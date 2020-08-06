@@ -1,0 +1,23 @@
+# JavaScript dependencies
+node_modules
+
+# PureScript dependencies
+.spago
+
+# PureScript output
+output
+
+# Webpack prod output
+dist
+
+# PureScript tooling
+.psc-ide-port
+.purs-repl
+
+# Dead Code Eliminated (zephyr) output
+dce-output
+
+## Miscellaneous
+
+# macOS trash
+.DS_Store
