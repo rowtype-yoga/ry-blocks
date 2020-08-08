@@ -1,16 +1,15 @@
 module Yoga where
 
 import Prelude
-import Data.Nullable (Nullable)
+import Data.Function as F
+import Data.Symbol (SProxy(..))
 import Effect.Unsafe (unsafePerformEffect)
-import Foreign.Object (Object)
 import Prim.Row (class Lacks)
-import React.Basic.DOM (CSS)
-import React.Basic.Events (EventHandler)
-import React.Basic.Hooks (JSX, ReactComponent, Ref, Render)
+import React.Basic.Emotion as Emotion
+import React.Basic.Hooks (JSX, ReactComponent, Render)
 import React.Basic.Hooks as Hooks
+import Record as Record
 import Untagged.Coercible (class Coercible, coerce)
-import Web.DOM (Node)
 
 reactComponent ∷
   ∀ hooks props.
@@ -33,3 +32,23 @@ reactComponentWithChildren = (map map map) unsafePerformEffect Hooks.reactCompon
 
 yogaElement ∷ ∀ allProps givenProps. Coercible givenProps (Record allProps) => ReactComponent (Record allProps) -> givenProps -> JSX
 yogaElement el props = Hooks.element el (coerce props)
+
+el ∷
+  ∀ props.
+  Lacks "children" props =>
+  ReactComponent { children ∷ Array JSX | props } ->
+  Record props -> Array JSX -> JSX
+el x props children = Hooks.element x (Record.insert (SProxy ∷ SProxy "children") children props)
+
+styled ∷
+  ∀ props.
+  Lacks "children" props =>
+  ReactComponent { className ∷ String, children ∷ Array JSX | props } ->
+  { className ∷ String, css ∷ Emotion.Style | props } -> Array JSX -> JSX
+styled x props children = Emotion.element x (Record.insert (SProxy ∷ SProxy "children") children props)
+
+styledLeaf ∷
+  ∀ props.
+  ReactComponent { className ∷ String | props } ->
+  { className ∷ String, css ∷ Emotion.Style | props } -> JSX
+styledLeaf = Emotion.element

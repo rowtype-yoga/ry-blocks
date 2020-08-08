@@ -5,7 +5,7 @@ import Components.Stack.Style as Style
 
 type PropsF f =
   ( className ∷ f String
-  | Style.Props f Props_div
+  | Style.Props f DivProps
   )
 
 type Props =

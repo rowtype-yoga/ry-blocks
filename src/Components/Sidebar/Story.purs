@@ -67,5 +67,17 @@ sidebar =
                 , space: "2em"
                 , side: SidebarRight
                 }
+            , R.h2_ [ R.text "No Stretch" ]
+            , element Sidebar.component
+                { children:
+                  [ R.div_
+                      [ R.div { children: [ R.text $ power "Content " 50 ], style: css { backgroundColor: "darkslateblue" } }
+                      , R.div { children: [ R.text "Sidebar" ], style: css { backgroundColor: "teal" } }
+                      ]
+                  ]
+                , style: css { backgroundColor: "oldlace" }
+                , noStretch: true
+                , side: SidebarRight
+                }
             ]
         ]

@@ -6,6 +6,7 @@ import Data.Foldable (class Foldable, foldMap, foldl, foldr)
 import Data.Maybe (Maybe, maybe)
 import Data.Newtype (class Newtype)
 import Unsafe.Coerce (unsafeCoerce)
+import Untagged.Coercible (class Coercible)
 import Untagged.Union (UndefinedOr, defined, fromUndefinedOr, maybeToUor, uorToMaybe)
 
 type Id a =
@@ -55,7 +56,7 @@ ifTrue v alt x = if (x ?|| false) then v else alt
 isTruthy ∷ OptionalProp Boolean -> Boolean
 isTruthy = getOr false
 
-infixr 6 getOrFlipped as ?||
+infixr 5 getOrFlipped as ?||
 
 appendIfDefined ∷ ∀ a. (Semigroup a) => a -> OptionalProp a -> a
 appendIfDefined a undefOrA = maybe a (a <> _) (opToMaybe undefOrA)

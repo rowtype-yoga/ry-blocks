@@ -5,6 +5,8 @@ import Prelude.Style
 type Props f r =
   ( css ∷ f Style
   , space ∷ f String
+  , justify ∷ f String
+  , align ∷ f String
   | r
   )
 
@@ -17,12 +19,12 @@ cluster props = styles <>? props.css
           nest
             { display: flex
             , flexWrap: wrap
-            , alignItems: center
-            , justifyContent: flexStart
-            , margin: "calc(" <> props.space ?|| "1rem" <> "/2 * -1)" # str
+            , alignItems: (str <$> props.align) ?|| center
+            , justifyContent: (str <$> props.justify) ?|| flexStart
+            , margin: "calc(" <> props.space ?|| "var(--s1)" <> "/2 * -1)" # str
             }
         , "& > * > *":
           nest
-            { margin: "calc(" <> (props.space ?|| "1rem") <> "/2)" # str
+            { margin: "calc(" <> props.space ?|| "var(--s1)" <> "/2)" # str
             }
         }

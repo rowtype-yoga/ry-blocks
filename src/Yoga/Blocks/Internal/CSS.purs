@@ -19,6 +19,12 @@ right = str "right"
 auto ∷ StyleProperty
 auto = str "auto"
 
+relative ∷ StyleProperty
+relative = str "relative"
+
+absolute ∷ StyleProperty
+absolute = str "absolute"
+
 contentBox ∷ StyleProperty
 contentBox = str "content-box"
 
@@ -27,6 +33,8 @@ borderBox = str "border-box"
 
 _0 ∷ StyleProperty
 _0 = str "0"
+
+_100percent = percent 100.0
 
 flex = str "flex"
 

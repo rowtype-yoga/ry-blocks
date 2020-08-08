@@ -14,10 +14,7 @@ type Props =
 type PropsOptional =
   PropsF OptionalProp
 
-component ∷
-  ∀ p p_.
-  Union p p_ Props =>
-  ReactComponent { | p }
+component ∷ ∀ p p_. Union p p_ Props => ReactComponent { | p }
 component =
   mkForwardRefComponent "Sidebar" do
     \(props ∷ { | PropsOptional }) ref -> React.do
