@@ -7,7 +7,6 @@ import React.Basic.DOM (css)
 import React.Basic.DOM as R
 import React.Basic.DOM.Events as Event
 import React.Basic.Hooks as React
-import Web.HTML.HTMLElement (tabIndex)
 
 type PropsF f =
   ( className ∷ f String
@@ -56,9 +55,9 @@ component =
                     }
             , emotionInput (props { max = show max, min = show min, value = show value })
                 { className: "ry-range-thumb " <>? props.className
-                , css: Style.range props <> guard props.disabled Style.inputDisabled
+                , css: Style.range props <> guard props.disabled Style.inputDisabled <>? props.css
                 , style: props.style
-                , tabIndex: -1
+                , tabIndex: 0
                 , value: show value
                 , type: "range"
                 , onChange: handler Event.targetValue ((_ >>= Int.fromString) >>> (foldMap setValue))

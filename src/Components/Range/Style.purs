@@ -11,35 +11,19 @@ type Props f r =
   )
 
 range ∷ ∀ p. { | Props OptionalProp p } -> Style
-range props = splitStyles <> styles <>? props.css
+range props = styles <>? props.css
   where
     styles =
       css
         { position: str "relative"
-        , width: percent 100.0
         , height: str "var(--s0)"
         , display: inlineBlock
-        , background: str "white"
-        , borderWidth: _0
         }
-
-    splitStyles = props.splitAfter # foldMap \n -> onlyChildStyle <> nthChildStyle n
-      where
-        onlyChildStyle =
-          css
-            { "&:only-child": nest { height: 100.0 # percent }
-            }
-
-        nthChild n = "& > :nth-child(" <> show n <> ")"
-
-        nthChildStyle n = (nthChild n) ~: { marginBottom: auto }
 
 container ∷ Style
 container =
   css
     { position: relative
-    -- , background: str "hotpink"
-    , width: _100percent
     , "input[type=range]":
       nest
         { appearance: none
@@ -89,17 +73,17 @@ focusCircle =
     , height: str "var(--s0)"
     , borderRadius: 50.0 # percent
     , left: str $ "calc(var(--val)/var(--max) * calc(100% - var(--s0)))"
-    , border: str "1px solid var(--highlight-col)"
+    , border: str "3px solid var(--highlight-col)"
     , boxShadow: str "0 0 var(--s-3) --var(--highlight-col)"
     , position: absolute
-    , transform: str "scale(1.1)"
+    , transform: str "scale(1.4)"
     , zIndex: str "12"
     }
 
 track ∷ Style
 track =
   css
-    { top: str "calc(var(--s0)/2.3)"
+    { top: str "calc((var(--s0) - var(--s-3)) / 2)"
     , height: str "var(--s-3)"
     , borderRadius: str "calc(var(--s-3)/2)"
     , position: absolute

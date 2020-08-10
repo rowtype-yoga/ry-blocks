@@ -82,12 +82,16 @@ type Layout =
 type Variants =
   CSS |+| Undefined
 
+type LayoutTransition =
+  Boolean |+| Undefined
+
 type MotionPropsF f r =
   ( initial ∷ f Initial
   , animate ∷ f Animate
   , variants ∷ f Variants
   , transition ∷ f Transition
   , layout ∷ f Layout
+  , layoutId ∷ f String |+| Undefined
   , exit ∷ f Exit
   | r
   )

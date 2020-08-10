@@ -4,12 +4,13 @@ import Prelude
 import Components.Centre as Centre
 import Components.Container.Style as Styles
 import Components.Sidebar as Sidebar
+import Components.Stack as Stack
 import Data.Monoid (guard)
 import Data.Tuple (Tuple(..))
 import Data.Tuple.Nested ((/\))
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
-import Framer.Motion (makeVariantLabels, withMotion)
+import Framer.Motion (animateSharedLayout, makeVariantLabels, withMotion)
 import Framer.Motion as M
 import React.Basic (JSX, element, fragment)
 import React.Basic.DOM (css)
@@ -18,6 +19,7 @@ import React.Basic.Emotion as E
 import React.Basic.Events (handler_)
 import React.Basic.Hooks (useState)
 import React.Basic.Hooks as React
+import Untagged.Coercible (coerce)
 import Yoga (el, reactComponent, styled)
 import Yoga.Blocks.Internal (_0, center, flex)
 import Yoga.Blocks.Internal.CSS (_100percent)
@@ -112,6 +114,76 @@ motion = do
         , boxShadow: E.str "50px 50px 60px #b92ebc, -50px -50px 60px #fb3efe"
         , background: E.str "linear-gradient(145deg, #e93aec, #c431c7)"
         }
+
+layoutTrans ∷ Effect JSX
+layoutTrans = do
+  mc <- mkMc
+  pure $ element mc {}
+  where
+    mkMc = do
+      pure
+        $ reactComponent "MotionTest" \{} -> React.do
+            sidebarOpen /\ setSidebarOpen <- useState true
+            let
+              ava1 =
+                el M.div
+                  { layout: coerce true
+                  , layoutId: coerce "ava"
+                  , key: "ava"
+                  , onClick: handler_ (setSidebarOpen not)
+                  , transition: M.transition { delay: 0.2, type: "spring", damping: 30, stiffness: 200 }
+                  , style:
+                    css
+                      { height: "200px"
+                      , width: "200px"
+                      , borderRadius: "50%"
+                      , border: "4px solid darkslateblue"
+                      , backgroundImage: "url('https://pbs.twimg.com/profile_images/1166763324723404801/nAUqF6tX.jpg')"
+                      , backgroundSize: "cover"
+                      }
+                  }
+                  []
+              ava2 =
+                el M.div
+                  { layout: coerce true
+                  , layoutId: coerce "ava"
+                  , key: "ava"
+                  , onClick: handler_ (setSidebarOpen not)
+                  , style:
+                    css
+                      { height: "100px"
+                      , width: "100px"
+                      , backgroundImage: "url('https://pbs.twimg.com/profile_images/1166763324723404801/nAUqF6tX.jpg')"
+                      , backgroundSize: "cover"
+                      , borderRadius: "50%"
+                      , border: "2px solid darkslateblue"
+                      }
+                  }
+                  []
+              ava3 =
+                el M.div
+                  { onClick: handler_ (setSidebarOpen not)
+                  , exit: M.exit (css { scale: 1.4, opacity: 0 })
+                  , transition: M.transition { duration: 0.19 }
+                  , style:
+                    css
+                      { height: "100px"
+                      , width: "100px"
+                      , background: "oldlace"
+                      , borderRadius: "50%"
+                      , border: "4px solid darkslateblue"
+                      }
+                  }
+                  []
+            pure
+              $ el animateSharedLayout {}
+                  [ el M.animatePresence {}
+                      [ if sidebarOpen then
+                          ava1
+                        else
+                          el Stack.component {} [ ava2, ava3 ]
+                      ]
+                  ]
 
 animatedSidebar ∷ Effect JSX
 animatedSidebar = do
