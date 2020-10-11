@@ -50,7 +50,7 @@ container =
 button ∷ { isFirst ∷ Boolean, isLast ∷ Boolean } -> Style
 button { isFirst, isLast } =
   css
-    { background: transparent
+    { background: color transparent
     , appearance: none
     , color: str colour.text
     , border: none

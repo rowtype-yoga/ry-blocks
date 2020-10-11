@@ -38,7 +38,7 @@ import Record.Unsafe.Union (unsafeUnion)
 import Type.Data.Row (RProxy(..))
 import Untagged.Coercible (class Coercible)
 import Web.DOM (Node)
-import Yoga.Blocks.Internal.CSS (_0, auto, borderBox, center, column, contentBox, flex, flexStart, left, nest, nestDynamic, right, (~:))
+import Yoga.Blocks.Internal.CSS (_0)
 
 foreign import mkForwardRefComponent ∷
   ∀ inputProps props a hooks.

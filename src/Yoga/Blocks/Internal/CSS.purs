@@ -1,51 +1,27 @@
 module Yoga.Blocks.Internal.CSS where
 
 import Prelude
-import React.Basic.Emotion
-import Foreign.Object (Object)
+
+import Color (Color, rgba)
 import Foreign.Object as Object
-import Type.Row.Homogeneous (class Homogeneous)
+import Prim.RowList (class RowToList)
+import React.Basic.Emotion (Style, StyleProperty, css, nested, percent, str)
+import Type.Row.Homogeneous (class Homogeneous, class HomogeneousRowList)
 import Unsafe.Coerce (unsafeCoerce)
-
-center ∷ StyleProperty
-center = str "center"
-
-left ∷ StyleProperty
-left = str "left"
-
-right ∷ StyleProperty
-right = str "right"
-
-auto ∷ StyleProperty
-auto = str "auto"
-
-relative ∷ StyleProperty
-relative = str "relative"
-
-absolute ∷ StyleProperty
-absolute = str "absolute"
-
-contentBox ∷ StyleProperty
-contentBox = str "content-box"
-
-borderBox ∷ StyleProperty
-borderBox = str "border-box"
 
 _0 ∷ StyleProperty
 _0 = str "0"
 
+transparent :: Color
+transparent = rgba 0 0 0 0.0
+
+left :: StyleProperty
+left = str "left"
+
+_100percent :: StyleProperty
 _100percent = percent 100.0
 
-flex = str "flex"
-
-hidden = str "hidden"
-
-wrap = str "wrap"
-
-column = str "column"
-
-flexStart = str "flex-start"
-
+nest :: forall r rl. RowToList r rl => HomogeneousRowList rl StyleProperty => Record r -> StyleProperty
 nest = nested <<< css
 
 nestDynamic ∷

@@ -1,6 +1,7 @@
 module Components.Motion.Story where
 
 import Prelude
+
 import Components.Centre as Centre
 import Components.Container.Style as Styles
 import Components.Sidebar as Sidebar
@@ -15,13 +16,14 @@ import Framer.Motion as M
 import React.Basic (JSX, element, fragment)
 import React.Basic.DOM (css)
 import React.Basic.DOM as R
+import React.Basic.Emotion (center, flex)
 import React.Basic.Emotion as E
 import React.Basic.Events (handler_)
 import React.Basic.Hooks (useState)
 import React.Basic.Hooks as React
 import Untagged.Coercible (coerce)
 import Yoga (el, reactComponent, styled)
-import Yoga.Blocks.Internal (_0, center, flex)
+import Yoga.Blocks.Internal (_0)
 import Yoga.Blocks.Internal.CSS (_100percent)
 
 default ∷
