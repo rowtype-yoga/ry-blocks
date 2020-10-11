@@ -32,18 +32,3 @@ jobs:
         run: yarn test
       - name: Build Storybook
         run: yarn build-storybook
-      - name: Bundle Frontend
-        run: yarn bundle
-
-     ## UI Server
-      - name: Install UI Server Dependencies
-        working-directory: ui-server
-        run: yarn install
-      - name: Build UI Server
-        working-directory: ui-server
-        run: yarn build
-
-    ## Build docker image
-    ## The Dockerfile requires the two previous steps
-      - name: Build Docker image
-        run: docker build . 

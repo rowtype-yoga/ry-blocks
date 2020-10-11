@@ -23,3 +23,5 @@ exports.pickDefinedFn = function (ks, r) {
     }
     return copy;
 };
+
+exports.createRef = React.createRef

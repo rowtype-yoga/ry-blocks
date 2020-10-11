@@ -1,6 +1,13 @@
 module Components.Container.Style where
 
 import Prelude.Style
+import Color (Color, darken, lighten)
+import Color as Color
+import Data.Symbol (class IsSymbol, SProxy, reflectSymbol)
+import Foreign.Object (Object)
+import Foreign.Object as Object
+import Heterogeneous.Mapping (class HMapWithIndex, class MappingWithIndex, hmap, hmapWithIndex)
+import Unsafe.Coerce (unsafeCoerce)
 
 global ∷ Style
 global =
@@ -11,24 +18,7 @@ global =
             { minHeight: 100.0 # vh
             , minWidth: 100.0 # vw
             }
-    , ":root":
-      nested
-        $ css
-            { "--white": "#f7f4f0" # str
-            , "--black": "#020207" # str
-            , "--bg-col": "var(--white)" # str
-            , "--input-col": "rgb(200,200,200)" # str
-            , "--border-col": "rgb(118,118,118)" # str
-            , "--text-col": "var(--black)" # str
-            , "@media (prefers-color-scheme: dark)":
-              nest
-                { "--bg-col": "var(--black)" # str
-                , "--input-col": "rgb(43,43,43)" # str
-                , "--border-col": "rgb(195,195,195)" # str
-                , "--text-col": "var(--white)" # str
-                }
-            }
-        <> variables
+    , ":root": nested $ variables
     , html:
       nested
         $ css
@@ -38,8 +28,8 @@ global =
       nested
         $ css
             { fontFamily: str "Inter, system-ui, sans-serif"
-            , background: str "var(--bg-col)"
-            , color: str "var(--text-col)"
+            , background: str colour.background0
+            , color: str colour.text
             , margin: str "0"
             }
         <> colourTheme defaultColours
@@ -63,82 +53,139 @@ global =
             { boxSizing: str "inherit"
             }
     , input
+    , form:
+      nested
+        $ css
+            { backgroundColor: str colour.background07
+            }
     }
 
 defaultColours ∷ Colours
 defaultColours =
   { light:
-    { background: "#FEFEFE"
-    , highlight: "#0099FF"
-    , text: "#333333"
-    , input:
-      { background: "#DDD"
-      , textDisabled: "#999999"
-      , backgroundDisabled: "#F0F0F0"
-      }
+    { background0: lightBg
+    , background02: darken 0.02 lightBg
+    , background05: darken 0.05 lightBg
+    , background07: darken 0.07 lightBg
+    , background10: darken 0.1 lightBg
+    , background12: darken 0.12 lightBg
+    , background15: darken 0.15 lightBg
+    , background20: darken 0.2 lightBg
+    , background25: darken 0.25 lightBg
+    , background30: darken 0.3 lightBg
+    , background40: darken 0.4 lightBg
+    , background50: darken 0.5 lightBg
+    , background60: darken 0.6 lightBg
+    , background70: darken 0.7 lightBg
+    , background80: darken 0.8 lightBg
+    , background90: darken 0.9 lightBg
+    , background100: darken 1.0 lightBg
+    , interfaceBackground: lightBg
+    , interfaceBackgroundHighlight: lightBg
+    , interfaceBackgroundShadow: darken 0.1 lightBg
+    , highlight: highlight
+    , text: darkBg
     }
   , dark:
-    { background: "#111"
-    , highlight: "#0099FF"
-    , text: "#FFE9D7"
-    , input:
-      { background: "#444444"
-      , textDisabled: "#666"
-      , backgroundDisabled: "#222"
-      }
+    { background0: darkBg
+    , background02: lighten 0.02 darkBg
+    , background05: lighten 0.05 darkBg
+    , background07: lighten 0.07 darkBg
+    , background10: lighten 0.1 darkBg
+    , background12: lighten 0.12 darkBg
+    , background15: lighten 0.15 darkBg
+    , background20: lighten 0.2 darkBg
+    , background25: lighten 0.25 darkBg
+    , background30: lighten 0.3 darkBg
+    , background40: lighten 0.4 darkBg
+    , background50: lighten 0.5 darkBg
+    , background60: lighten 0.6 darkBg
+    , background70: lighten 0.7 darkBg
+    , background80: lighten 0.8 darkBg
+    , background90: lighten 0.9 darkBg
+    , background100: lighten 1.0 darkBg
+    , interfaceBackground: lighten 0.4 darkBg
+    , interfaceBackgroundHighlight: lighten 0.5 darkBg
+    , interfaceBackgroundShadow: lighten 0.4 darkBg
+    , highlight
+    , text: lightBg
     }
   }
+  where
+    highlight = Color.rgb 0x00 0x99 0xFF
 
-type ColoursVariant =
-  { background ∷ String
-  , highlight ∷ String
-  , text ∷ String
-  , input ∷
-    { background ∷ String
-    , textDisabled ∷ String
-    , backgroundDisabled ∷ String
-    }
+    -- highlight = Color.rgb 0x10 0x45 0x4A
+    darkBg = Color.rgb 0 0 0
+
+    lightBg = Color.rgb 255 255 255
+
+type FlatTheme a =
+  { background0 ∷ a
+  , background02 ∷ a
+  , background05 ∷ a
+  , background07 ∷ a
+  , background10 ∷ a
+  , background12 ∷ a
+  , background15 ∷ a
+  , background20 ∷ a
+  , background25 ∷ a
+  , background30 ∷ a
+  , background40 ∷ a
+  , background50 ∷ a
+  , background60 ∷ a
+  , background70 ∷ a
+  , background80 ∷ a
+  , background90 ∷ a
+  , background100 ∷ a
+  , interfaceBackground ∷ a
+  , interfaceBackgroundHighlight ∷ a
+  , interfaceBackgroundShadow ∷ a
+  , highlight ∷ a
+  , text ∷ a
   }
 
 type Colours =
-  { dark ∷ ColoursVariant
-  , light ∷ ColoursVariant
+  { dark ∷ FlatTheme Color
+  , light ∷ FlatTheme Color
   }
 
+data MakeCSSVarLabels
+  = MakeCSSVarLabels
+
+instance makeCSSVarLabels' ∷
+  (IsSymbol sym) =>
+  MappingWithIndex MakeCSSVarLabels (SProxy sym) a String where
+  mappingWithIndex MakeCSSVarLabels prop _ = "--" <> (reflectSymbol prop)
+
+makeCSSVarLabels ∷ ∀ a b. HMapWithIndex MakeCSSVarLabels a b => a -> b
+makeCSSVarLabels = hmapWithIndex MakeCSSVarLabels
+
+colour ∷ FlatTheme String
+colour =
+  hmap (\x -> "var(" <> x <> ")")
+    $ makeCSSVarLabels defaultColours.light
+
 colourTheme ∷ Colours -> Style
-colourTheme { dark, light } =
-  css
-    -- Dark
-    { "--bg-col-inverted": dark.background # str
-    , "--text-col-inverted": dark.text # str
-    , "--highlight-col-inverted": dark.highlight # str
-    , "--input-bg-col-inverted": dark.input.background # str
-    , "--input-bg-col-disabled-inverted": dark.input.backgroundDisabled # str
-    , "--input-text-col-disabled-inverted": dark.input.textDisabled # str
-    -- Light
-    , "--bg-col": light.background # str
-    , "--text-col": light.text # str
-    , "--highlight-col": light.highlight # str
-    , "--input-bg-col": light.input.background # str
-    , "--input-bg-col-disabled": light.input.backgroundDisabled # str
-    , "--input-text-col-disabled": light.input.textDisabled # str
-    , "@media (prefers-color-scheme: dark)":
-      nest
-        { "--bg-col-inverted": light.background # str
-        , "--text-col-inverted": light.text # str
-        , "--highlight-col-inverted": light.highlight # str
-        , "--input-bg-col-inverted": light.input.background # str
-        , "--input-bg-col-disabled-inverted": light.input.backgroundDisabled # str
-        , "--input-text-col-disabled-inverted": light.input.textDisabled # str
-        -- Light
-        , "--bg-col": dark.background # str
-        , "--text-col": dark.text # str
-        , "--highlight-col": dark.highlight # str
-        , "--input-bg-col": dark.input.background # str
-        , "--input-bg-col-disabled": dark.input.backgroundDisabled # str
-        , "--input-text-col-disabled": dark.input.textDisabled # str
-        }
-    }
+colourTheme { dark, light } = lightT
+  where
+    darkT ∷ Style
+    darkT = unsafeCoerce darkObj
+
+    darkObj ∷ Object StyleProperty
+    darkObj =
+      Object.fromHomogeneous defaultColours.dark
+        # Object.foldMap \k v ->
+            Object.singleton ("--" <> k) (str (Color.toHexString v))
+
+    lightObj ∷ Object StyleProperty
+    lightObj =
+      Object.fromHomogeneous defaultColours.light
+        # Object.foldMap \k v ->
+            Object.singleton ("--" <> k) (str (Color.toHexString v))
+              # Object.insert "@media (prefers-color-scheme: dark)" (nested darkT)
+
+    lightT ∷ Style
+    lightT = unsafeCoerce lightObj
 
 variables ∷ Style
 variables =

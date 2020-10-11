@@ -13,21 +13,21 @@ module Yoga.Blocks.Internal
   , emotionInput
   , module Yoga.Blocks.Internal.OptionalProp
   , module Yoga.Blocks.Internal.CSS
+  , createRef
   ) where
 
 import Prelude
-import Yoga.Blocks.Internal.OptionalProp
+import Yoga.Blocks.Internal.OptionalProp (Id, OptionalProp(..), appendIfDefined, getOr, getOrFlipped, ifTrue, isTruthy, maybeToOp, opToMaybe, unsafeUnOptional, (<>?), (?||))
 import Data.Array (fromFoldable)
 import Data.Function.Uncurried (Fn2, runFn2)
 import Data.Nullable (Nullable)
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object (Object)
-import Prelude (Unit, (<<<))
 import Prim.Row (class Union)
 import Prim.Row as Row
 import Prim.RowList as RL
-import React.Basic.DOM (CSS, Props_div, Props_input, unsafeCreateDOMComponent)
+import React.Basic.DOM (CSS, unsafeCreateDOMComponent)
 import React.Basic.Emotion (Style)
 import React.Basic.Emotion as E
 import React.Basic.Events (EventHandler)
@@ -35,9 +35,8 @@ import React.Basic.Hooks (JSX, ReactComponent, Ref, Render)
 import Record.Extra (class Keys, keys)
 import Record.Unsafe.Union (unsafeUnion)
 import Type.Data.Row (RProxy(..))
-import Untagged.Coercible (class Coercible)
 import Web.DOM (Node)
-import Yoga.Blocks.Internal.CSS (_0, auto, borderBox, center, column, contentBox, flex, flexStart, left, nest, nestDynamic, right, (~:))
+import Yoga.Blocks.Internal.CSS (_0)
 
 foreign import mkForwardRefComponent ∷
   ∀ inputProps props a hooks.
@@ -50,6 +49,8 @@ foreign import mkForwardRefComponentEffect ∷
   String ->
   ({ | inputProps } -> Ref a -> Render Unit hooks JSX) ->
   Effect (ReactComponent { | props })
+
+foreign import createRef ∷ ∀ a. Effect (Ref a)
 
 unsafeEmotion ∷ ∀ props propsA propsB ref. ReactComponent { className ∷ String, css ∷ E.Style, ref ∷ Ref ref | props } -> Record propsA -> { className ∷ String, css ∷ E.Style, ref ∷ Ref ref | propsB } -> JSX
 unsafeEmotion component propsA propsB = E.element component (unsafeUnion propsB propsA)
@@ -218,7 +219,7 @@ type DivPropsF f =
   , property ∷ f String
   , radioGroup ∷ f String
   , readOnly ∷ f Boolean
-  -- , ref ∷ f (Ref (Nullable Node))
+  , ref ∷ f (Ref (Nullable Node))
   , resource ∷ f String
   , role ∷ f String
   , rowSpan ∷ f Int

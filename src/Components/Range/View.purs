@@ -1,8 +1,10 @@
 module Components.Range.View (component, Props, PropsF) where
 
 import Prelude.View
+
 import Components.Range.Style as Style
 import Data.Int as Int
+import Foreign.Object as Object
 import React.Basic.DOM (css)
 import React.Basic.DOM as R
 import React.Basic.DOM.Events as Event
@@ -39,6 +41,7 @@ component =
             , onFocus: handler_ $ setHasFocus true
             , onBlur: handler_ $ setHasFocus false
             , style: props.style <> css { "--val": value, "--max": max - min }
+            , _data: Object.singleton "testid" "range-testid"
             }
             [ styledLeaf R.div'
                 { className: "ry-range-filled"
@@ -57,7 +60,6 @@ component =
                 { className: "ry-range-thumb " <>? props.className
                 , css: Style.range props <> guard props.disabled Style.inputDisabled <>? props.css
                 , style: props.style
-                , tabIndex: 0
                 , value: show value
                 , type: "range"
                 , onChange: handler Event.targetValue ((_ >>= Int.fromString) >>> (foldMap setValue))

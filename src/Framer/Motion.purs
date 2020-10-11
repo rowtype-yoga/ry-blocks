@@ -68,7 +68,6 @@ foreign import data AnimationControls ∷ Type
 type Animate =
   CSS
     |+| VariantLabel
-    |+| CSS
     |+| Array VariantLabel
     |+| AnimationControls
     |+| Undefined

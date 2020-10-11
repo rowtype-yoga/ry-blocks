@@ -1,7 +1,10 @@
 module Components.Range.Style where
 
 import Prelude.Style
+
+import Data.Interpolate (i)
 import React.Basic.Emotion (inlineBlock)
+import Components.Container.Style (colour)
 
 type Props f r =
   ( css ∷ f Style
@@ -47,6 +50,7 @@ thumbStyle =
     { appearance: none
     , width: str "var(--s0)"
     , height: str "var(--s0)"
+    , border: none
     , borderRadius: 50.0 # percent
     , background: str "white"
     , boxShadow: str "0 calc(var(--s-4)/2) var(--s-3) rgba(70,70,70,0.6)"
@@ -73,8 +77,8 @@ focusCircle =
     , height: str "var(--s0)"
     , borderRadius: 50.0 # percent
     , left: str $ "calc(var(--val)/var(--max) * calc(100% - var(--s0)))"
-    , border: str "3px solid var(--highlight-col)"
-    , boxShadow: str "0 0 var(--s-3) --var(--highlight-col)"
+    , border: str $ i "3px solid " colour.highlight
+    , boxShadow: str $ i "0 0 var(--s-3) " <> colour.highlight
     , position: absolute
     , transform: str "scale(1.4)"
     , zIndex: str "12"
@@ -90,14 +94,14 @@ track =
     }
 
 disabled ∷ Style
-disabled = css { backgroundColor: str "var(--input-bg-col-disabled)" }
+disabled = css { backgroundColor: str colour.background30 }
 
 filled ∷ Style
 filled =
   track
     <> css
         { width: str "calc(var(--val)/var(--max) * 100%)"
-        , backgroundColor: str "var(--highlight-col)"
+        , backgroundColor: str colour.highlight
         }
 
 notFilled ∷ Style
@@ -106,5 +110,5 @@ notFilled =
     <> css
         { width: str "calc((1 - (var(--val)/var(--max))) * 100%)"
         , right: _0
-        , backgroundColor: str "var(--input-bg-col)"
+        , backgroundColor: str colour.background40
         }
