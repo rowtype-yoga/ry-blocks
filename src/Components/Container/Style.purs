@@ -4,7 +4,6 @@ import Prelude.Style
 import Color (Color, darken, lighten)
 import Color as Color
 import Data.Symbol (class IsSymbol, SProxy, reflectSymbol)
-import Debug.Trace (spy)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Heterogeneous.Mapping (class HMapWithIndex, class MappingWithIndex, hmap, hmapWithIndex)
@@ -33,7 +32,7 @@ global =
             , color: str colour.text
             , margin: str "0"
             }
-        <> spy "hihih" (colourTheme defaultColours)
+        <> colourTheme defaultColours
     , "h1,h2,h3,h4,h5":
       nest
         { fontWeight: str "800"

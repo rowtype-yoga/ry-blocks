@@ -11,10 +11,3 @@ spec =
       it "renders without errors" do
         void
           $ renderComponent Range.component {}
-      it "accepts div props" do
-        { findByText } <-
-          renderComponent Range.component
-            { role: "Heinz"
-            }
-        elem <- findByText "Find me!"
-        elem `shouldHaveAttribute` "role"
