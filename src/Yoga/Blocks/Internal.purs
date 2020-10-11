@@ -13,6 +13,7 @@ module Yoga.Blocks.Internal
   , emotionInput
   , module Yoga.Blocks.Internal.OptionalProp
   , module Yoga.Blocks.Internal.CSS
+  , createRef
   ) where
 
 import Prelude
@@ -50,6 +51,8 @@ foreign import mkForwardRefComponentEffect ∷
   String ->
   ({ | inputProps } -> Ref a -> Render Unit hooks JSX) ->
   Effect (ReactComponent { | props })
+
+foreign import createRef ∷ ∀ a. Effect (Ref a)
 
 unsafeEmotion ∷ ∀ props propsA propsB ref. ReactComponent { className ∷ String, css ∷ E.Style, ref ∷ Ref ref | props } -> Record propsA -> { className ∷ String, css ∷ E.Style, ref ∷ Ref ref | propsB } -> JSX
 unsafeEmotion component propsA propsB = E.element component (unsafeUnion propsB propsA)
@@ -218,7 +221,7 @@ type DivPropsF f =
   , property ∷ f String
   , radioGroup ∷ f String
   , readOnly ∷ f Boolean
-  -- , ref ∷ f (Ref (Nullable Node))
+  , ref ∷ f (Ref (Nullable Node))
   , resource ∷ f String
   , role ∷ f String
   , rowSpan ∷ f Int

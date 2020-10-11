@@ -7,6 +7,7 @@ You can edit this file as you like.
   [ "console"
   , "effect"
   , "heterogeneous"
+  , "interpolate"
   , "psci-support"
   , "react-basic-dom"
   , "react-basic-emotion"

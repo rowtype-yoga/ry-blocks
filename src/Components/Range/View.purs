@@ -57,7 +57,6 @@ component =
                 { className: "ry-range-thumb " <>? props.className
                 , css: Style.range props <> guard props.disabled Style.inputDisabled <>? props.css
                 , style: props.style
-                , tabIndex: 0
                 , value: show value
                 , type: "range"
                 , onChange: handler Event.targetValue ((_ >>= Int.fromString) >>> (foldMap setValue))
