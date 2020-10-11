@@ -17,18 +17,17 @@ module Yoga.Blocks.Internal
   ) where
 
 import Prelude
-import Yoga.Blocks.Internal.OptionalProp
+import Yoga.Blocks.Internal.OptionalProp (Id, OptionalProp(..), appendIfDefined, getOr, getOrFlipped, ifTrue, isTruthy, maybeToOp, opToMaybe, unsafeUnOptional, (<>?), (?||))
 import Data.Array (fromFoldable)
 import Data.Function.Uncurried (Fn2, runFn2)
 import Data.Nullable (Nullable)
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object (Object)
-import Prelude (Unit, (<<<))
 import Prim.Row (class Union)
 import Prim.Row as Row
 import Prim.RowList as RL
-import React.Basic.DOM (CSS, Props_div, Props_input, unsafeCreateDOMComponent)
+import React.Basic.DOM (CSS, unsafeCreateDOMComponent)
 import React.Basic.Emotion (Style)
 import React.Basic.Emotion as E
 import React.Basic.Events (EventHandler)
@@ -36,7 +35,6 @@ import React.Basic.Hooks (JSX, ReactComponent, Ref, Render)
 import Record.Extra (class Keys, keys)
 import Record.Unsafe.Union (unsafeUnion)
 import Type.Data.Row (RProxy(..))
-import Untagged.Coercible (class Coercible)
 import Web.DOM (Node)
 import Yoga.Blocks.Internal.CSS (_0)
 
