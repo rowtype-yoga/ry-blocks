@@ -1,7 +1,6 @@
 module Components.Segmented.Story where
 
 import Prelude
-
 import Components.Container.Style as Styles
 import Components.Segmented as Segmented
 import Data.Tuple.Nested ((/\))
@@ -35,12 +34,12 @@ segmented = do
   pure $ element demoComponent {}
   where
     makeDemoComponent = do
-      pure 
+      pure
         $ reactComponent "Segmented Demo" \{} -> React.do
-          activeIndex /\ setElementIndex <- useState' 0
-          pure 
-            $ element Segmented.component
-            { activeIndex
-            , updateActiveIndex: setElementIndex
-            , buttonContents: R.text <$> [ "Heinz", "Dembi", "Merh", "mehr", "meeehr" ]
-            }
+            activeIndex /\ setElementIndex <- useState' 0
+            pure
+              $ element Segmented.component
+                  { activeIndex
+                  , updateActiveIndex: setElementIndex
+                  , buttonContents: R.text <$> [ "Heinz", "Dembi", "Merh", "mehr", "meeehr" ]
+                  }

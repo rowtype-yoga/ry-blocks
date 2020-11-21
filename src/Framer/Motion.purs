@@ -10,6 +10,9 @@ module Framer.Motion
   , MotionProps
   , initial
   , MotionPropsF
+  , prop
+  , Drag
+  , DragMomentum
   , Transition
   , transition
   , Initial
@@ -28,29 +31,50 @@ module Framer.Motion
   , animateSharedLayout
   , AnimateSharedLayoutProps
   , AnimateSharedLayoutType
+  , OnDragEnd
+  , onDragEnd
+  , PanInfo
+  , Point2D
   , switch
   , crossfade
   , AnimatePresenceProps
+  , ConstraintsRef
   , animatePresence
+  , svg
+  , path
+  , rect
   ) where
 
 import Prelude
+import Data.Nullable (Nullable)
 import Data.Symbol (class IsSymbol, SProxy, reflectSymbol)
 import Effect (Effect)
+import Effect.Uncurried (EffectFn2, mkEffectFn2)
 import Heterogeneous.Mapping (class HMapWithIndex, class MappingWithIndex, hmapWithIndex)
 import Literals.Undefined (Undefined)
 import Prim.Row (class Nub, class Union)
 import React.Basic (JSX, ReactComponent)
 import React.Basic.DOM (CSS, Props_div, Props_h1, css)
+import React.Basic.DOM.Internal (SharedSVGProps)
+import React.Basic.DOM.SVG (Props_svg, Props_rect, Props_path)
+import React.Basic.Hooks (Ref)
 import Record (disjointUnion)
 import Type.Row (type (+))
 import Untagged.Coercible (class Coercible, coerce)
 import Untagged.Union (type (|+|))
+import Web.DOM (Node)
+import Web.Event.Internal.Types (Event)
 import Yoga.Blocks.Internal (Id)
 
 foreign import divImpl ∷ ∀ a. ReactComponent { | a }
 
 foreign import h1Impl ∷ ∀ a. ReactComponent { | a }
+
+foreign import svgImpl ∷ ∀ a. ReactComponent { | a }
+
+foreign import pathImpl ∷ ∀ a. ReactComponent { | a }
+
+foreign import rectImpl ∷ ∀ a. ReactComponent { | a }
 
 type Transition =
   CSS |+| Undefined
@@ -64,6 +88,8 @@ type Exit =
   CSS |+| Array VariantLabel |+| Undefined
 
 foreign import data AnimationControls ∷ Type
+
+prop = coerce
 
 type Animate =
   CSS
@@ -84,9 +110,34 @@ type Variants =
 type LayoutTransition =
   Boolean |+| Undefined
 
+type Drag =
+  Boolean |+| Undefined
+
+type DragMomentum =
+  Boolean |+| Undefined
+
+type ConstraintsRef =
+  Ref (Nullable Node) |+| Undefined
+
+type Point2D =
+  { x ∷ Number, y ∷ Number }
+
+type PanInfo =
+  { point ∷ Point2D, delta ∷ Point2D, offset ∷ Point2D, velocity ∷ Point2D }
+
+type OnDragEnd =
+  EffectFn2 Event PanInfo Unit
+
+onDragEnd ∷ ∀ coercible. Coercible OnDragEnd coercible => (Event -> PanInfo -> Effect Unit) -> coercible
+onDragEnd fn2 = coerce ((mkEffectFn2 fn2) ∷ OnDragEnd)
+
 type MotionPropsF f r =
   ( initial ∷ f Initial
   , animate ∷ f Animate
+  , drag ∷ f Drag
+  , dragMomentum ∷ f DragMomentum
+  , onDragEnd ∷ f (OnDragEnd |+| Undefined)
+  , constraintsRef ∷ f ConstraintsRef
   , variants ∷ f Variants
   , transition ∷ f Transition
   , layout ∷ f Layout
@@ -127,16 +178,19 @@ instance makeVariantLabels' ∷
 makeVariantLabels ∷ ∀ a b. HMapWithIndex MakeVariantLabel a b => a -> b
 makeVariantLabels = hmapWithIndex MakeVariantLabel
 
-div ∷
-  ∀ attrs attrs_.
-  Union attrs attrs_ (MotionProps + Props_div) =>
-  ReactComponent { | attrs }
+div ∷ ∀ attrs attrs_. Union attrs attrs_ (MotionProps + Props_div) => ReactComponent { | attrs }
 div = divImpl
 
-h1 ∷
-  ∀ attrs attrs_.
-  Union attrs attrs_ (MotionProps + Props_h1) =>
-  ReactComponent { | attrs }
+svg ∷ ∀ attrs attrs_. Union attrs attrs_ (MotionProps + (SharedSVGProps Props_svg)) => ReactComponent { | attrs }
+svg = svgImpl
+
+path ∷ ∀ attrs attrs_. Union attrs attrs_ (MotionProps + (SharedSVGProps Props_path)) => ReactComponent { | attrs }
+path = pathImpl
+
+rect ∷ ∀ attrs attrs_. Union attrs attrs_ (MotionProps + (SharedSVGProps Props_rect)) => ReactComponent { | attrs }
+rect = rectImpl
+
+h1 ∷ ∀ attrs attrs_. Union attrs attrs_ (MotionProps + Props_h1) => ReactComponent { | attrs }
 h1 = h1Impl
 
 withMotion ∷

@@ -1,7 +1,6 @@
 module Yoga.Blocks.Internal.CSS where
 
 import Prelude
-
 import Color (Color, rgba)
 import Foreign.Object as Object
 import Prim.RowList (class RowToList)
@@ -12,16 +11,16 @@ import Unsafe.Coerce (unsafeCoerce)
 _0 ∷ StyleProperty
 _0 = str "0"
 
-transparent :: Color
+transparent ∷ Color
 transparent = rgba 0 0 0 0.0
 
-left :: StyleProperty
+left ∷ StyleProperty
 left = str "left"
 
-_100percent :: StyleProperty
+_100percent ∷ StyleProperty
 _100percent = percent 100.0
 
-nest :: forall r rl. RowToList r rl => HomogeneousRowList rl StyleProperty => Record r -> StyleProperty
+nest ∷ ∀ r rl. RowToList r rl => HomogeneousRowList rl StyleProperty => Record r -> StyleProperty
 nest = nested <<< css
 
 nestDynamic ∷

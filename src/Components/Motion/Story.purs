@@ -1,7 +1,6 @@
 module Components.Motion.Story where
 
 import Prelude
-
 import Components.Centre as Centre
 import Components.Container.Style as Styles
 import Components.Sidebar as Sidebar
