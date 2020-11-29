@@ -9,7 +9,7 @@ import Effect (Effect)
 import React.Basic (JSX, element)
 import React.Basic.DOM as R
 import React.Basic.Hooks (reactChildrenFromArray)
-import Yoga (el, styled, styledLeaf)
+import Yoga (el, styledLeaf)
 
 default ∷ { title ∷ String }
 default = { title: "Pages/Container" }

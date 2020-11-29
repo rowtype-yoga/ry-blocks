@@ -1,4 +1,4 @@
-module Components.Segmented.View (component, Props, MandatoryProps, PropsF) where
+module Components.Segmented.View (component, Props, MandatoryProps, PropsF, ComponentProps) where
 
 import Prelude.View
 import Components.Cluster as Cluster

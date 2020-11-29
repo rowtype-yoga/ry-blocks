@@ -2,4 +2,4 @@ module Components.Container
   ( module Components.Container.View
   ) where
 
-import Components.Container.View (component)
+import Components.Container.View (component, Props)

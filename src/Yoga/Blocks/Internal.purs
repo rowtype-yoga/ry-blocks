@@ -105,7 +105,6 @@ dangerous = unsafePerformEffect <<< unsafeCreateDOMComponent
 
 -- type DivProps =
 --   Props_div
-
 type DivProps =
   DivPropsF Id
 

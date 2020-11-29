@@ -13,12 +13,11 @@ exports.mkForwardRefComponentEffect = (displayName) => (renderFn) => () => {
     return React.forwardRef(component);
 };
 
-
-exports.pickDefinedFn = function (ks, r) {
-    var copy = {};
-    for (var i = 0; i < ks.length; i++) {
-        if (r[ks[i]] !== undefined) {
-            copy[ks[i]] = r[ks[i]];
+exports.pickDefinedFn = function (ks, obj) {
+    const copy = {};
+    for (let i = 0; i < ks.length; i++) {
+        if (obj[ks[i]] !== undefined) {
+            copy[ks[i]] = obj[ks[i]];
         }
     }
     return copy;

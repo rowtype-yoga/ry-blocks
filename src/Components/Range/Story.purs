@@ -9,14 +9,13 @@ import React.Basic (JSX, element, fragment)
 import React.Basic.DOM (css)
 import React.Basic.DOM as R
 import React.Basic.Emotion as E
-import Yoga.Blocks.Internal (_0)
 
 default ∷
   { decorators ∷ Array (Effect JSX -> JSX)
   , title ∷ String
   }
 default =
-  { title: "Layout/Range"
+  { title: "Atom/Range"
   , decorators:
     [ \storyFn ->
         R.div_

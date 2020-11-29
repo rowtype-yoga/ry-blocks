@@ -18,7 +18,7 @@ default ∷
   , title ∷ String
   }
 default =
-  { title: "Layout/Segmented"
+  { title: "Atom/Segmented"
   , decorators:
     [ \storyFn ->
         R.div_

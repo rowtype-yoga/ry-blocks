@@ -1,7 +1,7 @@
-module Components.Stack.View (component, Props, PropsF) where
+module Components.Imposter.View (component, Props, PropsF) where
 
 import Prelude.View
-import Components.Stack.Style as Style
+import Components.Imposter.Style as Style
 
 type PropsF f =
   ( className ∷ f String
@@ -15,12 +15,12 @@ type PropsOptional =
   PropsF OptionalProp
 
 component ∷ ∀ p q. Union p q Props => ReactComponent { | p }
-component =
-  mkForwardRefComponent "Stack" do
+component = do
+  mkForwardRefComponent "Imposter" do
     \(props ∷ { | PropsOptional }) ref -> React.do
       pure
         $ emotionDiv props
-            { className: "ry-stack " <>? props.className
-            , css: Style.stack props
+            { className: "ry-imposter " <>? props.className
+            , css: Style.imposter props
             , ref
             }

@@ -1,4 +1,4 @@
-module Components.Container.View (component) where
+module Components.Container.View (component, Props) where
 
 import Prelude.View
 import Components.Container.Style as Styles

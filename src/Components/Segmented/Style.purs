@@ -60,6 +60,7 @@ button { isFirst, isLast } =
     , paddingLeft: str if isFirst then "var(--s0)" else "calc(var(--s0)*0.9)"
     , paddingRight: str if isLast then "var(--s0)" else "calc(var(--s0)*0.9)"
     , zIndex: str "3"
+    , "&:active": nest { outline: str "0" } -- ensures no outline on click in Chrome
     }
 
 wrapper ∷ Style

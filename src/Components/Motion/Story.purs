@@ -18,7 +18,7 @@ import React.Basic.DOM as R
 import React.Basic.Emotion (center, flex)
 import React.Basic.Emotion as E
 import React.Basic.Events (handler_)
-import React.Basic.Hooks (useState)
+import React.Basic.Hooks (reactChildrenFromArray, useState)
 import React.Basic.Hooks as React
 import Untagged.Coercible (coerce)
 import Yoga (el, reactComponent, styled)
@@ -220,7 +220,7 @@ animatedSidebar = do
                           { css: sidebarStyle
                           , className: "sidebarContainer"
                           }
-                          [ el M.animatePresence {} [ guard sidebarOpen sb ]
+                          [ element M.animatePresence { children: [ guard sidebarOpen sb ] }
                           , R.div_
                               [ el M.h1
                                   { initial: M.initial (css { x: -10, opacity: 0 })

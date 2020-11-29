@@ -16,6 +16,7 @@ module Framer.Motion
   , Transition
   , transition
   , Initial
+  , BoundingBox2D
   , (>>)
   , variants
   , Animate
@@ -38,7 +39,7 @@ module Framer.Motion
   , switch
   , crossfade
   , AnimatePresenceProps
-  , ConstraintsRef
+  , DragConstraints
   , animatePresence
   , svg
   , path
@@ -50,6 +51,7 @@ import Data.Nullable (Nullable)
 import Data.Symbol (class IsSymbol, SProxy, reflectSymbol)
 import Effect (Effect)
 import Effect.Uncurried (EffectFn2, mkEffectFn2)
+import Foreign.Object (Object)
 import Heterogeneous.Mapping (class HMapWithIndex, class MappingWithIndex, hmapWithIndex)
 import Literals.Undefined (Undefined)
 import Prim.Row (class Nub, class Union)
@@ -57,11 +59,12 @@ import React.Basic (JSX, ReactComponent)
 import React.Basic.DOM (CSS, Props_div, Props_h1, css)
 import React.Basic.DOM.Internal (SharedSVGProps)
 import React.Basic.DOM.SVG (Props_svg, Props_rect, Props_path)
-import React.Basic.Hooks (Ref)
+import React.Basic.Events (EventHandler)
+import React.Basic.Hooks (ReactChildren, Ref)
 import Record (disjointUnion)
 import Type.Row (type (+))
 import Untagged.Coercible (class Coercible, coerce)
-import Untagged.Union (type (|+|))
+import Untagged.Union (type (|+|), UndefinedOr)
 import Web.DOM (Node)
 import Web.Event.Internal.Types (Event)
 import Yoga.Blocks.Internal (Id)
@@ -85,10 +88,11 @@ data Target
   = Target
 
 type Exit =
-  CSS |+| Array VariantLabel |+| Undefined
+  CSS |+| VariantLabel |+| Array VariantLabel |+| Undefined
 
 foreign import data AnimationControls ∷ Type
 
+prop ∷ ∀ a b. Coercible a b => a -> b
 prop = coerce
 
 type Animate =
@@ -116,8 +120,15 @@ type Drag =
 type DragMomentum =
   Boolean |+| Undefined
 
-type ConstraintsRef =
-  Ref (Nullable Node) |+| Undefined
+type DragConstraints =
+  Ref (Nullable Node) |+| BoundingBox2D |+| Undefined
+
+type BoundingBox2D =
+  { left ∷ Int |+| Number |+| Undefined
+  , right ∷ Int |+| Number |+| Undefined
+  , top ∷ Int |+| Number |+| Undefined
+  , bottom ∷ Int |+| Number |+| Undefined
+  }
 
 type Point2D =
   { x ∷ Number, y ∷ Number }
@@ -137,7 +148,7 @@ type MotionPropsF f r =
   , drag ∷ f Drag
   , dragMomentum ∷ f DragMomentum
   , onDragEnd ∷ f (OnDragEnd |+| Undefined)
-  , constraintsRef ∷ f ConstraintsRef
+  , dragConstraints ∷ f DragConstraints
   , variants ∷ f Variants
   , transition ∷ f Transition
   , layout ∷ f Layout
@@ -173,7 +184,7 @@ data MakeVariantLabel
 instance makeVariantLabels' ∷
   (IsSymbol sym) =>
   MappingWithIndex MakeVariantLabel (SProxy sym) a VariantLabel where
-  mappingWithIndex MakeVariantLabel prop _ = VariantLabel (reflectSymbol prop)
+  mappingWithIndex MakeVariantLabel prop' _ = VariantLabel (reflectSymbol prop')
 
 makeVariantLabels ∷ ∀ a b. HMapWithIndex MakeVariantLabel a b => a -> b
 makeVariantLabels = hmapWithIndex MakeVariantLabel
@@ -244,3 +255,136 @@ foreign import animateSharedLayout ∷
   ∀ attrs attrs_.
   Union attrs attrs_ AnimateSharedLayoutProps =>
   ReactComponent { | attrs }
+
+type Props_div_no_key =
+  ( _aria ∷ Object String
+  , _data ∷ Object String
+  , about ∷ String
+  , acceptCharset ∷ String
+  , accessKey ∷ String
+  , allowFullScreen ∷ Boolean
+  , allowTransparency ∷ Boolean
+  , autoFocus ∷ Boolean
+  , autoPlay ∷ Boolean
+  , capture ∷ Boolean
+  , cellPadding ∷ String
+  , cellSpacing ∷ String
+  , charSet ∷ String
+  , children ∷ Array JSX
+  , classID ∷ String
+  , className ∷ String
+  , colSpan ∷ Int
+  , contentEditable ∷ Boolean
+  , contextMenu ∷ String
+  , crossOrigin ∷ String
+  , dangerouslySetInnerHTML ∷ { __html ∷ String }
+  , datatype ∷ String
+  , dateTime ∷ String
+  , dir ∷ String
+  , draggable ∷ Boolean
+  , encType ∷ String
+  , formAction ∷ String
+  , formEncType ∷ String
+  , formMethod ∷ String
+  , formNoValidate ∷ Boolean
+  , formTarget ∷ String
+  , frameBorder ∷ String
+  , hidden ∷ Boolean
+  , hrefLang ∷ String
+  , htmlFor ∷ String
+  , httpEquiv ∷ String
+  , icon ∷ String
+  , id ∷ String
+  , inlist ∷ String
+  , inputMode ∷ String
+  , is ∷ String
+  , itemID ∷ String
+  , itemProp ∷ String
+  , itemRef ∷ String
+  , itemScope ∷ Boolean
+  , itemType ∷ String
+  , keyParams ∷ String
+  , keyType ∷ String
+  , lang ∷ String
+  , marginHeight ∷ String
+  , marginWidth ∷ String
+  , maxLength ∷ Int
+  , mediaGroup ∷ String
+  , minLength ∷ Int
+  , noValidate ∷ Boolean
+  , onAnimationEnd ∷ EventHandler
+  , onAnimationIteration ∷ EventHandler
+  , onAnimationStart ∷ EventHandler
+  , onBlur ∷ EventHandler
+  , onClick ∷ EventHandler
+  , onCompositionEnd ∷ EventHandler
+  , onCompositionStart ∷ EventHandler
+  , onCompositionUpdate ∷ EventHandler
+  , onContextMenu ∷ EventHandler
+  , onCopy ∷ EventHandler
+  , onCut ∷ EventHandler
+  , onDoubleClick ∷ EventHandler
+  , onDrag ∷ EventHandler
+  , onDragEnd ∷ EventHandler
+  , onDragEnter ∷ EventHandler
+  , onDragExit ∷ EventHandler
+  , onDragLeave ∷ EventHandler
+  , onDragOver ∷ EventHandler
+  , onDragStart ∷ EventHandler
+  , onDrop ∷ EventHandler
+  , onFocus ∷ EventHandler
+  , onGotPointerCapture ∷ EventHandler
+  , onInvalid ∷ EventHandler
+  , onKeyDown ∷ EventHandler
+  , onKeyPress ∷ EventHandler
+  , onKeyUp ∷ EventHandler
+  , onLostPointerCapture ∷ EventHandler
+  , onMouseDown ∷ EventHandler
+  , onMouseEnter ∷ EventHandler
+  , onMouseLeave ∷ EventHandler
+  , onMouseMove ∷ EventHandler
+  , onMouseOut ∷ EventHandler
+  , onMouseOver ∷ EventHandler
+  , onMouseUp ∷ EventHandler
+  , onPaste ∷ EventHandler
+  , onPointerCancel ∷ EventHandler
+  , onPointerDown ∷ EventHandler
+  , onPointerEnter ∷ EventHandler
+  , onPointerLeave ∷ EventHandler
+  , onPointerMove ∷ EventHandler
+  , onPointerOut ∷ EventHandler
+  , onPointerOver ∷ EventHandler
+  , onPointerUp ∷ EventHandler
+  , onSelect ∷ EventHandler
+  , onSubmit ∷ EventHandler
+  , onTouchCancel ∷ EventHandler
+  , onTouchEnd ∷ EventHandler
+  , onTouchMove ∷ EventHandler
+  , onTouchStart ∷ EventHandler
+  , onTransitionEnd ∷ EventHandler
+  , onWheel ∷ EventHandler
+  , prefix ∷ String
+  , property ∷ String
+  , radioGroup ∷ String
+  , readOnly ∷ Boolean
+  , ref ∷ Ref (Nullable Node)
+  , resource ∷ String
+  , role ∷ String
+  , rowSpan ∷ Int
+  , scoped ∷ Boolean
+  , seamless ∷ Boolean
+  , security ∷ String
+  , spellCheck ∷ Boolean
+  , srcDoc ∷ JSX
+  , srcLang ∷ String
+  , srcSet ∷ String
+  , style ∷ CSS
+  , suppressContentEditableWarning ∷ Boolean
+  , tabIndex ∷ Int
+  , title ∷ String
+  , typeof ∷ String
+  , unselectable ∷ Boolean
+  , useMap ∷ String
+  , vocab ∷ String
+  , wmode ∷ String
+  )
