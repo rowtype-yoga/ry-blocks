@@ -17,5 +17,5 @@ box props = styles <>? props.css
     styles =
       css
         { padding: props.padding ?|| (1.0 # em)
-        , border: str $ i ((props.borderWidth) ?|| "1px") " solid"
+        , border: str $ i ((props.borderWidth) ?|| "0") " solid"
         }
