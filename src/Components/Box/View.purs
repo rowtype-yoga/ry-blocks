@@ -1,26 +1,27 @@
-module Components.Box.View (component, Props) where
+module Components.Box.View (component, Props, PropsF) where
 
 import Prelude.View
-import Components.Box.Style as Styles
-import Data.Nullable (Nullable)
-import React.Basic.DOM as R
-import React.Basic.Emotion as E
-import Unsafe.Coerce (unsafeCoerce)
-import Untagged.Union (UndefinedOr)
-import Web.DOM (Node)
+import Components.Box.Style as Style
+
+type PropsF f =
+  ( className ∷ f String
+  | Style.Props f + DivProps
+  )
 
 type Props =
-  { kids ∷ Array JSX
-  , nodeRef ∷ UndefinedOr (Ref (Nullable Node))
-  }
+  PropsF Id
 
-component ∷ ReactComponent Props
+type PropsOptional =
+  PropsF OptionalProp
+
+component ∷ ∀ p p_. Union p p_ Props => ReactComponent { | p }
 component =
-  reactComponent "Box" \({ kids, nodeRef } ∷ Props) -> React.do
-    pure
-      $ E.element R.div'
-          { className: "ry-box"
-          , css: Styles.box
-          , children: kids
-          , ref: unsafeCoerce nodeRef
-          }
+  mkForwardRefComponent "Box" do
+    \(props ∷ { | PropsOptional }) ref -> React.do
+      pure
+        $ emotionDiv
+            props
+            { className: "ry-box " <>? props.className
+            , css: Style.box props
+            , ref
+            }

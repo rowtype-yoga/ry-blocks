@@ -6,14 +6,11 @@ import Components.Modal as Modal
 import Data.Tuple.Nested ((/\))
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
-import Literals.Undefined (undefined)
 import React.Basic (JSX, element, fragment)
 import React.Basic.DOM as R
 import React.Basic.Emotion as E
 import React.Basic.Events (handler_)
 import React.Basic.Hooks as React
-import Untagged.Coercible (coerce)
-import Yoga as RY
 import Yoga as Y
 import Yoga.Block as Block
 
@@ -37,7 +34,7 @@ modal = do
   pure $ React.element compo {}
   where
     compo =
-      RY.reactComponent "Modal Story" \{} -> React.do
+      Y.reactComponent "Modal Story" \{} -> React.do
         isOpen /\ setIsOpen <- React.useState' true
         pure
           $ fragment
@@ -49,7 +46,7 @@ modal = do
                   ]
               , element Modal.component
                   { content:
-                    element Block.box { kids: [ R.text "Hi" ], nodeRef: coerce undefined }
+                    Y.el Block.box {} [ R.text "hi" ]
                   , isOpen
                   , setIsOpen
                   }

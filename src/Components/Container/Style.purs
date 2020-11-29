@@ -1,7 +1,6 @@
 module Components.Container.Style where
 
 import Prelude.Style
-import Color (Color, darken, lighten)
 import Color as Color
 import Data.Symbol (class IsSymbol, SProxy, reflectSymbol)
 import Foreign.Object (Object)

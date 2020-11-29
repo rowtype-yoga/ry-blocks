@@ -18,7 +18,7 @@ import React.Basic.DOM as R
 import React.Basic.Emotion (center, flex)
 import React.Basic.Emotion as E
 import React.Basic.Events (handler_)
-import React.Basic.Hooks (reactChildrenFromArray, useState)
+import React.Basic.Hooks (useState)
 import React.Basic.Hooks as React
 import Untagged.Coercible (coerce)
 import Yoga (el, reactComponent, styled)

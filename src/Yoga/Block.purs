@@ -13,7 +13,7 @@ import Components.Stack as Stack
 import Prim.Row (class Union)
 import React.Basic (ReactComponent)
 
-box ∷ ReactComponent Box.Props
+box ∷ ∀ p q. Union p q Box.Props => ReactComponent { | p }
 box = Box.component
 
 centre ∷ ∀ p q. Union p q Centre.Props => ReactComponent { | p }
