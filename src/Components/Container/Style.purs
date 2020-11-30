@@ -17,7 +17,9 @@ global =
             { minHeight: 100.0 # vh
             , minWidth: 100.0 # vw
             }
-    , ":root": nested $ variables
+    , ":root":
+      nested $ variables
+        <> fontVariables { main: "Inter, system-ui, sans-serif", mono: "Victor Mono, Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace" }
     , html:
       nested
         $ css
@@ -26,7 +28,7 @@ global =
     , body:
       nested
         $ css
-            { fontFamily: str "Inter, system-ui, sans-serif"
+            { fontFamily: str "var(--mainFont)"
             , background: str colour.background0
             , color: str colour.text
             , margin: str "0"
@@ -201,6 +203,13 @@ variables =
     , "--s3": str "calc(var(--s2) * var(--ratio))"
     , "--s4": str "calc(var(--s3) * var(--ratio))"
     , "--s5": str "calc(var(--s4) * var(--ratio))"
+    }
+
+fontVariables ∷ { main ∷ String, mono ∷ String } -> Style
+fontVariables { main, mono } =
+  css
+    { "--mainFont": str $ main <> ", monospace"
+    , "--monoFont": str $ mono <> ", monospace"
     }
 
 input ∷ StyleProperty
