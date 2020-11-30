@@ -44,6 +44,8 @@ instance functorOptionalProp ∷ Functor OptionalProp where
 instance altOptionalProp ∷ Alt OptionalProp where
   alt op1 op2 = maybeToOp $ (opToMaybe op1) <|> (opToMaybe op2)
 
+instance coercibleOptionalProp ∷ Coercible a (OptionalProp a)
+
 getOr ∷ ∀ a. a -> OptionalProp a -> a
 getOr default (OptionalProp o) = fromUndefinedOr default o
 
