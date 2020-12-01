@@ -60,14 +60,14 @@ import React.Basic.DOM (CSS, Props_div, Props_h1, css)
 import React.Basic.DOM.Internal (SharedSVGProps)
 import React.Basic.DOM.SVG (Props_svg, Props_rect, Props_path)
 import React.Basic.Events (EventHandler)
-import React.Basic.Hooks (ReactChildren, Ref)
+import React.Basic.Hooks (Ref)
 import Record (disjointUnion)
 import Type.Row (type (+))
 import Untagged.Coercible (class Coercible, coerce)
-import Untagged.Union (type (|+|), UndefinedOr)
+import Untagged.Union (type (|+|))
 import Web.DOM (Node)
 import Web.Event.Internal.Types (Event)
-import Yoga.Blocks.Internal (Id)
+import Yoga.Block.Internal (Id)
 
 foreign import divImpl ∷ ∀ a. ReactComponent { | a }
 

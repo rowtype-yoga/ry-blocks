@@ -185,7 +185,7 @@ let additions =
           ]
         , repo =
             "https://github.com/i-am-the-slime/purescript-react-testing-library.git"
-        , version = "master"
+        , version = "7726ad443ad8c67f94932ab8934640df0ea39fb2"
         }
       , react-basic-dom =
         { dependencies =

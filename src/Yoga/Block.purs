@@ -1,15 +1,15 @@
 module Yoga.Block where
 
-import Components.Box as Box
-import Components.Centre as Centre
-import Components.Cluster as Cluster
-import Components.Container as Container
-import Components.Imposter as Imposter
-import Components.Modal as Modal
-import Components.Range as Range
-import Components.Segmented as Segmented
-import Components.Sidebar as Sidebar
-import Components.Stack as Stack
+import Yoga.Block.Layout.Box as Box
+import Yoga.Block.Layout.Centre as Centre
+import Yoga.Block.Layout.Cluster as Cluster
+import Yoga.Block.Container as Container
+import Yoga.Block.Layout.Imposter as Imposter
+import Yoga.Block.Modal as Modal
+import Yoga.Block.Atom.Range as Range
+import Yoga.Block.Atom.Segmented as Segmented
+import Yoga.Block.Layout.Sidebar as Sidebar
+import Yoga.Block.Layout.Stack as Stack
 import Prim.Row (class Union)
 import React.Basic (ReactComponent)
 
