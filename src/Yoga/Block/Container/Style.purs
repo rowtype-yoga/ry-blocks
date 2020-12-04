@@ -19,7 +19,7 @@ global =
             }
     , ":root":
       nested $ variables
-        <> fontVariables { main: "Inter, system-ui, sans-serif", mono: "Victor Mono, Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace" }
+        <> fontVariables { main: "Inter, system-ui, sans-serif", mono: "Victor Mono, Menlo, Consolas, Monaco, Liberation Mono, Lucida Console" }
     , html:
       nested
         $ css
@@ -34,6 +34,10 @@ global =
             , margin: str "0"
             }
         <> colourTheme defaultColours
+    , "pre,code":
+      nest
+        { fontFamily: str "var(--monoFont)"
+        }
     , "h1,h2,h3,h4,h5":
       nest
         { fontWeight: str "800"
@@ -84,6 +88,8 @@ defaultColours =
     , interfaceBackground: lightBg
     , interfaceBackgroundHighlight: lightBg
     , interfaceBackgroundShadow: darken 0.1 lightBg
+    , inputBackground: darken 0.03 lightBg
+    , inputBorder: darken 0.1 lightBg
     , highlight: highlight
     , text: darkBg
     }
@@ -108,6 +114,8 @@ defaultColours =
     , interfaceBackground: lighten 0.4 darkBg
     , interfaceBackgroundHighlight: lighten 0.5 darkBg
     , interfaceBackgroundShadow: lighten 0.4 darkBg
+    , inputBackground: lighten 0.10 darkBg
+    , inputBorder: lighten 0.17 darkBg
     , highlight
     , text: lightBg
     }
@@ -141,6 +149,8 @@ type FlatTheme a =
   , interfaceBackground ∷ a
   , interfaceBackgroundHighlight ∷ a
   , interfaceBackgroundShadow ∷ a
+  , inputBackground ∷ a
+  , inputBorder ∷ a
   , highlight ∷ a
   , text ∷ a
   }

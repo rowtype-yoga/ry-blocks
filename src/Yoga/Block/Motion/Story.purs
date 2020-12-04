@@ -220,7 +220,9 @@ animatedSidebar = do
                           { css: sidebarStyle
                           , className: "sidebarContainer"
                           }
-                          [ element M.animatePresence { children: [ guard sidebarOpen sb ] }
+                          [ element M.animatePresence
+                              { children: [ guard sidebarOpen sb ]
+                              }
                           , R.div_
                               [ el M.h1
                                   { initial: M.initial (css { x: -10, opacity: 0 })

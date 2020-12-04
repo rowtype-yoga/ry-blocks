@@ -21,19 +21,20 @@ codeInput props = styles <>? props.css
         { overflow: visible
         , boxSizing: borderBox
         , verticalAlign: baseline
-        , background: str colour.interfaceBackground
-        , border: str $ i "solid var(--s-5) " colour.interfaceBackground
+        , background: str colour.inputBackground
+        , border: str $ i "solid 1px " colour.inputBorder
         , borderRadius: str "var(--s-2)"
         , fontFamily: str "var(--monoFont)"
         , fontSize: str "var(--s0)"
         , lineHeight: str "var(--s0)"
         , width: str $ i "calc(" (coerce (props.maxLength) ?|| 10) "ch + 4.3 * var(--s-5))"
-        , padding: str "0 var(--s-5) 0 var(--s-5)"
+        , padding: str "calc(var(--s-5) - 1px)"
         , color: str colour.text
         , "&:focus":
           nest
             { animation: plopAnimation <> str " 260ms ease-in"
             , border: str $ "solid var(--s-5) " <> colour.highlight
+            , padding: _0
             }
         }
 
