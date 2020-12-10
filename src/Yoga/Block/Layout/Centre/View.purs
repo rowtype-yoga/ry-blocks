@@ -15,13 +15,16 @@ type PropsOptional =
   PropsF OptionalProp
 
 component ∷ ∀ p p_. Union p p_ Props => ReactComponent { | p }
-component =
+component = rawComponent
+
+rawComponent ∷ ∀ p. ReactComponent { | p }
+rawComponent =
   mkForwardRefComponent "Centre" do
     \(props ∷ { | PropsOptional }) ref -> React.do
       pure
         $ emotionDiv
+            ref
             props
             { className: "ry-centre " <>? props.className
             , css: Style.centre props
-            , ref
             }

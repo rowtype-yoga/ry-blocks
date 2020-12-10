@@ -9,22 +9,22 @@ module Yoga.Block.Internal
   , InputProps
   , InputPropsF
   , emotionDiv
-  , emotionDiv_
   , emotionInput
   , module Yoga.Block.Internal.OptionalProp
   , module Yoga.Block.Internal.CSS
+  , unsafeUnionDroppingUndefined
+  , unsafeMergeSecond
   , createRef
   ) where
 
 import Prelude
-import Yoga.Block.Internal.OptionalProp (Id, OptionalProp(..), appendIfDefined, getOr, getOrFlipped, ifTrue, isTruthy, maybeToOp, opToMaybe, unsafeUnOptional, (<>?), (?||))
-import Data.Array (fromFoldable)
-import Data.Function.Uncurried (Fn2, runFn2)
+import Data.Array as Array
+import Data.Function.Uncurried (Fn3, runFn3)
 import Data.Nullable (Nullable)
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object (Object)
-import Prim.Row (class Union)
+import Prim.Row (class Lacks, class Union)
 import Prim.Row as Row
 import Prim.RowList as RL
 import React.Basic.DOM (CSS, unsafeCreateDOMComponent)
@@ -33,10 +33,10 @@ import React.Basic.Emotion as E
 import React.Basic.Events (EventHandler)
 import React.Basic.Hooks (JSX, ReactComponent, Ref, Render)
 import Record.Extra (class Keys, keys)
-import Record.Unsafe.Union (unsafeUnion)
 import Type.Data.Row (RProxy(..))
 import Web.DOM (Node)
 import Yoga.Block.Internal.CSS (_0)
+import Yoga.Block.Internal.OptionalProp (Id, OptionalProp(..), appendIfDefined, getOr, getOrFlipped, ifTrue, isTruthy, maybeToOp, opToMaybe, unsafeUnOptional, (<>?), (?||))
 
 foreign import mkForwardRefComponent ∷
   ∀ inputProps props a hooks.
@@ -52,52 +52,97 @@ foreign import mkForwardRefComponentEffect ∷
 
 foreign import createRef ∷ ∀ a. Effect (Ref a)
 
-unsafeEmotion ∷ ∀ props propsA propsB ref. ReactComponent { className ∷ String, css ∷ E.Style, ref ∷ Ref ref | props } -> Record propsA -> { className ∷ String, css ∷ E.Style, ref ∷ Ref ref | propsB } -> JSX
-unsafeEmotion component propsA propsB = E.element component (unsafeUnion propsB propsA)
+foreign import unsafeUnionDroppingUndefined ∷ ∀ r1 r2 r3. Record r1 -> Record r2 -> Record r3
+
+foreign import unsafeMergeSecond ∷ ∀ r1 r2 r3. Record r1 -> Record r2 -> Record r3
+
+unsafeEmotion ∷ ∀ props propsA propsB. ReactComponent { className ∷ String, css ∷ E.Style | props } -> Record propsA -> { className ∷ String, css ∷ E.Style | propsB } -> JSX
+unsafeEmotion component propsA propsB = E.element component (unsafeUnionDroppingUndefined propsB propsA)
+
+unsafeEmotionKeyed ∷ ∀ props propsA propsB. ReactComponent { className ∷ String, css ∷ E.Style, key ∷ String | props } -> Record propsA -> { className ∷ String, css ∷ E.Style | propsB } -> JSX
+unsafeEmotionKeyed component propsA propsB = E.elementKeyed component (unsafeUnionDroppingUndefined propsB propsA)
 
 emotionDiv_ ∷
   ∀ props props_.
+  Lacks "ref" props =>
   Union props props_ ( className ∷ String, css ∷ Style, ref ∷ Ref (Nullable Node) | DivProps ) =>
   (Record (DivProps)) ->
   { className ∷ String
   , css ∷ Style
-  , ref ∷ Ref (Nullable Node)
   | props
   } ->
   JSX
 emotionDiv_ = unsafeEmotion unsafeDiv
 
-emotionDiv = emotionDiv_ <<< pickDefined
+emotionDiv ∷
+  ∀ props props_ more.
+  Lacks "ref" props =>
+  Union props props_ ( className ∷ String, css ∷ Style, ref ∷ Ref (Nullable Node) | DivProps ) =>
+  Ref (Nullable Node) ->
+  { | DivPropsF Id more } ->
+  { className ∷ String
+  , css ∷ Style
+  | props
+  } ->
+  JSX
+emotionDiv ref = emotionDiv_ <<< pickDefined ref
 
-foreign import pickDefinedFn ∷ ∀ r1 r2. Fn2 (Array String) (Record r1) (Record r2)
+unsafeDiv ∷ ∀ r. ReactComponent (Record r)
+unsafeDiv = dangerous "div"
+
+foreign import pickDefinedFn ∷ ∀ r1 r2. Fn3 (Ref (Nullable Node)) (Array String) (Record r1) (Record r2)
 
 pickDefined ∷
   ∀ a r b l.
   Row.Union b r a =>
   RL.RowToList b l =>
+  Ref (Nullable Node) ->
   Keys l =>
   Record a ->
-  Record b
-pickDefined = runFn2 pickDefinedFn ks
+  { ref ∷ Ref (Nullable Node) | b }
+pickDefined ref = runFn3 pickDefinedFn ref ks
   where
-    ks = fromFoldable $ keys (RProxy ∷ RProxy b)
-
-unsafeDiv = dangerous "div"
+    ks = Array.fromFoldable $ keys (RProxy ∷ RProxy b)
 
 emotionInput_ ∷
   ∀ props props_.
+  Lacks "ref" props =>
   Union props props_ ( className ∷ String, css ∷ Style, ref ∷ Ref (Nullable Node) | InputProps ) =>
-  (Record (InputProps)) ->
+  { | InputProps } ->
   { className ∷ String
   , css ∷ Style
-  , ref ∷ Ref (Nullable Node)
   | props
   } ->
   JSX
 emotionInput_ = unsafeEmotion unsafeInput
 
-emotionInput = emotionInput_ <<< pickDefined
+emotionInputKeyed_ ∷
+  ∀ props props_.
+  Lacks "ref" props =>
+  Union props props_ ( className ∷ String, css ∷ Style, ref ∷ Ref (Nullable Node), key ∷ String | InputProps ) =>
+  { | InputProps } ->
+  { className ∷ String
+  , css ∷ Style
+  , key ∷ String
+  | props
+  } ->
+  JSX
+emotionInputKeyed_ = unsafeEmotionKeyed unsafeInput
 
+emotionInput ∷
+  ∀ props props_ more.
+  Lacks "ref" props =>
+  Union props props_ ( className ∷ String, css ∷ Style, ref ∷ Ref (Nullable Node) | InputProps ) =>
+  Ref (Nullable Node) ->
+  { | InputPropsF Id more } ->
+  { className ∷ String
+  , css ∷ Style
+  | props
+  } ->
+  JSX
+emotionInput ref = emotionInput_ <<< pickDefined ref
+
+unsafeInput ∷ ∀ r. ReactComponent (Record r)
 unsafeInput = dangerous "input"
 
 dangerous ∷ ∀ props. String -> ReactComponent (Record props)
@@ -106,9 +151,9 @@ dangerous = unsafePerformEffect <<< unsafeCreateDOMComponent
 -- type DivProps =
 --   Props_div
 type DivProps =
-  DivPropsF Id
+  DivPropsF Id ()
 
-type DivPropsF f =
+type DivPropsF f more =
   ( _aria ∷ f (Object String)
   , _data ∷ f (Object String)
   , about ∷ f String
@@ -238,12 +283,13 @@ type DivPropsF f =
   , useMap ∷ f String
   , vocab ∷ f String
   , wmode ∷ f String
+  | more
   )
 
 type InputProps =
-  InputPropsF Id
+  InputPropsF Id ()
 
-type InputPropsF f =
+type InputPropsF f more =
   ( _aria ∷ f (Object String)
   , _data ∷ f (Object String)
   , about ∷ f String
@@ -369,8 +415,8 @@ type InputPropsF f =
   , prefix ∷ f String
   , property ∷ f String
   , radioGroup ∷ f String
-  , readOnly ∷ f Boolean
   , ref ∷ f (Ref (Nullable Node))
+  , readOnly ∷ f Boolean
   , required ∷ f Boolean
   , resource ∷ f String
   , results ∷ f String
@@ -401,4 +447,5 @@ type InputPropsF f =
   , wmode ∷ f String
   , min ∷ f (String)
   , max ∷ f (String)
+  | more
   )

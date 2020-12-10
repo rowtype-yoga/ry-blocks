@@ -8,7 +8,6 @@ import React.Basic.DOM as R
 import React.Basic.Emotion as E
 import React.Basic.SyntaxHighlighter.Component (mkHighlighterTheme)
 import React.Basic.SyntaxHighlighter.Component as SH
-import Yoga (el)
 import Yoga.Block.Container.Style as Styles
 
 default ∷

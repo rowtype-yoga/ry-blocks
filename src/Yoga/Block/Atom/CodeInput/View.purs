@@ -1,38 +1,35 @@
-module Yoga.Block.Atom.CodeInput.View (component, Props, PropsF) where
+module Yoga.Block.Atom.CodeInput.View
+  ( component
+  , Props
+  , EmotionProps
+  ) where
 
 import Yoga.Prelude.View
+import React.Basic.Emotion (Style)
 import Yoga.Block.Atom.CodeInput.Style as Style
-import React.Basic.DOM as R
-
-type PropsF f =
-  ( className ∷ f String
-  | Style.Props f + InputProps
-  )
 
 type Props =
-  PropsF Id
+  ( 
+  | Style.Props Id (InputPropsF Id EmotionProps)
+  )
 
-type PropsOptional =
-  PropsF OptionalProp
+type EmotionProps =
+  ( className ∷ String, css ∷ Style )
 
 component ∷ ∀ p q. Union p q Props => ReactComponent { | p }
-component =
+component = rawComponent
+
+rawComponent ∷ ∀ r. ReactComponent { | r }
+rawComponent =
   mkForwardRefComponent "CodeInput" do
-    \(props ∷ { | PropsOptional }) ref -> React.do
+    \(props ∷ { | Props }) ref -> React.do
       pure
-        $ styled R.div'
-            { className: "ry-inline-code-wrapper"
-            , css: Style.codeInputWrapper
+        $ emotionInput ref
+            props
+            { className: "ry-inline-code"
+            , css: Style.codeInput props
+            , spellCheck: false
+            , autoComplete: "false"
+            , autoCorrect: "off"
+            , autoCapitalize: "off"
             }
-            [ emotionInput
-                props
-                { className: "ry-inline-code " <>? props.className
-                , css: Style.codeInput props
-                , ref
-                , spellCheck: false
-                , onDragOver: handler preventDefault (const mempty)
-                , autoComplete: "false"
-                , autoCorrect: "off"
-                , autoCapitalize: "off"
-                }
-            ]

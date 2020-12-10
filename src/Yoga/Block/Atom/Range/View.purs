@@ -24,7 +24,10 @@ type PropsOptional =
   PropsF OptionalProp
 
 component ∷ ∀ p p_. Union p p_ Props => ReactComponent { | p }
-component =
+component = rawComponent
+
+rawComponent ∷ ∀ p. ReactComponent (Record p)
+rawComponent =
   mkForwardRefComponent "Range" do
     \(props ∷ { | PropsOptional }) ref -> React.do
       let min = props.min ?|| 0
@@ -55,13 +58,12 @@ component =
                     { className: "ry-range-focus-circle"
                     , css: Style.focusCircle
                     }
-            , emotionInput (props { max = show max, min = show min, value = show value })
+            , emotionInput ref (props { max = show max, min = show min, value = show value })
                 { className: "ry-range-thumb " <>? props.className
                 , css: Style.range props <> guard props.disabled Style.inputDisabled <>? props.css
                 , style: props.style
                 , value: show value
                 , type: "range"
                 , onChange: handler Event.targetValue ((_ >>= Int.fromString) >>> (foldMap setValue))
-                , ref
                 }
             ]

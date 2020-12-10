@@ -15,12 +15,14 @@ type PropsOptional =
   PropsF OptionalProp
 
 component ∷ ∀ p q. Union p q Props => ReactComponent { | p }
-component =
+component = rawComponent
+
+rawComponent ∷ ∀ p. ReactComponent { | p }
+rawComponent =
   mkForwardRefComponent "Stack" do
     \(props ∷ { | PropsOptional }) ref -> React.do
       pure
-        $ emotionDiv props
+        $ emotionDiv ref props
             { className: "ry-stack " <>? props.className
             , css: Style.stack props
-            , ref
             }

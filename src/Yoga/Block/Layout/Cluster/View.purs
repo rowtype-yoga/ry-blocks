@@ -15,12 +15,14 @@ type PropsOptional =
   PropsF OptionalProp
 
 component ∷ ∀ p p_. Union p p_ Props => ReactComponent { | p }
-component =
+component = rawComponent
+
+rawComponent ∷ ∀ p. ReactComponent { | p }
+rawComponent =
   mkForwardRefComponent "Cluster" do
     \(props ∷ { | PropsOptional }) ref -> React.do
       pure
-        $ emotionDiv props
+        $ emotionDiv ref props
             { className: "ry-cluster " <>? props.className
             , css: Style.cluster props
-            , ref
             }

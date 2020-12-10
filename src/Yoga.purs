@@ -1,33 +1,12 @@
 module Yoga where
 
-import Prelude
 import Data.Symbol (SProxy(..))
-import Effect.Unsafe (unsafePerformEffect)
 import Prim.Row (class Lacks)
 import React.Basic.Emotion as Emotion
-import React.Basic.Hooks (JSX, ReactChildren, ReactComponent, Render, reactChildrenFromArray)
+import React.Basic.Hooks (JSX, ReactComponent)
 import React.Basic.Hooks as Hooks
 import Record as Record
 import Untagged.Coercible (class Coercible, coerce)
-
-reactComponent ∷
-  ∀ hooks props.
-  Lacks "children" props =>
-  Lacks "key" props =>
-  Lacks "ref" props =>
-  String ->
-  ({ | props } -> Render Unit hooks JSX) ->
-  ReactComponent { | props }
-reactComponent = (map map map) unsafePerformEffect Hooks.reactComponent
-
-reactComponentWithChildren ∷
-  ∀ hooks props children.
-  Lacks "key" props =>
-  Lacks "ref" props =>
-  String ->
-  ({ children ∷ Hooks.ReactChildren children | props } -> Render Unit hooks JSX) ->
-  ReactComponent { children ∷ Hooks.ReactChildren children | props }
-reactComponentWithChildren = (map map map) unsafePerformEffect Hooks.reactComponentWithChildren
 
 yogaElement ∷ ∀ allProps givenProps. Coercible givenProps (Record allProps) => ReactComponent (Record allProps) -> givenProps -> JSX
 yogaElement el' props = Hooks.element el' (coerce props)

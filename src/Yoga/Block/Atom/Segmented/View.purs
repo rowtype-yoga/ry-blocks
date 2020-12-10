@@ -1,28 +1,29 @@
 module Yoga.Block.Atom.Segmented.View (component, Props, MandatoryProps, PropsF, ComponentProps) where
 
 import Yoga.Prelude.View
-import Yoga.Block.Layout.Cluster as Cluster
-import Yoga.Block.Atom.Segmented.Style as Style
 import Control.Monad.Maybe.Trans (MaybeT(..), runMaybeT)
 import Control.Monad.Trans.Class (lift)
-import Data.Array ((:))
 import Data.Array as A
 import Data.FoldableWithIndex (foldMapWithIndex)
-import Data.Nullable (Nullable)
 import Data.Traversable (traverse)
+import Effect.Aff (Milliseconds(..), delay)
+import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object as Object
 import Framer.Motion (VariantLabel)
 import Framer.Motion as Motion
-import Hooks.UseResize (useResize')
+import Hooks.UseResize (useResize)
 import React.Basic.DOM (css)
 import React.Basic.DOM as R
 import React.Basic.Emotion as E
+import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
+import React.Basic.Hooks.Aff (useAff)
 import Record.Extra (pick)
 import Unsafe.Coerce (unsafeCoerce)
-import Web.DOM (Node)
 import Web.HTML.HTMLElement (getBoundingClientRect)
 import Web.HTML.HTMLElement as HTMLElement
+import Yoga.Block.Atom.Segmented.Style as Style
+import Yoga.Block.Layout.Cluster as Cluster
 
 type PropsF f =
   ( 
@@ -40,21 +41,19 @@ type Props =
   PropsF Id
 
 activeComponent ∷ ∀ p p_. Union (MandatoryProps p) p_ Props => ReactComponent { | MandatoryProps p }
-activeComponent =
+activeComponent = rawActiveComponent
+
+rawActiveComponent ∷ ∀ p. ReactComponent { | p }
+rawActiveComponent =
   mkForwardRefComponent "SegmentedActive" do
     \(props ∷ { | Props }) ref -> React.do
       maybeVariants /\ setVariants <- useState' Nothing
-      { active, previous } /\ setIndices <- useState' { active: props.activeItemIndex, previous: props.previousActiveItemIndex }
       let
         computeStyles = do
           maybeSt <- runMaybeT $ traverse getStyle props.activeItemRefs
           unless (maybeVariants == maybeSt) do
             for_ maybeSt (setVariants <<< Just)
-      void <<< useResize'
-        $ do
-            setIndices { active, previous: active }
-            computeStyles
-      useLayoutEffect props.activeItemIndex do
+      useLayoutEffectAlways do
         computeStyles
         mempty
       let
@@ -64,20 +63,20 @@ activeComponent =
           styledLeaf Motion.div
             { css: Style.activeElement
             , className: "ry-active-segmented-element"
-            , initial: (unsafeCoerce <<< show) previous
+            , initial: (unsafeCoerce <<< show) props.previousActiveItemIndex
             , transition: Motion.transition { type: "tween", duration: 0.2, ease: "easeOut" }
             , variants:
               Motion.variants $ maybeVariants
                 # fromMaybe []
                 # foldMapWithIndex (\i s -> Object.singleton (show i) (css s))
                 # unsafeCoerce
-            , animate: Motion.animate ((unsafeCoerce $ show active) ∷ VariantLabel)
+            , animate: Motion.animate ((unsafeCoerce <<< show $ props.activeItemIndex) ∷ VariantLabel)
             }
         children =
           [ E.element R.div'
               { className: "ry-segmented"
               , css: Style.segmented
-              , children: activeElement : props.children
+              , children: A.cons activeElement props.children
               }
           ]
       pure
@@ -117,46 +116,51 @@ type ComponentProps =
 
 component ∷ ReactComponent ComponentProps
 component =
-  reactComponent "Segmented" \({ buttonContents, activeIndex, updateActiveIndex } ∷ ComponentProps) -> React.do
-    previousActiveIndex /\ setPreviousActiveIndex <- useState' 0
-    initialised /\ initialise <- useState' false
-    itemRefs /\ setItemRefs <- useState' []
-    useEffect initialised do
-      refs <- traverse (const createRef) buttonContents
-      when (not initialised) do
-        initialise true
-        setItemRefs refs
-      pure (pure unit)
-    let
-      children ∷ Array JSX
-      children =
-        buttonContents `A.zip` itemRefs
-          # A.mapWithIndex \i (buttonContent /\ ref) -> do
-              let isLast = i + 1 == A.length buttonContents
-              let isFirst = i == 0
-              styled R.button'
-                { key: show i
-                , css: Style.button { isFirst, isLast }
-                , className: "ry-segmented-button"
-                , onClick:
-                  handler preventDefault
-                    $ const do
-                        setPreviousActiveIndex activeIndex
-                        updateActiveIndex i
-                , ref
-                }
-                [ buttonContent ]
-    pure
-      $ styled R.div'
-          { css: Style.wrapper
-          , className: "ry-segmented-wrapper"
-          }
-          [ styled activeComponent
-              { activeItemRefs: itemRefs
-              , activeItemIndex: activeIndex
-              , previousActiveItemIndex: previousActiveIndex
-              , css: Style.container
-              , className: "ry-segmented-container"
+  unsafePerformEffect
+    $ reactComponent "Segmented" \({ buttonContents, activeIndex, updateActiveIndex } ∷ ComponentProps) -> React.do
+        previousActiveIndex /\ setPreviousActiveIndex <- useState' 0
+        itemRefs /\ setItemRefs <- useState' []
+        useLayoutEffectOnce do
+          refs <- traverse (const createRef) buttonContents
+          setItemRefs refs
+          mempty
+        windowSize <- useResize
+        useAff windowSize do
+          delay (100.0 # Milliseconds)
+          liftEffect do -- force rerender
+            refs <- traverse (const createRef) buttonContents
+            setItemRefs refs
+        let
+          updateIndex idx = do
+            setPreviousActiveIndex activeIndex
+            updateActiveIndex idx
+          children ∷ Array JSX
+          children = A.mapWithIndex contentToChild refsAndContents
+          refsAndContents ∷ Array (JSX /\ Ref (Nullable Node))
+          refsAndContents = A.zip buttonContents itemRefs
+          contentToChild ∷ Int -> (JSX /\ Ref (Nullable Node)) -> JSX
+          contentToChild idx (buttonContent /\ ref) = do
+            let isLast = idx + 1 == A.length buttonContents
+            let isFirst = idx == 0
+            styled R.button'
+              { key: show idx
+              , ref
+              , css: Style.button { isFirst, isLast }
+              , className: "ry-segmented-button"
+              , onClick: handler preventDefault (const (updateIndex idx))
               }
-              children
-          ]
+              [ buttonContent ]
+        pure
+          $ styled R.div'
+              { css: Style.wrapper
+              , className: "ry-segmented-wrapper"
+              }
+              [ styled activeComponent
+                  { activeItemRefs: itemRefs
+                  , activeItemIndex: activeIndex
+                  , previousActiveItemIndex: previousActiveIndex
+                  , css: Style.container
+                  , className: "ry-segmented-container"
+                  }
+                  children
+              ]
