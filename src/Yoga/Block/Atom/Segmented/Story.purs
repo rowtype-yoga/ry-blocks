@@ -39,5 +39,9 @@ segmented = do
           $ element Segmented.component
               { activeIndex
               , updateActiveIndex: setElementIndex
-              , buttonContents: R.text <$> [ "One Option", "Another option", "No choice left" ]
+              , buttonContents:
+                [ { id: "one", value: "One Option" }
+                , { id: "two", value: "Another option" }
+                , { id: "three", value: "No choice left" }
+                ]
               }
