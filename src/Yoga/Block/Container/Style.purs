@@ -43,15 +43,9 @@ global =
         { fontWeight: str "800"
         }
     , h1:
-      nested
-        $ css
-            { fontSize: em 3.5
-            }
+      nested $ css { fontSize: em 3.5 }
     , h2:
-      nested
-        $ css
-            { fontSize: em 2.7
-            }
+      nested $ css { fontSize: em 2.7 }
     , "*, *:before, *:after":
       nested
         $ css

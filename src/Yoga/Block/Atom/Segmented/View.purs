@@ -126,7 +126,7 @@ component =
           mempty
         windowSize <- useResize
         useAff windowSize do
-          delay (100.0 # Milliseconds)
+          delay (200.0 # Milliseconds)
           liftEffect do -- force rerender
             refs <- traverse (const createRef) buttonContents
             setItemRefs refs
@@ -149,7 +149,14 @@ component =
               , className: "ry-segmented-button"
               , onClick: handler preventDefault (const (updateIndex idx))
               }
-              [ buttonContent ]
+              [ styled R.span'
+                  { className: "ry-segmented-button__content"
+                  , css: Style.buttonContent { isFirst, isLast }
+                  , tabIndex: -1
+                  }
+                  [ buttonContent
+                  ]
+              ]
         pure
           $ styled R.div'
               { css: Style.wrapper

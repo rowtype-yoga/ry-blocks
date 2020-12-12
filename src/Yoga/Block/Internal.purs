@@ -198,7 +198,6 @@ type DivPropsF f more =
   , itemRef ∷ f String
   , itemScope ∷ f Boolean
   , itemType ∷ f String
-  , key ∷ f String
   , keyParams ∷ f String
   , keyType ∷ f String
   , lang ∷ f String
@@ -345,7 +344,6 @@ type InputPropsF f more =
   , itemRef ∷ f String
   , itemScope ∷ f Boolean
   , itemType ∷ f String
-  , key ∷ f String
   , keyParams ∷ f String
   , keyType ∷ f String
   , lang ∷ f String

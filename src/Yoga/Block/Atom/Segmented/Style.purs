@@ -1,8 +1,8 @@
 module Yoga.Block.Atom.Segmented.Style where
 
 import Yoga.Prelude.Style
-import Yoga.Block.Container.Style (colour)
 import Data.Interpolate (i)
+import Yoga.Block.Container.Style (colour)
 
 type Props f r =
   ( css ∷ f Style
@@ -55,12 +55,29 @@ button { isFirst, isLast } =
     , color: str colour.text
     , border: none
     , margin: _0
+    , padding: _0
     , fontSize: str "var(--s0)"
+    , boxSizing: borderBox
+    , zIndex: str "3"
+    , "&:active": nest { outline: str "0" } -- ensures no outline on click in Chrome
+    , "&:focus": nest { outline: none }
+    , "&:focus > .ry-segmented-button__content":
+      nest
+        { boxShadow: str $ i "0px 0px 0px var(--s-4) " colour.highlight
+        }
+    }
+
+buttonContent ∷ { isFirst ∷ Boolean, isLast ∷ Boolean } -> Style
+buttonContent { isFirst, isLast } =
+  css
+    { "&:active": nest { outline: str "0" } -- ensures no outline on click in Chrome
+    , "&:focus": nest { outline: none }
+    , display: inlineBlock
     , padding: str "var(--s-4)"
     , paddingLeft: str if isFirst then "var(--s0)" else "calc(var(--s0)*0.9)"
     , paddingRight: str if isLast then "var(--s0)" else "calc(var(--s0)*0.9)"
-    , zIndex: str "3"
-    , "&:active": nest { outline: str "0" } -- ensures no outline on click in Chrome
+    , borderRadius: str "8px"
+    , margin: _0
     }
 
 wrapper ∷ Style
