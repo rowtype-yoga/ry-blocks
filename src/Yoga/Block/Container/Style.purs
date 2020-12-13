@@ -16,6 +16,8 @@ global =
         $ css
             { minHeight: 100.0 # vh
             , minWidth: 100.0 # vw
+            , lineHeight: str "1.15"
+            , "-webkit-text-size-adjust": _100percent
             }
     , ":root":
       nested $ variables
@@ -212,8 +214,8 @@ variables =
 fontVariables ∷ { main ∷ String, mono ∷ String } -> Style
 fontVariables { main, mono } =
   css
-    { "--mainFont": str $ main <> ", monospace"
-    , "--monoFont": str $ mono <> ", monospace"
+    { "--mainFont": str $ main <> """, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol""""
+    , "--monoFont": str $ mono <> ", monospace, monospace"
     }
 
 input ∷ StyleProperty

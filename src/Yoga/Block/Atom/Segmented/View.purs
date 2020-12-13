@@ -1,8 +1,7 @@
 module Yoga.Block.Atom.Segmented.View (component, Props, MandatoryProps, PropsF, ComponentProps) where
 
-import Prelude
 import Yoga.Prelude.View
-import Control.Monad.Maybe.Trans (MaybeT(..), lift, runMaybeT)
+import Control.Monad.Maybe.Trans (MaybeT(..), runMaybeT)
 import Control.Monad.Trans.Class (lift)
 import Data.Array as A
 import Data.FoldableWithIndex (foldMapWithIndex)
@@ -11,7 +10,7 @@ import Data.Traversable (traverse)
 import Effect.Aff (Milliseconds(..), delay)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object as Object
-import Framer.Motion (VariantLabel)
+import Framer.Motion (Animate, VariantLabel, Variants)
 import Framer.Motion as Motion
 import Hooks.Key as Key
 import Hooks.UseResize (useResize)
@@ -36,7 +35,6 @@ type PropsF f =
 
 type MandatoryProps r =
   ( activeItemRefs ∷ Array (Ref (Nullable Node))
-  , previousActiveItemIndex ∷ Int
   , activeItemIndex ∷ Int
   | r
   )
@@ -47,36 +45,45 @@ type Props =
 activeComponent ∷ ∀ p p_. Union (MandatoryProps p) p_ Props => ReactComponent { | MandatoryProps p }
 activeComponent = rawActiveComponent
 
+indexToVariant ∷ Int -> VariantLabel
+indexToVariant = show >>> unsafeCoerce
+
 rawActiveComponent ∷ ∀ p. ReactComponent { | p }
 rawActiveComponent =
   mkForwardRefComponent "SegmentedActive" do
     \(props ∷ { | Props }) ref -> React.do
-      maybeVariants /\ setVariants <- useState' Nothing
+      animationVariants /\ setVariants <- useState' []
       let
-        computeStyles = do
-          maybeSt <- runMaybeT $ traverse getStyle props.activeItemRefs
-          unless (maybeVariants == maybeSt) do
-            for_ maybeSt (setVariants <<< Just)
+        computeVariants = do
+          styles <- traverse getStyle props.activeItemRefs
+          unless (animationVariants == styles) do
+            setVariants styles # lift
       useLayoutEffectAlways do
-        computeStyles
-        mempty
+        runMaybeT computeVariants *> mempty
       let
+        variants ∷ Variants
+        variants =
+          Motion.variants $ animationVariants
+            # foldMapWithIndex (\i s -> Object.singleton (show i) (css s))
+            # unsafeCoerce
+        animate ∷ Animate
+        animate = Motion.animate (indexToVariant props.activeItemIndex)
         clusterProps ∷ { | Cluster.Props }
         clusterProps = pick props
         activeElement =
-          styledLeaf Motion.div
-            { css: Style.activeElement
-            , className: "ry-active-segmented-element"
-            , initial: (unsafeCoerce <<< show) props.previousActiveItemIndex
-            , transition: Motion.transition { type: "tween", duration: 0.2, ease: "easeOut" }
-            , variants:
-              Motion.variants $ maybeVariants
-                # fromMaybe []
-                # foldMapWithIndex (\i s -> Object.singleton (show i) (css s))
-                # unsafeCoerce
-            , animate: Motion.animate ((unsafeCoerce <<< show $ props.activeItemIndex) ∷ VariantLabel)
-            , _aria: Object.fromHomogeneous { hidden: "true" }
-            }
+          guard (animationVariants /= [])
+            $ styledLeaf Motion.div
+                { css: Style.activeElement
+                , className: "ry-active-segmented-element"
+                , initial: Motion.initial (indexToVariant props.activeItemIndex)
+                , transition:
+                  Motion.transition
+                    { type: "tween", duration: 0.2, ease: "easeOut" }
+                , variants
+                , animate
+                , _aria: Object.fromHomogeneous { hidden: "true" }
+                , ref
+                }
         children =
           [ E.element R.div'
               { className: "ry-segmented"
@@ -86,14 +93,12 @@ rawActiveComponent =
               }
           ]
       pure
-        $ E.element
-            Cluster.component
-            ( clusterProps
-                { children = children
-                , justify = "center"
-                , space = "var(--s5)"
-                }
-            )
+        $ E.element Cluster.component
+        $ clusterProps
+            { children = children
+            , justify = "center"
+            , space = "var(--s5)"
+            }
 
 getStyle ∷
   Ref (Nullable Node) ->
@@ -139,7 +144,6 @@ component ∷ ReactComponent ComponentProps
 component =
   unsafePerformEffect
     $ reactComponent "Segmented" \({ buttonContents, activeIndex, updateActiveIndex } ∷ ComponentProps) -> React.do
-        previousActiveIndex /\ setPreviousActiveIndex <- useState' 0
         -------------------------------------------
         -- Store button refs for animation purposes
         itemRefs /\ setItemRefs <- useState' []
@@ -151,9 +155,11 @@ component =
         -- Support keyboard input
         let
           maxIndex = A.length buttonContents - 1
+          updateIndex idx = do
+            updateActiveIndex idx
           updateTo toIndex = do
             itemRefs # blurAtIndex activeIndex
-            updateActiveIndex toIndex
+            updateIndex toIndex
             itemRefs # focusAtIndex toIndex
         useKeyDown case _ of
           Key.Right ->
@@ -174,9 +180,6 @@ component =
             refs <- traverse (const createRef) buttonContents
             setItemRefs refs
         let
-          updateIndex idx = do
-            setPreviousActiveIndex activeIndex
-            updateActiveIndex idx
           children ∷ Array JSX
           children = A.mapWithIndex contentToChild refsAndContents
           refsAndContents ∷ Array ({ id ∷ String, value ∷ String } /\ Ref (Nullable Node))
@@ -215,7 +218,6 @@ component =
               [ styled activeComponent
                   { activeItemRefs: itemRefs
                   , activeItemIndex: activeIndex
-                  , previousActiveItemIndex: previousActiveIndex
                   , css: Style.container
                   , className: "ry-segmented-container"
                   }

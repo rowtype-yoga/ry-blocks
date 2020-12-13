@@ -11,7 +11,7 @@ on:
     
 jobs:
   build:
-    name: Test, Bundle, and Dockerise
+    name: Test, and Build Storybook
     runs-on: ubuntu-20.04
     steps:
 

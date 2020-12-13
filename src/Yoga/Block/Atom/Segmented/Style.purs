@@ -18,12 +18,13 @@ segmented = styles
         , margin: _0
         , padding: _0
         , width: auto
+        , overflow: visible
         }
 
 activeElement ∷ Style
 activeElement =
   css
-    { position: fixed
+    { position: absolute
     , borderRadius: str "8px"
     , background: str colour.interfaceBackground
     , border: str $ i "1px solid " colour.interfaceBackgroundShadow
@@ -32,7 +33,8 @@ activeElement =
     , boxShadow: str "0 0 1px rgba(0,0,0,0.55)"
     , margin: _0
     , padding: _0
-    , zIndex: str "0"
+    , zIndex: str "3"
+    , overflow: visible
     }
 
 container ∷ Style
@@ -45,6 +47,7 @@ container =
     , border: str $ i "1px solid " colour.background15
     , borderBottom: str $ i "1px solid " colour.background20
     , padding: _0
+    , overflow: visible
     }
 
 button ∷ { isFirst ∷ Boolean, isLast ∷ Boolean } -> Style
@@ -55,15 +58,18 @@ button { isFirst, isLast } =
     , color: str colour.text
     , border: none
     , margin: _0
-    , padding: _0
+    , padding: str "var(--s-4)"
+    , paddingLeft: _0
+    , paddingRight: _0
     , fontSize: str "var(--s0)"
+    , overflow: visible
     , boxSizing: borderBox
     , zIndex: str "3"
     , "&:active": nest { outline: str "0" } -- ensures no outline on click in Chrome
     , "&:focus": nest { outline: none }
     , "&:focus > .ry-segmented-button__content":
       nest
-        { boxShadow: str $ i "0px 0px 0px var(--s-4) " colour.highlight
+        { border: str $ i "var(--s-4) solid " colour.highlight
         }
     }
 
@@ -72,12 +78,16 @@ buttonContent { isFirst, isLast } =
   css
     { "&:active": nest { outline: str "0" } -- ensures no outline on click in Chrome
     , "&:focus": nest { outline: none }
-    , display: inlineBlock
+    , top: str "-3px"
     , padding: str "var(--s-4)"
     , paddingLeft: str if isFirst then "var(--s0)" else "calc(var(--s0)*0.9)"
     , paddingRight: str if isLast then "var(--s0)" else "calc(var(--s0)*0.9)"
     , borderRadius: str "8px"
+    , boxSizing: borderBox
+    , border: str $ i "var(--s-4) solid transparent"
+    , height: _100percent
     , margin: _0
+    , overflow: visible
     }
 
 wrapper ∷ Style
@@ -86,4 +96,5 @@ wrapper =
     { display: flex
     , alignItems: center
     , justifyContent: center
+    , overflow: visible
     }
