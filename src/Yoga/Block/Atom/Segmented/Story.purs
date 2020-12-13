@@ -5,6 +5,7 @@ import Data.Tuple.Nested ((/\))
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
 import React.Basic (JSX, element)
+import React.Basic.DOM (css)
 import React.Basic.DOM as R
 import React.Basic.Emotion as E
 import React.Basic.Hooks (reactComponent, useState')

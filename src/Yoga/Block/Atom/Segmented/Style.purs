@@ -9,6 +9,14 @@ type Props f r =
   | r
   )
 
+cluster ∷ Style
+cluster =
+  css
+    { overflow: auto
+    , flex: str "1"
+    , display: str "inline-flex"
+    }
+
 segmented ∷ Style
 segmented = styles
   where
@@ -16,9 +24,17 @@ segmented = styles
       css
         { borderWidth: _0
         , margin: _0
-        , padding: _0
         , width: auto
-        , overflow: visible
+        , display: flex
+        , flex: str "1"
+        , minHeight: str "min-content"
+        , background: str colour.background10
+        , boxShadow: str "inset 0 1 0 rgba(0,0,0,0.1)"
+        , borderRadius: str "10px"
+        , border: str $ i "1px solid " colour.background15
+        , borderBottom: str $ i "1px solid " colour.background20
+        , padding: _0
+        , overflow: scroll
         }
 
 activeElement ∷ Style
@@ -34,20 +50,6 @@ activeElement =
     , margin: _0
     , padding: _0
     , zIndex: str "3"
-    , overflow: visible
-    }
-
-container ∷ Style
-container =
-  css
-    { background: str colour.background10
-    , boxShadow: str "inset 0 1 0 rgba(0,0,0,0.1)"
-    , borderRadius: str "10px"
-    , height: auto
-    , border: str $ i "1px solid " colour.background15
-    , borderBottom: str $ i "1px solid " colour.background20
-    , padding: _0
-    , overflow: visible
     }
 
 button ∷ { isFirst ∷ Boolean, isLast ∷ Boolean } -> Style
@@ -58,18 +60,15 @@ button { isFirst, isLast } =
     , color: str colour.text
     , border: none
     , margin: _0
-    , padding: str "var(--s-4)"
-    , paddingLeft: _0
-    , paddingRight: _0
+    , padding: _0
     , fontSize: str "var(--s0)"
-    , overflow: visible
     , boxSizing: borderBox
     , zIndex: str "3"
     , "&:active": nest { outline: str "0" } -- ensures no outline on click in Chrome
     , "&:focus": nest { outline: none }
     , "&:focus > .ry-segmented-button__content":
       nest
-        { border: str $ i "var(--s-4) solid " colour.highlight
+        { borderColor: str colour.highlight
         }
     }
 
@@ -78,23 +77,12 @@ buttonContent { isFirst, isLast } =
   css
     { "&:active": nest { outline: str "0" } -- ensures no outline on click in Chrome
     , "&:focus": nest { outline: none }
-    , top: str "-3px"
-    , padding: str "var(--s-4)"
-    , paddingLeft: str if isFirst then "var(--s0)" else "calc(var(--s0)*0.9)"
-    , paddingRight: str if isLast then "var(--s0)" else "calc(var(--s0)*0.9)"
+    , padding: _0
+    , paddingLeft: str if isFirst then "calc(var(--s0) - var(--s-4))" else "calc(var(--s0)*0.9 - var(--s-4))"
+    , paddingRight: str if isLast then "calc(var(--s0) - var(--s-4))" else "calc(var(--s0)*0.9 - var(--s-4))"
     , borderRadius: str "8px"
     , boxSizing: borderBox
     , border: str $ i "var(--s-4) solid transparent"
-    , height: _100percent
+    , display: fixed
     , margin: _0
-    , overflow: visible
-    }
-
-wrapper ∷ Style
-wrapper =
-  css
-    { display: flex
-    , alignItems: center
-    , justifyContent: center
-    , overflow: visible
     }

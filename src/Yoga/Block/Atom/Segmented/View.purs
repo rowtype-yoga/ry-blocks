@@ -36,6 +36,7 @@ type PropsF f =
 type MandatoryProps r =
   ( activeItemRefs ∷ Array (Ref (Nullable Node))
   , activeItemIndex ∷ Int
+  , children ∷ Array JSX
   | r
   )
 
@@ -93,12 +94,11 @@ rawActiveComponent =
               }
           ]
       pure
-        $ E.element Cluster.component
-        $ clusterProps
-            { children = children
-            , justify = "center"
-            , space = "var(--s5)"
-            }
+        $ E.element R.div'
+        $ { children: children
+          , css: Style.cluster
+          , className: "ry-segmented-container"
+          }
 
 getStyle ∷
   Ref (Nullable Node) ->
@@ -211,15 +211,8 @@ component =
                   ]
               ]
         pure
-          $ styled R.div'
-              { css: Style.wrapper
-              , className: "ry-segmented-wrapper"
+          $ React.element activeComponent
+              { activeItemRefs: itemRefs
+              , activeItemIndex: activeIndex
+              , children
               }
-              [ styled activeComponent
-                  { activeItemRefs: itemRefs
-                  , activeItemIndex: activeIndex
-                  , css: Style.container
-                  , className: "ry-segmented-container"
-                  }
-                  children
-              ]
