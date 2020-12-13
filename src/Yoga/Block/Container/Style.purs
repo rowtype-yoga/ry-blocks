@@ -82,7 +82,7 @@ defaultColours =
     , background90: darken 0.9 lightBg
     , background100: darken 1.0 lightBg
     , interfaceBackground: lightBg
-    , interfaceBackgroundHighlight: lightBg
+    , interfaceBackgroundHighlight: darken 0.07 lightBg
     , interfaceBackgroundShadow: darken 0.1 lightBg
     , inputBackground: darken 0.03 lightBg
     , inputBorder: darken 0.1 lightBg

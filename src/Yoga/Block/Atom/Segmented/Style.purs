@@ -77,12 +77,17 @@ buttonContent { isFirst, isLast } =
   css
     { "&:active": nest { outline: str "0" } -- ensures no outline on click in Chrome
     , "&:focus": nest { outline: none }
-    , padding: _0
-    , paddingLeft: str if isFirst then "calc(var(--s0) - var(--s-4))" else "calc(var(--s0)*0.9 - var(--s-4))"
-    , paddingRight: str if isLast then "calc(var(--s0) - var(--s-4))" else "calc(var(--s0)*0.9 - var(--s-4))"
+    , paddingLeft: str if isFirst then edgePadding else inBetweenPadding
+    , paddingRight: str if isLast then edgePadding else inBetweenPadding
     , borderRadius: str "8px"
-    , boxSizing: borderBox
-    , border: str $ i "var(--s-4) solid transparent"
+    , border: str $ i borderSize " solid transparent"
     , display: fixed
     , margin: _0
+    , overflow: visible
     }
+  where
+    borderSize = "var(--s-4)"
+
+    edgePadding = i "calc(var(--s0) - " borderSize ")"
+
+    inBetweenPadding = i "calc(var(--s0)*0.9 - " borderSize ")"
