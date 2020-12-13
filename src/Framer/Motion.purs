@@ -63,7 +63,7 @@ import React.Basic.Events (EventHandler)
 import React.Basic.Hooks (Ref)
 import Record (disjointUnion)
 import Type.Row (type (+))
-import Untagged.Coercible (class Coercible, coerce)
+import Untagged.Castable (class Castable, cast)
 import Untagged.Union (type (|+|))
 import Web.DOM (Node)
 import Web.Event.Internal.Types (Event)
@@ -92,8 +92,8 @@ type Exit =
 
 foreign import data AnimationControls ∷ Type
 
-prop ∷ ∀ a b. Coercible a b => a -> b
-prop = coerce
+prop ∷ ∀ a b. Castable a b => a -> b
+prop = cast
 
 type Animate =
   CSS
@@ -139,8 +139,8 @@ type PanInfo =
 type OnDragEnd =
   EffectFn2 Event PanInfo Unit
 
-onDragEnd ∷ ∀ coercible. Coercible OnDragEnd coercible => (Event -> PanInfo -> Effect Unit) -> coercible
-onDragEnd fn2 = coerce ((mkEffectFn2 fn2) ∷ OnDragEnd)
+onDragEnd ∷ ∀ coercible. Castable OnDragEnd coercible => (Event -> PanInfo -> Effect Unit) -> coercible
+onDragEnd fn2 = cast ((mkEffectFn2 fn2) ∷ OnDragEnd)
 
 type MotionPropsF f r =
   ( initial ∷ f Initial
@@ -160,23 +160,23 @@ type MotionPropsF f r =
 type MotionProps r =
   MotionPropsF Id r
 
-animate ∷ ∀ a. Coercible a Animate => a -> Animate
-animate = coerce
+animate ∷ ∀ a. Castable a Animate => a -> Animate
+animate = cast
 
-initial ∷ ∀ a. Coercible a Initial => a -> Initial
-initial = coerce
+initial ∷ ∀ a. Castable a Initial => a -> Initial
+initial = cast
 
 transition ∷ ∀ r. { | r } -> Transition
-transition = coerce <<< css
+transition = cast <<< css
 
-exit ∷ ∀ a. Coercible a Exit => a -> Exit
-exit = coerce
+exit ∷ ∀ a. Castable a Exit => a -> Exit
+exit = cast
 
 variants ∷ ∀ r. { | r } -> Variants
-variants = coerce <<< css
+variants = cast <<< css
 
-layout ∷ ∀ a. Coercible a Layout => a -> Layout
-layout = coerce
+layout ∷ ∀ a. Castable a Layout => a -> Layout
+layout = cast
 
 data MakeVariantLabel
   = MakeVariantLabel
@@ -206,12 +206,12 @@ h1 = h1Impl
 
 withMotion ∷
   ∀ result baseProps motionSubset.
-  Union baseProps (MotionProps ()) result => Nub result result => Coercible motionSubset { | MotionProps () } => Record baseProps -> motionSubset -> Record result
-withMotion old new = disjointUnion old ((coerce new) ∷ { | MotionProps () })
+  Union baseProps (MotionProps ()) result => Nub result result => Castable motionSubset { | MotionProps () } => Record baseProps -> motionSubset -> Record result
+withMotion old new = disjointUnion old ((cast new) ∷ { | MotionProps () })
 
 motion ∷
   ∀ result baseProps motionSubset.
-  Union baseProps (MotionProps ()) result => Nub result result => Coercible motionSubset { | MotionProps () } => motionSubset -> Record baseProps -> Record result
+  Union baseProps (MotionProps ()) result => Nub result result => Castable motionSubset { | MotionProps () } => motionSubset -> Record baseProps -> Record result
 motion = flip withMotion
 
 infixr 7 withMotion as >>

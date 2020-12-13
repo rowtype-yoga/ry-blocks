@@ -16,7 +16,7 @@ import React.Basic.Emotion as E
 import React.Basic.Events (handler_)
 import React.Basic.Hooks (reactComponent, useState)
 import React.Basic.Hooks as React
-import Untagged.Coercible (coerce)
+import Untagged.Castable (cast)
 import Yoga (el, styled)
 import Yoga.Block.Container.Style as Styles
 import Yoga.Block.Internal (_0)
@@ -125,8 +125,8 @@ layoutTrans = do
         let
           ava1 =
             el M.div
-              { layout: coerce true
-              , layoutId: coerce "ava"
+              { layout: cast true
+              , layoutId: cast "ava"
               , key: "ava"
               , onClick: handler_ (setSidebarOpen not)
               , transition: M.transition { delay: 0.2, type: "spring", damping: 30, stiffness: 200 }
@@ -143,8 +143,8 @@ layoutTrans = do
               []
           ava2 =
             el M.div
-              { layout: coerce true
-              , layoutId: coerce "ava"
+              { layout: cast true
+              , layoutId: cast "ava"
               , key: "ava"
               , onClick: handler_ (setSidebarOpen not)
               , style:

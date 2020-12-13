@@ -2,7 +2,7 @@ module Yoga.Block.Atom.CodeInput.Style where
 
 import Yoga.Prelude.Style
 import Data.Interpolate (i)
-import Untagged.Coercible (coerce)
+import Untagged.Castable (cast)
 import Yoga.Block.Container.Style (colour)
 
 type Props f r =
@@ -11,7 +11,7 @@ type Props f r =
   )
 
 codeInput ∷ ∀ p. { maxLength ∷ Int | Props Id p } -> Style
-codeInput props = styles <>? coerce props.css
+codeInput props = styles <>? cast props.css
   where
     styles =
       css
@@ -24,7 +24,7 @@ codeInput props = styles <>? coerce props.css
         , fontFamily: str "var(--monoFont)"
         , fontSize: str "var(--s0)"
         , lineHeight: str "var(--s0)"
-        , width: str $ i "calc(" (coerce props.maxLength ?|| 10) "ch + 4.3 * var(--s-5))"
+        , width: str $ i "calc(" (cast props.maxLength ?|| 10) "ch + 4.3 * var(--s-5))"
         , padding: str "calc(var(--s-5) - 1px)"
         , color: str colour.text
         , "&:focus":

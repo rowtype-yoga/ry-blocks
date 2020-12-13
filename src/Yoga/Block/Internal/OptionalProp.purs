@@ -6,7 +6,7 @@ import Data.Foldable (class Foldable, foldMap, foldl, foldr)
 import Data.Maybe (Maybe, maybe)
 import Data.Newtype (class Newtype)
 import Unsafe.Coerce (unsafeCoerce)
-import Untagged.Coercible (class Coercible)
+import Untagged.Castable (class Castable)
 import Untagged.Union (UndefinedOr, defined, fromUndefinedOr, maybeToUor, uorToMaybe)
 
 type Id a =
@@ -44,7 +44,7 @@ instance functorOptionalProp ∷ Functor OptionalProp where
 instance altOptionalProp ∷ Alt OptionalProp where
   alt op1 op2 = maybeToOp $ (opToMaybe op1) <|> (opToMaybe op2)
 
-instance coercibleOptionalProp ∷ Coercible a (OptionalProp a)
+instance coercibleOptionalProp ∷ Castable a (OptionalProp a)
 
 getOr ∷ ∀ a. a -> OptionalProp a -> a
 getOr default (OptionalProp o) = fromUndefinedOr default o
