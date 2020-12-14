@@ -38,7 +38,6 @@ type MandatoryProps r =
   ( activeItemRefs ∷ Array (Ref (Nullable Node))
   , activeItemIndex ∷ Int
   , updateActiveIndex ∷ Int -> Effect Unit
-  , children ∷ Array JSX
   | r
   )
 
@@ -77,7 +76,6 @@ rawActiveComponent ∷ ∀ p. ReactComponent { | p }
 rawActiveComponent =
   mkForwardRefComponent "SegmentedActive" do
     \(props ∷ { | Props }) ref -> React.do
-      let _ = spy "rerender" props
       animationVariants /\ setVariants <- useState' []
       let
         computeVariants = do
@@ -126,20 +124,7 @@ rawActiveComponent =
                 , _aria: Object.fromHomogeneous { hidden: "true" }
                 , ref
                 }
-        children =
-          [ E.element R.div'
-              { className: "ry-segmented"
-              , css: Style.segmented
-              , role: "tablist"
-              , children: A.cons activeElement props.children
-              }
-          ]
-      pure
-        $ E.element R.div'
-        $ { children: children
-          , css: Style.cluster
-          , className: "ry-segmented-container"
-          }
+      pure activeElement
 
 getStyle ∷
   Ref (Nullable Node) ->
@@ -248,9 +233,23 @@ component =
                   ]
               ]
         pure
-          $ React.element activeComponent
-              { activeItemRefs: itemRefs
-              , activeItemIndex: activeIndex
-              , updateActiveIndex
-              , children
-              }
+          $ E.element R.div'
+          $ { css: Style.cluster
+            , className: "ry-segmented-container"
+            , children:
+              [ E.element R.div'
+                  { className: "ry-segmented"
+                  , css: Style.segmented
+                  , role: "tablist"
+                  , children:
+                    A.cons
+                      ( React.element activeComponent
+                          { activeItemRefs: itemRefs
+                          , activeItemIndex: activeIndex
+                          , updateActiveIndex
+                          }
+                      )
+                      children
+                  }
+              ]
+            }
