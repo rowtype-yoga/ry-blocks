@@ -64,7 +64,7 @@ button { isFirst, isLast } =
     , fontSize: str "var(--s0)"
     , boxSizing: borderBox
     , zIndex: str "3"
-    , "&:active": nest { outline: str "0" } -- ensures no outline on click in Chrome
+    , "&:active": nest { outline: str "0" }
     , "&:focus": nest { outline: none }
     , "&:focus > .ry-segmented-button__content":
       nest
@@ -75,14 +75,17 @@ button { isFirst, isLast } =
 buttonContent ∷ { isFirst ∷ Boolean, isLast ∷ Boolean } -> Style
 buttonContent { isFirst, isLast } =
   css
-    { "&:active": nest { outline: str "0" } -- ensures no outline on click in Chrome
+    { "&:active": nest { outline: str "0" }
     , "&:focus": nest { outline: none }
     , paddingLeft: str if isFirst then edgePadding else inBetweenPadding
     , paddingRight: str if isLast then edgePadding else inBetweenPadding
     , borderRadius: str "8px"
     , border: str $ i borderSize " solid transparent"
-    , display: fixed
+    , display: flex
+    , alignItems: center
+    , justifyContent: center
     , margin: _0
+    , minHeight: _100percent
     , overflow: visible
     }
   where

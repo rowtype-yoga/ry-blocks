@@ -7,10 +7,9 @@ import Control.Monad.Trans.Class (lift)
 import Control.MonadZero as MZ
 import Data.Array as A
 import Data.FoldableWithIndex (foldMapWithIndex)
-import Data.Maybe (fromMaybe')
+import Data.Maybe (fromMaybe', isJust)
 import Data.Newtype (wrap)
 import Data.Traversable (traverse)
-import Debug.Trace (spy)
 import Effect.Aff (Milliseconds(..), delay)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object as Object
@@ -64,8 +63,8 @@ findOverlapping activeIndex styles x =
     fst <- A.head styles
     lst <- A.last styles
     let inside e = (e.left < x) && (e.left + e.width) >= x
-    let tooFarLeft = MZ.guard (x < fst.left) $> 0
-    let tooFarRight = MZ.guard (x >= lst.left + lst.width) $> A.length styles - 1
+    let tooFarLeft = MZ.guard (x <= fst.left + fst.width) $> 0
+    let tooFarRight = MZ.guard (x >= lst.left) $> A.length styles - 1
     A.findIndex inside styles <|> tooFarLeft <|> tooFarRight
 
 rawActiveComponent ∷ ∀ p. ReactComponent { | p }
@@ -92,7 +91,47 @@ rawActiveComponent =
           Nothing -> Motion.animate (indexToVariant props.activeItemIndex)
           Just x -> do
             let idx = findOverlapping props.activeItemIndex animationVariants x
-            Motion.animate ((css <$> animationVariants A.!! idx) # fromMaybe' \_ -> unsafeCrashWith "shit")
+            let av = animationVariants
+            let firstVariant = av # A.head # fromMaybe' \_ -> unsafeCrashWith "shit"
+            let lastVariant = av # A.last # fromMaybe' \_ -> unsafeCrashWith "shit"
+            let baseVariant = av A.!! idx # fromMaybe' \_ -> unsafeCrashWith "shit"
+            let
+              closestVariant =
+                if x >= (baseVariant.left + (baseVariant.width / 2.0)) then
+                  av A.!! (idx + 1) # fromMaybe lastVariant
+                else
+                  av A.!! (idx - 1) # fromMaybe firstVariant
+            let
+              greater /\ smaller =
+                if baseVariant.left > closestVariant.left then
+                  baseVariant /\ closestVariant
+                else
+                  closestVariant /\ baseVariant
+            -- Total
+            let rangeStart = smaller.left + (smaller.width / 2.0)
+            let rangeEnd = greater.left + (greater.width / 2.0)
+            let range = rangeEnd - rangeStart
+            let ratio = ((x - rangeStart) / range)
+            let interpolatedWidth = (greater.width * ratio) + smaller.width * (1.0 - ratio)
+            -- Right
+            let rangeStartRight = smaller.left + smaller.width
+            let rangeEndRight = greater.left + greater.width
+            let rangeRight = rangeEndRight - rangeStartRight
+            let ratioRight = ((x + (interpolatedWidth / 2.0) - rangeStartRight) / rangeRight)
+            -- Left
+            let rangeStartLeft = smaller.left
+            let rangeEndLeft = greater.left
+            let rangeLeft = rangeEndLeft - rangeStartLeft
+            let ratioLeft = (((x - (interpolatedWidth / 2.0)) - rangeStartLeft) / rangeLeft)
+            -- Individual
+            let left = rangeStartLeft + (ratioLeft * rangeLeft)
+            let right = rangeStartRight + (ratioRight * rangeRight)
+            let width = right - left
+            let
+              variant =
+                baseVariant
+                  { left = left, width = width }
+            Motion.animate (css $ if smaller == greater then baseVariant else variant)
         clusterProps ∷ { | Cluster.Props }
         clusterProps = pick props
         activeElement =
@@ -104,21 +143,28 @@ rawActiveComponent =
                 , drag: Motion.drag "x"
                 , dragMomentum: Motion.dragMomentum false
                 , layout: Motion.layout true
+                , onDragStart:
+                  Motion.onDragStart \_ pi -> do
+                    setDragX (Just pi.point.x)
                 , onDrag:
                   Motion.onDrag \_ pi -> do
-                    setDragX (Just pi.point.x)
+                    when (isJust dragX)
+                      $ setDragX (Just pi.point.x)
                 , onDragEnd:
                   Motion.onDragEnd \_ pi -> do
-                    void
-                      $ runMaybeT do
-                          let newIdx = findOverlapping props.activeItemIndex animationVariants pi.point.x
-                          setDragX Nothing # lift
-                          props.updateActiveIndex newIdx # lift
+                    let newIdx = findOverlapping props.activeItemIndex animationVariants (dragX # fromMaybe pi.point.x)
+                    when (newIdx == props.activeItemIndex) do
+                      let maybeCurr = animationVariants A.!! newIdx
+                      for_ maybeCurr \curr -> do
+                        -- reset drag
+                        setDragX (Just $ curr.left + curr.width / 2.0)
+                    setDragX Nothing
+                    props.updateActiveIndex newIdx
                 , dragConstraints: Motion.dragConstraints { left: 0, right: 0 }
                 , dragElastic: Motion.dragElastic false
                 , transition:
                   Motion.transition
-                    { type: "tween", duration: 0.2, ease: "easeOut" }
+                    { type: "tween", duration: if isJust dragX then 0.05 else 0.2, ease: "easeOut" }
                 , variants
                 , animate
                 , _aria: Object.fromHomogeneous { hidden: "true" }
