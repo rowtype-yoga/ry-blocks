@@ -5,7 +5,6 @@ import Data.Tuple.Nested ((/\))
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
 import React.Basic (JSX, element)
-import React.Basic.DOM (css)
 import React.Basic.DOM as R
 import React.Basic.Emotion as E
 import React.Basic.Hooks (reactComponent, useState')
@@ -35,14 +34,15 @@ segmented = do
   where
     makeDemoComponent =
       reactComponent "Segmented Demo" \{} -> React.do
-        activeIndex /\ setElementIndex <- useState' 0
+        activeIndex /\ setElementIndex <- useState' 2
         pure
           $ element Segmented.component
               { activeIndex
               , updateActiveIndex: setElementIndex
               , buttonContents:
-                [ { id: "one", value: "One Option" }
+                [ { id: "one", value: "1" }
                 , { id: "two", value: "Another option" }
-                , { id: "three", value: "No choice left" }
+                , { id: "two", value: "2" }
+                , { id: "three", value: "An extremely long option that is bad" }
                 ]
               }

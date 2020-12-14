@@ -7,6 +7,7 @@ import Data.Array as A
 import Data.FoldableWithIndex (foldMapWithIndex)
 import Data.Newtype (wrap)
 import Data.Traversable (traverse)
+import Debug.Trace (spy)
 import Effect.Aff (Milliseconds(..), delay)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object as Object
@@ -36,6 +37,7 @@ type PropsF f =
 type MandatoryProps r =
   ( activeItemRefs ∷ Array (Ref (Nullable Node))
   , activeItemIndex ∷ Int
+  , updateActiveIndex ∷ Int -> Effect Unit
   , children ∷ Array JSX
   | r
   )
@@ -49,10 +51,33 @@ activeComponent = rawActiveComponent
 indexToVariant ∷ Int -> VariantLabel
 indexToVariant = show >>> unsafeCoerce
 
+type BBox =
+  { top ∷ Number, left ∷ Number, width ∷ Number, height ∷ Number }
+
+computeDragConstraints ∷ Int -> Array BBox -> Motion.DragConstraints
+computeDragConstraints activeIndex styles =
+  Motion.dragConstraints
+    $ fromMaybe { left: 0.0, right: 0.0 } do
+        x <- styles A.!! activeIndex
+        first <- A.head styles
+        last <- A.last styles
+        pure
+          { left: first.left - x.left
+          , right: (last.left + last.width) - (x.left + x.width)
+          }
+
+findOverlapping ∷ Int -> Array BBox -> Motion.PanInfo -> Int
+findOverlapping activeIndex styles panInfo =
+  fromMaybe activeIndex do
+    curr <- styles A.!! activeIndex
+    let x = panInfo.point.x
+    styles # A.findIndex \e -> (e.left <= x) && (e.left + e.width) >= x
+
 rawActiveComponent ∷ ∀ p. ReactComponent { | p }
 rawActiveComponent =
   mkForwardRefComponent "SegmentedActive" do
     \(props ∷ { | Props }) ref -> React.do
+      let _ = spy "rerender" props
       animationVariants /\ setVariants <- useState' []
       let
         computeVariants = do
@@ -77,6 +102,22 @@ rawActiveComponent =
                 { css: Style.activeElement
                 , className: "ry-active-segmented-element"
                 , initial: Motion.initial (indexToVariant props.activeItemIndex)
+                , drag: Motion.drag "x"
+                , dragMomentum: Motion.dragMomentum false
+                , layout: Motion.layout true
+                , onDrag:
+                  Motion.onDrag \_ pi -> do
+                    mempty
+                , onDragEnd:
+                  Motion.onDragEnd \_ pi -> do
+                    void
+                      $ runMaybeT do
+                          let newIdx = findOverlapping props.activeItemIndex animationVariants pi
+                          when (newIdx == props.activeItemIndex) do
+                            props.updateActiveIndex (-1) # lift -- hack to force rerender
+                          props.updateActiveIndex newIdx # lift
+                , dragConstraints: computeDragConstraints props.activeItemIndex animationVariants
+                , dragElastic: Motion.dragElastic false
                 , transition:
                   Motion.transition
                     { type: "tween", duration: 0.2, ease: "easeOut" }
@@ -102,12 +143,7 @@ rawActiveComponent =
 
 getStyle ∷
   Ref (Nullable Node) ->
-  MaybeT Effect
-    { height ∷ Number
-    , left ∷ Number
-    , top ∷ Number
-    , width ∷ Number
-    }
+  MaybeT Effect BBox
 getStyle itemRef = do
   node <- MaybeT $ readRefMaybe itemRef
   htmlElement <- MaybeT $ pure $ HTMLElement.fromNode node
@@ -193,7 +229,8 @@ component =
               , ref
               , css: Style.button { isFirst, isLast }
               , className: "ry-segmented-button"
-              , onClick: handler preventDefault (const (updateIndex idx))
+              , style: css { pointerEvents: if idx == activeIndex then "none" else "" }
+              , onClick: handler_ (updateIndex idx)
               , role: "tab"
               , tabIndex: if idx == activeIndex then 0 else -1
               , id
@@ -214,5 +251,6 @@ component =
           $ React.element activeComponent
               { activeItemRefs: itemRefs
               , activeItemIndex: activeIndex
+              , updateActiveIndex
               , children
               }

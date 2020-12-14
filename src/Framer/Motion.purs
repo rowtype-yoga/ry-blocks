@@ -13,10 +13,18 @@ module Framer.Motion
   , prop
   , Drag
   , DragMomentum
+  , dragMomentum
+  , DragPropagation
+  , DragElastic
+  , dragElastic
+  , dragPropagation
+  , drag
   , Transition
   , transition
   , Initial
   , BoundingBox2D
+  , boundingBox2D
+  , dragConstraints
   , (>>)
   , variants
   , Animate
@@ -34,6 +42,10 @@ module Framer.Motion
   , AnimateSharedLayoutType
   , OnDragEnd
   , onDragEnd
+  , OnDragStart
+  , onDragStart
+  , OnDrag
+  , onDrag
   , PanInfo
   , Point2D
   , switch
@@ -115,13 +127,22 @@ type LayoutTransition =
   Boolean |+| Undefined
 
 type Drag =
-  Boolean |+| Undefined
+  Boolean |+| String |+| Undefined
 
 type DragMomentum =
   Boolean |+| Undefined
 
+dragMomentum ∷ ∀ c. Castable c DragMomentum => c -> DragMomentum
+dragMomentum = cast
+
 type DragConstraints =
   Ref (Nullable Node) |+| BoundingBox2D |+| Undefined
+
+type DragElastic =
+  Boolean |+| Number |+| Undefined
+
+dragElastic ∷ ∀ c. Castable c DragElastic => c -> DragElastic
+dragElastic = cast
 
 type BoundingBox2D =
   { left ∷ Int |+| Number |+| Undefined
@@ -130,25 +151,47 @@ type BoundingBox2D =
   , bottom ∷ Int |+| Number |+| Undefined
   }
 
+boundingBox2D ∷ ∀ c. Castable c BoundingBox2D => c -> BoundingBox2D
+boundingBox2D = cast
+
 type Point2D =
   { x ∷ Number, y ∷ Number }
 
 type PanInfo =
   { point ∷ Point2D, delta ∷ Point2D, offset ∷ Point2D, velocity ∷ Point2D }
 
-type OnDragEnd =
-  EffectFn2 Event PanInfo Unit
+type OnDragStart =
+  (EffectFn2 Event PanInfo Unit |+| Undefined)
 
-onDragEnd ∷ ∀ coercible. Castable OnDragEnd coercible => (Event -> PanInfo -> Effect Unit) -> coercible
-onDragEnd fn2 = cast ((mkEffectFn2 fn2) ∷ OnDragEnd)
+type OnDragEnd =
+  (EffectFn2 Event PanInfo Unit |+| Undefined)
+
+type OnDrag =
+  (EffectFn2 Event PanInfo Unit |+| Undefined)
+
+type DragPropagation =
+  Boolean |+| Undefined
+
+onDragStart ∷ (Event -> PanInfo -> Effect Unit) -> OnDragStart
+onDragStart fn2 = cast (mkEffectFn2 fn2)
+
+onDragEnd ∷ (Event -> PanInfo -> Effect Unit) -> OnDragEnd
+onDragEnd fn2 = cast (mkEffectFn2 fn2)
+
+onDrag ∷ (Event -> PanInfo -> Effect Unit) -> OnDrag
+onDrag fn2 = cast (mkEffectFn2 fn2)
 
 type MotionPropsF f r =
   ( initial ∷ f Initial
   , animate ∷ f Animate
   , drag ∷ f Drag
   , dragMomentum ∷ f DragMomentum
-  , onDragEnd ∷ f (OnDragEnd |+| Undefined)
+  , dragElastic ∷ f DragElastic
+  , onDragStart ∷ f OnDragStart
+  , onDrag ∷ f OnDrag
+  , onDragEnd ∷ f OnDragEnd
   , dragConstraints ∷ f DragConstraints
+  , dragPropagation ∷ f DragPropagation
   , variants ∷ f Variants
   , transition ∷ f Transition
   , layout ∷ f Layout
@@ -168,6 +211,15 @@ initial = cast
 
 transition ∷ ∀ r. { | r } -> Transition
 transition = cast <<< css
+
+drag ∷ ∀ a. Castable a Drag => a -> Drag
+drag = cast
+
+dragConstraints ∷ ∀ a. Castable a BoundingBox2D => a -> DragConstraints
+dragConstraints x = cast ((cast x) ∷ BoundingBox2D)
+
+dragPropagation ∷ ∀ a. Castable a DragPropagation => a -> DragPropagation
+dragPropagation = cast
 
 exit ∷ ∀ a. Castable a Exit => a -> Exit
 exit = cast
