@@ -1,10 +1,13 @@
 module Yoga.Block.Atom.Segmented.View (component, Props, MandatoryProps, PropsF, ComponentProps) where
 
 import Yoga.Prelude.View
+import Control.Alt ((<|>))
 import Control.Monad.Maybe.Trans (MaybeT(..), runMaybeT)
 import Control.Monad.Trans.Class (lift)
+import Control.MonadZero as MZ
 import Data.Array as A
 import Data.FoldableWithIndex (foldMapWithIndex)
+import Data.Maybe (fromMaybe')
 import Data.Newtype (wrap)
 import Data.Traversable (traverse)
 import Debug.Trace (spy)
@@ -15,6 +18,7 @@ import Framer.Motion (Animate, VariantLabel, Variants)
 import Framer.Motion as Motion
 import Hooks.Key as Key
 import Hooks.UseResize (useResize)
+import Partial.Unsafe (unsafeCrashWith)
 import React.Basic.DOM (css)
 import React.Basic.DOM as R
 import React.Basic.Emotion as E
@@ -53,30 +57,23 @@ indexToVariant = show >>> unsafeCoerce
 type BBox =
   { top ∷ Number, left ∷ Number, width ∷ Number, height ∷ Number }
 
-computeDragConstraints ∷ Int -> Array BBox -> Motion.DragConstraints
-computeDragConstraints activeIndex styles =
-  Motion.dragConstraints
-    $ fromMaybe { left: 0.0, right: 0.0 } do
-        x <- styles A.!! activeIndex
-        first <- A.head styles
-        last <- A.last styles
-        pure
-          { left: first.left - x.left
-          , right: (last.left + last.width) - (x.left + x.width)
-          }
-
-findOverlapping ∷ Int -> Array BBox -> Motion.PanInfo -> Int
-findOverlapping activeIndex styles panInfo =
+findOverlapping ∷ Int -> Array BBox -> Number -> Int
+findOverlapping activeIndex styles x =
   fromMaybe activeIndex do
     curr <- styles A.!! activeIndex
-    let x = panInfo.point.x
-    styles # A.findIndex \e -> (e.left <= x) && (e.left + e.width) >= x
+    fst <- A.head styles
+    lst <- A.last styles
+    let inside e = (e.left < x) && (e.left + e.width) >= x
+    let tooFarLeft = MZ.guard (x < fst.left) $> 0
+    let tooFarRight = MZ.guard (x >= lst.left + lst.width) $> A.length styles - 1
+    A.findIndex inside styles <|> tooFarLeft <|> tooFarRight
 
 rawActiveComponent ∷ ∀ p. ReactComponent { | p }
 rawActiveComponent =
   mkForwardRefComponent "SegmentedActive" do
     \(props ∷ { | Props }) ref -> React.do
       animationVariants /\ setVariants <- useState' []
+      dragX /\ setDragX <- useState' Nothing
       let
         computeVariants = do
           styles <- traverse getStyle props.activeItemRefs
@@ -91,7 +88,11 @@ rawActiveComponent =
             # foldMapWithIndex (\i s -> Object.singleton (show i) (css s))
             # unsafeCoerce
         animate ∷ Animate
-        animate = Motion.animate (indexToVariant props.activeItemIndex)
+        animate = case dragX of
+          Nothing -> Motion.animate (indexToVariant props.activeItemIndex)
+          Just x -> do
+            let idx = findOverlapping props.activeItemIndex animationVariants x
+            Motion.animate ((css <$> animationVariants A.!! idx) # fromMaybe' \_ -> unsafeCrashWith "shit")
         clusterProps ∷ { | Cluster.Props }
         clusterProps = pick props
         activeElement =
@@ -105,16 +106,15 @@ rawActiveComponent =
                 , layout: Motion.layout true
                 , onDrag:
                   Motion.onDrag \_ pi -> do
-                    mempty
+                    setDragX (Just pi.point.x)
                 , onDragEnd:
                   Motion.onDragEnd \_ pi -> do
                     void
                       $ runMaybeT do
-                          let newIdx = findOverlapping props.activeItemIndex animationVariants pi
-                          when (newIdx == props.activeItemIndex) do
-                            props.updateActiveIndex (-1) # lift -- hack to force rerender
+                          let newIdx = findOverlapping props.activeItemIndex animationVariants pi.point.x
+                          setDragX Nothing # lift
                           props.updateActiveIndex newIdx # lift
-                , dragConstraints: computeDragConstraints props.activeItemIndex animationVariants
+                , dragConstraints: Motion.dragConstraints { left: 0, right: 0 }
                 , dragElastic: Motion.dragElastic false
                 , transition:
                   Motion.transition
@@ -242,14 +242,12 @@ component =
                   , css: Style.segmented
                   , role: "tablist"
                   , children:
-                    A.cons
-                      ( React.element activeComponent
-                          { activeItemRefs: itemRefs
-                          , activeItemIndex: activeIndex
-                          , updateActiveIndex
-                          }
-                      )
-                      children
+                    React.element activeComponent
+                      { activeItemRefs: itemRefs
+                      , activeItemIndex: activeIndex
+                      , updateActiveIndex
+                      }
+                      A.: children
                   }
               ]
             }

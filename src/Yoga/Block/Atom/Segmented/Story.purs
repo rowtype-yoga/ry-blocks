@@ -40,9 +40,9 @@ segmented = do
               { activeIndex
               , updateActiveIndex: setElementIndex
               , buttonContents:
-                [ { id: "one", value: "1" }
+                [ { id: "three", value: "An extremely long option that is bad" }
                 , { id: "two", value: "Another option" }
                 , { id: "two", value: "2" }
-                , { id: "three", value: "An extremely long option that is bad" }
+                , { id: "one", value: "1" }
                 ]
               }
