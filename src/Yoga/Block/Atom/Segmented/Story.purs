@@ -2,6 +2,7 @@ module Yoga.Block.Atom.Segmented.Story where
 
 import Prelude
 import Data.Tuple.Nested ((/\))
+import Data.TwoOrMore (twoOrMore)
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
 import React.Basic (JSX, element)
@@ -40,12 +41,11 @@ segmented = do
               { activeIndex
               , updateActiveIndex: setElementIndex
               , buttonContents:
-                [ { id: "bla", value: "🥸" }
-                , { id: "three", value: "An extremely long option that is bad" }
-                , { id: "gag", value: "2" }
-                , { id: "nag", value: "1" }
-                , { id: "two", value: "Another option" }
-                , { id: "four", value: "2" }
-                , { id: "one", value: "1" }
-                ]
+                twoOrMore
+                  { id: "gag", value: "2" }
+                  { id: "nag", value: "1" }
+                  [ { id: "two", value: "Another option" }
+                  , { id: "four", value: "2" }
+                  , { id: "one", value: "1" }
+                  ]
               }

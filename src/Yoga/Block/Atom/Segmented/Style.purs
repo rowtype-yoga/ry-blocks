@@ -50,6 +50,7 @@ activeElement =
     , margin: _0
     , padding: _0
     , zIndex: str "3"
+    , cursor: str "grab"
     }
 
 button ∷ { isFirst ∷ Boolean, isLast ∷ Boolean } -> Style

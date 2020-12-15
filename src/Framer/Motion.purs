@@ -4,6 +4,7 @@ module Framer.Motion
   , MakeVariantLabel
   , div
   , h1
+  , variantsFromObject
   , custom
   , Exit
   , exit
@@ -75,6 +76,7 @@ import React.Basic.Events (EventHandler)
 import React.Basic.Hooks (Ref)
 import Record (disjointUnion)
 import Type.Row (type (+))
+import Unsafe.Coerce (unsafeCoerce)
 import Untagged.Castable (class Castable, cast)
 import Untagged.Union (type (|+|))
 import Web.DOM (Node)
@@ -226,6 +228,9 @@ exit = cast
 
 variants ∷ ∀ r. { | r } -> Variants
 variants = cast <<< css
+
+variantsFromObject ∷ ∀ o. Object o -> Variants
+variantsFromObject = cast <<< (unsafeCoerce ∷ _ -> CSS)
 
 layout ∷ ∀ a. Castable a Layout => a -> Layout
 layout = cast
