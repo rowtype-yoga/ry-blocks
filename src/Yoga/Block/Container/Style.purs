@@ -8,8 +8,27 @@ import Foreign.Object as Object
 import Heterogeneous.Mapping (class HMapWithIndex, class MappingWithIndex, hmap, hmapWithIndex)
 import Unsafe.Coerce (unsafeCoerce)
 
+data DarkOrLightMode
+  = DarkMode
+  | LightMode
+
+lightModeStyle ∷ Style
+lightModeStyle = unsafeCoerce lightModeVariables
+
+darkModeStyle ∷ Style
+darkModeStyle = unsafeCoerce darkModeVariables
+
+darkMode ∷ Style
+darkMode = mkGlobal (Just DarkMode)
+
+lightMode ∷ Style
+lightMode = mkGlobal (Just LightMode)
+
 global ∷ Style
-global =
+global = mkGlobal Nothing
+
+mkGlobal ∷ Maybe DarkOrLightMode -> Style
+mkGlobal maybeMode =
   css
     { "body, html":
       nested
@@ -17,7 +36,8 @@ global =
             { minHeight: 100.0 # vh
             , minWidth: 100.0 # vw
             , lineHeight: str "1.15"
-            , "-webkit-text-size-adjust": _100percent
+            , "WebkitTextSizeAdjust": _100percent
+            , transition: str "background,color 0.33s ease-in"
             }
     , ":root":
       nested $ variables
@@ -35,7 +55,10 @@ global =
             , color: str colour.text
             , margin: str "0"
             }
-        <> colourTheme defaultColours
+        <> case maybeMode of
+            Nothing -> autoSwitchColourTheme
+            Just DarkMode -> darkModeStyle
+            Just LightMode -> lightModeStyle
     , "pre,code":
       nest
         { fontFamily: str "var(--monoFont)"
@@ -81,7 +104,10 @@ defaultColours =
     , background80: darken 0.8 lightBg
     , background90: darken 0.9 lightBg
     , background100: darken 1.0 lightBg
+    , success
+    , successText
     , interfaceBackground: lightBg
+    , interfaceTextDisabled: darken 0.33 lightBg
     , interfaceBackgroundHighlight: darken 0.07 lightBg
     , interfaceBackgroundShadow: darken 0.1 lightBg
     , inputBackground: darken 0.03 lightBg
@@ -108,16 +134,23 @@ defaultColours =
     , background90: lighten 0.9 darkBg
     , background100: lighten 1.0 darkBg
     , interfaceBackground: lighten 0.4 darkBg
+    , interfaceTextDisabled: lighten 0.8 darkBg
     , interfaceBackgroundHighlight: lighten 0.5 darkBg
     , interfaceBackgroundShadow: lighten 0.4 darkBg
     , inputBackground: lighten 0.10 darkBg
     , inputBorder: lighten 0.17 darkBg
+    , success
+    , successText
     , highlight
     , text: lightBg
     }
   }
   where
     highlight = Color.rgb 0x00 0x99 0xFF
+
+    success = Color.rgb 20 200 60
+
+    successText = Color.rgb 250 250 250
 
     -- highlight = Color.rgb 0x10 0x45 0x4A
     darkBg = Color.rgb 0 0 0
@@ -143,11 +176,14 @@ type FlatTheme a =
   , background90 ∷ a
   , background100 ∷ a
   , interfaceBackground ∷ a
+  , interfaceTextDisabled ∷ a
   , interfaceBackgroundHighlight ∷ a
   , interfaceBackgroundShadow ∷ a
   , inputBackground ∷ a
   , inputBorder ∷ a
   , highlight ∷ a
+  , success ∷ a
+  , successText ∷ a
   , text ∷ a
   }
 
@@ -172,8 +208,8 @@ colour =
   hmap (\x -> "var(" <> x <> ")")
     $ makeCSSVarLabels defaultColours.light
 
-colourTheme ∷ Colours -> Style
-colourTheme { dark, light } = lightT
+autoSwitchColourTheme ∷ Style
+autoSwitchColourTheme = lightT
   where
     darkT ∷ Style
     darkT = unsafeCoerce darkObj
@@ -182,17 +218,29 @@ colourTheme { dark, light } = lightT
     darkObj =
       Object.fromHomogeneous defaultColours.dark
         # Object.foldMap \k v ->
-            Object.singleton ("--" <> k) (str (Color.toHexString v))
+            Object.singleton ("--" <> k) (str (Color.cssStringRGBA v))
 
     lightObj ∷ Object StyleProperty
     lightObj =
       Object.fromHomogeneous defaultColours.light
         # Object.foldMap \k v ->
-            Object.singleton ("--" <> k) (str (Color.toHexString v))
+            Object.singleton ("--" <> k) (str (Color.cssStringRGBA v))
               # Object.insert "@media (prefers-color-scheme: dark)" (nested darkT)
 
     lightT ∷ Style
     lightT = unsafeCoerce lightObj
+
+lightModeVariables ∷ Object StyleProperty
+lightModeVariables =
+  Object.fromHomogeneous defaultColours.light
+    # Object.foldMap \k v ->
+        Object.singleton ("--" <> k) (str (Color.cssStringRGBA v))
+
+darkModeVariables ∷ Object StyleProperty
+darkModeVariables =
+  Object.fromHomogeneous defaultColours.dark
+    # Object.foldMap \k v ->
+        Object.singleton ("--" <> k) (str (Color.cssStringRGBA v))
 
 variables ∷ Style
 variables =

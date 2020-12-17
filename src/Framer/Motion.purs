@@ -1,6 +1,21 @@
 module Framer.Motion
   ( animate
   , makeVariantLabels
+  , WhileTap
+  , whileTap
+  , callback
+  , class EffectFnMaker
+  , toEffectFn
+  , OnTap
+  , TapInfo
+  , OnTapStart
+  , OnTapEnd
+  , onTapStart
+  , onTapEnd
+  , onTapCancel
+  , onTap
+  , OnTapCancel
+  , TargetAndTransition
   , MakeVariantLabel
   , div
   , h1
@@ -14,6 +29,7 @@ module Framer.Motion
   , prop
   , Drag
   , DragMomentum
+  , button
   , dragMomentum
   , DragPropagation
   , DragElastic
@@ -63,13 +79,13 @@ import Prelude
 import Data.Nullable (Nullable)
 import Data.Symbol (class IsSymbol, SProxy, reflectSymbol)
 import Effect (Effect)
-import Effect.Uncurried (EffectFn2, mkEffectFn2)
+import Effect.Uncurried (EffectFn1, EffectFn2, mkEffectFn1, mkEffectFn2)
 import Foreign.Object (Object)
 import Heterogeneous.Mapping (class HMapWithIndex, class MappingWithIndex, hmapWithIndex)
 import Literals.Undefined (Undefined)
 import Prim.Row (class Nub, class Union)
 import React.Basic (JSX, ReactComponent)
-import React.Basic.DOM (CSS, Props_div, Props_h1, css)
+import React.Basic.DOM (CSS, Props_div, Props_h1, Props_button, css)
 import React.Basic.DOM.Internal (SharedSVGProps)
 import React.Basic.DOM.SVG (Props_svg, Props_rect, Props_path)
 import React.Basic.Events (EventHandler)
@@ -84,6 +100,8 @@ import Web.Event.Internal.Types (Event)
 import Yoga.Block.Internal (Id)
 
 foreign import divImpl ∷ ∀ a. ReactComponent { | a }
+
+foreign import buttonImpl ∷ ∀ a. ReactComponent { | a }
 
 foreign import h1Impl ∷ ∀ a. ReactComponent { | a }
 
@@ -171,14 +189,63 @@ type OnDragEnd =
 type OnDrag =
   (EffectFn2 Event PanInfo Unit |+| Undefined)
 
+type WhileTap =
+  TargetAndTransition |+| String |+| Undefined
+
+type OnTap =
+  (EffectFn2 Event TapInfo Unit |+| Undefined)
+
+type OnTapStart =
+  (EffectFn2 Event TapInfo Unit |+| Undefined)
+
+type OnTapEnd =
+  (EffectFn2 Event TapInfo Unit |+| Undefined)
+
+type OnTapCancel =
+  (EffectFn2 Event TapInfo Unit |+| Undefined)
+
+onTapStart ∷ (Event -> TapInfo -> Effect Unit) -> OnTapStart
+onTapStart = cast <<< toEffectFn
+
+onTapEnd ∷ (Event -> TapInfo -> Effect Unit) -> OnTapEnd
+onTapEnd = cast <<< toEffectFn
+
+onTap ∷ (Event -> TapInfo -> Effect Unit) -> OnTap
+onTap fn2 = cast (mkEffectFn2 fn2)
+
+onTapCancel ∷ (Event -> TapInfo -> Effect Unit) -> OnTap
+onTapCancel fn2 = cast (mkEffectFn2 fn2)
+
+type TapInfo =
+  { x ∷ Number, y ∷ Number }
+
+-- Can contain "transition" and "transitionEnd"
+type TargetAndTransition =
+  CSS
+
 type DragPropagation =
   Boolean |+| Undefined
 
+whileTap ∷ ∀ c. Castable c WhileTap => c -> WhileTap
+whileTap = cast
+
+class EffectFnMaker fn effectFn | fn -> effectFn where
+  toEffectFn ∷ fn -> effectFn
+
+instance callbackableEffectFn2 ∷ EffectFnMaker (a -> b -> Effect c) (EffectFn2 a b c) where
+  toEffectFn = mkEffectFn2
+
+instance callbackableEffectFn1 ∷ EffectFnMaker (a -> Effect b) (EffectFn1 a b) where
+  toEffectFn = mkEffectFn1
+
+callback ∷ ∀ a c f. Castable c a => EffectFnMaker f c => f -> a
+callback = cast <<< toEffectFn
+
 onDragStart ∷ (Event -> PanInfo -> Effect Unit) -> OnDragStart
-onDragStart fn2 = cast (mkEffectFn2 fn2)
+onDragStart = cast <<< toEffectFn
 
 onDragEnd ∷ (Event -> PanInfo -> Effect Unit) -> OnDragEnd
-onDragEnd fn2 = cast (mkEffectFn2 fn2)
+onDragEnd = cast <<< toEffectFn
 
 onDrag ∷ (Event -> PanInfo -> Effect Unit) -> OnDrag
 onDrag fn2 = cast (mkEffectFn2 fn2)
@@ -198,6 +265,11 @@ type MotionPropsF f r =
   , transition ∷ f Transition
   , layout ∷ f Layout
   , layoutId ∷ f String |+| Undefined
+  , whileTap ∷ f WhileTap
+  , onTap ∷ f OnTap
+  , onTapStart ∷ f OnTapStart
+  , onTapEnd ∷ f OnTapEnd
+  , onTapCancel ∷ f OnTapCancel
   , exit ∷ f Exit
   | r
   )
@@ -248,6 +320,9 @@ makeVariantLabels = hmapWithIndex MakeVariantLabel
 
 div ∷ ∀ attrs attrs_. Union attrs attrs_ (MotionProps + Props_div) => ReactComponent { | attrs }
 div = divImpl
+
+button ∷ ∀ attrs attrs_. Union attrs attrs_ (MotionProps + Props_button) => ReactComponent { | attrs }
+button = buttonImpl
 
 svg ∷ ∀ attrs attrs_. Union attrs attrs_ (MotionProps + (SharedSVGProps Props_svg)) => ReactComponent { | attrs }
 svg = svgImpl

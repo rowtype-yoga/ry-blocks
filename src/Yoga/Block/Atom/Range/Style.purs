@@ -2,7 +2,6 @@ module Yoga.Block.Atom.Range.Style where
 
 import Yoga.Prelude.Style
 import Data.Interpolate (i)
-import React.Basic.Emotion (inlineBlock)
 import Yoga.Block.Container.Style (colour)
 
 type Props f r =

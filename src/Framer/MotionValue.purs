@@ -2,7 +2,7 @@ module MotionValue where
 
 import Prelude
 import Effect (Effect)
-import Effect.Uncurried (EffectFn1, runEffectFn1)
+import Effect.Uncurried (EffectFn1, mkEffectFn1, runEffectFn1)
 import React.Basic.Hooks (Hook, unsafeHook)
 
 foreign import data MotionValue ∷ Type -> Type
@@ -21,9 +21,14 @@ setButDoNotRender v = setImpl v false
 set ∷ ∀ a. a -> MotionValue a -> Effect Unit
 set v = setImpl v true
 
-foreign import isAnimating ∷ ∀ a. (MotionValue a) -> Effect Boolean
+foreign import isAnimating ∷ ∀ a. MotionValue a -> Effect Boolean
 
-foreign import stop ∷ ∀ a. (MotionValue a) -> Effect Unit
+foreign import stop ∷ ∀ a. MotionValue a -> Effect Unit
+
+foreign import onChangeImpl ∷ ∀ a. EffectFn1 a Unit -> MotionValue a -> Effect (Effect Unit)
+
+onChange ∷ ∀ a. (a -> Effect Unit) -> MotionValue a -> Effect (Effect Unit)
+onChange = mkEffectFn1 >>> onChangeImpl
 
 useMotionValue ∷ ∀ a. a -> Hook (UseMotionValue a) (MotionValue a)
 useMotionValue initialValue =

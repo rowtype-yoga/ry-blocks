@@ -41,7 +41,7 @@ zip (TwoOrMore as) (TwoOrMore bs) =
     }
 
 findIndex ∷ ∀ a. (a -> Boolean) -> TwoOrMore a -> Maybe Int
-findIndex f (TwoOrMore { first, second, rest }) =
+findIndex f (TwoOrMore { first, second, rest }) = do
   if f first then
     Just 0
   else

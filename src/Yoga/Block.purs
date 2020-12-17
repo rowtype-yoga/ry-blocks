@@ -22,7 +22,7 @@ centre = Centre.component
 cluster ∷ ∀ p q. Union p q Cluster.Props => ReactComponent { | p }
 cluster = Cluster.component
 
-container ∷ ReactComponent Container.Props
+container ∷ ∀ p q. Union p q Container.Props => ReactComponent { | p }
 container = Container.component
 
 imposter ∷ ∀ p q. Union p q Imposter.Props => ReactComponent { | p }
@@ -34,7 +34,7 @@ modal = Modal.component
 range ∷ ∀ p q. Union p q Range.Props => ReactComponent { | p }
 range = Range.component
 
-segmented ∷ ReactComponent Segmented.ComponentProps
+segmented ∷ ReactComponent Segmented.Props
 segmented = Segmented.component
 
 sidebar ∷ ∀ p q. Union p q Sidebar.Props => ReactComponent { | p }

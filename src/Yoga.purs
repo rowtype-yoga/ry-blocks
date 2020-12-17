@@ -28,6 +28,7 @@ el_ x props = Hooks.element x props
 styled ∷
   ∀ props.
   Lacks "children" props =>
+  Lacks "keyp" props =>
   ReactComponent { className ∷ String, children ∷ Array JSX | props } ->
   { className ∷ String, css ∷ Emotion.Style | props } -> Array JSX -> JSX
 styled x props children = Emotion.element x (Record.insert (SProxy ∷ SProxy "children") children props)
