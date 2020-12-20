@@ -11,6 +11,7 @@ module Yoga.Prelude.Default
   , module Data.Foldable
   , module Data.FoldableWithIndex
   , module Data.FunctorWithIndex
+  , runMaybeT_
   ) where
 
 import Prelude
@@ -25,3 +26,6 @@ import Data.Maybe (Maybe(..), fromMaybe, fromMaybe', isJust, maybe)
 import Data.Monoid (guard)
 import Effect (Effect)
 import Effect.Class (liftEffect)
+
+runMaybeT_ ∷ ∀ f a. Functor f => MaybeT f a -> f Unit
+runMaybeT_ = void <<< runMaybeT

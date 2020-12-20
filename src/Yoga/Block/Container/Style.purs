@@ -50,7 +50,7 @@ mkGlobal maybeMode =
     , body:
       nested
         $ css
-            { fontFamily: str "var(--mainFont)"
+            { fontFamily: str "var(--main-font)"
             , background: str colour.background0
             , color: str colour.text
             , margin: str "0"
@@ -61,7 +61,7 @@ mkGlobal maybeMode =
             Just LightMode -> lightModeStyle
     , "pre,code":
       nest
-        { fontFamily: str "var(--monoFont)"
+        { fontFamily: str "var(--mono-font)"
         }
     , "h1,h2,h3,h4,h5":
       nest
@@ -76,7 +76,6 @@ mkGlobal maybeMode =
         $ css
             { boxSizing: str "inherit"
             }
-    , input
     , form:
       nested
         $ css
@@ -155,7 +154,7 @@ defaultColours =
     -- highlight = Color.rgb 0x10 0x45 0x4A
     darkBg = Color.rgb 0 0 0
 
-    lightBg = Color.rgb 255 255 255
+    lightBg = Color.rgb 250 250 250
 
 type FlatTheme a =
   { background0 ∷ a
@@ -262,22 +261,8 @@ variables =
 fontVariables ∷ { main ∷ String, mono ∷ String } -> Style
 fontVariables { main, mono } =
   css
-    { "--mainFont": str $ main <> """, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol""""
-    , "--monoFont": str $ mono <> ", monospace, monospace"
-    }
-
-input ∷ StyleProperty
-input =
-  nest
-    { backgroundColor: "var(--input-bg-col)" # str
-    , padding: "5px" # str
-    , border: str "1px solid var(--bg-col)"
-    , borderRadius: "5px" # str
-    , fontSize: "12px" # str
-    , paddingBottom: "4px" # str
-    , paddingLeft: "8px" # str
-    , "&:disabled": nest { color: str "var(--input-text-col-disabled)" }
-    , "&:focus": nested inputFocus
+    { "--main-font": str $ main <> """, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol""""
+    , "--mono-font": str $ mono <> ", monospace, monospace"
     }
 
 -- Standalone style for storybook

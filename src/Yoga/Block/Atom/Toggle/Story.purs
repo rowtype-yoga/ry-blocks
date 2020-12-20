@@ -10,6 +10,7 @@ import React.Basic.DOM as R
 import React.Basic.Hooks as React
 import Yoga.Block as Block
 import Yoga.Block.Atom.Toggle as Toggle
+import Yoga.Block.Atom.Toggle.Types (TogglePosition(..))
 import Yoga.Block.Container.Style (DarkOrLightMode(..))
 
 default ∷
@@ -35,30 +36,32 @@ toggle = do
   where
     mkBasicExample =
       React.reactComponent "Toggle example" \p -> React.do
-        isOn /\ turnOnOrOff <- React.useState' false
+        togglePosition /\ setTogglePosition <- React.useState' ToggleIsRight
         pure
           $ element Toggle.component
-              { value: isOn
-              , onToggle: turnOnOrOff
+              { togglePosition
+              , setTogglePosition
               }
 
     mkDarkLightToggle =
       React.reactComponent "Toggle dark night example" \p -> React.do
-        isOn /\ turnOnOrOff <- React.useState' false
+        togglePosition /\ setTogglePosition <- React.useState' ToggleIsLeft
         theme /\ setTheme <- React.useState' Nothing
         let
           content =
             element Toggle.component
-              { value: isOn
-              , onToggle:
-                \b -> do
-                  turnOnOrOff b
-                  setTheme (Just if b then DarkMode else LightMode)
-              , on: R.text "🌒"
-              , off: R.text "🌞"
-              , backgroundOn:
-                Color.hsl 205.0 1.0 0.93
-              , backgroundOff:
+              { togglePosition: togglePosition
+              , setTogglePosition:
+                \newTogglePosition -> do
+                  setTogglePosition newTogglePosition
+                  setTheme case newTogglePosition of
+                    ToggleIsRight -> Just DarkMode
+                    ToggleIsLeft -> Just LightMode
+              , left: R.text "🌒"
+              , right: R.text "🌞"
+              , backgroundLeft:
+                Color.hsl 205.0 1.0 0.83
+              , backgroundRight:
                 Color.hsl 260.0 0.7 0.45
               }
         pure

@@ -18,6 +18,7 @@ You can edit this file as you like.
   , "routing-duplex"
   , "spec-discovery"
   , "untagged-union"
+  , "web-uievents"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]

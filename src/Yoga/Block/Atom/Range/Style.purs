@@ -6,8 +6,6 @@ import Yoga.Block.Container.Style (colour)
 
 type Props f r =
   ( css ∷ f Style
-  , space ∷ f StyleProperty
-  , splitAfter ∷ f Int
   | r
   )
 

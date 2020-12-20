@@ -7,42 +7,10 @@ import Effect.Uncurried (EffectFn3, runEffectFn3)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Prim.Row (class Union)
-import React.Basic.DOM (CSS)
-import Unsafe.Coerce (unsafeCoerce)
-import Yoga.Prelude.View (Hook, NodeRef, unsafeHook)
+import Yoga.Prelude.View (Hook, unsafeHook)
+import React.Basic.Popper.Types (Options, PopperData, PopperElement, ReferenceElement)
 
 foreign import data UsePopper ∷ Type -> Type -> Type
-
-type ReferenceElement =
-  NodeRef
-
-type PopperElement =
-  NodeRef
-
-type ArrowElement =
-  NodeRef
-
-type DataAttributes =
-  { popper ∷ Object String, arrow ∷ Object String }
-
-type Styles =
-  { popper ∷ CSS, arrow ∷ CSS }
-
-type PopperData =
-  { styles ∷ Styles, attributes ∷ DataAttributes }
-
-foreign import data Modifier ∷ Type
-
-modifierArrow ∷ ArrowElement -> Modifier
-modifierArrow element = unsafeCoerce { name: "arrow", options: { element } }
-
-modifierOffset ∷ { x ∷ Number, y ∷ Number } -> Modifier
-modifierOffset { x, y } = unsafeCoerce { name: "offset", options: { offset: [ x, y ] } }
-
-type Options =
-  ( modifiers ∷ Array Modifier
-  , strategy ∷ String
-  )
 
 foreign import usePopperImpl ∷ ∀ opts. EffectFn3 ReferenceElement PopperElement { | opts } PopperData
 

@@ -5,8 +5,8 @@ import Yoga.Block.Container.Style (colour)
 
 type Props f r =
   ( css ∷ f Style
-  , backgroundOn ∷ f Color
-  , backgroundOff ∷ f Color
+  , backgroundLeft ∷ f Color
+  , backgroundRight ∷ f Color
   | r
   )
 
@@ -23,17 +23,17 @@ button =
     , padding: _0
     }
 
-theToggle ∷ ∀ p. { | Props OptionalProp p } -> Style
-theToggle props =
+theToggle ∷ Style
+theToggle =
   css
-    { width: var "--s2"
-    , height: var "--s2"
+    { width: str "calc(var(--s2) * 0.8)"
+    , height: str "calc(var(--s2) * 0.8)"
     , background: str $ colour.interfaceBackground
     , border: none
     , borderRadius: str $ "calc(var(--s2) / 2)"
     , position: absolute
-    , top: str "-1px"
-    , left: _0
+    , top: str "3px"
+    , left: str "3px"
     , margin: _0
     , boxShadow: str "0 0.5px 3px rgba(0,0,0,0.50)"
     }
@@ -46,25 +46,33 @@ toggleTextContainer =
     , fontWeight: str "bold"
     , position: absolute
     , top: _0
+    , fontSize: str "calc(0.6 * var(--s1))"
     , lineHeight: var "--s2"
     , height: var "--s2"
     , display: flex
     }
+
+successTextColour ∷ StyleProperty
+successTextColour = str colour.successText
+
+disabledTextColour ∷ StyleProperty
+disabledTextColour = str colour.interfaceTextDisabled
 
 toggleText ∷ Style
 toggleText =
   css
     { textAlign: str "left"
     , margin: _0
+    , padding: _0
     , width: str "50%"
     , height: str "100%"
     , display: flex
     , justifyContent: center
     , alignItems: center
-    , color: str colour.interfaceTextDisabled
-    , "&:first-child":
+    , color: disabledTextColour
+    , "& > *":
       nest
-        { color: str colour.successText
+        { color: successTextColour
         }
     }
 

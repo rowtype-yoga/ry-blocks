@@ -1,13 +1,15 @@
 module Yoga.Block.Atom.Range.View (component, Props, PropsF) where
 
 import Yoga.Prelude.View
-import Yoga.Block.Atom.Range.Style as Style
 import Data.Int as Int
 import Foreign.Object as Object
+import Framer.Motion as M
 import React.Basic.DOM (css)
 import React.Basic.DOM as R
 import React.Basic.DOM.Events as Event
 import React.Basic.Hooks as React
+import Yoga.Block.Atom.Range.Style as Style
+import Yoga.Block.Atom.Tooltip as Tooltip
 
 type PropsF f =
   ( className ∷ f String
@@ -58,11 +60,11 @@ rawComponent =
                     { className: "ry-range-focus-circle"
                     , css: Style.focusCircle
                     }
-            , emotionInput ref (props { max = show max, min = show min, value = show value })
+            , emotionInput
+                ref
+                (props { max = show max, min = show min, value = show value })
                 { className: "ry-range-thumb " <>? props.className
                 , css: Style.range props <> guard props.disabled Style.inputDisabled <>? props.css
-                , style: props.style
-                , value: show value
                 , type: "range"
                 , onChange: handler Event.targetValue ((_ >>= Int.fromString) >>> (foldMap setValue))
                 }

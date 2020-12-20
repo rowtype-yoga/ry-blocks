@@ -6,6 +6,14 @@ module Framer.Motion
   , callback
   , class EffectFnMaker
   , toEffectFn
+  , OnHoverStart
+  , onHoverStart
+  , customProp
+  , OnHoverEnd
+  , onHoverEnd
+  , whileHover
+  , WhileHover
+  , EventInfo
   , OnTap
   , TapInfo
   , OnTapStart
@@ -80,6 +88,7 @@ import Data.Nullable (Nullable)
 import Data.Symbol (class IsSymbol, SProxy, reflectSymbol)
 import Effect (Effect)
 import Effect.Uncurried (EffectFn1, EffectFn2, mkEffectFn1, mkEffectFn2)
+import Foreign (Foreign, unsafeToForeign)
 import Foreign.Object (Object)
 import Heterogeneous.Mapping (class HMapWithIndex, class MappingWithIndex, hmapWithIndex)
 import Literals.Undefined (Undefined)
@@ -97,6 +106,7 @@ import Untagged.Castable (class Castable, cast)
 import Untagged.Union (type (|+|))
 import Web.DOM (Node)
 import Web.Event.Internal.Types (Event)
+import Web.UIEvent.MouseEvent (MouseEvent)
 import Yoga.Block.Internal (Id)
 
 foreign import divImpl ∷ ∀ a. ReactComponent { | a }
@@ -216,6 +226,28 @@ onTap fn2 = cast (mkEffectFn2 fn2)
 onTapCancel ∷ (Event -> TapInfo -> Effect Unit) -> OnTap
 onTapCancel fn2 = cast (mkEffectFn2 fn2)
 
+type EventInfo =
+  { point ∷ { x ∷ Number, y ∷ Number }
+  }
+
+type WhileHover =
+  (EffectFn2 MouseEvent EventInfo Unit |+| Undefined)
+
+type OnHoverEnd =
+  (EffectFn2 MouseEvent EventInfo Unit |+| Undefined)
+
+type OnHoverStart =
+  (EffectFn2 MouseEvent EventInfo Unit |+| Undefined)
+
+onHoverStart ∷ (MouseEvent -> EventInfo -> Effect Unit) -> OnHoverStart
+onHoverStart = cast <<< toEffectFn
+
+onHoverEnd ∷ (MouseEvent -> EventInfo -> Effect Unit) -> OnHoverEnd
+onHoverEnd = cast <<< toEffectFn
+
+whileHover ∷ ∀ c. Castable c WhileHover => c -> WhileHover
+whileHover = cast
+
 type TapInfo =
   { x ∷ Number, y ∷ Number }
 
@@ -250,9 +282,13 @@ onDragEnd = cast <<< toEffectFn
 onDrag ∷ (Event -> PanInfo -> Effect Unit) -> OnDrag
 onDrag fn2 = cast (mkEffectFn2 fn2)
 
+customProp ∷ ∀ a. a -> Foreign
+customProp = unsafeToForeign
+
 type MotionPropsF f r =
   ( initial ∷ f Initial
   , animate ∷ f Animate
+  , custom ∷ f Foreign
   , drag ∷ f Drag
   , dragMomentum ∷ f DragMomentum
   , dragElastic ∷ f DragElastic
@@ -270,6 +306,9 @@ type MotionPropsF f r =
   , onTapStart ∷ f OnTapStart
   , onTapEnd ∷ f OnTapEnd
   , onTapCancel ∷ f OnTapCancel
+  , whileHover ∷ f WhileHover
+  , onHoverStart ∷ f OnHoverStart
+  , onHoverEnd ∷ f OnHoverEnd
   , exit ∷ f Exit
   | r
   )

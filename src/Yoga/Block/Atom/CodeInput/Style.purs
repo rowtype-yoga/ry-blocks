@@ -21,7 +21,7 @@ codeInput props = styles <>? cast props.css
         , background: str colour.inputBackground
         , border: str $ i "solid 1px " colour.inputBorder
         , borderRadius: str "var(--s-2)"
-        , fontFamily: str "var(--monoFont)"
+        , fontFamily: str "var(--mono-font)"
         , fontSize: str "var(--s0)"
         , lineHeight: str "var(--s0)"
         , width: str $ i "calc(" (cast props.maxLength ?|| 10) "ch + 4.3 * var(--s-5))"

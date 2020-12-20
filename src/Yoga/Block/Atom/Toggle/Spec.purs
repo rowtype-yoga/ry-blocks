@@ -2,6 +2,7 @@ module Yoga.Block.Atom.Toggle.Spec where
 
 import Yoga.Prelude.Spec
 import Yoga.Block.Atom.Toggle as Toggle
+import Yoga.Block.Atom.Toggle.Types (TogglePosition(..))
 
 spec ∷ Spec Unit
 spec =
@@ -10,6 +11,6 @@ spec =
       it "renders without errors" do
         void
           $ renderComponent Toggle.component
-              { value: true
-              , onToggle: mempty
+              { togglePosition: ToggleIsLeft
+              , setTogglePosition: mempty
               }
