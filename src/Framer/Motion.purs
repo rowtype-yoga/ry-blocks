@@ -7,7 +7,10 @@ module Framer.Motion
   , class EffectFnMaker
   , toEffectFn
   , OnHoverStart
+  , span
   , onHoverStart
+  , LayoutId
+  , layoutId
   , customProp
   , OnHoverEnd
   , onHoverEnd
@@ -94,7 +97,7 @@ import Heterogeneous.Mapping (class HMapWithIndex, class MappingWithIndex, hmapW
 import Literals.Undefined (Undefined)
 import Prim.Row (class Nub, class Union)
 import React.Basic (JSX, ReactComponent)
-import React.Basic.DOM (CSS, Props_div, Props_h1, Props_button, css)
+import React.Basic.DOM (CSS, Props_button, Props_div, Props_h1, Props_span, css)
 import React.Basic.DOM.Internal (SharedSVGProps)
 import React.Basic.DOM.SVG (Props_svg, Props_rect, Props_path)
 import React.Basic.Events (EventHandler)
@@ -110,6 +113,8 @@ import Web.UIEvent.MouseEvent (MouseEvent)
 import Yoga.Block.Internal (Id)
 
 foreign import divImpl ∷ ∀ a. ReactComponent { | a }
+
+foreign import spanImpl ∷ ∀ a. ReactComponent { | a }
 
 foreign import buttonImpl ∷ ∀ a. ReactComponent { | a }
 
@@ -285,6 +290,12 @@ onDrag fn2 = cast (mkEffectFn2 fn2)
 customProp ∷ ∀ a. a -> Foreign
 customProp = unsafeToForeign
 
+type LayoutId =
+  String |+| Undefined
+
+layoutId ∷ ∀ a. Castable a LayoutId => a -> LayoutId
+layoutId = cast
+
 type MotionPropsF f r =
   ( initial ∷ f Initial
   , animate ∷ f Animate
@@ -300,7 +311,7 @@ type MotionPropsF f r =
   , variants ∷ f Variants
   , transition ∷ f Transition
   , layout ∷ f Layout
-  , layoutId ∷ f String |+| Undefined
+  , layoutId ∷ f LayoutId
   , whileTap ∷ f WhileTap
   , onTap ∷ f OnTap
   , onTapStart ∷ f OnTapStart
@@ -359,6 +370,9 @@ makeVariantLabels = hmapWithIndex MakeVariantLabel
 
 div ∷ ∀ attrs attrs_. Union attrs attrs_ (MotionProps + Props_div) => ReactComponent { | attrs }
 div = divImpl
+
+span ∷ ∀ attrs attrs_. Union attrs attrs_ (MotionProps + Props_span) => ReactComponent { | attrs }
+span = spanImpl
 
 button ∷ ∀ attrs attrs_. Union attrs attrs_ (MotionProps + Props_button) => ReactComponent { | attrs }
 button = buttonImpl

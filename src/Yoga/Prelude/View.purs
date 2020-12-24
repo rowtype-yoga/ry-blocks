@@ -12,8 +12,6 @@ module Yoga.Prelude.View
   , module Web.HTML.HTMLElement
   , module Data.Nullable
   , module Untagged.Castable
-  , NodeRef
-  , getBoundingBoxFromRef
   ) where
 
 import Yoga.Prelude.Default
@@ -27,16 +25,5 @@ import Type.Row (type (+))
 import Untagged.Castable (cast)
 import Web.DOM (Node)
 import Web.HTML.HTMLElement (HTMLElement, DOMRect, blur, focus, getBoundingClientRect)
-import Web.HTML.HTMLElement as HTMLElement
 import Yoga (el, el_, styled, styledLeaf, yogaElement)
-import Yoga.Block.Internal (DivProps, DivPropsF, Id, InputProps, InputPropsF, OptionalProp(..), _0, appendIfDefined, createRef, dangerous, emotionDiv, emotionInput, getOr, getOrFlipped, ifTrue, isTruthy, maybeToOp, mkForwardRefComponent, mkForwardRefComponentEffect, opToMaybe, unsafeDiv, unsafeEmotion, unsafeUnOptional, (<>?), (?||))
-
-type NodeRef =
-  Ref (Nullable Node)
-
-getBoundingBoxFromRef ∷ Ref (Nullable Node) -> Effect (Maybe DOMRect)
-getBoundingBoxFromRef itemRef =
-  runMaybeT do
-    node <- MaybeT $ readRefMaybe itemRef
-    htmlElement <- MaybeT $ pure $ HTMLElement.fromNode node
-    lift $ getBoundingClientRect htmlElement
+import Yoga.Block.Internal (DivProps, DivPropsF, Id, InputProps, InputPropsF, NodeRef, OptionalProp(..), _0, appendIfDefined, createRef, dangerous, emotionDiv, emotionInput, forwardedRefAsMaybe, getBoundingBoxFromRef, getHTMLElementFromRef, getOr, getOrFlipped, ifTrue, isTruthy, maybeToOp, mkForwardRefComponent, mkForwardRefComponentEffect, opToMaybe, unsafeDiv, unsafeEmotion, unsafeMergeSecond, unsafeUnMaybe, unsafeUnOptional, unsafeUnionDroppingUndefined, (<>?), (?||), setOrDelete)

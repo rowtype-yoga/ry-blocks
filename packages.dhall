@@ -119,12 +119,12 @@ let additions =
 
 
 let upstream =
-      https://github.com/purescript/package-sets/releases/download/psc-0.13.8-20201217/packages.dhall sha256:f46d45e29977f3b57717b56d20a5ceac12532224516eea3012a4688f22ac1539
+      https://github.com/purescript/package-sets/releases/download/psc-0.13.8-20201222/packages.dhall sha256:620d0e4090cf1216b3bcbe7dd070b981a9f5578c38e810bbd71ece1794bfe13b
 
 let overrides =
-      { spec-discovery = upstream.spec-discovery // { version = "master" }
-      , react-basic = upstream.react-basic // { version = "main" }
+      { react-basic = upstream.react-basic // { version = "main" }
       , react-basic-hooks = upstream.react-basic-hooks // { version = "main " }
+      , react-testing-library = upstream.react-testing-library // { version = "main" }
       }
 
 let additions =
@@ -165,27 +165,6 @@ let additions =
           ]
         , repo = "https://github.com/jvliwanag/purescript-untagged-union.git"
         , version = "master"
-        }
-      , react-testing-library =
-        { dependencies =
-          [ "aff-promise"
-          , "console"
-          , "debug"
-          , "effect"
-          , "foreign"
-          , "foreign-object"
-          , "psci-support"
-          , "react-basic-dom"
-          , "react-basic-hooks"
-          , "remotedata"
-          , "run"
-          , "simple-json"
-          , "spec"
-          , "spec-discovery"
-          ]
-        , repo =
-            "https://github.com/i-am-the-slime/purescript-react-testing-library.git"
-        , version = "7726ad443ad8c67f94932ab8934640df0ea39fb2"
         }
       , react-basic-dom =
         { dependencies =

@@ -1,5 +1,5 @@
 for f in (ls src/Yoga/Block/Icon/SVG/*.svg)
-  npx svgo -i $f
+  svgo -i $f
 end
 node convert-svgs.js
 for f in (ls src/Yoga/Block/Icon/SVG/*.purs)

@@ -19,6 +19,9 @@ span props =
   css
     { "--stroke-colour": (props.stroke <|> props.colour) ?|| (str colour.text)
     , "--fill-colour": (props.fill <|> props.colour) ?|| (str "transparent")
+    , display: inlineFlex
+    , justifyContent: center
+    , alignItems: center
     , "& > svg":
       nest
         { width: (props.width <|> props.size) ?|| (str "auto")

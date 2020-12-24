@@ -3,8 +3,12 @@ module Yoga.Block.Internal.OptionalProp where
 import Prelude
 import Control.Alt (class Alt, (<|>))
 import Data.Foldable (class Foldable, foldMap, foldl, foldr)
-import Data.Maybe (Maybe, maybe)
+import Data.Maybe (Maybe(..), maybe)
 import Data.Newtype (class Newtype)
+import Data.Symbol (class IsSymbol, SProxy, reflectSymbol)
+import Prim.Row (class Cons)
+import Record (set)
+import Record.Unsafe (unsafeDelete)
 import Unsafe.Coerce (unsafeCoerce)
 import Untagged.Castable (class Castable)
 import Untagged.Union (UndefinedOr, defined, fromUndefinedOr, maybeToUor, uorToMaybe)
@@ -14,8 +18,23 @@ type Id a =
 
 newtype OptionalProp a = OptionalProp (UndefinedOr a)
 
+setOrDelete ∷
+  ∀ r a rNoA key.
+  IsSymbol key =>
+  Cons key a rNoA r =>
+  SProxy key ->
+  OptionalProp a ->
+  { | r } ->
+  { | r }
+setOrDelete key v = case opToMaybe v of
+  Nothing -> unsafeDelete (reflectSymbol key)
+  Just v' -> set key v'
+
 unsafeUnOptional ∷ ∀ a. OptionalProp a -> a
 unsafeUnOptional = unsafeCoerce
+
+unsafeUnMaybe ∷ ∀ a. Maybe a -> a
+unsafeUnMaybe = maybeToOp >>> unsafeUnOptional
 
 opToMaybe ∷ ∀ a. OptionalProp a -> Maybe a
 opToMaybe (OptionalProp x) = uorToMaybe x
@@ -44,7 +63,7 @@ instance functorOptionalProp ∷ Functor OptionalProp where
 instance altOptionalProp ∷ Alt OptionalProp where
   alt op1 op2 = maybeToOp $ (opToMaybe op1) <|> (opToMaybe op2)
 
-instance coercibleOptionalProp ∷ Castable a (OptionalProp a)
+instance castableOptionalProp ∷ Castable a (OptionalProp a)
 
 getOr ∷ ∀ a. a -> OptionalProp a -> a
 getOr default (OptionalProp o) = fromUndefinedOr default o

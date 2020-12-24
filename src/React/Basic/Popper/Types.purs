@@ -37,4 +37,5 @@ modifierOffset { x, y } = unsafeCoerce { name: "offset", options: { offset: [ x,
 type Options =
   ( modifiers ∷ Array Modifier
   , strategy ∷ String
+  , placement ∷ String
   )

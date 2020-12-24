@@ -1,6 +1,7 @@
 module Yoga.Block.Internal
   ( mkForwardRefComponent
   , mkForwardRefComponentEffect
+  , forwardedRefAsMaybe
   , unsafeEmotion
   , unsafeDiv
   , dangerous
@@ -8,6 +9,7 @@ module Yoga.Block.Internal
   , DivPropsF
   , InputProps
   , InputPropsF
+  , NodeRef
   , emotionDiv
   , emotionInput
   , module Yoga.Block.Internal.OptionalProp
@@ -15,12 +17,18 @@ module Yoga.Block.Internal
   , unsafeUnionDroppingUndefined
   , unsafeMergeSecond
   , createRef
+  , getBoundingBoxFromRef
+  , getHTMLElementFromRef
   ) where
 
 import Prelude
+import Control.Monad.Maybe.Trans (MaybeT(..), runMaybeT)
 import Data.Array as Array
 import Data.Function.Uncurried (Fn3, runFn3)
+import Data.Maybe (Maybe)
 import Data.Nullable (Nullable)
+import Data.Nullable as Nullable
+import Data.Traversable (for)
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object (Object)
@@ -31,12 +39,16 @@ import React.Basic.DOM (CSS, unsafeCreateDOMComponent)
 import React.Basic.Emotion (Style)
 import React.Basic.Emotion as E
 import React.Basic.Events (EventHandler)
-import React.Basic.Hooks (JSX, ReactComponent, Ref, Render)
+import React.Basic.Hooks (JSX, ReactComponent, Ref, Render, readRefMaybe)
 import Record.Extra (class Keys, keys)
 import Type.Data.Row (RProxy(..))
+import Unsafe.Coerce (unsafeCoerce)
+import Untagged.Union (UndefinedOr, uorToMaybe)
 import Web.DOM (Node)
+import Web.HTML.HTMLElement (DOMRect, HTMLElement, getBoundingClientRect)
+import Web.HTML.HTMLElement as HTMLElement
 import Yoga.Block.Internal.CSS (_0)
-import Yoga.Block.Internal.OptionalProp (Id, OptionalProp(..), appendIfDefined, getOr, getOrFlipped, ifTrue, isTruthy, maybeToOp, opToMaybe, unsafeUnOptional, (<>?), (?||))
+import Yoga.Block.Internal.OptionalProp (Id, OptionalProp(..), appendIfDefined, getOr, getOrFlipped, ifTrue, isTruthy, maybeToOp, opToMaybe, setOrDelete, unsafeUnMaybe, unsafeUnOptional, (<>?), (?||))
 
 foreign import mkForwardRefComponent ∷
   ∀ inputProps props a hooks.
@@ -51,6 +63,26 @@ foreign import mkForwardRefComponentEffect ∷
   Effect (ReactComponent { | props })
 
 foreign import createRef ∷ ∀ a. Effect (Ref a)
+
+type NodeRef =
+  Ref (Nullable Node)
+
+getBoundingBoxFromRef ∷ Ref (Nullable Node) -> Effect (Maybe DOMRect)
+getBoundingBoxFromRef itemRef = do
+  htmlElem <- getHTMLElementFromRef itemRef
+  for htmlElem getBoundingClientRect
+
+getHTMLElementFromRef ∷ Ref (Nullable Node) -> Effect (Maybe HTMLElement)
+getHTMLElementFromRef itemRef =
+  runMaybeT do
+    node <- MaybeT $ readRefMaybe itemRef
+    MaybeT $ pure $ HTMLElement.fromNode node
+
+forwardedRefAsMaybe ∷ ∀ a. Ref a -> Maybe (Ref a)
+forwardedRefAsMaybe r = safelyWrapped # uorToMaybe >>= Nullable.toMaybe
+  where
+    safelyWrapped ∷ UndefinedOr (Nullable (Ref a))
+    safelyWrapped = unsafeCoerce r
 
 foreign import unsafeUnionDroppingUndefined ∷ ∀ r1 r2 r3. Record r1 -> Record r2 -> Record r3
 
