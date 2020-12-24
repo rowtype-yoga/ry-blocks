@@ -6,10 +6,6 @@ import React.Basic.Emotion as Emotion
 import React.Basic.Hooks (JSX, ReactComponent)
 import React.Basic.Hooks as Hooks
 import Record as Record
-import Untagged.Castable (class Castable, cast)
-
-yogaElement ∷ ∀ allProps givenProps. Castable givenProps (Record allProps) => ReactComponent (Record allProps) -> givenProps -> JSX
-yogaElement el' props = Hooks.element el' (cast props)
 
 el ∷
   ∀ props.

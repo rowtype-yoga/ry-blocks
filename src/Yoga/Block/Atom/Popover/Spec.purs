@@ -11,6 +11,6 @@ spec =
       it "renders without errors" do
         void
           $ renderComponent Popover.component
-              { theTip: R.text "Tip"
-              , target: R.text "Target"
+              { target: R.text "Target"
+              , children: [ R.text "hi"]
               }
