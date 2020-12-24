@@ -2,21 +2,24 @@ module Yoga.Block.Internal.OptionalProp where
 
 import Prelude
 import Control.Alt (class Alt, (<|>))
-import Data.Foldable (class Foldable, foldMap, foldl, foldr)
+import Data.Foldable (class Foldable, foldMap, foldl, foldr, for_)
 import Data.Maybe (Maybe(..), maybe)
 import Data.Newtype (class Newtype)
 import Data.Symbol (class IsSymbol, SProxy, reflectSymbol)
+import Effect.Uncurried (mkEffectFn1, runEffectFn1)
 import Prim.Row (class Cons)
+import React.Basic.Events (EventHandler)
 import Record (set)
 import Record.Unsafe (unsafeDelete)
 import Unsafe.Coerce (unsafeCoerce)
-import Untagged.Castable (class Castable)
+import Untagged.Castable (class Castable, cast)
 import Untagged.Union (UndefinedOr, defined, fromUndefinedOr, maybeToUor, uorToMaybe)
 
-type Id a =
-  a
+type Id a
+  = a
 
-newtype OptionalProp a = OptionalProp (UndefinedOr a)
+newtype OptionalProp a
+  = OptionalProp (UndefinedOr a)
 
 setOrDelete ∷
   ∀ r a rNoA key.
@@ -30,6 +33,18 @@ setOrDelete key v = case opToMaybe v of
   Nothing -> unsafeDelete (reflectSymbol key)
   Just v' -> set key v'
 
+asOptional :: forall a. a -> OptionalProp a
+asOptional = cast
+
+asMaybe :: forall a. a -> Maybe a
+asMaybe = asOptional >>> opToMaybe
+
+composeHandler :: EventHandler -> EventHandler -> EventHandler
+composeHandler handler propsHandler =
+  mkEffectFn1 \a -> do
+    for_ (propsHandler # asMaybe) $ flip runEffectFn1 a
+    for_ (handler # asMaybe) $ flip runEffectFn1 a -- not necessary but safer
+
 unsafeUnOptional ∷ ∀ a. OptionalProp a -> a
 unsafeUnOptional = unsafeCoerce
 
@@ -41,7 +56,6 @@ opToMaybe (OptionalProp x) = uorToMaybe x
 
 maybeToOp ∷ ∀ a. Maybe a -> OptionalProp a
 maybeToOp mb = OptionalProp (maybeToUor mb)
-
 derive instance ntOptionalProp ∷ Newtype (OptionalProp a) _
 
 instance semigroupOptionalProp ∷ Semigroup a => Semigroup (OptionalProp a) where

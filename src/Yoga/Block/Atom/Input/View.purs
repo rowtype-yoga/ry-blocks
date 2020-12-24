@@ -4,6 +4,7 @@ import Yoga.Prelude.View
 import Data.String.NonEmpty (NonEmptyString)
 import Data.String.NonEmpty as NonEmptyString
 import Data.Symbol (SProxy(..))
+import Effect.Uncurried (mkEffectFn1, runEffectFn1)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Framer.Motion as M
@@ -16,6 +17,7 @@ import Yoga.Block.Atom.Input.Style as Style
 import Yoga.Block.Atom.Input.Types (HTMLInput)
 import Yoga.Block.Atom.Input.Types as HTMLInput
 import Yoga.Block.Icon.SVG as SVGIcon
+import Yoga.Block.Internal.OptionalProp (asMaybe)
 
 type PropsF f
   = ( leading ∷ f JSX
@@ -132,6 +134,18 @@ rawComponent =
         maybePlaceholder = do
           given <- props.placeholder # cast # opToMaybe
           if isJust maybeLabelText && hasFocus then Just given else Nothing
+        onBlur =
+          handler preventDefault
+            ( const do
+                when hasFocus $ setHasFocus false
+                el <- getHTMLElementFromRef ref
+                let
+                  inputEl = InputElement.fromHTMLElement =<< el
+                for_ inputEl \ie -> do
+                  v <- InputElement.value ie
+                  setHasValue (v /= "")
+            )
+        onFocus = handler preventDefault (const $ unless hasFocus $ setHasFocus true)
         inputWrapper =
           div
             </* { className: "ry-input-wrapper"
@@ -150,18 +164,8 @@ rawComponent =
                   )
                   { className: "ry-input"
                   , css: Style.input props
-                  , onFocus: handler preventDefault (const $ unless hasFocus $ setHasFocus true)
-                  , onBlur:
-                    handler preventDefault
-                      ( const do
-                          when hasFocus $ setHasFocus false
-                          el <- getHTMLElementFromRef ref
-                          let
-                            inputEl = InputElement.fromHTMLElement =<< el
-                          for_ inputEl \ie -> do
-                            v <- InputElement.value ie
-                            setHasValue (v /= "")
-                      )
+                  , onFocus: composeHandler props.onFocus onFocus
+                  , onBlur: composeHandler props.onBlur onBlur
                   , _aria:
                     if props.label # opToMaybe # isJust then
                       aria # Object.insert "labelledby" labelId
