@@ -1,7 +1,6 @@
 module Yoga.Block.Atom.Tooltip.View (component, MandatoryProps, Props, PropsF) where
 
 import Yoga.Prelude.View
-import Debug.Trace (spy)
 import Effect.Aff (Milliseconds(..), delay)
 import Effect.Uncurried (mkEffectFn1)
 import Framer.Motion as Motion
@@ -14,23 +13,23 @@ import React.Basic.Popper.Types (modifierArrow, modifierOffset, nullRef)
 import Unsafe.Coerce (unsafeCoerce)
 import Yoga.Block.Atom.Tooltip.Style as Style
 
-type PropsF f =
-  ( className ∷ f String
-  , hideDelay ∷ f Milliseconds
-  | Style.Props f (MandatoryProps ())
-  )
+type PropsF f
+  = ( className ∷ f String
+    , hideDelay ∷ f Milliseconds
+    | Style.Props f (MandatoryProps ())
+    )
 
-type MandatoryProps r =
-  ( theTip ∷ JSX
-  , target ∷ JSX
-  | r
-  )
+type MandatoryProps r
+  = ( theTip ∷ JSX
+    , target ∷ JSX
+    | r
+    )
 
-type Props =
-  PropsF Id
+type Props
+  = PropsF Id
 
-type PropsOptional =
-  PropsF OptionalProp
+type PropsOptional
+  = PropsF OptionalProp
 
 component ∷ ∀ p p_. Union p p_ Props => ReactComponent { | MandatoryProps p }
 component = rawComponent
@@ -61,7 +60,6 @@ rawComponent =
           setVisible false # liftEffect
       useAff touching do
         if touching then do
-          let _ = spy "sausage" touching
           delay (1000.0 # Milliseconds)
           setVisible true # liftEffect
         else do
@@ -77,7 +75,7 @@ rawComponent =
       let
         result =
           fragment
-            $ [ refElem
+            $ [ refElem [ props.target ]
               , popperEl
                   [ animatePresence
                       $ guard visible
@@ -88,42 +86,41 @@ rawComponent =
                           ]
                   ]
               ]
-        animatePresence = el Motion.animatePresence { initial: false }
+        animatePresence = Motion.animatePresence </ { initial: false }
         content =
-          styled Motion.div
-            { className: "popper-element-content"
-            , css: Style.content props
-            , initial: Motion.initial $ R.css { opacity: [ 1.0, 0.8, 0.0 ], scale: [ 1.0, 0.85 ] }
-            , animate: Motion.animate $ R.css { opacity: [ 0.0, 0.3, 1.0 ], scale: [ 0.0, 1.05, 1.0, 0.98, 1.01, 1.0 ] }
-            , exit: Motion.exit $ R.css { opacity: [ 1.0, 0.8, 0.0 ], scale: [ 1.0, 0.85 ] }
-            , transition: Motion.transition { duration: 0.2 }
-            , key: "container"
-            }
+          Motion.div
+            </* { className: "popper-element-content"
+              , css: Style.content props
+              , initial: Motion.initial $ R.css { opacity: [ 1.0, 0.8, 0.0 ], scale: [ 1.0, 0.85 ] }
+              , animate: Motion.animate $ R.css { opacity: [ 0.0, 0.3, 1.0 ], scale: [ 0.0, 1.05, 1.0, 0.98, 1.01, 1.0 ] }
+              , exit: Motion.exit $ R.css { opacity: [ 1.0, 0.8, 0.0 ], scale: [ 1.0, 0.85 ] }
+              , transition: Motion.transition { duration: 0.2 }
+              , key: "container"
+              }
         popperEl =
-          styled R.div'
-            { className: "popper-element"
-            , css: Style.popper
-            , ref: unsafeCoerce (mkEffectFn1 setPopperElement)
-            , style: styles.popper
-            , _data: attributes.popper
-            }
+          div
+            </* { className: "popper-element"
+              , css: Style.popper
+              , ref: unsafeCoerce (mkEffectFn1 setPopperElement)
+              , style: styles.popper
+              , _data: attributes.popper
+              }
         arrow =
-          styledLeaf R.div'
-            { className: "popper-arrow"
-            , id: "arrow"
-            , css: Style.arrow props
-            , ref: unsafeCoerce (mkEffectFn1 setArrowElement)
-            , style: styles.arrow
-            , _data: attributes.arrow
-            }
+          div
+            </*> { className: "popper-arrow"
+              , id: "arrow"
+              , css: Style.arrow props
+              , ref: unsafeCoerce (mkEffectFn1 setArrowElement)
+              , style: styles.arrow
+              , _data: attributes.arrow
+              }
         refElem =
-          element Motion.div
-            { ref: unsafeCoerce (mkEffectFn1 setReferenceElement)
-            , style: css { display: "inline-block" }
-            , children: [ props.target ]
-            , onHoverStart: Motion.onHoverStart \_ _ -> hoveredIn
-            , onHoverEnd: Motion.onHoverEnd \_ _ -> hoveredOut
-            , onTouchStart: handler_ touchStarted
-            , onTouchEnd: handler_ touchEnded
-            }
+          Motion.div
+            </ { ref: unsafeCoerce (mkEffectFn1 setReferenceElement)
+              , style: css { display: "inline-block" }
+              , onHoverStart: Motion.onHoverStart \_ _ -> hoveredIn
+              , onHoverEnd: Motion.onHoverEnd \_ _ -> hoveredOut
+              , onTouchStart: handler_ touchStarted
+              , onTouchEnd: handler_ touchEnded
+              }
       pure result

@@ -10,7 +10,7 @@ import Data.Symbol (SProxy(..))
 import Data.Tuple.Nested ((/\))
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
-import Framer.Motion (animatePresence, animateSharedLayout)
+import Framer.Motion (animateSharedLayout)
 import Framer.Motion as Motion
 import React.Basic (JSX, ReactComponent, element, fragment)
 import React.Basic.DOM (CSS, css)
@@ -20,7 +20,7 @@ import React.Basic.Emotion as E
 import React.Basic.Events (handler, handler_)
 import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
-import Yoga (el, el_)
+import Yoga ((/>), (</), (</>))
 import Yoga.Block.Atom.Input as Input
 import Yoga.Block.Atom.Input.Placement.Types (Placement(..))
 import Yoga.Block.Atom.Input.Placement.Types as Placement
@@ -90,24 +90,24 @@ popover = do
     $ fragment
         [ R.div_
             [ R.h2_ [ R.text "Autosuggest" ]
-            , el_ autosuggest {}
+            , autosuggest </> {}
             ]
         ]
   where
-    mkAutosuggest ∷ Effect (ReactComponent {})
-    mkAutosuggest = do
-      motionStack <- Motion.custom Stack.component
-      reactComponent "PopoverExample" \props -> React.do
-        text /\ setText <- React.useState' ""
-        visible /\ setVisible <- React.useState' false
-        let
-          matchingAuthors =
-            authors
-              # Array.filter (\a -> String.contains (String.Pattern (String.toLower text)) (String.toLower a))
-        let
-          target =
-            el_ Input.component
-              { type: HTMLInput.Text
+  mkAutosuggest ∷ Effect (ReactComponent {})
+  mkAutosuggest = do
+    motionStack <- Motion.custom Stack.component
+    reactComponent "PopoverExample" \props -> React.do
+      text /\ setText <- React.useState' ""
+      visible /\ setVisible <- React.useState' false
+      let
+        matchingAuthors =
+          authors
+            # Array.filter (\a -> String.contains (String.Pattern (String.toLower text)) (String.toLower a))
+      let
+        target =
+          Input.component
+            </> { type: HTMLInput.Text
               , id: "author"
               , label: nes (SProxy ∷ _ "Author")
               , placeholder: "e.g. William Shakespeare"
@@ -116,139 +116,139 @@ popover = do
               , onBlur: handler_ (setVisible false)
               , onFocus: handler_ (setVisible true)
               }
-          pop =
-            el Popover.component
-              { target
+        pop =
+          Popover.component
+            </ { target
               , placement: Placement Placement.Bottom (Just Placement.Start)
               }
-          box =
-            el Box.component
-              { style:
+        box =
+          Box.component
+            </ { style:
                 css
                   { background: "rgba(128, 128, 128, 0.5)"
                   , borderRadius: "5px"
                   }
               }
-          stack =
-            el motionStack
-              $ Motion.motion
-                  { variants: Motion.variants containerVariants
-                  , animate: Motion.animate (if visible then containerVariant.visible else containerVariant.hidden)
-                  , layout: Motion.layout true
-                  }
-                  {}
-          entry a =
-            el Motion.div
-              { key: a
+        stack =
+          motionStack
+            </ Motion.motion
+                { variants: Motion.variants containerVariants
+                , animate: Motion.animate (if visible then containerVariant.visible else containerVariant.hidden)
+                , layout: Motion.layout true
+                }
+                {}
+        entry a =
+          Motion.div
+            </ { key: a
               , layout: Motion.layout true
               , variants: Motion.variants itemVariants
               }
-              [ R.text a ]
-        pure
-          $ fragment
-              [ pop
-                  [ box
-                      [ el animateSharedLayout {} [ stack (entry <$> matchingAuthors) ]
-                      ]
-                  ]
-              ]
+            /> [ R.text a ]
+      pure
+        $ fragment
+            [ pop
+                [ box
+                    [ animateSharedLayout </ {} /> [ stack (entry <$> matchingAuthors) ]
+                    ]
+                ]
+            ]
 
-    authors =
-      [ "William Shakespeare"
-      , "Agatha Christie"
-      , "Barbara Cartland"
-      , "Danielle Steel"
-      , "Harold Robbins"
-      , "Georges Simenon"
-      , "Enid Blyton"
-      , "Sidney Sheldon"
-      , "J. K. Rowling"
-      , "Gilbert Patten"
-      , "Dr. Seuss"
-      , "Eiichiro Oda"
-      , "Leo Tolstoy"
-      , "Corín Tellado"
-      , "Jackie Collins"
-      , "Horatio Alger"
-      , "R. L. Stine"
-      , "Dean Koontz"
-      , "Nora Roberts"
-      , "Alexander Pushkin"
-      , "Stephen King"
-      , "Paulo Coelho"
-      , "Jeffrey Archer"
-      , "Louis L'Amour"
-      , "Jirō Akagawa"
-      , "René Goscinny"
-      , "Erle Stanley Gardner"
-      , "Edgar Wallace"
-      , "Jin Yong"
-      , "Janet Dailey"
-      , "Robert Ludlum"
-      , "Akira Toriyama"
-      , "Osamu Tezuka"
-      , "James Patterson"
-      , "Frédéric Dard"
-      , "Stan and Jan Berenstain"
-      , "Roald Dahl"
-      , "John Grisham"
-      , "Zane Grey"
-      , "Irving Wallace"
-      , "J. R. R. Tolkien"
-      , "Masashi Kishimoto"
-      , "Karl May"
-      , "Carter Brown"
-      , "Mickey Spillane"
-      , "C. S. Lewis"
-      , "Kyotaro Nishimura"
-      , "Mitsuru Adachi"
-      , "Rumiko Takahashi"
-      , "Gosho Aoyama"
-      , "Dan Brown"
-      , "Ann M. Martin"
-      , "Ryōtarō Shiba"
-      , "Arthur Hailey"
-      , "Gérard de Villiers"
-      , "Beatrix Potter"
-      , "Michael Crichton"
-      , "Richard Scarry"
-      , "Clive Cussler"
-      , "Alistair MacLean"
-      , "Ken Follett"
-      , "Astrid Lindgren"
-      , "Debbie Macomber"
-      , "EL James"
-      , "Tite Kubo"
-      , "Eiji Yoshikawa"
-      , "Catherine Cookson"
-      , "Stephenie Meyer"
-      , "Norman Bridwell"
-      , "David Baldacci"
-      , "Nicholas Sparks"
-      , "Hirohiko Araki"
-      , "Evan Hunter"
-      , "Andrew Neiderman"
-      , "Roger Hargreaves"
-      , "Anne Rice"
-      , "Robin Cook"
-      , "Wilbur Smith"
-      , "Erskine Caldwell"
-      , "Judith Krantz"
-      , "Eleanor Hibbert"
-      , "Lewis Carroll"
-      , "Denise Robins"
-      , "Cao Xueqin"
-      , "Ian Fleming"
-      , "Hermann Hesse"
-      , "Rex Stout"
-      , "Anne Golon"
-      , "Frank G. Slaughter"
-      , "Edgar Rice Burroughs"
-      , "John Creasey"
-      , "James A. Michener"
-      , "Yasuo Uchida"
-      , "Seiichi Morimura"
-      , "Mary Higgins Clark"
-      , "Penny Jordan"
-      , "Patricia Cornwell"
-      ]
+  authors =
+    [ "William Shakespeare"
+    , "Agatha Christie"
+    , "Barbara Cartland"
+    , "Danielle Steel"
+    , "Harold Robbins"
+    , "Georges Simenon"
+    , "Enid Blyton"
+    , "Sidney Sheldon"
+    , "J. K. Rowling"
+    , "Gilbert Patten"
+    , "Dr. Seuss"
+    , "Eiichiro Oda"
+    , "Leo Tolstoy"
+    , "Corín Tellado"
+    , "Jackie Collins"
+    , "Horatio Alger"
+    , "R. L. Stine"
+    , "Dean Koontz"
+    , "Nora Roberts"
+    , "Alexander Pushkin"
+    , "Stephen King"
+    , "Paulo Coelho"
+    , "Jeffrey Archer"
+    , "Louis L'Amour"
+    , "Jirō Akagawa"
+    , "René Goscinny"
+    , "Erle Stanley Gardner"
+    , "Edgar Wallace"
+    , "Jin Yong"
+    , "Janet Dailey"
+    , "Robert Ludlum"
+    , "Akira Toriyama"
+    , "Osamu Tezuka"
+    , "James Patterson"
+    , "Frédéric Dard"
+    , "Stan and Jan Berenstain"
+    , "Roald Dahl"
+    , "John Grisham"
+    , "Zane Grey"
+    , "Irving Wallace"
+    , "J. R. R. Tolkien"
+    , "Masashi Kishimoto"
+    , "Karl May"
+    , "Carter Brown"
+    , "Mickey Spillane"
+    , "C. S. Lewis"
+    , "Kyotaro Nishimura"
+    , "Mitsuru Adachi"
+    , "Rumiko Takahashi"
+    , "Gosho Aoyama"
+    , "Dan Brown"
+    , "Ann M. Martin"
+    , "Ryōtarō Shiba"
+    , "Arthur Hailey"
+    , "Gérard de Villiers"
+    , "Beatrix Potter"
+    , "Michael Crichton"
+    , "Richard Scarry"
+    , "Clive Cussler"
+    , "Alistair MacLean"
+    , "Ken Follett"
+    , "Astrid Lindgren"
+    , "Debbie Macomber"
+    , "EL James"
+    , "Tite Kubo"
+    , "Eiji Yoshikawa"
+    , "Catherine Cookson"
+    , "Stephenie Meyer"
+    , "Norman Bridwell"
+    , "David Baldacci"
+    , "Nicholas Sparks"
+    , "Hirohiko Araki"
+    , "Evan Hunter"
+    , "Andrew Neiderman"
+    , "Roger Hargreaves"
+    , "Anne Rice"
+    , "Robin Cook"
+    , "Wilbur Smith"
+    , "Erskine Caldwell"
+    , "Judith Krantz"
+    , "Eleanor Hibbert"
+    , "Lewis Carroll"
+    , "Denise Robins"
+    , "Cao Xueqin"
+    , "Ian Fleming"
+    , "Hermann Hesse"
+    , "Rex Stout"
+    , "Anne Golon"
+    , "Frank G. Slaughter"
+    , "Edgar Rice Burroughs"
+    , "John Creasey"
+    , "James A. Michener"
+    , "Yasuo Uchida"
+    , "Seiichi Morimura"
+    , "Mary Higgins Clark"
+    , "Penny Jordan"
+    , "Patricia Cornwell"
+    ]

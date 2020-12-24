@@ -14,7 +14,7 @@ module Yoga.Prelude.View
   , module Untagged.Castable
   ) where
 
-import Yoga.Prelude.Default
+import Yoga.Prelude.Default hiding (div)
 import Data.Nullable (Nullable, notNull, null)
 import Prim.Row (class Union)
 import React.Basic.DOM (Props_div)
@@ -25,5 +25,5 @@ import Type.Row (type (+))
 import Untagged.Castable (cast)
 import Web.DOM (Node)
 import Web.HTML.HTMLElement (HTMLElement, DOMRect, blur, focus, getBoundingClientRect)
-import Yoga (el, el_, styled, styledLeaf)
+import Yoga ((/>), (</), (</*), (</*>), (</>), div, span, button)
 import Yoga.Block.Internal (DivProps, DivPropsF, Id, InputProps, InputPropsF, NodeRef, OptionalProp(..), _0, appendIfDefined, createRef, dangerous, emotionDiv, emotionInput, forwardedRefAsMaybe, getBoundingBoxFromRef, getHTMLElementFromRef, getOr, getOrFlipped, ifTrue, isTruthy, maybeToOp, mkForwardRefComponent, mkForwardRefComponentEffect, opToMaybe, unsafeDiv, unsafeEmotion, unsafeMergeSecond, unsafeUnMaybe, unsafeUnOptional, unsafeUnionDroppingUndefined, (<>?), (?||), setOrDelete)

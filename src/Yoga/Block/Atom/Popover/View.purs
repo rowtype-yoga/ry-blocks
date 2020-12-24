@@ -4,7 +4,6 @@ import Yoga.Prelude.View
 import Effect.Uncurried (mkEffectFn1)
 import Framer.Motion as Motion
 import React.Basic.DOM (css)
-import React.Basic.DOM as R
 import React.Basic.Hooks as React
 import React.Basic.Popper.Hook (usePopper)
 import React.Basic.Popper.Types (modifierOffset, nullRef)
@@ -13,23 +12,23 @@ import Yoga.Block.Atom.Input.Placement.Types (Placement)
 import Yoga.Block.Atom.Input.Placement.Types as Placement
 import Yoga.Block.Atom.Popover.Style as Style
 
-type PropsF f =
-  ( className ∷ f String
-  , placement ∷ f Placement
-  | Style.Props f (MandatoryProps ())
-  )
+type PropsF f
+  = ( className ∷ f String
+    , placement ∷ f Placement
+    | Style.Props f (MandatoryProps ())
+    )
 
-type MandatoryProps r =
-  ( children ∷ Array JSX
-  , target ∷ JSX
-  | r
-  )
+type MandatoryProps r
+  = ( children ∷ Array JSX
+    , target ∷ JSX
+    | r
+    )
 
-type Props =
-  PropsF Id
+type Props
+  = PropsF Id
 
-type PropsOptional =
-  PropsF OptionalProp
+type PropsOptional
+  = PropsF OptionalProp
 
 component ∷ ∀ p p_. Union p p_ Props => ReactComponent { | MandatoryProps p }
 component = rawComponent
@@ -60,23 +59,23 @@ rawComponent =
                   ]
               ]
         content =
-          styled R.div'
-            { className: "popper-element-content"
-            , css: Style.content
-            , key: "container"
-            }
+          div
+            </* { className: "popper-element-content"
+              , css: Style.content
+              , key: "container"
+              }
         popperEl =
-          styled R.div'
-            { className: "popper-element"
-            , css: Style.popper
-            , ref: unsafeCoerce (mkEffectFn1 setPopperElement)
-            , style: styles.popper
-            , _data: attributes.popper
-            }
+          div
+            </* { className: "popper-element"
+              , css: Style.popper
+              , ref: unsafeCoerce (mkEffectFn1 setPopperElement)
+              , style: styles.popper
+              , _data: attributes.popper
+              }
         refElem =
-          element Motion.div
-            { ref: unsafeCoerce (mkEffectFn1 setReferenceElement)
-            , style: css { display: "inline-block" }
-            , children: [ props.target ]
-            }
+          Motion.div
+            </ { ref: unsafeCoerce (mkEffectFn1 setReferenceElement)
+              , style: css { display: "inline-block" }
+              }
+            /> [ props.target ]
       pure result

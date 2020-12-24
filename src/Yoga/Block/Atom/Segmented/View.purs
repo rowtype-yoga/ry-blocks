@@ -24,14 +24,14 @@ import Web.HTML.HTMLElement as HTMLElement
 import Yoga.Block.Atom.Segmented.Style as Style
 import Yoga.Block.Atom.Segmented.View.ActiveIndicator as ActiveIndicator
 
-type Item =
-  { id ∷ String, value ∷ String }
+type Item
+  = { id ∷ String, value ∷ String }
 
-type Props =
-  { buttonContents ∷ TwoOrMore Item
-  , activeIndex ∷ Int
-  , updateActiveIndex ∷ Int -> Effect Unit
-  }
+type Props
+  = { buttonContents ∷ TwoOrMore Item
+    , activeIndex ∷ Int
+    , updateActiveIndex ∷ Int -> Effect Unit
+    }
 
 component ∷ ReactComponent Props
 component =
@@ -85,31 +85,33 @@ component =
           refsAndContents = TwoOrMore.zip buttonContents <$> itemRefs
           contentToChild ∷ Int -> (Item /\ Ref (Nullable Node)) -> JSX
           contentToChild idx ({ id, value } /\ ref) = do
-            let isLast = idx + 1 == TwoOrMore.length buttonContents
-            let isFirst = idx == 0
-            styled R.button'
-              { key: show idx
-              , ref
-              , css: Style.button { isFirst, isLast }
-              , className: "ry-segmented-button"
-              , style: css { pointerEvents: if idx == activeIndex then "none" else "" }
-              , onClick: handler_ (updateIndex idx)
-              , role: "tab"
-              , tabIndex: if idx == activeIndex then 0 else -1
-              , id
-              , _aria:
-                Object.fromHomogeneous
-                  { selected: show (idx == activeIndex)
-                  }
-              }
-              [ styled R.span'
-                  { className: "ry-segmented-button__content"
-                  , css: Style.buttonContent { isFirst, isLast }
-                  , tabIndex: if idx == activeIndex then 0 else -1
-                  }
-                  [ R.text value
-                  ]
-              ]
+            let
+              isLast = idx + 1 == TwoOrMore.length buttonContents
+            let
+              isFirst = idx == 0
+            button
+              </* { key: show idx
+                , ref
+                , css: Style.button { isFirst, isLast }
+                , className: "ry-segmented-button"
+                , style: css { pointerEvents: if idx == activeIndex then "none" else "" }
+                , onClick: handler_ (updateIndex idx)
+                , role: "tab"
+                , tabIndex: if idx == activeIndex then 0 else -1
+                , id
+                , _aria:
+                  Object.fromHomogeneous
+                    { selected: show (idx == activeIndex)
+                    }
+                }
+              /> [ span
+                    </* { className: "ry-segmented-button__content"
+                      , css: Style.buttonContent { isFirst, isLast }
+                      , tabIndex: if idx == activeIndex then 0 else -1
+                      }
+                    /> [ R.text value
+                      ]
+                ]
         pure
           $ E.element R.div'
           $ { css: Style.cluster

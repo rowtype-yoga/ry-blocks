@@ -12,12 +12,12 @@ import React.Basic.Hooks as React
 import Yoga.Block.Layout.Imposter as Imposter
 import Yoga.Block.Modal.Style as Style
 
-type Props =
-  { content ∷ JSX
-  , isOpen ∷ Boolean
-  , setIsOpen ∷ Boolean -> Effect Unit
-  | ()
-  }
+type Props
+  = { content ∷ JSX
+    , isOpen ∷ Boolean
+    , setIsOpen ∷ Boolean -> Effect Unit
+    | ()
+    }
 
 component ∷ ReactComponent Props
 component =
@@ -26,14 +26,14 @@ component =
         clickAwayRef <- React.useRef Nullable.null
         pure
           $ fragment
-              [ el Motion.animatePresence {}
-                  $ guard isOpen
+              [ Motion.animatePresence </ {}
+                  /> guard isOpen
                       [ element clickaway { theRef: clickAwayRef, hide: setIsOpen false }
                       ]
-              , el Motion.animatePresence {}
-                  [ guard isOpen
-                      $ element window { clickAwayRef, hide: setIsOpen false, content }
-                  ]
+              , Motion.animatePresence </ {}
+                  /> [ guard isOpen
+                        $ element window { clickAwayRef, hide: setIsOpen false, content }
+                    ]
               ]
 
 clickaway ∷ ReactComponent { theRef ∷ Ref (Nullable Node), hide ∷ Effect Unit }
@@ -61,14 +61,14 @@ window =
                 , css: Style.modal
                 , key: "ry-modal-window"
                 , children:
-                  [ styled Motion.div
-                      { className: "ry-modal"
-                      , css: Style.modal
-                      , drag: Motion.prop true
-                      , dragMomentum: Motion.prop false
-                      , dragConstraints: Motion.prop clickAwayRef
-                      }
-                      [ content ]
+                  [ Motion.div
+                      </* { className: "ry-modal"
+                        , css: Style.modal
+                        , drag: Motion.prop true
+                        , dragMomentum: Motion.prop false
+                        , dragConstraints: Motion.prop clickAwayRef
+                        }
+                      /> [ content ]
                   ]
                 }
                   `withMotion`
@@ -78,4 +78,4 @@ window =
                     }
               )
   where
-    motionImposter = unsafePerformEffect $ Motion.custom Imposter.component
+  motionImposter = unsafePerformEffect $ Motion.custom Imposter.component
