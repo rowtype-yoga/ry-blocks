@@ -4,7 +4,6 @@ import Yoga.Prelude.View
 import Data.String.NonEmpty (NonEmptyString)
 import Data.String.NonEmpty as NonEmptyString
 import Data.Symbol (SProxy(..))
-import Effect.Uncurried (mkEffectFn1, runEffectFn1)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Framer.Motion as M

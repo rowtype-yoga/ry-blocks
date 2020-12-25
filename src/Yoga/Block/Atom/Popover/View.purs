@@ -4,10 +4,10 @@ import Yoga.Prelude.View
 import Effect.Uncurried (mkEffectFn1)
 import React.Basic.Hooks as React
 import React.Basic.Popper.Hook (usePopper)
+import React.Basic.Popper.Placement.Types (Placement)
+import React.Basic.Popper.Placement.Types as Placement
 import React.Basic.Popper.Types (modifierOffset, nullRef)
 import Unsafe.Coerce (unsafeCoerce)
-import Yoga.Block.Atom.Input.Placement.Types (Placement)
-import Yoga.Block.Atom.Input.Placement.Types as Placement
 import Yoga.Block.Atom.Popover.Style as Style
 
 type PropsF f

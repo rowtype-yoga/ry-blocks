@@ -2,9 +2,10 @@ module Yoga.Block.Atom.Input.Types where
 
 import Prelude
 
+-- No support for "button" because of the dedicated
+-- HTML Element
 data HTMLInput
-  = Button
-  | Checkbox
+  = Checkbox
   | Color
   | Date
   | DatetimeLocal
@@ -25,12 +26,10 @@ data HTMLInput
   | Time
   | Url
   | Week
-
 derive instance eqHTMLInput ∷ Eq HTMLInput
 
 toString ∷ HTMLInput -> String
 toString = case _ of
-  Button -> "button"
   Checkbox -> "checkbox"
   Color -> "color"
   Date -> "date"

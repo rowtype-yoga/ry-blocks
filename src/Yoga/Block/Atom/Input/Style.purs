@@ -4,10 +4,10 @@ import Yoga.Prelude.Style
 import Data.Interpolate (i)
 import Yoga.Block.Container.Style (colour)
 
-type Props f r =
-  ( css ∷ f Style
-  | r
-  )
+type Props f r
+  = ( css ∷ f Style
+    | r
+    )
 
 leftIconSize ∷ StyleProperty
 leftIconSize = var "--left-icon-size"

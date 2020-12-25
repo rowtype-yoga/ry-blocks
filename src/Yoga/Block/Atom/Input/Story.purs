@@ -73,9 +73,6 @@ input = do
             , element Input.component { type: HTMLInput.Text, value: "", label: NonEmptyString "Heinzi", onChange: handler_ mempty }
             , R.h2_ [ R.text "Search Input" ]
             , element Input.component { type: HTMLInput.Search, placeholder: "Search...", onChange: handler_ mempty }
-            , R.h2_ [ R.text "Button" ]
-            , element Input.component { type: HTMLInput.Button, value: "A button", onChange: handler_ mempty }
-            , R.h2_ [ R.text "Submit" ]
             -- , element Input.component { type: "submit" }
             -- , R.h2_ [ R.text "Radio" ]
             -- , element Input.component { type: "radio" }

@@ -22,12 +22,12 @@ import React.Basic.Emotion as E
 import React.Basic.Events (handler, handler_)
 import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
+import React.Basic.Popper.Placement.Types (Placement(..))
+import React.Basic.Popper.Placement.Types as Placement
 import React.Basic.Popper.Types (nullRef)
 import Unsafe.Coerce (unsafeCoerce)
 import Yoga ((/>), (</), (</>))
 import Yoga.Block.Atom.Input as Input
-import Yoga.Block.Atom.Input.Placement.Types (Placement(..))
-import Yoga.Block.Atom.Input.Placement.Types as Placement
 import Yoga.Block.Atom.Input.Types as HTMLInput
 import Yoga.Block.Atom.Popover as Popover
 import Yoga.Block.Container.Style as Styles

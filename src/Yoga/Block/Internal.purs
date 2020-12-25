@@ -9,9 +9,12 @@ module Yoga.Block.Internal
   , DivPropsF
   , InputProps
   , InputPropsF
+  , ButtonProps
+  , ButtonPropsF
   , NodeRef
   , emotionDiv
   , emotionInput
+  , emotionButton
   , module Yoga.Block.Internal.OptionalProp
   , module Yoga.Block.Internal.CSS
   , unsafeUnionDroppingUndefined
@@ -35,13 +38,14 @@ import Foreign.Object (Object)
 import Prim.Row (class Lacks, class Union)
 import Prim.Row as Row
 import Prim.RowList as RL
-import React.Basic.DOM (CSS, unsafeCreateDOMComponent)
+import React.Basic.DOM (CSS, Props_input, Props_button, unsafeCreateDOMComponent)
 import React.Basic.Emotion (Style)
 import React.Basic.Emotion as E
 import React.Basic.Events (EventHandler)
 import React.Basic.Hooks (JSX, ReactComponent, Ref, Render, readRefMaybe)
 import Record.Extra (class Keys, keys)
 import Type.Data.Row (RProxy(..))
+import Type.Row (type (+))
 import Unsafe.Coerce (unsafeCoerce)
 import Untagged.Union (UndefinedOr, uorToMaybe)
 import Web.DOM (Node)
@@ -136,18 +140,7 @@ pickDefined ref = runFn3 pickDefinedFn ref ks
   where
   ks = Array.fromFoldable $ keys (RProxy ∷ RProxy b)
 
-emotionInput_ ∷
-  ∀ props props_.
-  Lacks "ref" props =>
-  Union props props_ ( className ∷ String, css ∷ Style, ref ∷ Ref (Nullable Node) | InputProps ) =>
-  { | InputProps } ->
-  { className ∷ String
-  , css ∷ Style
-  | props
-  } ->
-  JSX
-emotionInput_ = unsafeEmotion unsafeInput
-
+-- [TODO] Delete?
 emotionInputKeyed_ ∷
   ∀ props props_.
   Lacks "ref" props =>
@@ -160,6 +153,18 @@ emotionInputKeyed_ ∷
   } ->
   JSX
 emotionInputKeyed_ = unsafeEmotionKeyed unsafeInput
+
+emotionInput_ ∷
+  ∀ props props_.
+  Lacks "ref" props =>
+  Union props props_ ( className ∷ String, css ∷ Style, ref ∷ Ref (Nullable Node) | InputProps ) =>
+  { | InputProps } ->
+  { className ∷ String
+  , css ∷ Style
+  | props
+  } ->
+  JSX
+emotionInput_ = unsafeEmotion unsafeInput
 
 emotionInput ∷
   ∀ props props_ more.
@@ -176,6 +181,34 @@ emotionInput ref = emotionInput_ <<< pickDefined ref
 
 unsafeInput ∷ ∀ r. ReactComponent (Record r)
 unsafeInput = dangerous "input"
+
+emotionButton_ ∷
+  ∀ props props_.
+  Lacks "ref" props =>
+  Union props props_ ( className ∷ String, css ∷ Style | ButtonProps ) =>
+  { | ButtonProps } ->
+  { className ∷ String
+  , css ∷ Style
+  | props
+  } ->
+  JSX
+emotionButton_ = unsafeEmotion unsafeButton
+
+emotionButton ∷
+  ∀ props props_ more.
+  Lacks "ref" props =>
+  Union props props_ ( className ∷ String, css ∷ Style | ButtonProps ) =>
+  Ref (Nullable Node) ->
+  { | ButtonPropsF Id more } ->
+  { className ∷ String
+  , css ∷ Style
+  | props
+  } ->
+  JSX
+emotionButton ref = emotionButton_ <<< pickDefined ref
+
+unsafeButton ∷ ∀ r. ReactComponent (Record r)
+unsafeButton = dangerous "button"
 
 dangerous ∷ ∀ props. String -> ReactComponent (Record props)
 dangerous = unsafePerformEffect <<< unsafeCreateDOMComponent
@@ -477,5 +510,148 @@ type InputPropsF f more
     , wmode ∷ f String
     , min ∷ f (String)
     , max ∷ f (String)
+    | more
+    )
+
+type ButtonProps
+  = ButtonPropsF Id ()
+
+type ButtonPropsF f more
+  = ( _aria :: f (Object String)
+    , _data :: f (Object String)
+    , about :: f String
+    , acceptCharset :: f String
+    , accessKey :: f String
+    , allowFullScreen :: f Boolean
+    , allowTransparency :: f Boolean
+    , autoFocus :: f Boolean
+    , autoPlay :: f Boolean
+    , capture :: f Boolean
+    , cellPadding :: f String
+    , cellSpacing :: f String
+    , charSet :: f String
+    , children :: f (Array JSX)
+    , classID :: f String
+    , className :: f String
+    , colSpan :: f Int
+    , contentEditable :: f Boolean
+    , contextMenu :: f String
+    , crossOrigin :: f String
+    , dangerouslySetInnerHTML :: f { __html :: String }
+    , datatype :: f String
+    , dateTime :: f String
+    , dir :: f String
+    , disabled :: f Boolean
+    , draggable :: f Boolean
+    , encType :: f String
+    , form :: f String
+    , formAction :: f String
+    , formEncType :: f String
+    , formMethod :: f String
+    , formNoValidate :: f Boolean
+    , formTarget :: f String
+    , frameBorder :: f String
+    , hidden :: f Boolean
+    , hrefLang :: f String
+    , htmlFor :: f String
+    , httpEquiv :: f String
+    , icon :: f String
+    , id :: f String
+    , inlist :: f String
+    , inputMode :: f String
+    , is :: f String
+    , itemID :: f String
+    , itemProp :: f String
+    , itemRef :: f String
+    , itemScope :: f Boolean
+    , itemType :: f String
+    , key :: f String
+    , keyParams :: f String
+    , keyType :: f String
+    , lang :: f String
+    , marginHeight :: f String
+    , marginWidth :: f String
+    , maxLength :: f Int
+    , mediaGroup :: f String
+    , minLength :: f Int
+    , name :: f String
+    , noValidate :: f Boolean
+    , onAnimationEnd :: f EventHandler
+    , onAnimationIteration :: f EventHandler
+    , onAnimationStart :: f EventHandler
+    , onBlur :: f EventHandler
+    , onClick :: f EventHandler
+    , onCompositionEnd :: f EventHandler
+    , onCompositionStart :: f EventHandler
+    , onCompositionUpdate :: f EventHandler
+    , onContextMenu :: f EventHandler
+    , onCopy :: f EventHandler
+    , onCut :: f EventHandler
+    , onDoubleClick :: f EventHandler
+    , onDrag :: f EventHandler
+    , onDragEnd :: f EventHandler
+    , onDragEnter :: f EventHandler
+    , onDragExit :: f EventHandler
+    , onDragLeave :: f EventHandler
+    , onDragOver :: f EventHandler
+    , onDragStart :: f EventHandler
+    , onDrop :: f EventHandler
+    , onFocus :: f EventHandler
+    , onGotPointerCapture :: f EventHandler
+    , onInvalid :: f EventHandler
+    , onKeyDown :: f EventHandler
+    , onKeyPress :: f EventHandler
+    , onKeyUp :: f EventHandler
+    , onLostPointerCapture :: f EventHandler
+    , onMouseDown :: f EventHandler
+    , onMouseEnter :: f EventHandler
+    , onMouseLeave :: f EventHandler
+    , onMouseMove :: f EventHandler
+    , onMouseOut :: f EventHandler
+    , onMouseOver :: f EventHandler
+    , onMouseUp :: f EventHandler
+    , onPaste :: f EventHandler
+    , onPointerCancel :: f EventHandler
+    , onPointerDown :: f EventHandler
+    , onPointerEnter :: f EventHandler
+    , onPointerLeave :: f EventHandler
+    , onPointerMove :: f EventHandler
+    , onPointerOut :: f EventHandler
+    , onPointerOver :: f EventHandler
+    , onPointerUp :: f EventHandler
+    , onSelect :: f EventHandler
+    , onSubmit :: f EventHandler
+    , onTouchCancel :: f EventHandler
+    , onTouchEnd :: f EventHandler
+    , onTouchMove :: f EventHandler
+    , onTouchStart :: f EventHandler
+    , onTransitionEnd :: f EventHandler
+    , onWheel :: f EventHandler
+    , prefix :: f String
+    , property :: f String
+    , radioGroup :: f String
+    , readOnly :: f Boolean
+    , ref :: f (Ref (Nullable Node))
+    , resource :: f String
+    , role :: f String
+    , rowSpan :: f Int
+    , scoped :: f Boolean
+    , seamless :: f Boolean
+    , security :: f String
+    , spellCheck :: f Boolean
+    , srcDoc :: f JSX
+    , srcLang :: f String
+    , srcSet :: f String
+    , style :: f CSS
+    , suppressContentEditableWarning :: f Boolean
+    , tabIndex :: f Int
+    , title :: f String
+    , type :: f String
+    , typeof :: f String
+    , unselectable :: f Boolean
+    , useMap :: f String
+    , value :: f String
+    , vocab :: f String
+    , wmode :: f String
     | more
     )

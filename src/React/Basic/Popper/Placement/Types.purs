@@ -1,4 +1,4 @@
-module Yoga.Block.Atom.Input.Placement.Types (render, Placement(..), Primary(..), Secondary(..)) where
+module React.Basic.Popper.Placement.Types (render, Placement(..), Primary(..), Secondary(..)) where
 
 import Prelude
 import Data.Foldable (foldMap)
