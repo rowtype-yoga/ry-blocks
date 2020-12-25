@@ -1,4 +1,4 @@
-module Hooks.Scroll where
+module Yoga.Block.Hook.Scroll where
 
 import Prelude
 import Data.Newtype (class Newtype)
@@ -20,12 +20,12 @@ registerListener listener = do
   addEventListener eventType listener false target
   pure $ removeEventListener eventType listener false target
 
-newtype UseScrollPosition hooks = UseScrollPosition (UseLayoutEffect Unit (UseState ScrollPosition hooks))
-
+newtype UseScrollPosition hooks
+  = UseScrollPosition (UseLayoutEffect Unit (UseState ScrollPosition hooks))
 derive instance ntUseScrollPosition ∷ Newtype (UseScrollPosition hooks) _
 
-type ScrollPosition =
-  { scrollX ∷ Number, scrollY ∷ Number }
+type ScrollPosition
+  = { scrollX ∷ Number, scrollY ∷ Number }
 
 useScrollPosition ∷ Hook UseScrollPosition ScrollPosition
 useScrollPosition =

@@ -1,4 +1,4 @@
-module Hooks.UseResize where
+module Yoga.Block.Hook.UseResize where
 
 import Prelude
 import Data.Int (toNumber)
@@ -20,15 +20,16 @@ registerListener listener = do
   addEventListener eventType listener false target
   pure $ removeEventListener eventType listener false target
 
-newtype UseResize hooks = UseResize (UseLayoutEffect Unit (UseState { width ∷ Number, height ∷ Number } hooks))
-
+newtype UseResize hooks
+  = UseResize (UseLayoutEffect Unit (UseState { width ∷ Number, height ∷ Number } hooks))
 derive instance ntUseResize ∷ Newtype (UseResize hooks) _
 
 useResize ∷ Hook UseResize { width ∷ Number, height ∷ Number }
 useResize =
   coerceHook React.do
     size /\ updateSize <- useState { width: 0.0, height: 0.0 }
-    let setSize = updateSize <<< const
+    let
+      setSize = updateSize <<< const
     useLayoutEffect unit do
       setSizeFromWindow setSize
       listener <- makeListener setSize
@@ -51,7 +52,8 @@ useResize' ∷ Effect Unit -> Hook UseResize { width ∷ Number, height ∷ Numb
 useResize' eff =
   coerceHook React.do
     size /\ updateSize <- useState { width: 0.0, height: 0.0 }
-    let setSize = updateSize <<< const
+    let
+      setSize = updateSize <<< const
     useLayoutEffect unit do
       setSizeFromWindow setSize
       listener <- makeListener (setSize >=> const eff)

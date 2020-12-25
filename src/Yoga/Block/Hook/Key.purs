@@ -1,4 +1,4 @@
-module Hooks.Key where
+module Yoga.Block.Hook.Key where
 
 import Data.Maybe (Maybe(..))
 import Web.Event.Event (Event)

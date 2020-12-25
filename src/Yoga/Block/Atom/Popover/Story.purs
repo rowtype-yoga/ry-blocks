@@ -103,6 +103,7 @@ popover = do
                       , stiffness: 200.0
                       , damping: 20.0
                       , mass: 0.7
+                      , delay: 0.3
                       }
                 }
                 { placement: Placement Placement.Bottom (Just Placement.Start)

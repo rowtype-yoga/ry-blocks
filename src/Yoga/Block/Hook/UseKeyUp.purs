@@ -1,19 +1,19 @@
-module React.Basic.Extra.Hooks.UseKeyUp where
+module Yoga.Block.Hook.UseKeyUp where
 
 import Prelude
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
 import Effect (Effect)
-import Hooks.Key (KeyCode, getKeyCode, intToKeyCode)
+import Yoga.Block.Hook.Key (KeyCode, getKeyCode, intToKeyCode)
 import React.Basic.Hooks (Hook, UseEffect, coerceHook, useEffect)
 import Web.Event.Event (EventType(..))
 import Web.Event.EventTarget (addEventListener, eventListener, removeEventListener)
 import Web.HTML (window)
 import Web.HTML.Window as Win
 
-newtype UseKeyUp hooks = UseKeyUp
+newtype UseKeyUp hooks
+  = UseKeyUp
   (UseEffect Unit hooks)
-
 derive instance ntUseKeyUp ∷ Newtype (UseKeyUp hooks) _
 
 useKeyUp ∷ (KeyCode -> Effect Unit) -> Hook UseKeyUp Unit

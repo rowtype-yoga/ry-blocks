@@ -10,13 +10,13 @@ import Data.TwoOrMore as TwoOrMore
 import Effect.Aff (delay)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object as Object
-import Hooks.Key as Key
-import Hooks.UseResize (useResize)
+import Yoga.Block.Hook.Key as Key
+import Yoga.Block.Hook.UseResize (useResize)
+import Yoga.Block.Hook.UseKeyDown (useKeyDown)
 import Math as Math
 import React.Basic.DOM (css)
 import React.Basic.DOM as R
 import React.Basic.Emotion as E
-import React.Basic.Extra.Hooks.UseKeyDown (useKeyDown)
 import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
 import React.Basic.Hooks.Aff (useAff)
