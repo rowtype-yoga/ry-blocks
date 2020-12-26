@@ -90,6 +90,7 @@ mkGlobal maybeMode =
     , "::selection":
       nest
         { background: str colour.highlight
+        , colour: str colour.highlightText
         }
     , "*, *:before, *:after":
       nested
@@ -97,6 +98,11 @@ mkGlobal maybeMode =
             { boxSizing: str "inherit"
             }
     }
+
+withAlpha ∷ Number -> Color -> Color
+withAlpha alpha c1 = Color.rgba' r g b alpha
+  where
+    { r, g, b } = Color.toRGBA' c1
 
 defaultColours ∷ Colours
 defaultColours =
@@ -132,6 +138,10 @@ defaultColours =
     , inputBackground: lightBg
     , inputBorder: darken 0.1 lightBg
     , highlight
+    , highlightLighter: withAlpha 0.2 (Color.lighten 0.5 highlight)
+    , highlightDarker: withAlpha 0.15 (Color.darken 0.5 highlight)
+    , highlightRotatedForwards: highlight # rotateHue 30.0
+    , highlightRotatedBackwards: highlight # rotateHue (-30.0)
     , highlightText
     , text: textLightTheme
     , placeholderText: lighten 0.4 darkBg
@@ -168,13 +178,18 @@ defaultColours =
     , invalid
     , invalidText
     , highlight: highlightDark
+    , highlightLighter: withAlpha 0.2 (Color.lighten 0.5 highlightDark)
+    , highlightDarker: withAlpha 0.4 (Color.darken 0.5 highlightDark)
+    , highlightRotatedForwards: highlightDark # rotateHue 30.0
+    , highlightRotatedBackwards: highlightDark # rotateHue (-30.0)
     , highlightText
     , text: lightBg
     , placeholderText: darken 0.4 lightBg
     }
   }
   where
-    highlight = Color.rgb 0x00 0x99 0xFF
+    -- highlight = Color.rgb 0x00 0x99 0xFF
+    highlight = Color.hsl 350.0 0.93 0.67
 
     highlightDark = Color.rgb 0x88 0x33 0xFF
 
@@ -222,6 +237,10 @@ type FlatTheme a =
   , inputBackground ∷ a
   , inputBorder ∷ a
   , highlight ∷ a
+  , highlightRotatedBackwards ∷ a
+  , highlightRotatedForwards ∷ a
+  , highlightDarker ∷ a
+  , highlightLighter ∷ a
   , highlightText ∷ a
   , success ∷ a
   , successText ∷ a

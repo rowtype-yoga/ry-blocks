@@ -9,6 +9,7 @@ import React.Basic.Emotion as E
 import React.Basic.Events (handler_)
 import Yoga.Block.Atom.Button.View as Button
 import Yoga.Block.Container.Style as Styles
+import Yoga ((</), (/>))
 
 default ∷
   { decorators ∷ Array (Effect JSX -> JSX)
@@ -32,6 +33,6 @@ button = do
         [ R.div_
             [ R.h1_ [ R.text "Button Examples" ]
             , R.h2_ [ R.text "Generic Button" ]
-            , element Button.component { value: "A Generic Button", onClick: handler_ mempty }
+            , Button.component </ { onClick: handler_ mempty } /> [ R.text "Click" ]
             ]
         ]

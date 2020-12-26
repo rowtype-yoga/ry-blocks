@@ -7,18 +7,18 @@ import Yoga.Block.Atom.Button.Style as Style
 import Yoga.Block.Atom.Button.Types (ButtonType)
 import Yoga.Block.Internal (ButtonProps, emotionButton)
 
-type PropsF f
-  = ( buttonType ∷ f ButtonType
-    | Style.Props f ButtonProps
-    )
+type PropsF f =
+  ( buttonType ∷ f ButtonType
+  | Style.Props f ButtonProps
+  )
 
-type Props
-  = PropsF Id
+type Props =
+  PropsF Id
 
-type PropsOptional
-  = PropsF OptionalProp
+type PropsOptional =
+  PropsF OptionalProp
 
-key :: forall t1. SProxy t1
+key ∷ ∀ t1. SProxy t1
 key = SProxy
 
 component ∷ ∀ p p_. Union p p_ Props => ReactComponent { | p }
@@ -32,7 +32,7 @@ rawComponent =
         $ emotionButton propsRef
             ( props
                 # RB.build
-                    ( RB.delete (key :: _ "css") >>> RB.delete (key :: _ "buttonType")
+                    ( RB.delete (key ∷ _ "css") >>> RB.delete (key ∷ _ "buttonType")
                     )
             )
             { className: "ry-button"
