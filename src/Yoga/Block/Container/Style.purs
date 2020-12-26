@@ -89,8 +89,8 @@ mkGlobal maybeMode =
             }
     , "::selection":
       nest
-        { background: str colour.highlight
-        , colour: str colour.highlightText
+        { color: str colour.highlightText
+        , background: str colour.highlight
         }
     , "*, *:before, *:after":
       nested
@@ -133,8 +133,8 @@ defaultColours =
     , required
     , interfaceBackground: lightBg
     , interfaceTextDisabled: darken 0.33 lightBg
-    , interfaceBackgroundHighlight: darken 0.07 lightBg
-    , interfaceBackgroundShadow: darken 0.1 lightBg
+    , interfaceBackgroundHighlight: lighten 0.05 lightBg
+    , interfaceBackgroundShadow: darken 0.04 lightBg
     , inputBackground: lightBg
     , inputBorder: darken 0.1 lightBg
     , highlight
@@ -166,10 +166,10 @@ defaultColours =
     , background100: lighten 1.0 darkBg
     , textInverted: darkBg
     , backgroundInverted: lightBg
-    , interfaceBackground: lighten 0.4 darkBg
+    , interfaceBackground: interfaceBackgroundDark
     , interfaceTextDisabled: lighten 0.8 darkBg
-    , interfaceBackgroundHighlight: lighten 0.5 darkBg
-    , interfaceBackgroundShadow: lighten 0.4 darkBg
+    , interfaceBackgroundHighlight: lighten 0.1 interfaceBackgroundDark
+    , interfaceBackgroundShadow: darken 0.1 interfaceBackgroundDark
     , inputBackground: darkBg
     , inputBorder: lighten 0.17 darkBg
     , success
@@ -188,10 +188,11 @@ defaultColours =
     }
   }
   where
-    -- highlight = Color.rgb 0x00 0x99 0xFF
-    highlight = Color.hsl 350.0 0.93 0.67
+    highlight = Color.hsl 270.0 0.90 0.62
 
     highlightDark = Color.rgb 0x88 0x33 0xFF
+
+    interfaceBackgroundDark = Color.hsl 240.0 0.10 0.33
 
     highlightText = Color.rgb 0xFF 0xFF 0xFF
 

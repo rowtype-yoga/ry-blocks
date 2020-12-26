@@ -1,13 +1,18 @@
 module Yoga.Block.Atom.Input.View where
 
 import Yoga.Prelude.View
+import Data.Array as Array
+import Data.Interpolate (i)
+import Data.Semigroup.Foldable (intercalateMap)
 import Data.String.NonEmpty (NonEmptyString)
 import Data.String.NonEmpty as NonEmptyString
 import Data.Symbol (SProxy(..))
+import Debug.Trace (spy)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Framer.Motion as M
-import React.Basic.DOM (css)
+import Partial.Unsafe (unsafeCrashWith)
+import React.Basic.DOM (CSS, css)
 import React.Basic.DOM as R
 import React.Basic.Hooks as React
 import Web.HTML.HTMLInputElement as InputElement
@@ -18,19 +23,19 @@ import Yoga.Block.Atom.Input.Types as HTMLInput
 import Yoga.Block.Icon.SVG as SVGIcon
 import Yoga.Block.Internal.OptionalProp (asMaybe)
 
-type PropsF f
-  = ( leading ∷ f JSX
-    , trailing ∷ f JSX
-    , label ∷ f NonEmptyString
-    , type ∷ f HTMLInput
-    | Style.Props f InputProps
-    )
+type PropsF f =
+  ( leading ∷ f JSX
+  , trailing ∷ f JSX
+  , label ∷ f NonEmptyString
+  , type ∷ f HTMLInput
+  | Style.Props f InputProps
+  )
 
-type Props
-  = PropsF Id
+type Props =
+  PropsF Id
 
-type PropsOptional
-  = PropsF OptionalProp
+type PropsOptional =
+  PropsF OptionalProp
 
 component ∷ ∀ p p_. Union p p_ Props => ReactComponent { | p }
 component = rawComponent
@@ -47,6 +52,68 @@ mkLeftIcon icon =
             }
       ]
 
+containerVariants ∷
+  { blurred ∷ CSS
+  , focussed ∷ CSS
+  }
+containerVariants =
+  { focussed:
+    css
+      { clipPath
+      , transition: { duration: 1.3 }
+      }
+  , blurred:
+    css
+      { clipPath:
+        drawPathUntil (Array.length path) path
+      }
+  }
+  where
+    clipPath = 3 Array... (Array.length path / 2 + 1) <#> \ln -> drawPathUntil (ln * 2) path
+
+type Point =
+  { x ∷ Int, y ∷ Int }
+
+p ∷ Int -> Int -> Point
+p x y = { x, y }
+
+drawPathUntil ∷ Int -> Array Point -> String
+drawPathUntil idx thePath = do
+  let fn { x, y } = i x "%" " " y "%"
+  let firstFew = Array.take idx thePath
+  let lastFew = Array.drop idx thePath $> (Array.last firstFew # fromMaybe' \_ -> unsafeCrashWith "ogod")
+  let rendered = intercalate "," $ fn <$> (firstFew <> lastFew)
+  spy "polybius" $ i "polygon(" rendered ")"
+
+path ∷ Array Point
+path = mkPath 5
+
+mkPath ∷ Int -> Array Point
+mkPath d = do
+  let
+    inside =
+      [ p d d
+      , p (100 - d) d
+      , p (100 - d) (100 - d)
+      , p d (100 - d)
+      , p d d
+      ]
+    outside =
+      [ p d 0
+      , p 100 0
+      , p 100 100
+      , p 0 100
+      , p 0 0
+      , p d 0 -- one turn, starting  way back
+      ]
+  inside <> outside <> (Array.reverse inside)
+
+containerVariantLabels ∷
+  { blurred ∷ M.VariantLabel
+  , focussed ∷ M.VariantLabel
+  }
+containerVariantLabels = M.makeVariantLabels containerVariants
+
 rawComponent ∷ ∀ p. ReactComponent { | p }
 rawComponent =
   mkForwardRefComponent "Input" do
@@ -54,8 +121,7 @@ rawComponent =
       inputBbox /\ setInputBbox <- useState' (zero ∷ DOMRect)
       hasFocus /\ setHasFocus <- useState' false
       backupRef ∷ NodeRef <- useRef null -- [TODO] test this
-      let
-        ref = forwardedRefAsMaybe propsRef # fromMaybe backupRef
+      let ref = forwardedRefAsMaybe propsRef # fromMaybe backupRef
       useEffectOnce do
         maybeBBox <- getBoundingBoxFromRef ref
         for_ maybeBBox setInputBbox
@@ -73,8 +139,7 @@ rawComponent =
           maybeBBox <- getBoundingBoxFromRef leftIconRef
           for_ maybeBBox (setLeftIconBbox <<< Just)
         mempty
-      let
-        (maybeValue ∷ Maybe String) = cast props.value # opToMaybe
+      let (maybeValue ∷ Maybe String) = cast props.value # opToMaybe
       hasValue /\ setHasValue <- useState' ((maybeValue # isJust) && (maybeValue /= Just ""))
       let
         aria ∷ Object String
@@ -138,22 +203,25 @@ rawComponent =
             ( const do
                 when hasFocus $ setHasFocus false
                 el <- getHTMLElementFromRef ref
-                let
-                  inputEl = InputElement.fromHTMLElement =<< el
+                let inputEl = InputElement.fromHTMLElement =<< el
                 for_ inputEl \ie -> do
                   v <- InputElement.value ie
                   setHasValue (v /= "")
             )
         onFocus = handler preventDefault (const $ unless hasFocus $ setHasFocus true)
         inputWrapper =
-          div
-            </* { className: "ry-input-wrapper"
-              , css: Style.inputWrapper props
-              , _data:
-                Object.fromHomogeneous
-                  { "invalid": aria # Object.lookup "invalid" # fromMaybe ""
-                  }
-              }
+          M.div
+            </* M.motion
+                { variants: M.variants containerVariants
+                , animate: M.animate if hasFocus then containerVariantLabels.focussed else containerVariantLabels.blurred
+                }
+                { className: "ry-input-wrapper"
+                , css: Style.inputWrapper props
+                , _data:
+                  Object.fromHomogeneous
+                    { "invalid": aria # Object.lookup "invalid" # fromMaybe ""
+                    }
+                }
             /> [ leading # foldMap \l -> div </ { ref: leftIconRef } /> [ l ]
               , emotionInput
                   ref
@@ -230,10 +298,8 @@ password =
                             ]
                     ]
               ]
-      let
-        trailing = props.trailing ?|| eyeCon
-      let
-        leading = props.leading ?|| mempty
+      let trailing = props.trailing ?|| eyeCon
+      let leading = props.leading ?|| mempty
       pure
         $ div
         </* { className: "ry-input-wrapper"

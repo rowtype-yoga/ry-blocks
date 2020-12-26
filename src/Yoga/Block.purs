@@ -1,17 +1,18 @@
 module Yoga.Block where
 
+import Prim.Row (class Union)
+import React.Basic (ReactComponent)
+import Yoga.Block.Atom.Icon as Icon
+import Yoga.Block.Atom.Range as Range
+import Yoga.Block.Atom.Segmented as Segmented
+import Yoga.Block.Container as Container
 import Yoga.Block.Layout.Box as Box
 import Yoga.Block.Layout.Centre as Centre
 import Yoga.Block.Layout.Cluster as Cluster
-import Yoga.Block.Container as Container
 import Yoga.Block.Layout.Imposter as Imposter
-import Yoga.Block.Modal as Modal
-import Yoga.Block.Atom.Range as Range
-import Yoga.Block.Atom.Segmented as Segmented
 import Yoga.Block.Layout.Sidebar as Sidebar
 import Yoga.Block.Layout.Stack as Stack
-import Prim.Row (class Union)
-import React.Basic (ReactComponent)
+import Yoga.Block.Modal as Modal
 
 box ∷ ∀ p q. Union p q Box.Props => ReactComponent { | p }
 box = Box.component
@@ -24,6 +25,9 @@ cluster = Cluster.component
 
 container ∷ ∀ p q. Union p q Container.Props => ReactComponent { | p }
 container = Container.component
+
+icon ∷ ∀ p q. Union p q Icon.Props => ReactComponent { | Icon.MandatoryProps p }
+icon = Icon.component
 
 imposter ∷ ∀ p q. Union p q Imposter.Props => ReactComponent { | p }
 imposter = Imposter.component

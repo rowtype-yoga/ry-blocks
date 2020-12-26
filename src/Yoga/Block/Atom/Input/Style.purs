@@ -4,10 +4,10 @@ import Yoga.Prelude.Style
 import Data.Interpolate (i)
 import Yoga.Block.Container.Style (colour)
 
-type Props f r
-  = ( css ∷ f Style
-    | r
-    )
+type Props f r =
+  ( css ∷ f Style
+  | r
+  )
 
 leftIconSize ∷ StyleProperty
 leftIconSize = var "--left-icon-size"
@@ -78,7 +78,17 @@ labelSmall =
         }
     , """&[data-has-focus="true"] > span""":
       nest
-        { background: str colour.highlight
+        { background:
+          str
+            $ i "linear-gradient(225deg,"
+                colour.highlightLighter
+                ","
+                colour.highlightDarker
+                "), linear-gradient(225deg,"
+                colour.highlightRotatedBackwards
+                ","
+                colour.highlightRotatedForwards
+                ")"
         , color: str colour.highlightText
         }
     }

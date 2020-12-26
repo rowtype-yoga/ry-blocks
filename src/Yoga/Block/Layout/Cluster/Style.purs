@@ -13,6 +13,8 @@ type Props f r =
 cluster ∷ ∀ p. { | Props OptionalProp p } -> Style
 cluster props = styles <>? props.css
   where
+    space = props.space ?|| "var(--s1)"
+
     styles =
       css
         { "& > *":
@@ -21,10 +23,10 @@ cluster props = styles <>? props.css
             , flexWrap: wrap
             , alignItems: (str <$> props.align) ?|| center
             , justifyContent: (str <$> props.justify) ?|| flexStart
-            , margin: "calc(" <> props.space ?|| "var(--s1)" <> "/2 * -1)" # str
+            , margin: "calc(" <> space <> "/2 * -1)" # str
             }
         , "& > * > *":
           nest
-            { margin: "calc(" <> props.space ?|| "var(--s1)" <> "/2)" # str
+            { margin: "calc(" <> space <> "/2)" # str
             }
         }
