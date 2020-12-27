@@ -1,6 +1,7 @@
 module Yoga.Block.Layout.Cluster.View (component, Props, PropsF) where
 
 import Yoga.Prelude.View
+import React.Basic.DOM as R
 import Yoga.Block.Layout.Cluster.Style as Style
 
 type PropsF f =
@@ -25,4 +26,5 @@ rawComponent =
         $ emotionDiv ref props
             { className: "ry-cluster " <>? props.className
             , css: Style.cluster props
+            , children: [ R.div' </ {} /> props.children ]
             }

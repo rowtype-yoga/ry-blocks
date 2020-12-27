@@ -22,29 +22,25 @@ container =
             [ R.text "Content"
             , el Stack.component {}
                 [ el Cluster.component {}
-                    [ R.div_
-                        [ R.input { value: "Text" }
-                        , R.input { type: "number", value: "0" }
-                        , styledLeaf R.input'
-                            { className: "styledinput"
-                            , css: inputFocus
-                            , value: "focus"
-                            }
-                        , R.input
-                            { className: "styledinput"
-                            , value: "focus"
-                            , disabled: true
-                            }
-                        ]
+                    [ R.input { value: "Text" }
+                    , R.input { type: "number", value: "0" }
+                    , styledLeaf R.input'
+                        { className: "styledinput"
+                        , css: inputFocus
+                        , value: "focus"
+                        }
+                    , R.input
+                        { className: "styledinput"
+                        , value: "focus"
+                        , disabled: true
+                        }
                     ]
                 , R.input { type: "file" }
                 , el Cluster.component {}
-                    [ R.div_
-                        [ R.input { type: "checkbox" }
-                        , R.input { type: "checkbox", checked: true }
-                        , R.input { type: "radio" }
-                        , R.input { type: "radio", checked: true }
-                        ]
+                    [ R.input { type: "checkbox" }
+                    , R.input { type: "checkbox", checked: true }
+                    , R.input { type: "radio" }
+                    , R.input { type: "radio", checked: true }
                     ]
                 , R.input { type: "range" }
                 ]

@@ -4,11 +4,9 @@ import Prelude hiding (div)
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
 import React.Basic (JSX, element, fragment)
-import React.Basic.DOM (css)
 import React.Basic.DOM as R
 import React.Basic.Emotion (str)
 import React.Basic.Emotion as E
-import React.Basic.Events (handler_)
 import Yoga (div, (/>), (</), (</>))
 import Yoga.Block as Block
 import Yoga.Block.Atom.Button.Types as ButtonType
@@ -40,23 +38,25 @@ button = do
             [ R.h1_ [ R.text "Button Examples" ]
             , R.h2_ [ R.text "Button types" ]
             , Block.cluster </ { space: "var(--s-1)" }
-                /> [ div </ {}
-                      /> [ Button.component </ { buttonType: ButtonType.Generic } /> [ R.text "Generic" ]
-                        , Button.component </ { buttonType: ButtonType.Primary } /> [ R.text "Primary" ]
-                        ]
+                /> [ Button.component </ { buttonType: ButtonType.Generic } /> [ R.text "Generic" ]
+                  , Button.component </ { buttonType: ButtonType.Primary } /> [ R.text "Primary" ]
+                  , Button.component </ { buttonType: ButtonType.Dangerous } /> [ R.text "Dangerous" ]
                   ]
             , R.h2_ [ R.text "Button shapes" ]
             , Block.cluster </ { space: "var(--s-1)" }
-                /> [ div </ {}
-                      /> [ Button.component </ { buttonType: ButtonType.Generic, buttonShape: ButtonType.Pill } /> [ R.text "Generic" ]
-                        , Button.component </ { buttonType: ButtonType.Primary, buttonShape: ButtonType.Pill } /> [ R.text "Primary" ]
-                        ]
+                /> [ Button.component </ { buttonType: ButtonType.Generic, buttonShape: ButtonType.Pill } /> [ R.text "Generic" ]
+                  , Button.component </ { buttonType: ButtonType.Primary, buttonShape: ButtonType.Pill } /> [ R.text "Primary" ]
                   ]
             , R.h2_ [ R.text "Icon button" ]
             , Block.cluster </ { space: "var(--s-1)" }
-                /> [ div </ {}
-                      /> [ Button.component </ {} /> [ Block.icon </> { icon: Icon.questionMark, size: str "var(--s2)", colour: str colour.highlight } ]
-                        ]
+                /> [ Button.component </ {} /> [ Block.icon </> { icon: Icon.questionMark, size: str "var(--s2)", colour: str colour.highlight } ]
+                  ]
+            , R.h2_ [ R.text "Disabled" ]
+            , Block.cluster </ { space: "var(--s-1)" }
+                /> [ Button.component </ { buttonType: ButtonType.Generic, disabled: true } /> [ R.text "Generic" ]
+                  , Button.component </ { buttonType: ButtonType.Primary, disabled: true } /> [ R.text "Primary" ]
+                  , Button.component </ { buttonType: ButtonType.Generic, buttonShape: ButtonType.Pill, disabled: true } /> [ R.text "Generic" ]
+                  , Button.component </ { buttonType: ButtonType.Primary, buttonShape: ButtonType.Pill, disabled: true } /> [ R.text "Primary" ]
                   ]
             ]
         ]

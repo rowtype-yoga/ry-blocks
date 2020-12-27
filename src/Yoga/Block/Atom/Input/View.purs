@@ -3,11 +3,9 @@ module Yoga.Block.Atom.Input.View where
 import Yoga.Prelude.View
 import Data.Array as Array
 import Data.Interpolate (i)
-import Data.Semigroup.Foldable (intercalateMap)
 import Data.String.NonEmpty (NonEmptyString)
 import Data.String.NonEmpty as NonEmptyString
 import Data.Symbol (SProxy(..))
-import Debug.Trace (spy)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Framer.Motion as M
@@ -21,7 +19,6 @@ import Yoga.Block.Atom.Input.Style as Style
 import Yoga.Block.Atom.Input.Types (HTMLInput)
 import Yoga.Block.Atom.Input.Types as HTMLInput
 import Yoga.Block.Icon.SVG as SVGIcon
-import Yoga.Block.Internal.OptionalProp (asMaybe)
 
 type PropsF f =
   ( leading ∷ f JSX
@@ -60,16 +57,16 @@ containerVariants =
   { focussed:
     css
       { clipPath
-      , transition: { duration: 1.3 }
+      , transition: { duration: 0.7 }
       }
   , blurred:
     css
       { clipPath:
-        drawPathUntil (Array.length path) path
+        drawPathUntil (Array.length path + 1) path
       }
   }
   where
-    clipPath = 3 Array... (Array.length path / 2 + 1) <#> \ln -> drawPathUntil (ln * 2) path
+    clipPath = 6 Array... (Array.length path) <#> \ln -> drawPathUntil ln path
 
 type Point =
   { x ∷ Int, y ∷ Int }
@@ -83,28 +80,27 @@ drawPathUntil idx thePath = do
   let firstFew = Array.take idx thePath
   let lastFew = Array.drop idx thePath $> (Array.last firstFew # fromMaybe' \_ -> unsafeCrashWith "ogod")
   let rendered = intercalate "," $ fn <$> (firstFew <> lastFew)
-  spy "polybius" $ i "polygon(" rendered ")"
+  i "polygon(" rendered ")"
 
 path ∷ Array Point
-path = mkPath 5
+path = mkPath 3 7
 
-mkPath ∷ Int -> Array Point
-mkPath d = do
+mkPath ∷ Int -> Int -> Array Point
+mkPath borderX borderY = do
   let
     inside =
-      [ p d d
-      , p (100 - d) d
-      , p (100 - d) (100 - d)
-      , p d (100 - d)
-      , p d d
+      [ {- ⌜ -} p borderX borderY
+      , {- ⌞ -} p borderX (100 - borderY)
+      , {- ⌟ -} p (100 - borderX) (100 - borderY)
+      , {- ⌝ -} p (100 - borderX) borderY
+      , {- ⌜ -} p borderX borderY
       ]
     outside =
-      [ p d 0
-      , p 100 0
-      , p 100 100
-      , p 0 100
-      , p 0 0
-      , p d 0 -- one turn, starting  way back
+      [ {- ⌜ -} p 0 0
+      , {- ⌞ -} p 0 100
+      , {- ⌟ -} p 100 100
+      , {- ⌝ -} p 100 0
+      , {- ⌜ -} p 0 0
       ]
   inside <> outside <> (Array.reverse inside)
 
@@ -216,7 +212,7 @@ rawComponent =
                 , animate: M.animate if hasFocus then containerVariantLabels.focussed else containerVariantLabels.blurred
                 }
                 { className: "ry-input-wrapper"
-                , css: Style.inputWrapper props
+                , css: Style.inputWrapper
                 , _data:
                   Object.fromHomogeneous
                     { "invalid": aria # Object.lookup "invalid" # fromMaybe ""
@@ -230,7 +226,7 @@ rawComponent =
                       # setOrDelete (SProxy ∷ _ "value") (maybeValue # maybeToOp)
                   )
                   { className: "ry-input"
-                  , css: Style.input props
+                  , css: Style.input
                   , onFocus: composeHandler props.onFocus onFocus
                   , onBlur: composeHandler props.onBlur onBlur
                   , _aria:
@@ -303,14 +299,14 @@ password =
       pure
         $ div
         </* { className: "ry-input-wrapper"
-          , css: Style.inputWrapper props
+          , css: Style.inputWrapper
           }
         /> [ leading
           , emotionInput
               ref
               props { type = HTMLInput.toString <$> props.type # unsafeUnOptional }
               { className: "ry-input"
-              , css: Style.input props
+              , css: Style.input
               , type: if hidePassword then "password" else "text"
               }
           , trailing

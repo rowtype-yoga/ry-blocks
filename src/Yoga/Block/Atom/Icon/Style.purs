@@ -22,9 +22,20 @@ span props =
     , display: inlineFlex
     , justifyContent: center
     , alignItems: center
+    , margin: _0
+    , padding: _0
+    , width
+    , height
+    , overflow: hidden
     , "& > svg":
       nest
-        { width: (props.width <|> props.size) ?|| (str "auto")
-        , height: (props.height <|> props.size) ?|| (str "1.2ch")
+        { width
+        , height
+        , margin: _0
+        , padding: _0
         }
     }
+  where
+    width = (props.width <|> props.size) ?|| (str "auto")
+
+    height = (props.height <|> props.size) ?|| (str "1ch")

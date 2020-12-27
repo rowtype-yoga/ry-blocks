@@ -4,6 +4,7 @@ import Prelude
 
 data ButtonType
   = Primary
+  | Dangerous
   | Generic
 
 derive instance eqButtonType ∷ Eq ButtonType
@@ -12,6 +13,7 @@ renderButtonType ∷ ButtonType -> String
 renderButtonType = case _ of
   Primary -> "primary"
   Generic -> "generic"
+  Dangerous -> "dangerous"
 
 data ButtonShape
   = Rounded

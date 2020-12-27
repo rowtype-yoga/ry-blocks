@@ -36,15 +36,13 @@ cluster =
             , el Cluster.component
                 { style: css { backgroundColor: "hotpink" }
                 }
-                [ R.div_
-                    $ [ power
-                          ( R.div
-                              { children: [ R.text "Content" ]
-                              , style: css { backgroundColor: "teal" }
-                              }
-                          )
-                          30
-                      ]
+                [ power
+                    ( R.div
+                        { children: [ R.text "Content" ]
+                        , style: css { backgroundColor: "teal" }
+                        }
+                    )
+                    30
                 ]
             , R.h2_ [ R.text "Zero Space" ]
             , el Cluster.component
@@ -52,10 +50,8 @@ cluster =
                 , space: "0"
                 , justify: "flex-end"
                 }
-                [ R.div_
-                    [ R.div { children: [ R.text "Child 1" ], style: css { backgroundColor: "teal" } }
-                    , R.div { children: [ R.text "Child 2" ], style: css { backgroundColor: "rebeccapurple" } }
-                    ]
+                [ R.div { children: [ R.text "Child 1" ], style: css { backgroundColor: "teal" } }
+                , R.div { children: [ R.text "Child 2" ], style: css { backgroundColor: "rebeccapurple" } }
                 ]
             ]
         ]

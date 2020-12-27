@@ -7,7 +7,7 @@ import React.Basic.DOM as R
 spec ∷ Spec Unit
 spec =
   after_ cleanup do
-    describe "The cluster" do
+    describe "The switcher" do
       it "renders without errors" do
         void
           $ renderComponent Switcher.component {}

@@ -43,6 +43,7 @@ labelContainer ∷ Style
 labelContainer =
   css
     { position: absolute
+    , overflow: visible
     , top: _0
     , left: _0
     , display: inlineBlock
@@ -147,13 +148,14 @@ leftIconContainer =
             }
         }
 
-inputWrapper ∷ ∀ r. { | Props OptionalProp r } -> Style
-inputWrapper props =
+inputWrapper ∷ Style
+inputWrapper =
   css
     { position: relative
     , boxSizing: borderBox
     , backgroundColor: str colour.inputBackground
-    , display: inlineFlex
+    , display: flex
+    , minWidth: str "calc(var(--s4) *2 )"
     , "--left-icon-size": var "--s0"
     , "--right-icon-size": str "calc(var(--s0) * 1.2)"
     , "--input-border-radius": var "--s-1"
@@ -161,7 +163,7 @@ inputWrapper props =
     , "--input-top-padding": var "--s-5"
     , "--input-bottom-padding": var "--s-5"
     , alignItems: center
-    , justifyContent: flexStart
+    , justifyContent: center
     , paddingLeft: str "calc(var(--input-side-padding) - var(--border-width))"
     , paddingRight: str "calc(var(--input-side-padding) - var(--border-width))"
     , paddingTop: str "calc(var(--input-top-padding) - var(--border-width))"
@@ -173,26 +175,28 @@ inputWrapper props =
     , """&[data-invalid="false"]""":
       nest
         { borderColor: str colour.success
+        , "--border-width": str "var(--s-5)"
         }
     , """&[data-invalid="true"]""":
       nest
         { borderColor: str colour.invalid
+        , "--border-width": str "var(--s-5)"
         }
     , "&:focus-within":
       nest
         { "--border-width": str "var(--s-5)"
         , borderColor: str colour.highlight
+        , transition: str "border-color 0s linear 0.1s"
         }
     }
 
-input ∷ ∀ r. { | Props OptionalProp r } -> Style
-input props =
+input ∷ Style
+input =
   css
     { "&[type=text],&[type=search],&[type=password],&[type=number],&:not([type])":
       nest
         { color: str colour.text
-        , width: _100percent
-        , flex: str "1"
+        , flex: str "2"
         , "--padding-top": var "--s-1"
         , "--padding-bottom": var "--s-1"
         , "&[aria-labelledby]":
@@ -220,13 +224,5 @@ input props =
     , "&:focus":
       nest
         { outline: none
-        }
-    , "&[type=button], &[type=submit]":
-      nest
-        { background: str colour.highlight
-        , color: str "white"
-        , boxShadow: str "0 1px 4px rgba(0,0,0,0.5)"
-        , borderColour: str colour.highlight
-        , height: str "auto"
         }
     }

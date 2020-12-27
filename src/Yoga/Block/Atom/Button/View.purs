@@ -36,14 +36,10 @@ rawComponent =
             { "button-type": renderButtonType (props.buttonType ?|| Button.Generic)
             , "button-shape": renderButtonShape (props.buttonShape ?|| Button.Rounded)
             }
-      pure $ div
-        </* { css: Style.buttonContainer
-          , className: "ry-button-container"
-          , _data
-          }
-        /> [ emotionButton propsRef
-              props
-              { className: "ry-button"
-              , css: Style.button
-              }
-          ]
+      pure
+        $ emotionButton propsRef
+            props
+            { className: "ry-button"
+            , css: Style.button
+            , _data
+            }

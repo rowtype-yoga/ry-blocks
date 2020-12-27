@@ -131,9 +131,13 @@ defaultColours =
     , invalid
     , invalidText
     , required
-    , interfaceBackground: lightBg
-    , interfaceTextDisabled: darken 0.33 lightBg
+    , interfaceBackground
+    , interfaceBackgroundDangerous
+    , interfaceDangerousText
+    , interfaceBackgroundDisabled: darken 0.03 lightBg
+    , interfaceTextDisabled: darken 0.30 lightBg
     , interfaceBackgroundHighlight: lighten 0.05 lightBg
+    , highlightDisabled: (desaturate 0.80 >>> lighten 0.28) highlight
     , interfaceBackgroundShadow: darken 0.04 lightBg
     , inputBackground: lightBg
     , inputBorder: darken 0.1 lightBg
@@ -167,17 +171,21 @@ defaultColours =
     , textInverted: darkBg
     , backgroundInverted: lightBg
     , interfaceBackground: interfaceBackgroundDark
-    , interfaceTextDisabled: lighten 0.8 darkBg
+    , interfaceBackgroundDangerous: interfaceBackgroundDangerousDark
+    , interfaceDangerousText: interfaceDangerousTextDark
+    , interfaceBackgroundDisabled: darken 0.3 interfaceBackgroundDark
+    , interfaceTextDisabled: (desaturate 0.3 >>> lighten 0.25) interfaceBackgroundDark
     , interfaceBackgroundHighlight: lighten 0.1 interfaceBackgroundDark
     , interfaceBackgroundShadow: darken 0.1 interfaceBackgroundDark
     , inputBackground: darkBg
     , inputBorder: lighten 0.17 darkBg
-    , success
+    , success: successDark
     , successText
     , required
     , invalid
     , invalidText
     , highlight: highlightDark
+    , highlightDisabled: (desaturate 0.76 >>> darken 0.32) highlightDark
     , highlightLighter: withAlpha 0.2 (Color.lighten 0.5 highlightDark)
     , highlightDarker: withAlpha 0.4 (Color.darken 0.5 highlightDark)
     , highlightRotatedForwards: highlightDark # rotateHue 30.0
@@ -194,9 +202,21 @@ defaultColours =
 
     interfaceBackgroundDark = Color.hsl 240.0 0.10 0.33
 
+    interfaceBackground = lightBg
+
+    interfaceBackgroundDangerous = interfaceBackground
+
+    interfaceDangerousText = invalid
+
+    interfaceBackgroundDangerousDark = Color.hsl 340.0 0.55 0.30
+
+    interfaceDangerousTextDark = Color.hsl 340.0 1.0 0.90
+
     highlightText = Color.rgb 0xFF 0xFF 0xFF
 
-    success = Color.rgb 20 200 60
+    success = Color.rgb 10 150 25
+
+    successDark = Color.rgb 20 200 60
 
     successText = Color.rgb 250 250 250
 
@@ -232,6 +252,9 @@ type FlatTheme a =
   , background100 ∷ a
   , backgroundInverted ∷ a
   , interfaceBackground ∷ a
+  , interfaceBackgroundDangerous ∷ a
+  , interfaceDangerousText ∷ a
+  , interfaceBackgroundDisabled ∷ a
   , interfaceTextDisabled ∷ a
   , interfaceBackgroundHighlight ∷ a
   , interfaceBackgroundShadow ∷ a
@@ -242,6 +265,7 @@ type FlatTheme a =
   , highlightRotatedForwards ∷ a
   , highlightDarker ∷ a
   , highlightLighter ∷ a
+  , highlightDisabled ∷ a
   , highlightText ∷ a
   , success ∷ a
   , successText ∷ a
