@@ -1,8 +1,9 @@
 module Yoga.Block.Layout.Cluster.Spec where
 
 import Yoga.Prelude.Spec
-import Yoga.Block.Layout.Cluster as Cluster
+import Foreign.Object as Object
 import React.Basic.DOM as R
+import Yoga.Block.Layout.Cluster as Cluster
 
 spec ∷ Spec Unit
 spec =
@@ -12,10 +13,11 @@ spec =
         void
           $ renderComponent Cluster.component {}
       it "accepts div props" do
-        { findByText } <-
+        { findByTestId } <-
           renderComponent Cluster.component
             { role: "Heinz"
+            , _data: Object.fromHomogeneous { testid: "cluster" }
             , children: [ R.text "Find me!" ]
             }
-        elem <- findByText "Find me!"
-        elem `shouldHaveAttribute` "role"
+        elem <- findByTestId "cluster"
+        shouldHaveAttributeWithValue elem "role" "Heinz"
