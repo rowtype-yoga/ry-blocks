@@ -96,6 +96,17 @@ mkGlobal maybeMode =
       nested
         $ css
             { boxSizing: str "inherit"
+            , fontFeatureSettings:
+              str
+                $ intercalate ","
+                $ show
+                <$> [ "ss03" -- curved r
+                  , "cv03" -- open six
+                  , "cv04" -- open nine
+                  -- , "cv05" -- lower case l with tail
+                  , "cv07" -- German double-s
+                  , "cv09" -- Flat top three
+                  ]
             }
     }
 

@@ -57,6 +57,7 @@ labelSmall =
     { fontSize: var "--s-1"
     , marginTop: str "calc(var(--s-3) * -1)"
     , marginLeft: var "--s-2"
+    , userSelect: none
     , """&[data-required="true"] > span:after""":
       nest
         { content: str "'＊'"
@@ -64,6 +65,7 @@ labelSmall =
     , "& > span":
       nest
         { fontWeight: str "500"
+        , whiteSpace: str "nowrap"
         , background: str colour.inputBackground
         , color: str colour.text
         , borderRadius: var "--s-4"
@@ -94,11 +96,15 @@ labelSmall =
         }
     }
 
-labelLarge ∷ { leftIconWidth ∷ Maybe Number } -> Style
-labelLarge { leftIconWidth } =
+labelLarge ∷ { leftIconWidth ∷ Maybe Number, inputWidth ∷ Number } -> Style
+labelLarge { leftIconWidth, inputWidth } =
   css
     { fontSize: str "calc(var(--s0) * 0.85)"
     , padding: _0
+    , whiteSpace: nowrap -- force on one line
+    , overflow: str "hidden"
+    , maxWidth: str $ i "calc(" inputWidth "px)"
+    , textOverflow: str "ellipsis"
     , marginTop: str "calc(var(--s-1) + var(--s-5))"
     , marginBottom: str "calc(var(--s-1) + var(--s-5))"
     , marginLeft:
@@ -108,7 +114,6 @@ labelLarge { leftIconWidth } =
     , marginRight: str "var(--input-side-padding)"
     , color: str colour.placeholderText
     , fontWeight: str "400"
-    , whiteSpace: nowrap -- force on one line
     , """&[data-required="true"]:after""":
       nest
         { content: str "'*'"
@@ -148,46 +153,57 @@ leftIconContainer =
             }
         }
 
+inputContainer ∷ ∀ r. { | Props OptionalProp r } -> Style
+inputContainer props = theCss <>? props.css
+  where
+    theCss =
+      css
+        { position: relative
+        , boxSizing: borderBox
+        , backgroundColor: str colour.inputBackground
+        , display: flex
+        , width: str "calc(var(--s4) * 2)"
+        , "--left-icon-size": var "--s0"
+        , "--right-icon-size": str "calc(var(--s0) * 1.2)"
+        , "--input-border-radius": var "--s-1"
+        , "--input-side-padding": var "--s-1"
+        , "--input-top-padding": var "--s-5"
+        , "--input-bottom-padding": var "--s-5"
+        , alignItems: center
+        , justifyContent: center
+        , paddingLeft: str "calc(var(--input-side-padding) - var(--border-width))"
+        , paddingRight: str "calc(var(--input-side-padding) - var(--border-width))"
+        , paddingTop: str "calc(var(--input-top-padding) - var(--border-width))"
+        , paddingBottom: str "calc(var(--input-bottom-padding) - var(--border-width))"
+        , gap: str "calc(var(--input-side-padding) / 2)"
+        , "--border-width": str "1px"
+        , border: str $ "var(--border-width) solid " <> colour.inputBorder
+        , borderRadius: var "--input-border-radius"
+        , """&[data-invalid="false"]""":
+          nest
+            { borderColor: str colour.success
+            , "--border-width": str "var(--s-5)"
+            }
+        , """&[data-invalid="true"]""":
+          nest
+            { borderColor: str colour.invalid
+            , "--border-width": str "var(--s-5)"
+            }
+        , "&:focus-within":
+          nest
+            { "--border-width": str "var(--s-5)"
+            , borderColor: str colour.highlight
+            , transition: str "border-color 0s linear 0.1s"
+            }
+        }
+
 inputWrapper ∷ Style
 inputWrapper =
   css
-    { position: relative
-    , boxSizing: borderBox
-    , backgroundColor: str colour.inputBackground
-    , display: flex
-    , minWidth: str "calc(var(--s4) *2 )"
-    , "--left-icon-size": var "--s0"
-    , "--right-icon-size": str "calc(var(--s0) * 1.2)"
-    , "--input-border-radius": var "--s-1"
-    , "--input-side-padding": var "--s-1"
-    , "--input-top-padding": var "--s-5"
-    , "--input-bottom-padding": var "--s-5"
-    , alignItems: center
-    , justifyContent: center
-    , paddingLeft: str "calc(var(--input-side-padding) - var(--border-width))"
-    , paddingRight: str "calc(var(--input-side-padding) - var(--border-width))"
-    , paddingTop: str "calc(var(--input-top-padding) - var(--border-width))"
-    , paddingBottom: str "calc(var(--input-bottom-padding) - var(--border-width))"
-    , gap: str "calc(var(--input-side-padding) / 2)"
-    , "--border-width": str "1px"
-    , border: str $ "var(--border-width) solid " <> colour.inputBorder
-    , borderRadius: var "--input-border-radius"
-    , """&[data-invalid="false"]""":
-      nest
-        { borderColor: str colour.success
-        , "--border-width": str "var(--s-5)"
-        }
-    , """&[data-invalid="true"]""":
-      nest
-        { borderColor: str colour.invalid
-        , "--border-width": str "var(--s-5)"
-        }
-    , "&:focus-within":
-      nest
-        { "--border-width": str "var(--s-5)"
-        , borderColor: str colour.highlight
-        , transition: str "border-color 0s linear 0.1s"
-        }
+    { margin: _0
+    , minWidth: _0
+    , padding: _0
+    , flex: str "1"
     }
 
 input ∷ Style
@@ -195,8 +211,16 @@ input =
   css
     { "&[type=text],&[type=search],&[type=password],&[type=number],&:not([type])":
       nest
-        { color: str colour.text
-        , flex: str "2"
+        { background: str "transparent"
+        , color: str colour.text
+        , width: _100percent
+        , minWidth: _0
+        , margin: _0
+        , paddingTop: var "--padding-top"
+        , paddingBottom: var "--padding-bottom"
+        , paddingLeft: _0
+        , paddingRight: _0
+        , fontSize: str "calc(var(--s0) * 0.85)"
         , "--padding-top": var "--s-1"
         , "--padding-bottom": var "--s-1"
         , "&[aria-labelledby]":
@@ -204,14 +228,6 @@ input =
             { paddingTop: str "calc(var(--padding-top) + (var(--s-5)/2))"
             , paddingBottom: str "calc(var(--padding-bottom) - (var(--s-5)/2))"
             }
-        , background: str "transparent"
-        , margin: _0
-        , paddingTop: var "--padding-top"
-        , paddingBottom: var "--padding-bottom"
-        , paddingLeft: _0
-        , paddingRight: _0
-        , fontSize: str "calc(var(--s0) * 0.85)"
-        , gap: str gapSize
         , border: none
         }
     , "&[type=search]":

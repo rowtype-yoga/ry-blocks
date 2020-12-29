@@ -10,13 +10,13 @@ import React.Basic.Hooks (JSX, ReactComponent)
 import React.Basic.Hooks as Hooks
 import Record as Record
 
-div :: forall attrs attrs_. Union attrs attrs_ Props_div => ReactComponent (Record attrs)
+div ∷ ∀ attrs attrs_. Union attrs attrs_ Props_div => ReactComponent (Record attrs)
 div = R.div'
 
-span :: forall attrs attrs_. Union attrs attrs_ Props_span => ReactComponent (Record attrs)
+span ∷ ∀ attrs attrs_. Union attrs attrs_ Props_span => ReactComponent (Record attrs)
 span = R.span'
 
-button :: forall attrs attrs_. Union attrs attrs_ Props_button => ReactComponent (Record attrs)
+button ∷ ∀ attrs attrs_. Union attrs attrs_ Props_button => ReactComponent (Record attrs)
 button = R.button'
 
 el ∷

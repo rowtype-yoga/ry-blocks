@@ -10,7 +10,7 @@ import React.Basic (JSX, element, fragment)
 import React.Basic.DOM as R
 import React.Basic.Emotion as E
 import React.Basic.Events (handler_)
-import Yoga (el, (</), (/>), (</>))
+import Yoga ((/>), (</), (</>))
 import Yoga.Block as Block
 import Yoga.Block.Atom.Input as Input
 import Yoga.Block.Atom.Input.Types as HTMLInput
@@ -58,11 +58,17 @@ input = do
                   , element Input.component { label: nes (SProxy ∷ _ "Pig nose"), leading: R.text "🌭" }
                   , element Input.component { label: nes (SProxy ∷ _ "Pig nose"), leading: R.text "⭐", trailing: R.text "🔮" }
                   ]
-            , R.h2_ [ R.text "[BUG] Overflowing label" ]
+            , R.h2_ [ R.text "Overflowing label" ]
             , element Input.component
                 { type: HTMLInput.Text
                 , label: nes (SProxy ∷ _ "Is undefined really a function?")
                 }
+            , Input.component </> { type: HTMLInput.Text, label: nes (SProxy ∷ _ "Now this is really just excessively long and you should avoid it.") }
+            , Input.component
+                </> { css: E.css { width: E.str "500px" }
+                  , type: HTMLInput.Text
+                  , label: nes (SProxy ∷ _ "You can avoid this problem by setting a custom width")
+                  }
             , R.h2_ [ R.text "Password" ]
             , element Input.component { type: HTMLInput.Password }
             , R.h2_ [ R.text "Text Input" ]

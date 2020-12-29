@@ -55,7 +55,8 @@ button =
     , """&[data-button-shape="pill"]""":
       nest
         { borderRadius: str "calc(var(--s1) * 0.85)"
-        , padding: str "calc(var(--s-1) * 0.9) var(--s0)"
+        , padding: str "calc(var(--s-1) * 0.85) var(--s0)"
+        , paddingBottom: str "calc(var(--s-1))"
         }
     , """&[data-button-type="primary"]""":
       nest
@@ -95,9 +96,7 @@ button =
         }
     , """&:active""":
       nest
-        { boxShadow:
-          str
-            $ "inset 0 1px var(--s-1) rgba(0,0,0,0.20)"
+        { boxShadow: str $ "inset 0 1px var(--s-1) rgba(0,0,0,0.20)"
         , borderTop: str $ i "1px solid " colour.interfaceBackgroundShadow
         , borderBottom: str $ i "1px solid " colour.interfaceBackgroundShadow
         , transform: str "scale3d(0.95,0.95,0.95)"
