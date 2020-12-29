@@ -1,14 +1,11 @@
 module Yoga.Block.Atom.Input.View where
 
 import Yoga.Prelude.View
-import Data.Array as Array
-import Data.Interpolate (i)
 import Data.String.NonEmpty (NonEmptyString)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Framer.Motion as M
-import Partial.Unsafe (unsafeCrashWith)
-import React.Basic.DOM (CSS, css)
+import React.Basic.DOM (css)
 import React.Basic.DOM as R
 import React.Basic.Hooks as React
 import Web.HTML.HTMLInputElement as InputElement
@@ -48,73 +45,6 @@ mkLeftIcon icon =
             , icon
             }
       ]
-
-containerVariants ∷
-  { blurred ∷ CSS
-  , focussed ∷ CSS
-  }
-containerVariants =
-  { focussed:
-    css
-      { clipPath
-      , transition: { duration: 0.6 }
-      }
-  , blurred:
-    css
-      { clipPath:
-        drawPathUntil (Array.length path + 1) path
-      }
-  }
-  where
-    clipPath = 6 Array... (Array.length path) <#> \ln -> drawPathUntil ln path
-
-type Point =
-  { x ∷ Int, y ∷ Int }
-
-drawPathUntil ∷ Int -> Array Point -> String
-drawPathUntil idx thePath = do
-  let fn { x, y } = i x "%" " " y "%"
-  let firstFew = Array.take idx thePath
-  let lastFew = Array.drop idx thePath $> (Array.last firstFew # fromMaybe' \_ -> unsafeCrashWith "ogod")
-  let rendered = intercalate "," $ fn <$> (firstFew <> lastFew)
-  i "polygon(" rendered ")"
-
-path ∷ Array Point
-path = mkPath 4 8
-
-mkPath ∷ Int -> Int -> Array Point
-mkPath borderX borderY = do
-  let
-    inside =
-      [ {- ⌜ -} p borderX borderY
-      , {- ⌞ -} p borderX (100 - borderY)
-      , {- ⌟ -} p (100 - borderX) (100 - borderY)
-      , {- ⌝ -} p (100 - borderX) borderY
-      , {- ⌜ -} p borderX borderY
-      ]
-    outside =
-      [ {-⌜    -} p 0 0
-      , {-⌞    -} p 0 100
-      , {- .   -} p 25 100
-      , {-  .  -} p 50 100
-      , {-   . -} p 75 100
-      , {-    ⌟-} p 100 100
-      , {-    ⌝-} p 100 0
-      , {-   ^ -} p 75 0
-      , {-  ^  -} p 50 0
-      , {- ^   -} p 25 0
-      , {-⌜    -} p 0 0
-      ]
-  inside <> outside <> (Array.reverse inside)
-  where
-    p ∷ Int -> Int -> Point
-    p x y = { x, y }
-
-containerVariantLabels ∷
-  { blurred ∷ M.VariantLabel
-  , focussed ∷ M.VariantLabel
-  }
-containerVariantLabels = M.makeVariantLabels containerVariants
 
 rawInput ∷ ∀ p. ReactComponent { | p }
 rawInput =
@@ -206,8 +136,7 @@ rawComponent =
               )
         inputContainer =
           rawContainer
-            </ { label: (mkLabel <$> props.label) ?|| mempty
-              , hasFocus: hasFocus
+            </ { hasFocus: hasFocus
               , isInvalid: aria # Object.lookup "invalid" <#> (_ == "true") # maybeToOp
               , css: props.css
               }

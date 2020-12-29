@@ -10,23 +10,23 @@ import React.Basic.Popper.Types (modifierOffset, nullRef)
 import Unsafe.Coerce (unsafeCoerce)
 import Yoga.Block.Atom.Popover.Style as Style
 
-type PropsF f
-  = ( className ∷ f String
-    , placement ∷ f Placement
-    | Style.Props f (MandatoryProps DivProps)
-    )
+type PropsF f =
+  ( className ∷ f String
+  , placement ∷ f Placement
+  | Style.Props f (MandatoryProps DivProps)
+  )
 
-type MandatoryProps r
-  = ( children ∷ Array JSX
-    , referenceElement ∷ NodeRef
-    | r
-    )
+type MandatoryProps r =
+  ( children ∷ Array JSX
+  , referenceElement ∷ NodeRef
+  | r
+  )
 
-type Props
-  = PropsF Id
+type Props =
+  PropsF Id
 
-type PropsOptional
-  = PropsF OptionalProp
+type PropsOptional =
+  PropsF OptionalProp
 
 component ∷ ∀ p p_. Union p p_ Props => ReactComponent { | MandatoryProps p }
 component = rawComponent
