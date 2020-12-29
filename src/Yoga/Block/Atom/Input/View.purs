@@ -209,7 +209,7 @@ rawComponent =
           rawContainer
             </ { label: (mkLabel <$> props.label) ?|| mempty
               , hasFocus: hasFocus
-              , inputProps: props
+              , isInvalid: aria # Object.lookup "invalid" <#> (_ == "true")
               , css: props.css
               }
             /> [ leading # foldMap \l -> div </ { ref: leftIconRef } /> [ l ]
