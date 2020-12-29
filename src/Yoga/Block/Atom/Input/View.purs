@@ -4,8 +4,6 @@ import Yoga.Prelude.View
 import Data.Array as Array
 import Data.Interpolate (i)
 import Data.String.NonEmpty (NonEmptyString)
-import Data.String.NonEmpty as NonEmptyString
-import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Framer.Motion as M
@@ -13,13 +11,14 @@ import Partial.Unsafe (unsafeCrashWith)
 import React.Basic.DOM (CSS, css)
 import React.Basic.DOM as R
 import React.Basic.Emotion (Style)
-import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
 import Web.HTML.HTMLInputElement as InputElement
 import Yoga.Block.Atom.Icon as Icon
 import Yoga.Block.Atom.Input.Style as Style
 import Yoga.Block.Atom.Input.Types (HTMLInput)
 import Yoga.Block.Atom.Input.Types as HTMLInput
+import Yoga.Block.Atom.Input.View.Container (rawContainer)
+import Yoga.Block.Atom.Input.View.Label as Label
 import Yoga.Block.Icon.SVG as SVGIcon
 
 type PropsF f =
@@ -129,42 +128,6 @@ rawInput =
         inputProps = props { type = HTMLInput.toString <$> props.type # unsafeUnOptional }
       pure result
 
-rawContainer ∷ ∀ p. ReactComponent { | p }
-rawContainer =
-  mkForwardRefComponent "InputContainer" do
-    \( props ∷
-        { children ∷ Array JSX
-        , label ∷ JSX
-        , css ∷ OptionalProp Style
-        , hasFocus ∷ Boolean
-        , inputProps ∷ { | InputPropsF OptionalProp () }
-        }
-    ) propsRef -> React.do
-      -- Left icon width to correctly place the label
-      let
-        aria ∷ Object String
-        aria = props.inputProps._aria # opToMaybe # fold
-        inputContainer =
-          M.div
-            </* M.motion
-                { variants: M.variants containerVariants
-                , animate: M.animate if props.hasFocus then containerVariantLabels.focussed else containerVariantLabels.blurred
-                }
-                { className: "ry-input-container"
-                , css: Style.inputContainer props
-                , _data:
-                  Object.fromHomogeneous
-                    { "invalid": aria # Object.lookup "invalid" # fromMaybe ""
-                    }
-                }
-            /> props.children
-      pure
-        $ div
-        </* { className: "ry-label-and-input-wrapper"
-          , css: Style.labelAndInputWrapper
-          }
-        /> [ inputContainer, props.label ]
-
 rawComponent ∷ ∀ p. ReactComponent (Record p)
 rawComponent =
   mkForwardRefComponent "InputContainer" do
@@ -192,7 +155,7 @@ rawComponent =
         maybeLabelText = props.label # opToMaybe
         mkLabel ∷ NonEmptyString -> JSX
         mkLabel labelText =
-          inputLabel
+          Label.component
             </> { onClickLargeLabel: handler preventDefault (const focusInput)
               , isFocussed: hasFocus
               , isRequired: aria # Object.lookup "required" # (_ == Just "true")
@@ -264,70 +227,6 @@ rawComponent =
                     , css: Style.labelAndInputWrapper
                     }
                   /> [ inputContainer, mkLabel labelText ]
-
-inputLabel ∷
-  ReactComponent
-    { onClickLargeLabel ∷ EventHandler
-    , isRequired ∷ Boolean
-    , isInvalid ∷ Boolean
-    , isFocussed ∷ Boolean
-    , renderLargeLabel ∷ Boolean
-    , leftIconRef ∷ NodeRef
-    , inputRef ∷ NodeRef
-    , labelId ∷ String
-    , inputId ∷ String
-    , labelText ∷ NonEmptyString
-    }
-inputLabel =
-  unsafePerformEffect
-    $ reactComponent "Password" \props -> React.do
-        inputBbox /\ setInputBbox <- useState' (zero ∷ DOMRect)
-        useEffectOnce do
-          maybeBBox <- getBoundingBoxFromRef props.inputRef
-          for_ maybeBBox setInputBbox
-          mempty
-        -- Left Icon
-        leftIconBbox /\ setLeftIconBbox <- useState' Nothing
-        useEffectAlways do
-          when (leftIconBbox == Nothing) do
-            maybeBBox <- getBoundingBoxFromRef props.leftIconRef
-            for_ maybeBBox (setLeftIconBbox <<< Just)
-          mempty
-        let container = div </* { className: "ry-input-label-container", css: Style.labelContainer }
-        let
-          labelSpan =
-            M.span
-              </ { onClick: props.onClickLargeLabel
-                , layout: M.layout true
-                , layoutId: M.layoutId "ry-input-label-text"
-                , htmlFor: props.inputId
-                , id: props.labelId
-                }
-        pure
-          $ container
-              [ M.animateSharedLayout </ { type: M.switch }
-                  /> [ guard (inputBbox /= zero)
-                        $ M.div
-                        </* { className: if props.renderLargeLabel then "ry-input-label-large" else "ry-input-label-small"
-                          , layoutId: M.layoutId "ry-input-label"
-                          , css:
-                            if props.renderLargeLabel then
-                              Style.labelLarge { leftIconWidth: leftIconBbox <#> _.width, inputWidth: inputBbox.width }
-                            else
-                              Style.labelSmall
-                          , layout: M.layout true
-                          , transition: M.transition { duration: 0.18, ease: "easeOut" }
-                          , _data:
-                            Object.fromHomogeneous
-                              { "has-focus": show props.isFocussed
-                              , "invalid": show props.isInvalid
-                              , "required": show props.isRequired
-                              }
-                          , initial: M.initial false
-                          }
-                        /> [ labelSpan [ R.text $ NonEmptyString.toString props.labelText ] ]
-                    ]
-              ]
 
 password ∷ ∀ p. ReactComponent { | p }
 password =
