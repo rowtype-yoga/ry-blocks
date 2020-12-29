@@ -10,7 +10,7 @@ import Foreign.Object (Object)
 import Foreign.Object as Object
 import Framer.Motion as M
 import Partial.Unsafe (unsafeCrashWith)
-import React.Basic.DOM (CSS, Props_input, css)
+import React.Basic.DOM (CSS, css)
 import React.Basic.DOM as R
 import React.Basic.Emotion (Style)
 import React.Basic.Hooks (reactComponent)
@@ -131,7 +131,7 @@ rawInput =
 
 rawContainer ∷ ∀ p. ReactComponent { | p }
 rawContainer =
-  mkForwardRefComponent "Input" do
+  mkForwardRefComponent "InputContainer" do
     \( props ∷
         { children ∷ Array JSX
         , label ∷ JSX
@@ -228,41 +228,29 @@ rawComponent =
                   setHasValue (v /= "")
             )
         onFocus = handler preventDefault (const $ unless hasFocus $ setHasFocus true)
+        theInput =
+          rawInput
+            </> ( props
+                  { onFocus = composeHandler props.onFocus onFocus
+                  , onBlur = composeHandler props.onBlur onBlur
+                  , ref = ref
+                  , placeholder = maybePlaceholder # maybeToOp # unsafeUnOptional
+                  , _aria =
+                    if props.label # opToMaybe # isJust then
+                      aria # Object.insert "labelledby" labelId
+                    else
+                      aria
+                  }
+              )
         inputContainer =
-          M.div
-            </* M.motion
-                { variants: M.variants containerVariants
-                , animate: M.animate if hasFocus then containerVariantLabels.focussed else containerVariantLabels.blurred
-                }
-                { className: "ry-input-container"
-                , css: Style.inputContainer props
-                , _data:
-                  Object.fromHomogeneous
-                    { "invalid": aria # Object.lookup "invalid" # fromMaybe ""
-                    }
-                }
+          rawContainer
+            </ { label: (mkLabel <$> props.label) ?|| mempty
+              , hasFocus: hasFocus
+              , inputProps: props
+              , css: props.css
+              }
             /> [ leading # foldMap \l -> div </ { ref: leftIconRef } /> [ l ]
-              , rawInput
-                  </> ( props
-                        { onFocus = composeHandler props.onFocus onFocus
-                        , onBlur = composeHandler props.onBlur onBlur
-                        , ref = ref
-                        , placeholder = maybePlaceholder # maybeToOp # unsafeUnOptional
-                        , _aria =
-                          if props.label # opToMaybe # isJust then
-                            aria # Object.insert "labelledby" labelId
-                          else
-                            aria
-                        }
-                    )
-              -- ref
-              -- ( props { type = HTMLInput.toString <$> props.type # unsafeUnOptional }
-              --     # setOrDelete (SProxy ∷ _ "placeholder") (maybePlaceholder # maybeToOp)
-              --     # setOrDelete (SProxy ∷ _ "value") (maybeValue # maybeToOp)
-              -- )
-              -- { className: "ry-input"
-              -- , css: Style.input
-              -- }
+              , theInput
               , trailing # foldMap \t -> div </ {} /> [ t ]
               ]
       pure
