@@ -10,7 +10,6 @@ import Framer.Motion as M
 import Partial.Unsafe (unsafeCrashWith)
 import React.Basic.DOM (CSS, css)
 import React.Basic.DOM as R
-import React.Basic.Emotion (Style)
 import React.Basic.Hooks as React
 import Web.HTML.HTMLInputElement as InputElement
 import Yoga.Block.Atom.Icon as Icon
@@ -209,7 +208,7 @@ rawComponent =
           rawContainer
             </ { label: (mkLabel <$> props.label) ?|| mempty
               , hasFocus: hasFocus
-              , isInvalid: aria # Object.lookup "invalid" <#> (_ == "true")
+              , isInvalid: aria # Object.lookup "invalid" <#> (_ == "true") # maybeToOp
               , css: props.css
               }
             /> [ leading # foldMap \l -> div </ { ref: leftIconRef } /> [ l ]
