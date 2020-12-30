@@ -96,21 +96,18 @@ labelSmall =
         }
     }
 
-labelLarge ∷ { leftIconWidth ∷ Maybe Number, inputWidth ∷ Number } -> Style
-labelLarge { leftIconWidth, inputWidth } =
+labelLarge ∷ { left ∷ Number, width ∷ Number, top ∷ Number } -> Style
+labelLarge { left, width, top } =
   css
     { fontSize: str "calc(var(--s0) * 0.85)"
     , padding: _0
     , whiteSpace: nowrap -- force on one line
     , overflow: str "hidden"
-    , maxWidth: str $ i "calc(" inputWidth "px)"
+    , maxWidth: str $ i width "px"
     , textOverflow: str "ellipsis"
     , marginTop: str "calc(var(--s-1) + var(--s-5))"
-    , marginBottom: str "calc(var(--s-1) + var(--s-5))"
-    , marginLeft:
-      case leftIconWidth of
-        Nothing -> var "--input-side-padding"
-        Just size -> str $ i "calc(var(--input-side-padding) + " gapSize " + " size "px)"
+    , marginBottom: str $ i "calc(" "var(--s-1)" "+" "var(--s-5)" " + " top "px" ")"
+    , marginLeft: str $ i left "px"
     , marginRight: str "var(--input-side-padding)"
     , color: str colour.placeholderText
     , fontWeight: str "400"

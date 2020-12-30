@@ -17,8 +17,8 @@ type Props =
   , isInvalid ∷ Boolean
   , isFocussed ∷ Boolean
   , renderLargeLabel ∷ Boolean
-  , leftIconRef ∷ NodeRef
   , inputRef ∷ NodeRef
+  , parentRef ∷ NodeRef
   , labelId ∷ String
   , inputId ∷ String
   , labelText ∷ NonEmptyString
@@ -30,19 +30,18 @@ component =
     $ reactComponent "Input Label" \props -> React.do
         -- Track input bounding box
         inputBbox /\ setInputBbox <- useState' (zero ∷ DOMRect)
+        parentBbox /\ setParentBbox <- useState' (zero ∷ DOMRect)
         useEffectOnce do
           maybeBBox <- getBoundingBoxFromRef props.inputRef
           for_ maybeBBox setInputBbox
           mempty
-        -- Left icon
-        leftIconBbox /\ setLeftIconBbox <- useState' Nothing
-        useEffectAlways do
-          when (leftIconBbox == Nothing) do
-            maybeBBox <- getBoundingBoxFromRef props.leftIconRef
-            for_ maybeBBox (setLeftIconBbox <<< Just)
+        useEffectOnce do
+          maybeBBox <- getBoundingBoxFromRef props.parentRef
+          for_ maybeBBox setParentBbox
           mempty
         -- UI
         let
+          text = R.text $ NonEmptyString.toString props.labelText
           result =
             container
               [ sharedLayout
@@ -52,20 +51,23 @@ component =
                       ]
                   ]
               ]
-          text = R.text $ NonEmptyString.toString props.labelText
-          sharedLayout = M.animateSharedLayout </ { type: M.switch }
           container = div </* { className: "ry-input-label-container", css: Style.labelContainer }
+          sharedLayout = M.animateSharedLayout </ { type: M.switch }
           labelContainer =
-            guard (inputBbox /= zero)
+            guard (inputBbox /= zero && parentBbox /= zero)
               $ M.div
               </* { className: if props.renderLargeLabel then "ry-input-label-large" else "ry-input-label-small"
+                , layout: M.layout true
                 , layoutId: M.layoutId "ry-input-label"
                 , css:
                   if props.renderLargeLabel then
-                    Style.labelLarge { leftIconWidth: leftIconBbox <#> _.width, inputWidth: inputBbox.width }
+                    Style.labelLarge
+                      { left: inputBbox.left - parentBbox.left
+                      , width: inputBbox.width
+                      , top: inputBbox.top - parentBbox.top
+                      }
                   else
                     Style.labelSmall
-                , layout: M.layout true
                 , transition: M.transition { duration: 0.18, ease: "easeOut" }
                 , _data:
                   Object.fromHomogeneous

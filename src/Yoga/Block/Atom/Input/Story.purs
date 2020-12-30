@@ -37,6 +37,16 @@ input = do
     $ fragment
         [ R.div_
             [ R.h1_ [ R.text "Input Examples" ]
+            , R.h3_ [ R.text "With a label" ]
+            , Block.cluster </ {}
+                /> [ element Input.component { label: nes (SProxy ∷ _ "This has a label"), value: "And text", onChange: handler_ mempty }
+                  , element Input.component { label: nes (SProxy ∷ _ "This has a label"), value: "", onChange: handler_ mempty }
+                  , element Input.component { label: nes (SProxy ∷ _ "This has a label"), placeholder: "A very long placeholder, too..." }
+                  , element Input.component { label: nes (SProxy ∷ _ "Pig nose"), leading: R.text "🐽🤣" }
+                  , element Input.component { label: nes (SProxy ∷ _ "Pig nose"), trailing: R.text "🤫" }
+                  , element Input.component { label: nes (SProxy ∷ _ "Pig nose"), leading: R.text "🌭" }
+                  , element Input.component { label: nes (SProxy ∷ _ "Pig nose"), leading: R.text "⭐", trailing: R.text "🔮" }
+                  ]
             , R.h2_ [ R.text "Generic Input" ]
             , Input.component </> { value: "A Generic Input", onChange: handler_ mempty }
             , R.h2_ [ R.text "Validation on text Input" ]
@@ -48,16 +58,6 @@ input = do
                 , label: nes (SProxy ∷ _ "I am so important")
                 , _aria: Object.singleton "required" "true"
                 }
-            , R.h3_ [ R.text "With a label" ]
-            , Block.cluster </ {}
-                /> [ element Input.component { label: nes (SProxy ∷ _ "This has a label"), value: "And text", onChange: handler_ mempty }
-                  , element Input.component { label: nes (SProxy ∷ _ "This has a label"), value: "", onChange: handler_ mempty }
-                  , element Input.component { label: nes (SProxy ∷ _ "This has a label"), placeholder: "A very long placeholder, too..." }
-                  , element Input.component { label: nes (SProxy ∷ _ "Pig nose"), leading: R.text "🐽🤣" }
-                  , element Input.component { label: nes (SProxy ∷ _ "Pig nose"), trailing: R.text "🤫" }
-                  , element Input.component { label: nes (SProxy ∷ _ "Pig nose"), leading: R.text "🌭" }
-                  , element Input.component { label: nes (SProxy ∷ _ "Pig nose"), leading: R.text "⭐", trailing: R.text "🔮" }
-                  ]
             , R.h2_ [ R.text "Overflowing label" ]
             , element Input.component
                 { type: HTMLInput.Text

@@ -1,6 +1,7 @@
 module Yoga.Block.Atom.CodeInput.View
   ( component
   , Props
+  , PropsF
   , EmotionProps
   ) where
 
@@ -8,10 +9,16 @@ import Yoga.Prelude.View
 import React.Basic.Emotion (Style)
 import Yoga.Block.Atom.CodeInput.Style as Style
 
-type Props =
+type PropsF f =
   ( 
-  | Style.Props Id (InputPropsF Id EmotionProps)
+  | Style.Props f (InputPropsF f EmotionProps)
   )
+
+type Props =
+  PropsF Id
+
+type PropsOptional =
+  PropsF OptionalProp
 
 type EmotionProps =
   ( className ∷ String, css ∷ Style )
@@ -22,7 +29,7 @@ component = rawComponent
 rawComponent ∷ ∀ r. ReactComponent { | r }
 rawComponent =
   mkForwardRefComponent "CodeInput" do
-    \(props ∷ { | Props }) ref -> React.do
+    \(props ∷ { | PropsOptional }) ref -> React.do
       pure
         $ emotionInput ref
             props

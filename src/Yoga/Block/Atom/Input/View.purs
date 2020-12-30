@@ -8,6 +8,7 @@ import Framer.Motion as M
 import React.Basic.DOM (css)
 import React.Basic.DOM as R
 import React.Basic.Hooks as React
+import Unsafe.Coerce (unsafeCoerce)
 import Web.HTML.HTMLInputElement as InputElement
 import Yoga.Block.Atom.Icon as Icon
 import Yoga.Block.Atom.Input.Style as Style
@@ -22,8 +23,11 @@ type PropsF f =
   , trailing ∷ f JSX
   , label ∷ f NonEmptyString
   , type ∷ f HTMLInput
-  | Style.Props f InputProps
+  | Style.Props f (InputPropsF f ())
   )
+
+coerceProps ∷ { | PropsOptional } -> { | Props }
+coerceProps = unsafeCoerce
 
 type Props =
   PropsF Id
@@ -31,7 +35,7 @@ type Props =
 type PropsOptional =
   PropsF OptionalProp
 
-component ∷ ∀ p p_. Union p p_ Props => ReactComponent { | p }
+component ∷ ∀ p q. Union p q Props => ReactComponent { | p }
 component = rawComponent
 
 mkLeftIcon ∷ JSX -> JSX
@@ -46,6 +50,12 @@ mkLeftIcon icon =
             }
       ]
 
+inputComponent ∷ ∀ p q. Union p q Props => ReactComponent { | p }
+inputComponent = rawInput
+
+inputComponentOptional ∷ ∀ p q. Union p q PropsOptional => ReactComponent { | p }
+inputComponentOptional = rawInput
+
 rawInput ∷ ∀ p. ReactComponent { | p }
 rawInput =
   mkForwardRefComponent "Input" do
@@ -54,7 +64,7 @@ rawInput =
         result = inputWrapper [ input ]
         inputWrapper = div </* { className: "ry-input-wrapper", css: Style.inputWrapper }
         input = emotionInput ref inputProps { className: "ry-input", css: Style.input }
-        inputProps = props { type = HTMLInput.toString <$> props.type # unsafeUnOptional }
+        inputProps = props { type = HTMLInput.toString <$> props.type }
       pure result
 
 rawComponent ∷ ∀ p. ReactComponent (Record p)
@@ -62,22 +72,23 @@ rawComponent =
   mkForwardRefComponent "InputContainer" do
     \(props ∷ { | PropsOptional }) propsRef -> React.do
       hasFocus /\ setHasFocus <- useState' false
-      backupRef ∷ NodeRef <- useRef null -- [TODO] test this
+      parentRef ∷ NodeRef <- useRef null
+      backupRef ∷ NodeRef <- useRef null
       let ref = forwardedRefAsMaybe propsRef # fromMaybe backupRef
       let
         focusInput =
           unless hasFocus do
             maybeHTMLElement <- getHTMLElementFromRef ref
             for_ maybeHTMLElement focus
-      -- Left icon width to correctly place the label
-      leftIconRef ∷ NodeRef <- useRef null
-      let (maybeValue ∷ Maybe String) = cast props.value # opToMaybe
+      let
+        maybeValue ∷ Maybe String
+        maybeValue = props.value # opToMaybe
       hasValue /\ setHasValue <- useState' ((maybeValue # isJust) && (maybeValue /= Just ""))
       let
         aria ∷ Object String
-        aria = props._aria # cast # opToMaybe # fold
+        aria = props._aria # opToMaybe # fold
         labelId ∷ String
-        labelId = props.id # cast # opToMaybe # fold # (_ <> "-label")
+        labelId = props.id # opToMaybe # fold # (_ <> "-label")
         renderLargeLabel ∷ Boolean
         renderLargeLabel = not hasFocus && not hasValue
         maybeLabelText ∷ Maybe NonEmptyString
@@ -90,10 +101,10 @@ rawComponent =
               , isRequired: aria # Object.lookup "required" # (_ == Just "true")
               , isInvalid: aria # Object.lookup "invalid" # (_ == Just "true")
               , renderLargeLabel
-              , leftIconRef
               , labelId
-              , inputId: props.id
+              , inputId: props.id ?|| "no-id" -- [TODO] Enforce ID?
               , inputRef: ref
+              , parentRef
               , labelText
               }
         leading ∷ Maybe JSX
@@ -107,7 +118,7 @@ rawComponent =
         trailing = opToMaybe props.trailing
         maybePlaceholder ∷ Maybe String
         maybePlaceholder = do
-          given <- props.placeholder # cast # opToMaybe
+          given <- props.placeholder # opToMaybe
           if isJust maybeLabelText && hasFocus then Just given else Nothing
         onBlur =
           handler preventDefault
@@ -121,26 +132,28 @@ rawComponent =
             )
         onFocus = handler preventDefault (const $ unless hasFocus $ setHasFocus true)
         theInput =
-          rawInput
-            </> ( props
-                  { onFocus = composeHandler props.onFocus onFocus
-                  , onBlur = composeHandler props.onBlur onBlur
-                  , ref = ref
-                  , placeholder = maybePlaceholder # maybeToOp # unsafeUnOptional
-                  , _aria =
-                    if props.label # opToMaybe # isJust then
-                      aria # Object.insert "labelledby" labelId
-                    else
-                      aria
-                  }
+          inputComponentOptional
+            </> ( (cast ∷ _ -> { | PropsOptional })
+                  $ props
+                      { onFocus = composeHandler onFocus props.onFocus
+                      , onBlur = composeHandler onBlur props.onBlur
+                      , ref = ref
+                      , placeholder = maybePlaceholder # maybeToOp
+                      , _aria =
+                        if props.label # opToMaybe # isJust then
+                          aria # Object.insert "labelledby" labelId
+                        else
+                          aria
+                      }
               )
         inputContainer =
           rawContainer
             </ { hasFocus: hasFocus
               , isInvalid: aria # Object.lookup "invalid" <#> (_ == "true") # maybeToOp
               , css: props.css
+              , ref: parentRef
               }
-            /> [ leading # foldMap \l -> div </ { ref: leftIconRef } /> [ l ]
+            /> [ leading # foldMap \l -> div </ {} /> [ l ]
               , theInput
               , trailing # foldMap \t -> div </ {} /> [ t ]
               ]
@@ -208,7 +221,7 @@ password =
           , R.div' </ {}
               /> [ emotionInput
                     ref
-                    props { type = HTMLInput.toString <$> props.type # unsafeUnOptional }
+                    (props { type = HTMLInput.toString <$> props.type })
                     { className: "ry-input"
                     , css: Style.input
                     , type: if hidePassword then "password" else "text"

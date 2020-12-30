@@ -7,7 +7,7 @@ import React.Basic (JSX, element, fragment)
 import React.Basic.DOM as R
 import React.Basic.Emotion (str)
 import React.Basic.Emotion as E
-import Yoga (div, (/>), (</), (</>))
+import Yoga ((/>), (</), (</>))
 import Yoga.Block as Block
 import Yoga.Block.Atom.Button.Types as ButtonType
 import Yoga.Block.Atom.Button.View as Button

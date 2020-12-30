@@ -37,7 +37,6 @@ import Yoga.Block.Container.Style (colour)
 import Yoga.Block.Container.Style as Styles
 import Yoga.Block.Icon.SVG as Icons
 import Yoga.Block.Layout.Box as Box
-import Yoga.Block.Layout.Cluster as Cluster
 import Yoga.Block.Layout.Stack as Stack
 
 default ∷
