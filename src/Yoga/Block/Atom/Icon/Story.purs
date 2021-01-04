@@ -33,5 +33,7 @@ icon = do
             [ R.h2_ [ R.text "Icon" ]
             , element Icon.component { icon: SVGIcon.on }
             , element Icon.component { icon: SVGIcon.off }
+            , element Icon.component { icon: SVGIcon.sun }
+            , element Icon.component { icon: SVGIcon.moon }
             ]
         ]

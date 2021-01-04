@@ -70,7 +70,7 @@ button =
         , color: str colour.highlightText
         , """&:focus-visible""":
           nest
-            { borderColor: str $ colour.background0
+            { borderColor: str "inherit"
             }
         , """&:active""":
           nest

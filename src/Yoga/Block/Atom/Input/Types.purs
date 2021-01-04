@@ -4,7 +4,7 @@ import Prelude
 
 -- No support for "button" because of the dedicated
 -- HTML Element
-data HTMLInput
+data HTMLInputType
   = Checkbox
   | Color
   | Date
@@ -26,9 +26,10 @@ data HTMLInput
   | Time
   | Url
   | Week
-derive instance eqHTMLInput ∷ Eq HTMLInput
 
-toString ∷ HTMLInput -> String
+derive instance eqHTMLInput ∷ Eq HTMLInputType
+
+toString ∷ HTMLInputType -> String
 toString = case _ of
   Checkbox -> "checkbox"
   Color -> "color"

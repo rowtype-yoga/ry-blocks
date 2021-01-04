@@ -25,4 +25,5 @@ rawComponent =
         $ emotionDiv ref props
             { className: "ry-sidebar " <>? props.className
             , css: Style.sidebar props
+            , children: [ div </ {} /> props.children ]
             }

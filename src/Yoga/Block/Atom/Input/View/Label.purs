@@ -11,18 +11,18 @@ import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
 import Yoga.Block.Atom.Input.Style as Style
 
-type Props =
-  { onClickLargeLabel ∷ EventHandler
-  , isRequired ∷ Boolean
-  , isInvalid ∷ Boolean
-  , isFocussed ∷ Boolean
-  , renderLargeLabel ∷ Boolean
-  , inputRef ∷ NodeRef
-  , parentRef ∷ NodeRef
-  , labelId ∷ String
-  , inputId ∷ String
-  , labelText ∷ NonEmptyString
-  }
+type Props
+  = { onClickLargeLabel ∷ EventHandler
+    , isRequired ∷ Boolean
+    , isInvalid ∷ Boolean
+    , isFocussed ∷ Boolean
+    , renderLargeLabel ∷ Boolean
+    , inputRef ∷ NodeRef
+    , parentRef ∷ NodeRef
+    , labelId ∷ String
+    , inputId ∷ String
+    , labelText ∷ NonEmptyString
+    }
 
 component ∷ ReactComponent Props
 component =
@@ -42,6 +42,7 @@ component =
         -- UI
         let
           text = R.text $ NonEmptyString.toString props.labelText
+
           result =
             container
               [ sharedLayout
@@ -51,8 +52,11 @@ component =
                       ]
                   ]
               ]
+
           container = div </* { className: "ry-input-label-container", css: Style.labelContainer }
+
           sharedLayout = M.animateSharedLayout </ { type: M.switch }
+
           labelContainer =
             guard (inputBbox /= zero && parentBbox /= zero)
               $ M.div
@@ -60,23 +64,24 @@ component =
                 , layout: M.layout true
                 , layoutId: M.layoutId "ry-input-label"
                 , css:
-                  if props.renderLargeLabel then
-                    Style.labelLarge
-                      { left: inputBbox.left - parentBbox.left
-                      , width: inputBbox.width
-                      , top: inputBbox.top - parentBbox.top
-                      }
-                  else
-                    Style.labelSmall
+                    if props.renderLargeLabel then
+                      Style.labelLarge
+                        { left: inputBbox.left - parentBbox.left
+                        , width: inputBbox.width
+                        , top: inputBbox.top - parentBbox.top
+                        }
+                    else
+                      Style.labelSmall
                 , transition: M.transition { duration: 0.18, ease: "easeOut" }
                 , _data:
-                  Object.fromHomogeneous
-                    { "has-focus": show props.isFocussed
-                    , "invalid": show props.isInvalid
-                    , "required": show props.isRequired
-                    }
+                    Object.fromHomogeneous
+                      { "has-focus": show props.isFocussed
+                      , "invalid": show props.isInvalid
+                      , "required": show props.isRequired
+                      }
                 , initial: M.initial false
                 }
+
           labelSpan =
             M.span
               </ { onClick: props.onClickLargeLabel

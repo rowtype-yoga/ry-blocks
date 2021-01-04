@@ -18,4 +18,5 @@ box props = styles <>? props.css
       css
         { padding: props.padding ?|| (1.0 # em)
         , border: str $ i ((props.borderWidth) ?|| "0") " solid"
+        , margin: _0
         }

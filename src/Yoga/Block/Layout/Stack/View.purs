@@ -21,8 +21,12 @@ rawComponent ∷ ∀ p. ReactComponent { | p }
 rawComponent =
   mkForwardRefComponent "Stack" do
     \(props ∷ { | PropsOptional }) ref -> React.do
+      -- Wrapping children to use `:nth-of-type` instead of `:nth-child` 
+      -- in CSS because the latter is problematic in SSR
+      let wrappedChildren = props.children <#> \c -> div </ {} /> [ c ]
       pure
         $ emotionDiv ref props
             { className: "ry-stack " <>? props.className
             , css: Style.stack props
+            , children: wrappedChildren
             }

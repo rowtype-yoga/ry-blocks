@@ -31,267 +31,264 @@ mkGlobal ∷ Maybe DarkOrLightMode -> Style
 mkGlobal maybeMode =
   css
     { "body, html":
-      nested
-        $ css
-            { minHeight: 100.0 # vh
-            , minWidth: 100.0 # vw
-            , lineHeight: str "1.15"
-            , "WebkitTextSizeAdjust": _100percent
-            , transition: str "background,color 0.33s ease-in"
-            }
+        nested
+          $ css
+              { minHeight: 100.0 # vh
+              , minWidth: 100.0 # vw
+              , lineHeight: str "1.15"
+              , "WebkitTextSizeAdjust": _100percent
+              , transition: str "background,color 0.33s ease-in"
+              }
     , ":root":
-      nested $ variables
-        <> fontVariables { main: "Inter", mono: "Victor Mono, Menlo, Consolas, Monaco, Liberation Mono, Lucida Console" }
+        nested $ variables
+          <> fontVariables { main: "Inter", mono: "Victor Mono, Menlo, Consolas, Monaco, Liberation Mono, Lucida Console" }
     , html:
-      nested
-        $ css
-            { boxSizing: str "border-box"
-            }
+        nested
+          $ css
+              { boxSizing: str "border-box"
+              }
     , body:
-      nested
-        $ css
-            { fontFamily: str "var(--main-font)"
-            , background: str colour.background0
-            , color: str colour.text
-            , margin: str "0"
-            }
-        <> case maybeMode of
-            Nothing -> autoSwitchColourTheme
-            Just DarkMode -> darkModeStyle
-            Just LightMode -> lightModeStyle
+        nested
+          $ css
+              { fontFamily: str "var(--main-font)"
+              , background: str colour.background
+              , color: str colour.text
+              , margin: str "0"
+              }
+          <> case maybeMode of
+              Nothing -> autoSwitchColourTheme
+              Just DarkMode -> darkModeStyle
+              Just LightMode -> lightModeStyle
     , "pre,code":
-      nest
-        { fontFamily: str "var(--mono-font)"
-        }
+        nest
+          { fontFamily: str "var(--mono-font)"
+          }
+    , "h1,h2,h3,h4":
+        nest
+          { lineHeight: var "--line-height-small"
+          , fontWeight: str "700"
+          , marginTop: str "var(--s-3)"
+          }
     , h1:
-      nested
-        $ css
-            { fontSize: var "--s4"
-            , lineHeight: str "calc(var(--s4) * 1.4)"
-            , fontWeight: str "900"
-            , letterSpacing: str "calc(var(--s-5) * -1)"
-            }
+        nested
+          $ css
+              { "--h1size": str "calc( min( var(--s2) + 2vw , var(--s4) ) )"
+              , fontSize: var "--h1size"
+              , letterSpacing: str "calc(var(--h1size) * -0.04)"
+              }
     , h2:
-      nested
-        $ css
-            { fontSize: var "--s3"
-            , lineHeight: str "calc(var(--s3) * 1.4)"
-            , fontWeight: str "800"
-            , letterSpacing: str "calc(var(--s-5) * -0.9)"
-            }
+        nested
+          $ css
+              { "--h2size": str "calc( min( var(--s1) + 2vw , var(--s3) ) )"
+              , fontSize: var "--h2size"
+              , letterSpacing: str "calc(var(--h2size) * -0.035)"
+              }
     , h3:
-      nested
-        $ css
-            { fontSize: var "--s2"
-            , lineHeight: str "calc(var(--s2) * 1.4)"
-            , fontWeight: str "700"
-            , letterSpacing: str "calc(var(--s-5) * -0.8)"
-            }
+        nested
+          $ css
+              { "--h3size": str "calc( min( var(--s0) + 2vw , var(--s2) ) )"
+              , fontSize: var "--h3size"
+              , letterSpacing: str "calc(var(--h3size) * -0.03)"
+              }
+    , p:
+        nested
+          $ css
+              { "--psize": str "calc( min( var(--s-2) + 2.7vw , var(--s0)*1.1 ) )"
+              , fontSize: var "--psize"
+              , letterSpacing: str "calc(var(--psize) * -0.03)"
+              }
+    , a:
+        nest
+          { color: str colour.text
+          , textDecorationColor: str colour.text
+          , "&:hover":
+              nest
+                { color: str colour.text
+                , textDecorationColor: str colour.highlight
+                }
+          , "&:visited":
+              nest
+                { color: str colour.backgroundLayer1
+                , textDecorationColor: str colour.backgroundLayer1
+                }
+          }
     , "::selection":
-      nest
-        { color: str colour.highlightText
-        , background: str colour.highlight
-        }
+        nest
+          { color: str colour.highlightText
+          , background: str colour.highlight
+          }
     , "*, *:before, *:after":
-      nested
-        $ css
-            { boxSizing: str "inherit"
-            , fontFeatureSettings:
-              str
-                $ intercalate ","
-                $ show
-                <$> [ "ss03" -- curved r
-                  , "cv03" -- open six
-                  , "cv04" -- open nine
-                  -- , "cv05" -- lower case l with tail
-                  , "cv07" -- German double-s
-                  , "cv09" -- Flat top three
-                  ]
-            }
+        nested
+          $ css
+              { boxSizing: str "inherit"
+              , "::selection":
+                  nest
+                    { color: str colour.highlightText
+                    , background: str colour.highlight
+                    }
+              , fontFeatureSettings:
+                  str
+                    $ intercalate ","
+                    $ show
+                    <$> [ "ss03" -- curved r
+                      , "cv03" -- open six
+                      , "cv04" -- open nine
+                      -- , "cv05" -- lower case l with tail
+                      , "cv07" -- German double-s
+                      , "cv09" -- Flat top three
+                      ]
+              }
     }
 
 withAlpha ∷ Number -> Color -> Color
 withAlpha alpha c1 = Color.rgba' r g b alpha
   where
-    { r, g, b } = Color.toRGBA' c1
+  { r, g, b } = Color.toRGBA' c1
 
 defaultColours ∷ Colours
 defaultColours =
   { light:
-    { background0: lightBg
-    , background02: darken 0.02 lightBg
-    , background05: darken 0.05 lightBg
-    , background07: darken 0.07 lightBg
-    , background10: darken 0.1 lightBg
-    , background12: darken 0.12 lightBg
-    , background15: darken 0.15 lightBg
-    , background20: darken 0.2 lightBg
-    , background25: darken 0.25 lightBg
-    , background30: darken 0.3 lightBg
-    , background40: darken 0.4 lightBg
-    , background50: darken 0.5 lightBg
-    , background60: darken 0.6 lightBg
-    , background70: darken 0.7 lightBg
-    , background80: darken 0.8 lightBg
-    , background90: darken 0.9 lightBg
-    , background100: darken 1.0 lightBg
-    , backgroundInverted: darken 0.85 lightBg
-    , textInverted: lightBg
-    , success
-    , successText
-    , invalid
-    , invalidText
-    , required
-    , interfaceBackground
-    , interfaceBackgroundDangerous
-    , interfaceDangerousText
-    , interfaceBackgroundDisabled: darken 0.03 lightBg
-    , interfaceTextDisabled: darken 0.30 lightBg
-    , interfaceBackgroundHighlight: lighten 0.05 lightBg
-    , highlightDisabled: (desaturate 0.80 >>> lighten 0.28) highlight
-    , interfaceBackgroundShadow: darken 0.04 lightBg
-    , inputBackground: lightBg
-    , inputBorder: darken 0.1 lightBg
-    , highlight
-    , highlightLighter: withAlpha 0.2 (Color.lighten 0.5 highlight)
-    , highlightDarker: withAlpha 0.15 (Color.darken 0.5 highlight)
-    , highlightRotatedForwards: highlight # rotateHue 30.0
-    , highlightRotatedBackwards: highlight # rotateHue (-30.0)
-    , highlightText
-    , text: textLightTheme
-    , placeholderText: lighten 0.4 darkBg
-    }
+      { background: lightBg
+      , backgroundLayer1: darken 0.20 >>> saturate 0.04 $ lightBg
+      , backgroundLayer2: darken 0.15 >>> saturate 0.07 $ lightBg
+      , backgroundLayer3: darken 0.10 >>> saturate 0.09 $ lightBg
+      , backgroundLayer4: darken 0.05 >>> saturate 0.12 $ lightBg
+      , backgroundLayer5: lightBg
+      , backgroundInverted: darken 0.85 lightBg
+      , textInverted: lightBg
+      , success
+      , successText
+      , invalid
+      , invalidText
+      , required
+      , interfaceBackground
+      , interfaceBackgroundDangerous
+      , interfaceDangerousText
+      , interfaceBackgroundDisabled: darken 0.03 lightBg
+      , interfaceTextDisabled: darken 0.30 lightBg
+      , interfaceBackgroundHighlight: lighten 0.05 lightBg
+      , highlightDisabled: (desaturate 0.80 >>> lighten 0.28) highlight
+      , interfaceBackgroundShadow: darken 0.04 lightBg
+      , inputBackground: lightBg
+      , inputBorder: darken 0.1 lightBg
+      , highlight
+      , highlightLighter: withAlpha 0.2 (Color.lighten 0.5 highlight)
+      , highlightDarker: withAlpha 0.15 (Color.darken 0.5 highlight)
+      , highlightRotatedForwards: highlight # rotateHue 30.0
+      , highlightRotatedBackwards: highlight # rotateHue (-30.0)
+      , highlightText
+      , text: textLightTheme
+      , placeholderText: lighten 0.4 darkBg
+      }
   , dark:
-    { background0: darkBg
-    , background02: lighten 0.02 darkBg
-    , background05: lighten 0.05 darkBg
-    , background07: lighten 0.07 darkBg
-    , background10: lighten 0.1 darkBg
-    , background12: lighten 0.12 darkBg
-    , background15: lighten 0.15 darkBg
-    , background20: lighten 0.2 darkBg
-    , background25: lighten 0.25 darkBg
-    , background30: lighten 0.3 darkBg
-    , background40: lighten 0.4 darkBg
-    , background50: lighten 0.5 darkBg
-    , background60: lighten 0.6 darkBg
-    , background70: lighten 0.7 darkBg
-    , background80: lighten 0.8 darkBg
-    , background90: lighten 0.9 darkBg
-    , background100: lighten 1.0 darkBg
-    , textInverted: darkBg
-    , backgroundInverted: lightBg
-    , interfaceBackground: interfaceBackgroundDark
-    , interfaceBackgroundDangerous: interfaceBackgroundDangerousDark
-    , interfaceDangerousText: interfaceDangerousTextDark
-    , interfaceBackgroundDisabled: darken 0.3 interfaceBackgroundDark
-    , interfaceTextDisabled: (desaturate 0.3 >>> lighten 0.25) interfaceBackgroundDark
-    , interfaceBackgroundHighlight: lighten 0.1 interfaceBackgroundDark
-    , interfaceBackgroundShadow: darken 0.1 interfaceBackgroundDark
-    , inputBackground: darkBg
-    , inputBorder: lighten 0.17 darkBg
-    , success: successDark
-    , successText
-    , required
-    , invalid
-    , invalidText
-    , highlight: highlightDark
-    , highlightDisabled: (desaturate 0.76 >>> darken 0.32) highlightDark
-    , highlightLighter: withAlpha 0.2 (Color.lighten 0.5 highlightDark)
-    , highlightDarker: withAlpha 0.4 (Color.darken 0.5 highlightDark)
-    , highlightRotatedForwards: highlightDark # rotateHue 30.0
-    , highlightRotatedBackwards: highlightDark # rotateHue (-30.0)
-    , highlightText
-    , text: lightBg
-    , placeholderText: darken 0.4 lightBg
-    }
+      { background: darkBg
+      , backgroundLayer1: lighten 0.30 >>> saturate 0.07 $ darkBg
+      , backgroundLayer2: lighten 0.21 >>> saturate 0.08 $ darkBg
+      , backgroundLayer3: lighten 0.14 >>> saturate 0.12 $ darkBg
+      , backgroundLayer4: lighten 0.07 >>> saturate 0.18 $ darkBg
+      , backgroundLayer5: darkBg
+      , textInverted: darkBg
+      , backgroundInverted: lightBg
+      , interfaceBackground: interfaceBackgroundDark
+      , interfaceBackgroundDangerous: interfaceBackgroundDangerousDark
+      , interfaceDangerousText: interfaceDangerousTextDark
+      , interfaceBackgroundDisabled: darken 0.3 interfaceBackgroundDark
+      , interfaceTextDisabled: (desaturate 0.3 >>> lighten 0.25) interfaceBackgroundDark
+      , interfaceBackgroundHighlight: lighten 0.1 interfaceBackgroundDark
+      , interfaceBackgroundShadow: darken 0.1 interfaceBackgroundDark
+      , inputBackground: darkBg
+      , inputBorder: lighten 0.17 darkBg
+      , success: successDark
+      , successText
+      , required
+      , invalid
+      , invalidText
+      , highlight: highlightDark
+      , highlightDisabled: (desaturate 0.76 >>> darken 0.32) highlightDark
+      , highlightLighter: withAlpha 0.2 (Color.lighten 0.5 highlightDark)
+      , highlightDarker: withAlpha 0.4 (Color.darken 0.5 highlightDark)
+      , highlightRotatedForwards: highlightDark # rotateHue 30.0
+      , highlightRotatedBackwards: highlightDark # rotateHue (-30.0)
+      , highlightText
+      , text: lightBg
+      , placeholderText: darken 0.4 lightBg
+      }
   }
   where
-    highlight = Color.hsl 270.0 0.90 0.62
+  highlight = Color.hsl 270.0 0.90 0.62
 
-    highlightDark = Color.rgb 0x88 0x33 0xFF
+  highlightDark = Color.rgb 0x88 0x33 0xFF
 
-    interfaceBackgroundDark = Color.hsl 240.0 0.10 0.33
+  interfaceBackgroundDark = Color.hsl 240.0 0.10 0.33
 
-    interfaceBackground = lightBg
+  interfaceBackground = lightBg
 
-    interfaceBackgroundDangerous = interfaceBackground
+  interfaceBackgroundDangerous = interfaceBackground
 
-    interfaceDangerousText = invalid
+  interfaceDangerousText = invalid
 
-    interfaceBackgroundDangerousDark = Color.hsl 340.0 0.55 0.30
+  interfaceBackgroundDangerousDark = Color.hsl 340.0 0.55 0.30
 
-    interfaceDangerousTextDark = Color.hsl 340.0 1.0 0.90
+  interfaceDangerousTextDark = Color.hsl 340.0 1.0 0.90
 
-    highlightText = Color.rgb 0xFF 0xFF 0xFF
+  highlightText = Color.rgb 0xFF 0xFF 0xFF
 
-    success = Color.rgb 10 150 25
+  success = Color.rgb 10 150 25
 
-    successDark = Color.rgb 20 200 60
+  successDark = Color.rgb 20 200 60
 
-    successText = Color.rgb 250 250 250
+  successText = Color.rgb 250 250 250
 
-    invalid = Color.rgb 220 40 70
+  invalid = Color.rgb 220 40 70
 
-    invalidText = successText
+  invalidText = successText
 
-    required = Color.rgb 200 50 80
+  required = Color.rgb 200 50 80
 
-    textLightTheme = Color.rgb 16 16 32
+  textLightTheme = Color.rgb 16 16 32
 
-    darkBg = Color.rgb 0 0 0
+  darkBg = Color.hsl 240.0 0.07 0.14
 
-    lightBg = Color.rgb 250 250 250
+  lightBg = Color.hsl 240.0 0.05 0.97
 
-type FlatTheme a =
-  { background0 ∷ a
-  , background02 ∷ a
-  , background05 ∷ a
-  , background07 ∷ a
-  , background10 ∷ a
-  , background12 ∷ a
-  , background15 ∷ a
-  , background20 ∷ a
-  , background25 ∷ a
-  , background30 ∷ a
-  , background40 ∷ a
-  , background50 ∷ a
-  , background60 ∷ a
-  , background70 ∷ a
-  , background80 ∷ a
-  , background90 ∷ a
-  , background100 ∷ a
-  , backgroundInverted ∷ a
-  , interfaceBackground ∷ a
-  , interfaceBackgroundDangerous ∷ a
-  , interfaceDangerousText ∷ a
-  , interfaceBackgroundDisabled ∷ a
-  , interfaceTextDisabled ∷ a
-  , interfaceBackgroundHighlight ∷ a
-  , interfaceBackgroundShadow ∷ a
-  , inputBackground ∷ a
-  , inputBorder ∷ a
-  , highlight ∷ a
-  , highlightRotatedBackwards ∷ a
-  , highlightRotatedForwards ∷ a
-  , highlightDarker ∷ a
-  , highlightLighter ∷ a
-  , highlightDisabled ∷ a
-  , highlightText ∷ a
-  , success ∷ a
-  , successText ∷ a
-  , invalid ∷ a
-  , invalidText ∷ a
-  , required ∷ a
-  , text ∷ a
-  , textInverted ∷ a
-  , placeholderText ∷ a
-  }
+type FlatTheme a
+  = { background ∷ a
+    , backgroundLayer1 ∷ a
+    , backgroundLayer2 ∷ a
+    , backgroundLayer3 ∷ a
+    , backgroundLayer4 ∷ a
+    , backgroundLayer5 ∷ a
+    , backgroundInverted ∷ a
+    , interfaceBackground ∷ a
+    , interfaceBackgroundDangerous ∷ a
+    , interfaceDangerousText ∷ a
+    , interfaceBackgroundDisabled ∷ a
+    , interfaceTextDisabled ∷ a
+    , interfaceBackgroundHighlight ∷ a
+    , interfaceBackgroundShadow ∷ a
+    , inputBackground ∷ a
+    , inputBorder ∷ a
+    , highlight ∷ a
+    , highlightRotatedBackwards ∷ a
+    , highlightRotatedForwards ∷ a
+    , highlightDarker ∷ a
+    , highlightLighter ∷ a
+    , highlightDisabled ∷ a
+    , highlightText ∷ a
+    , success ∷ a
+    , successText ∷ a
+    , invalid ∷ a
+    , invalidText ∷ a
+    , required ∷ a
+    , text ∷ a
+    , textInverted ∷ a
+    , placeholderText ∷ a
+    }
 
-type Colours =
-  { dark ∷ FlatTheme Color
-  , light ∷ FlatTheme Color
-  }
+type Colours
+  = { dark ∷ FlatTheme Color
+    , light ∷ FlatTheme Color
+    }
 
 data MakeCSSVarLabels
   = MakeCSSVarLabels
@@ -312,24 +309,25 @@ colour =
 autoSwitchColourTheme ∷ Style
 autoSwitchColourTheme = lightT
   where
-    darkT ∷ Style
-    darkT = unsafeCoerce darkObj
+  darkT ∷ Style
+  darkT = unsafeCoerce darkObj
 
-    darkObj ∷ Object StyleProperty
-    darkObj =
-      Object.fromHomogeneous defaultColours.dark
-        # Object.foldMap \k v ->
-            Object.singleton ("--" <> k) (str (Color.cssStringRGBA v))
+  darkObj ∷ Object StyleProperty
+  darkObj =
+    Object.fromHomogeneous defaultColours.dark
+      # Object.foldMap \k v ->
+          Object.singleton ("--" <> k) (str (Color.cssStringRGBA v))
 
-    lightObj ∷ Object StyleProperty
-    lightObj =
-      Object.fromHomogeneous defaultColours.light
-        # Object.foldMap \k v ->
-            Object.singleton ("--" <> k) (str (Color.cssStringRGBA v))
-              # Object.insert "@media (prefers-color-scheme: dark)" (nested darkT)
+  lightObj ∷ Object StyleProperty
+  lightObj =
+    Object.fromHomogeneous defaultColours.light
+      # Object.foldMap \k v ->
+          Object.singleton ("--" <> k) (str (Color.cssStringRGBA v))
+            # Object.insert "@media (prefers-color-scheme: dark)" (nested darkT)
+            # Object.insert "&:th" (nested darkT)
 
-    lightT ∷ Style
-    lightT = unsafeCoerce lightObj
+  lightT ∷ Style
+  lightT = unsafeCoerce lightObj
 
 lightModeVariables ∷ Object StyleProperty
 lightModeVariables =
@@ -346,7 +344,9 @@ darkModeVariables =
 variables ∷ Style
 variables =
   css
-    { "--ratio": "1.5" # str
+    { "--ratio": "1.61" # str
+    , "--line-height": str "var(--ratio)"
+    , "--line-height-small": str "calc(var(--ratio) * 0.8)"
     , "--s-5": str "calc(var(--s-4) / var(--ratio))"
     , "--s-4": str "calc(var(--s-3) / var(--ratio))"
     , "--s-3": str "calc(var(--s-2) / var(--ratio))"

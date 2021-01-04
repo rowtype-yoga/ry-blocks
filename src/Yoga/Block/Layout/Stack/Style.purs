@@ -35,6 +35,6 @@ stack props = splitStyles <> styles <>? props.css
             { "&:only-child": nest { height: 100.0 # percent }
             }
 
-        nthChild n = "& > :nth-child(" <> show n <> ")"
+        nthChild n = "& > div:nth-of-type(" <> show n <> ")"
 
         nthChildStyle n = (nthChild n) ~: { marginBottom: auto }

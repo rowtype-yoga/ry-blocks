@@ -8,11 +8,9 @@ import Data.Traversable (traverse)
 import Data.TwoOrMore (TwoOrMore)
 import Data.TwoOrMore as TwoOrMore
 import Effect.Aff (delay)
+import Effect.Class.Console (log)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object as Object
-import Yoga.Block.Hook.Key as Key
-import Yoga.Block.Hook.UseResize (useResize)
-import Yoga.Block.Hook.UseKeyDown (useKeyDown)
 import Math as Math
 import React.Basic.DOM (css)
 import React.Basic.DOM as R
@@ -23,15 +21,18 @@ import React.Basic.Hooks.Aff (useAff)
 import Web.HTML.HTMLElement as HTMLElement
 import Yoga.Block.Atom.Segmented.Style as Style
 import Yoga.Block.Atom.Segmented.View.ActiveIndicator as ActiveIndicator
+import Yoga.Block.Hook.Key as Key
+import Yoga.Block.Hook.UseKeyDown (useKeyDown)
+import Yoga.Block.Hook.UseResize (useResize)
 
-type Item
-  = { id ∷ String, value ∷ String }
+type Item =
+  { id ∷ String, value ∷ String }
 
-type Props
-  = { buttonContents ∷ TwoOrMore Item
-    , activeIndex ∷ Int
-    , updateActiveIndex ∷ Int -> Effect Unit
-    }
+type Props =
+  { buttonContents ∷ TwoOrMore Item
+  , activeIndex ∷ Int
+  , updateActiveIndex ∷ Int -> Effect Unit
+  }
 
 component ∷ ReactComponent Props
 component =
@@ -68,13 +69,14 @@ component =
         -------------------------------------------
         -- Ensure redraw on window resize
         windowSize <- useResize
-        useAff { windowSize } do
+        useAff windowSize.width do
           delay
             if Math.abs (windowWidth - windowSize.width) < 10.0 then
               100.0 # Milliseconds
             else
               10.0 # Milliseconds
           liftEffect do -- force rerender
+            log "Forcing rerender"
             refs <- traverse (const createRef) buttonContents
             setItemRefs (Just refs)
             setWindowWidth windowSize.width
@@ -85,10 +87,8 @@ component =
           refsAndContents = TwoOrMore.zip buttonContents <$> itemRefs
           contentToChild ∷ Int -> (Item /\ Ref (Nullable Node)) -> JSX
           contentToChild idx ({ id, value } /\ ref) = do
-            let
-              isLast = idx + 1 == TwoOrMore.length buttonContents
-            let
-              isFirst = idx == 0
+            let isLast = idx + 1 == TwoOrMore.length buttonContents
+            let isFirst = idx == 0
             button
               </* { key: show idx
                 , ref

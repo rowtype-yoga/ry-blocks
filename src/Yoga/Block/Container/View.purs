@@ -14,7 +14,7 @@ import Yoga.Block.Container.Style as Styles
 
 type PropsF f =
   ( content ∷ JSX
-  , themeVariant ∷ f DarkOrLightMode
+  , themeVariant ∷ f (Maybe DarkOrLightMode)
   )
 
 type Props =
@@ -33,7 +33,7 @@ rawComponent =
           $ Array.cons
               ( element E.global
                   { styles:
-                    case opToMaybe themeVariant of
+                    case opToMaybe themeVariant # join of
                       Nothing -> Styles.global
                       Just Styles.DarkMode -> Styles.darkMode
                       Just Styles.LightMode -> Styles.lightMode

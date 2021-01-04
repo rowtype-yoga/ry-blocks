@@ -10,33 +10,33 @@ import React.Basic.DOM (CSS, css)
 import React.Basic.Emotion (Style)
 import Yoga.Block.Atom.Input.Style as Style
 
-type PropsF f =
-  ( css ∷ f Style
-  , isInvalid ∷ f Boolean
-  | Style.Props f (MandatoryProps ())
-  )
+type PropsF f
+  = ( css ∷ f Style
+    , isInvalid ∷ f Boolean
+    | Style.Props f (MandatoryProps ())
+    )
 
-type MandatoryProps r =
-  ( children ∷ Array JSX
-  , hasFocus ∷ Boolean
-  | r
-  )
+type MandatoryProps r
+  = ( children ∷ Array JSX
+    , hasFocus ∷ Boolean
+    | r
+    )
 
-type Props =
-  PropsF Id
+type Props
+  = PropsF Id
 
-type PropsOptional =
-  PropsF OptionalProp
+type PropsOptional
+  = PropsF OptionalProp
 
 component ∷ ∀ p q. Union p q Props => ReactComponent { | MandatoryProps p }
 component = rawContainer
 
-type Propski =
-  { css ∷ OptionalProp Style
-  , hasFocus ∷ Boolean
-  , isInvalid ∷ OptionalProp Boolean
-  , children ∷ Array JSX
-  }
+type Propski
+  = { css ∷ OptionalProp Style
+    , hasFocus ∷ Boolean
+    , isInvalid ∷ OptionalProp Boolean
+    , children ∷ Array JSX
+    }
 
 rawContainer ∷ ∀ p. ReactComponent { | p }
 rawContainer =
@@ -52,11 +52,11 @@ rawContainer =
                 { className: "ry-input-container"
                 , css: Style.inputContainer props
                 , _data:
-                  props.isInvalid
-                    # foldMap \isInvalid ->
-                        Object.fromHomogeneous
-                          { "invalid": show isInvalid
-                          }
+                    props.isInvalid
+                      # foldMap \isInvalid ->
+                          Object.fromHomogeneous
+                            { "invalid": show isInvalid
+                            }
                 , ref
                 }
             /> props.children
@@ -64,10 +64,14 @@ rawContainer =
 
 drawPathUntil ∷ Int -> Array Point -> String
 drawPathUntil idx thePath = do
-  let fn { x, y } = i x "%" " " y "%"
-  let firstFew = Array.take idx thePath
-  let lastFew = Array.drop idx thePath $> (Array.last firstFew # fromMaybe' \_ -> unsafeCrashWith "ogod")
-  let rendered = intercalate "," $ fn <$> (firstFew <> lastFew)
+  let
+    fn { x, y } = i x "%" " " y "%"
+  let
+    firstFew = Array.take idx thePath
+  let
+    lastFew = Array.drop idx thePath $> (Array.last firstFew # fromMaybe' \_ -> unsafeCrashWith "ogod")
+  let
+    rendered = intercalate "," $ fn <$> (firstFew <> lastFew)
   i "polygon(" rendered ")"
 
 path ∷ Array Point
@@ -83,6 +87,7 @@ mkPath borderX borderY = do
       , {- ⌝ -} p (100 - borderX) borderY
       , {- ⌜ -} p borderX borderY
       ]
+
     outside =
       [ {-⌜    -} p 0 0
       , {-⌞    -} p 0 100
@@ -98,8 +103,8 @@ mkPath borderX borderY = do
       ]
   inside <> outside <> (Array.reverse inside)
   where
-    p ∷ Int -> Int -> Point
-    p x y = { x, y }
+  p ∷ Int -> Int -> Point
+  p x y = { x, y }
 
 containerVariantLabels ∷
   { blurred ∷ M.VariantLabel
@@ -113,18 +118,18 @@ containerVariants ∷
   }
 containerVariants =
   { focussed:
-    css
-      { clipPath
-      , transition: { duration: 0.6 }
-      }
+      css
+        { clipPath
+        , transition: { duration: 0.6 }
+        }
   , blurred:
-    css
-      { clipPath:
-        drawPathUntil (Array.length path + 1) path
-      }
+      css
+        { clipPath:
+            drawPathUntil (Array.length path + 1) path
+        }
   }
   where
-    clipPath = 6 Array... (Array.length path) <#> \ln -> drawPathUntil ln path
+  clipPath = 6 Array... (Array.length path) <#> \ln -> drawPathUntil ln path
 
-type Point =
-  { x ∷ Int, y ∷ Int }
+type Point
+  = { x ∷ Int, y ∷ Int }

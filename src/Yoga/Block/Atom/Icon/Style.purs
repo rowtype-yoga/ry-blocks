@@ -19,9 +19,7 @@ span props =
   css
     { "--stroke-colour": (props.stroke <|> props.colour) ?|| (str colour.text)
     , "--fill-colour": (props.fill <|> props.colour) ?|| (str "transparent")
-    , display: inlineFlex
-    , justifyContent: center
-    , alignItems: center
+    , display: inlineBlock
     , margin: _0
     , padding: _0
     , width
@@ -36,6 +34,6 @@ span props =
         }
     }
   where
-    width = (props.width <|> props.size) ?|| (str "auto")
+    width = (props.width <|> props.size) ?|| (str "1em")
 
-    height = (props.height <|> props.size) ?|| (str "1ch")
+    height = (props.height <|> props.size) ?|| (str "1em")

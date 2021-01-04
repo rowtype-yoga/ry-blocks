@@ -38,7 +38,7 @@ content props =
     , minWidth: str "50px"
     , padding: str "6px"
     , zIndex: str "-1"
-    , color: str colour.background0
+    , color: str colour.background
     , boxShadow: str "0 1px 8px rgba(0,0,0,0.33)"
     , borderRadius: var "--s-2"
     }

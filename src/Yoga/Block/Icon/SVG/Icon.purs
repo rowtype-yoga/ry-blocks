@@ -8,6 +8,8 @@ module Yoga.Block.Icon.SVG
   , module Yoga.Block.Icon.SVG.SimpleKey
   , module Yoga.Block.Icon.SVG.QuestionMark
   , module Yoga.Block.Icon.SVG.Cross
+  , module Yoga.Block.Icon.SVG.Sun
+  , module Yoga.Block.Icon.SVG.Moon
   ) where
 
 import Yoga.Block.Icon.SVG.On (on)
@@ -19,3 +21,5 @@ import Yoga.Block.Icon.SVG.Key (key)
 import Yoga.Block.Icon.SVG.SimpleKey (simpleKey)
 import Yoga.Block.Icon.SVG.QuestionMark (questionMark)
 import Yoga.Block.Icon.SVG.Cross (cross)
+import Yoga.Block.Icon.SVG.Sun (sun)
+import Yoga.Block.Icon.SVG.Moon (moon)

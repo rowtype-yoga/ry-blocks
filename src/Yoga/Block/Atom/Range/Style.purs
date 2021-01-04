@@ -90,7 +90,7 @@ track =
     }
 
 disabled ∷ Style
-disabled = css { backgroundColor: str colour.background30 }
+disabled = css { backgroundColor: str colour.backgroundLayer2 }
 
 filled ∷ Style
 filled =
@@ -106,5 +106,5 @@ notFilled =
     <> css
         { width: str "calc((1 - (var(--val)/var(--max))) * 100%)"
         , right: _0
-        , backgroundColor: str colour.background40
+        , backgroundColor: str colour.backgroundLayer4
         }

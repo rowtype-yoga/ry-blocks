@@ -24,12 +24,16 @@ codeInput props = styles <>? props.css
         , fontSize: str "var(--s0)"
         , lineHeight: str "var(--s0)"
         , width: str $ i "calc(" (props.maxLength ?|| 10) "ch + 4.3 * var(--s-5))"
-        , padding: str "calc(var(--s-5) - 1px)"
+        , padding: str "calc(var(--s-4) - 1px)"
         , color: str colour.text
         , "&:focus":
           nest
+            { outline: none
+            }
+        , "&:focus-visible":
+          nest
             { animation: plopAnimation <> str " 260ms ease-in"
-            , border: str $ "solid var(--s-5) " <> colour.highlight
+            , border: str $ "solid var(--s-4) " <> colour.highlight
             , padding: _0
             }
         }

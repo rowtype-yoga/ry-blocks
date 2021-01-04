@@ -35,20 +35,16 @@ sidebar =
             [ R.h2_ [ R.text "No Options" ]
             , element Sidebar.component
                 { children:
-                  [ R.div_
-                      [ R.div { children: [ R.text "Sidebar" ], style: css { backgroundColor: "teal" } }
-                      , R.div { children: [ R.text $ power "Content " 10 ], style: css { backgroundColor: "darkslateblue" } }
-                      ]
+                  [ R.div { children: [ R.text "Sidebar" ], style: css { backgroundColor: "teal" } }
+                  , R.div { children: [ R.text $ power "Content " 10 ], style: css { backgroundColor: "darkslateblue" } }
                   ]
                 , style: css { backgroundColor: "oldlace" }
                 }
             , R.h2_ [ R.text "Zero Space" ]
             , element Sidebar.component
                 { children:
-                  [ R.div_
-                      [ R.div { children: [ R.text "Child 1" ], style: css { backgroundColor: "teal" } }
-                      , R.div { children: [ R.text "Child 2" ], style: css { backgroundColor: "darkslateblue" } }
-                      ]
+                  [ R.div { children: [ R.text "Child 1" ], style: css { backgroundColor: "teal" } }
+                  , R.div { children: [ R.text "Child 2" ], style: css { backgroundColor: "darkslateblue" } }
                   ]
                 , style: css { backgroundColor: "oldlace" }
                 , space: "0"
@@ -56,10 +52,8 @@ sidebar =
             , R.h2_ [ R.text "Sidebar Right" ]
             , element Sidebar.component
                 { children:
-                  [ R.div_
-                      [ R.div { children: [ R.text $ power "Content " 50 ], style: css { backgroundColor: "darkslateblue" } }
-                      , R.div { children: [ R.text "Sidebar" ], style: css { backgroundColor: "teal" } }
-                      ]
+                  [ R.div { children: [ R.text $ power "Content " 50 ], style: css { backgroundColor: "darkslateblue" } }
+                  , R.div { children: [ R.text "Sidebar" ], style: css { backgroundColor: "teal" } }
                   ]
                 , style: css { backgroundColor: "oldlace" }
                 , sideWidth: "40px"
@@ -70,10 +64,8 @@ sidebar =
             , R.h2_ [ R.text "No Stretch" ]
             , element Sidebar.component
                 { children:
-                  [ R.div_
-                      [ R.div { children: [ R.text $ power "Content " 50 ], style: css { backgroundColor: "darkslateblue" } }
-                      , R.div { children: [ R.text "Sidebar" ], style: css { backgroundColor: "teal" } }
-                      ]
+                  [ R.div { children: [ R.text $ power "Content " 50 ], style: css { backgroundColor: "darkslateblue" } }
+                  , R.div { children: [ R.text "Sidebar" ], style: css { backgroundColor: "teal" } }
                   ]
                 , style: css { backgroundColor: "oldlace" }
                 , noStretch: true

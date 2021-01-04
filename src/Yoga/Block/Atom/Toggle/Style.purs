@@ -14,26 +14,36 @@ button ∷ Style
 button =
   css
     { position: relative
-    , background: str colour.inputBackground
+    , "&:focus": nest { outline: str "none" }
     , border: str $ "1px solid " <> colour.inputBorder
+    , "&:focus-visible":
+      nest
+        { boxShadow: str $ "0 0 0 var(--s-4) " <> colour.highlight
+        }
     , borderRadius: str "calc(var(--s2) / 2)"
     , height: var "--s2"
-    , width: str "calc(1.15 * var(--s3))"
+    , width: str "calc(var(--s2) + var(--s1))"
     , margin: _0
     , padding: _0
     }
 
+toggleLeft ∷ String
+toggleLeft = "calc(var(--s-2) * 0.3)"
+
+dragWidthDelta ∷ Number
+dragWidthDelta = 10.0
+
 theToggle ∷ Style
 theToggle =
   css
-    { width: str "calc(var(--s2) * 0.8)"
-    , height: str "calc(var(--s2) * 0.8)"
+    { width: str "calc(var(--s2) * 0.85)"
+    , height: str "calc(var(--s2) * 0.85)"
     , background: str $ colour.interfaceBackground
     , border: none
     , borderRadius: str $ "calc(var(--s2) / 2)"
     , position: absolute
-    , top: str "3px"
-    , left: str "3px"
+    , top: str "calc(var(--s-2) * 0.35)"
+    , left: str toggleLeft
     , margin: _0
     , boxShadow: str "0 0.5px 3px rgba(0,0,0,0.50)"
     }
@@ -45,11 +55,16 @@ toggleTextContainer =
     , border: none
     , fontWeight: str "bold"
     , position: absolute
-    , top: _0
-    , fontSize: str "calc(0.6 * var(--s1))"
-    , lineHeight: var "--s2"
+    , top: str "1px"
+    , fontSize: str "calc(var(--s2)*0.5)"
+    , lineHeight: str "calc(var(--s2)*0.5)"
+    , textAlign: center
     , height: var "--s2"
     , display: flex
+    , justifyContent: center
+    , alignItems: center
+    , margin: _0
+    , padding: _0
     }
 
 successTextColour ∷ StyleProperty
@@ -75,19 +90,3 @@ toggleText =
         { color: successTextColour
         }
     }
-
-inputDisabled ∷ Style
-inputDisabled =
-  css
-    { "input[type=toggle]::-webkit-slider-thumb": nested thumbStyleDisabled
-    , "input[type=toggle]::-moz-toggle-thumb": nested thumbStyleDisabled
-    }
-  where
-    thumbStyleDisabled =
-      css
-        { background: str "#fcfcfc"
-        , boxShadow: str "0 calc(var(--s-4)/2) var(--s-3) rgba(88,88,88,0.2)"
-        }
-
-disabled ∷ Style
-disabled = css { backgroundColor: str colour.background30 }

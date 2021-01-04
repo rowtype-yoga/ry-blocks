@@ -15,27 +15,10 @@ on =
     , strokeMiterlimit: "1.5"
     , children:
       [ SVG.path
-          { fill: "none"
-          , d: "M0 0h100v100H0z"
-          }
-      , SVG.clipPath
-          { id: "a"
-          , children:
-            [ SVG.path
-                { d: "M0 0h100v100H0z"
-                }
-            ]
-          }
-      , SVG.g
-          { clipPath: "url(#a)"
-          , children:
-            [ SVG.path
-                { d: "M50 1.921v96.261"
-                , fill: "none"
-                , stroke: "var(--stroke-colour)"
-                , strokeWidth: "20"
-                }
-            ]
+          { d: "M50 10v80"
+          , fill: "none"
+          , stroke: "var(--stroke-colour)"
+          , strokeWidth: "17"
           }
       ]
     }

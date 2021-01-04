@@ -65,10 +65,7 @@ toggle = do
                 Color.hsl 260.0 0.7 0.45
               }
         pure
-          $ case theme of
-              Nothing -> element Block.container { content }
-              Just themeVariant ->
-                element Block.container
-                  { content
-                  , themeVariant: themeVariant
-                  }
+          $ element Block.container
+              { content
+              , themeVariant: theme
+              }

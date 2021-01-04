@@ -2,19 +2,21 @@ module Yoga.Block.Atom.Input.View where
 
 import Yoga.Prelude.View
 import Data.String.NonEmpty (NonEmptyString)
+import Data.Symbol (SProxy(..))
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Framer.Motion as M
 import React.Basic.DOM (css)
 import React.Basic.DOM as R
 import React.Basic.Hooks as React
-import Unsafe.Coerce (unsafeCoerce)
+import Record.Builder as RB
 import Web.HTML.HTMLInputElement as InputElement
 import Yoga.Block.Atom.Icon as Icon
 import Yoga.Block.Atom.Input.Style as Style
-import Yoga.Block.Atom.Input.Types (HTMLInput)
-import Yoga.Block.Atom.Input.Types as HTMLInput
+import Yoga.Block.Atom.Input.Types (HTMLInputType)
+import Yoga.Block.Atom.Input.Types as InputTypes
 import Yoga.Block.Atom.Input.View.Container (rawContainer)
+import Yoga.Block.Atom.Input.View.HTMLInput as HTMLInput
 import Yoga.Block.Atom.Input.View.Label as Label
 import Yoga.Block.Icon.SVG as SVGIcon
 
@@ -22,12 +24,9 @@ type PropsF f =
   ( leading ∷ f JSX
   , trailing ∷ f JSX
   , label ∷ f NonEmptyString
-  , type ∷ f HTMLInput
+  , type ∷ f HTMLInputType
   | Style.Props f (InputPropsF f ())
   )
-
-coerceProps ∷ { | PropsOptional } -> { | Props }
-coerceProps = unsafeCoerce
 
 type Props =
   PropsF Id
@@ -49,23 +48,6 @@ mkLeftIcon icon =
             , icon
             }
       ]
-
-inputComponent ∷ ∀ p q. Union p q Props => ReactComponent { | p }
-inputComponent = rawInput
-
-inputComponentOptional ∷ ∀ p q. Union p q PropsOptional => ReactComponent { | p }
-inputComponentOptional = rawInput
-
-rawInput ∷ ∀ p. ReactComponent { | p }
-rawInput =
-  mkForwardRefComponent "Input" do
-    \(props ∷ { | PropsOptional }) ref -> React.do
-      let
-        result = inputWrapper [ input ]
-        inputWrapper = div </* { className: "ry-input-wrapper", css: Style.inputWrapper }
-        input = emotionInput ref inputProps { className: "ry-input", css: Style.input }
-        inputProps = props { type = HTMLInput.toString <$> props.type }
-      pure result
 
 rawComponent ∷ ∀ p. ReactComponent (Record p)
 rawComponent =
@@ -110,7 +92,7 @@ rawComponent =
         leading ∷ Maybe JSX
         leading =
           opToMaybe props.leading
-            <|> if (props.type <#> (_ == HTMLInput.Search)) ?|| false then
+            <|> if (props.type <#> (_ == InputTypes.Search)) ?|| false then
                 Just $ mkLeftIcon SVGIcon.magnifyingGlass
               else
                 Nothing
@@ -131,20 +113,28 @@ rawComponent =
                   setHasValue (v /= "")
             )
         onFocus = handler preventDefault (const $ unless hasFocus $ setHasFocus true)
+        inputProps =
+          props
+            { onFocus = composeHandler onFocus props.onFocus
+            , onBlur = composeHandler onBlur props.onBlur
+            , ref = ref
+            , placeholder = maybePlaceholder # maybeToOp
+            , _aria =
+              if props.label # opToMaybe # isJust then
+                aria # Object.insert "labelledby" labelId
+              else
+                aria
+            }
         theInput =
-          inputComponentOptional
-            </> ( (cast ∷ _ -> { | PropsOptional })
-                  $ props
-                      { onFocus = composeHandler onFocus props.onFocus
-                      , onBlur = composeHandler onBlur props.onBlur
-                      , ref = ref
-                      , placeholder = maybePlaceholder # maybeToOp
-                      , _aria =
-                        if props.label # opToMaybe # isJust then
-                          aria # Object.insert "labelledby" labelId
-                        else
-                          aria
-                      }
+          HTMLInput.componentOptional
+            </> ( (cast ∷ _ -> { | HTMLInput.PropsOptional })
+                  ( inputProps
+                      # RB.build
+                          ( RB.delete (SProxy ∷ _ "leading")
+                              >>> RB.delete (SProxy ∷ _ "label")
+                              >>> RB.delete (SProxy ∷ _ "trailing")
+                          )
+                  )
               )
         inputContainer =
           rawContainer
@@ -159,7 +149,7 @@ rawComponent =
               ]
       pure
         $ case props.type # opToMaybe of
-            Just HTMLInput.Password -> password </> props
+            Just InputTypes.Password -> password </> props
             _ -> case maybeLabelText of
               Nothing -> inputContainer
               Just labelText ->
@@ -221,7 +211,7 @@ password =
           , R.div' </ {}
               /> [ emotionInput
                     ref
-                    (props { type = HTMLInput.toString <$> props.type })
+                    (props { type = InputTypes.toString <$> props.type })
                     { className: "ry-input"
                     , css: Style.input
                     , type: if hidePassword then "password" else "text"
