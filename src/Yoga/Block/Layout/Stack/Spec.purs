@@ -10,7 +10,7 @@ spec =
     describe "The stack" do
       it "renders without errors" do
         void
-          $ renderComponent Stack.component {}
+          $ renderComponent Stack.component { children: [] }
       it "accepts div props" do
         { findByText } <-
           renderComponent Stack.component
@@ -18,4 +18,5 @@ spec =
             , children: [ R.text "Find me!" ]
             }
         elem <- findByText "Find me!"
-        elem `shouldHaveAttribute` "role"
+        parent <- elem # getParentOrFailWith "No parent!"
+        parent `shouldHaveAttribute` "role"

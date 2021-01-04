@@ -1,7 +1,7 @@
 module Yoga.Block where
 
 import Prim.Row (class Union)
-import React.Basic (ReactComponent)
+import React.Basic (JSX, ReactComponent)
 import Yoga.Block.Atom.Button as Button
 import Yoga.Block.Atom.Icon as Icon
 import Yoga.Block.Atom.Range as Range
@@ -47,10 +47,10 @@ range = Range.component
 segmented ∷ ReactComponent Segmented.Props
 segmented = Segmented.component
 
-sidebar ∷ ∀ p q. Union p q Sidebar.Props => ReactComponent { | p }
+sidebar ∷ ∀ p q. Union p q Sidebar.Props => ReactComponent { children ∷ Array JSX | p }
 sidebar = Sidebar.component
 
-stack ∷ ∀ p q. Union p q Stack.Props => ReactComponent { | p }
+stack ∷ ∀ p q. Union p q Stack.Props => ReactComponent { children ∷ Array JSX | p }
 stack = Stack.component
 
 switcher ∷ ∀ p q. Union p q Switcher.Props => ReactComponent { | p }

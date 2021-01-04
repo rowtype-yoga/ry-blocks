@@ -1,8 +1,8 @@
 module Yoga.Block.Layout.Sidebar.Spec where
 
 import Yoga.Prelude.Spec
-import Yoga.Block.Layout.Sidebar as Sidebar
 import React.Basic.DOM as R
+import Yoga.Block.Layout.Sidebar as Sidebar
 
 spec ∷ Spec Unit
 spec =
@@ -10,7 +10,7 @@ spec =
     describe "The sidebar" do
       it "renders without errors" do
         void
-          $ renderComponent Sidebar.component {}
+          $ renderComponent Sidebar.component { children: [] }
       it "accepts div props" do
         { findByText } <-
           renderComponent Sidebar.component
@@ -18,4 +18,5 @@ spec =
             , children: [ R.text "Find me!" ]
             }
         elem <- findByText "Find me!"
-        elem `shouldHaveAttribute` "role"
+        parent <- elem # getParentOrFailWith "Sidebar has no parent"
+        parent `shouldHaveAttribute` "role"

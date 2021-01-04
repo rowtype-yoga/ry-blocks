@@ -108,7 +108,7 @@ mkGlobal maybeMode =
                 }
           , "&:visited":
               nest
-                { color: str colour.backgroundLayer1
+                { color: str colour.text
                 , textDecorationColor: str colour.backgroundLayer1
                 }
           }
