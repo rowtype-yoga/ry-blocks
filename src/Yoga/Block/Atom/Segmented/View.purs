@@ -8,7 +8,6 @@ import Data.Traversable (traverse)
 import Data.TwoOrMore (TwoOrMore)
 import Data.TwoOrMore as TwoOrMore
 import Effect.Aff (delay)
-import Effect.Class.Console (log)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object as Object
 import Math as Math
@@ -45,7 +44,7 @@ component =
           refs <- traverse (const createRef) buttonContents
           setItemRefs (Just refs)
           mempty
-        windowWidth /\ setWindowWidth <- useState' 0.0
+        windowSize /\ setWindowSize <- useState' zero
         -------------------------------------------
         -- Support keyboard input
         let
@@ -68,18 +67,19 @@ component =
           _ -> pure unit
         -------------------------------------------
         -- Ensure redraw on window resize
-        windowSize <- useResize
-        useAff windowSize.width do
+        newWindowSize <- useResize
+        useAff newWindowSize do
+          let δw = Math.abs (newWindowSize.width - windowSize.width)
+          let δh = Math.abs (newWindowSize.height - windowSize.height)
           delay
-            if Math.abs (windowWidth - windowSize.width) < 10.0 then
+            if δw < 10.0 || δh < 10.0 then
               100.0 # Milliseconds
             else
               10.0 # Milliseconds
           liftEffect do -- force rerender
-            log "Forcing rerender"
             refs <- traverse (const createRef) buttonContents
             setItemRefs (Just refs)
-            setWindowWidth windowSize.width
+            setWindowSize windowSize
         let
           children ∷ Array JSX
           children = refsAndContents <#> mapWithIndex contentToChild # maybe mempty TwoOrMore.toArray
@@ -128,7 +128,7 @@ component =
                             { activeItemRefs
                             , activeItemIndex: activeIndex
                             , updateActiveIndex
-                            , windowWidth
+                            , windowSize
                             }
                             A.: children
                   }

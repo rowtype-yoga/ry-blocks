@@ -12,7 +12,7 @@ type Props f r =
 cluster ∷ Style
 cluster =
   css
-    { overflow: auto
+    { overflow: visible
     , flex: str "1"
     , display: str "inline-flex"
     , userSelect: none
@@ -21,28 +21,37 @@ cluster =
 segmented ∷ Style
 segmented = styles
   where
-    styles =
-      css
-        { borderWidth: _0
-        , margin: _0
-        , width: auto
-        , display: flex
-        , flex: str "1"
-        , minHeight: str "min-content"
-        , background: str colour.backgroundLayer3
-        , boxShadow: str "inset 0 1 0 rgba(0,0,0,0.1)"
-        , borderRadius: str "calc(var(--s-1) * 0.8)"
-        , border: str $ i "1px solid " colour.interfaceBackground
-        , borderBottom: str $ i "1px solid " colour.interfaceBackgroundShadow
-        , padding: _0
-        , overflow: scroll
-        , userSelect: none
-        }
+  styles =
+    css
+      { borderWidth: _0
+      , margin: _0
+      , width: auto
+      , display: flex
+      , flex: str "1"
+      , minHeight: str "min-content"
+      , background: str colour.backgroundLayer3
+      , boxShadow: str "inset 0 1 0 rgba(0,0,0,0.1)"
+      , borderRadius: str "calc(var(--s-1) * 0.8)"
+      , border: str $ i "1px solid " colour.interfaceBackground
+      , borderBottom: str $ i "1px solid " colour.interfaceBackgroundShadow
+      , padding: _0
+      , overflow: visible
+      , userSelect: none
+      }
+
+activeElementWrapper ∷ Style
+activeElementWrapper =
+  css
+    { position: relative
+    , width: str "0"
+    , overflow: visible
+    }
 
 activeElement ∷ Style
 activeElement =
   css
     { position: absolute
+    , display: block
     , borderRadius: str "calc(var(--s-1) * 0.8)"
     , background: str colour.backgroundLayer5
     , borderTop: str $ i "1px solid " colour.interfaceBackgroundHighlight
@@ -58,6 +67,7 @@ button { isFirst, isLast } =
     { background: color transparent
     , appearance: none
     , color: str colour.text
+    , overflow: visible
     , border: none
     , padding: _0
     , fontSize: str "var(--s0)"
@@ -95,8 +105,8 @@ buttonContent { isFirst, isLast } =
     , userSelect: none
     }
   where
-    borderSize = "var(--s-4)"
+  borderSize = "var(--s-4)"
 
-    edgePadding = i "calc(var(--s0) - " borderSize ")"
+  edgePadding = i "calc(var(--s0) - " borderSize ")"
 
-    inBetweenPadding = i "calc(var(--s0)*0.9 - " borderSize ")"
+  inBetweenPadding = i "calc(var(--s0)*0.9 - " borderSize ")"
