@@ -153,46 +153,46 @@ leftIconContainer =
 inputContainer ∷ ∀ r. { | Props OptionalProp r } -> Style
 inputContainer props = theCss <>? props.css
   where
-    theCss =
-      css
-        { position: relative
-        , boxSizing: borderBox
-        , backgroundColor: str colour.inputBackground
-        , display: flex
-        , width: str "calc(var(--s4) * 2)"
-        , "--left-icon-size": var "--s0"
-        , "--right-icon-size": str "calc(var(--s0) * 1.2)"
-        , "--input-border-radius": var "--s-1"
-        , "--input-side-padding": var "--s-1"
-        , "--input-top-padding": var "--s-5"
-        , "--input-bottom-padding": var "--s-5"
-        , alignItems: center
-        , justifyContent: center
-        , paddingLeft: str "calc(var(--input-side-padding) - var(--border-width))"
-        , paddingRight: str "calc(var(--input-side-padding) - var(--border-width))"
-        , paddingTop: str "calc(var(--input-top-padding) - var(--border-width))"
-        , paddingBottom: str "calc(var(--input-bottom-padding) - var(--border-width))"
-        , gap: str "calc(var(--input-side-padding) / 2)"
-        , "--border-width": str "1px"
-        , border: str $ "var(--border-width) solid " <> colour.inputBorder
-        , borderRadius: var "--input-border-radius"
-        , """&[data-invalid="false"]""":
-          nest
-            { borderColor: str colour.success
-            , "--border-width": str "var(--s-5)"
-            }
-        , """&[data-invalid="true"]""":
-          nest
-            { borderColor: str colour.invalid
-            , "--border-width": str "var(--s-5)"
-            }
-        , "&:focus-within":
-          nest
-            { "--border-width": str "var(--s-5)"
-            , borderColor: str colour.highlight
-            , transition: str "border-color 0s linear 0.1s"
-            }
-        }
+  theCss =
+    css
+      { position: relative
+      , boxSizing: borderBox
+      , backgroundColor: str colour.inputBackground
+      , display: flex
+      , width: str "calc(var(--s4) * 2)"
+      , "--left-icon-size": var "--s0"
+      , "--right-icon-size": str "calc(var(--s0) * 1.2)"
+      , "--input-border-radius": var "--s-1"
+      , "--input-side-padding": var "--s-1"
+      , "--input-top-padding": var "--s-5"
+      , "--input-bottom-padding": var "--s-5"
+      , alignItems: center
+      , justifyContent: center
+      , paddingLeft: str "calc(var(--input-side-padding) - var(--border-width))"
+      , paddingRight: str "calc(var(--input-side-padding) - var(--border-width))"
+      , paddingTop: str "calc(var(--input-top-padding) - var(--border-width))"
+      , paddingBottom: str "calc(var(--input-bottom-padding) - var(--border-width))"
+      , gap: str "calc(var(--input-side-padding) / 2)"
+      , "--border-width": str "1px"
+      , border: str $ "var(--border-width) solid " <> colour.inputBorder
+      , borderRadius: var "--input-border-radius"
+      , """&[data-invalid="false"]""":
+        nest
+          { borderColor: str colour.success
+          , "--border-width": str "2px"
+          }
+      , """&[data-invalid="true"]""":
+        nest
+          { borderColor: str colour.invalid
+          , "--border-width": str "2px)"
+          }
+      , "&:focus-within":
+        nest
+          { "--border-width": str "2px"
+          , borderColor: str colour.highlight
+          , transition: str "border-color 0s linear 0.1s"
+          }
+      }
 
 inputWrapper ∷ Style
 inputWrapper =

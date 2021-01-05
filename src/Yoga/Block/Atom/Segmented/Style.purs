@@ -13,9 +13,10 @@ cluster ∷ Style
 cluster =
   css
     { overflow: visible
-    , flex: str "1"
     , display: str "inline-flex"
     , userSelect: none
+    , padding: _0
+    , margin: _0
     }
 
 segmented ∷ Style
@@ -27,13 +28,14 @@ segmented = styles
       , margin: _0
       , width: auto
       , display: flex
+      , boxSizing: borderBox
       , flex: str "1"
       , minHeight: str "min-content"
-      , background: str colour.backgroundLayer3
+      , background: str colour.backgroundLayer2
       , boxShadow: str "inset 0 1 0 rgba(0,0,0,0.1)"
       , borderRadius: str "calc(var(--s-1) * 0.8)"
-      , border: str $ i "1px solid " colour.interfaceBackground
-      , borderBottom: str $ i "1px solid " colour.interfaceBackgroundShadow
+      , border: str $ i "1px solid " colour.backgroundLayer1
+      , borderBottom: str $ i "1px solid " colour.backgroundLayer1
       , padding: _0
       , overflow: visible
       , userSelect: none
@@ -43,21 +45,27 @@ activeElementWrapper ∷ Style
 activeElementWrapper =
   css
     { position: relative
+    , boxSizing: borderBox
     , width: str "0"
+    , height: str "100%"
     , overflow: visible
+    , padding: _0
+    , margin: _0
     }
 
 activeElement ∷ Style
 activeElement =
   css
     { position: absolute
+    , boxSizing: borderBox
     , display: block
     , borderRadius: str "calc(var(--s-1) * 0.8)"
-    , background: str colour.backgroundLayer5
-    , borderTop: str $ i "1px solid " colour.interfaceBackgroundHighlight
-    , borderBottom: str $ i "1px solid " colour.interfaceBackgroundShadow
+    , background: str colour.backgroundLayer4
+    , borderTop: str $ i "1px solid " colour.backgroundLayer5
+    , borderBottom: str $ i "1px solid " colour.backgroundLayer3
     , boxShadow: str "0 1px 2px rgba(20,20,20,0.67)"
     , padding: _0
+    , margin: _0
     , zIndex: str "3"
     }
 
@@ -71,8 +79,7 @@ button { isFirst, isLast } =
     , border: none
     , padding: _0
     , fontSize: str "var(--s0)"
-    , marginLeft: _0
-    , marginRight: _0
+    , margin: _0
     , boxSizing: borderBox
     , zIndex: str "3"
     , minWidth: var "--s2"
@@ -91,15 +98,15 @@ buttonContent { isFirst, isLast } =
   css
     { "&:active": nest { outline: str "0" }
     , "&:focus": nest { outline: none }
-    , paddingTop: str "1px"
-    , paddingBottom: str "1px"
+    , margin: _0
+    , paddingTop: str "var(--s-5)"
+    , paddingBottom: str "var(--s-4)"
     , paddingLeft: str if isFirst then edgePadding else inBetweenPadding
     , paddingRight: str if isLast then edgePadding else inBetweenPadding
     , borderRadius: str "calc(var(--s-1) * 0.75)"
     , border: str $ i borderSize " solid transparent"
     , display: flex
     , alignItems: center
-    , outlineRight: str "1px solid red"
     , justifyContent: center
     , overflow: visible
     , userSelect: none

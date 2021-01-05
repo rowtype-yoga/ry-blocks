@@ -98,10 +98,15 @@ component =
                             }
                         , onDragStart:
                           Motion.onDragStart \_ pi -> do
-                            setDragX (Just pi.point.x)
+                            maybeBbox <- getBoundingBoxFromRef (TwoOrMore.head props.activeItemRefs)
+                            for_ maybeBbox \bbox ->
+                              setDragX (Just (pi.point.x - bbox.left))
                         , onDrag:
                           Motion.onDrag \_ pi -> do
-                            when (isJust maybeDragX) $ setDragX (Just pi.point.x)
+                            when (isJust maybeDragX) do
+                              maybeBbox <- getBoundingBoxFromRef (TwoOrMore.head props.activeItemRefs)
+                              for_ maybeBbox \bbox ->
+                                setDragX (Just (pi.point.x - bbox.left))
                         , onDragEnd:
                           Motion.onDragEnd \_ pi -> do
                             let
