@@ -3,14 +3,22 @@ module Yoga.Block.Container.Style where
 import Yoga.Prelude.Style
 import Color as Color
 import Data.Symbol (class IsSymbol, SProxy, reflectSymbol)
+import Effect.Uncurried (EffectFn2, runEffectFn2)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Heterogeneous.Mapping (class HMapWithIndex, class MappingWithIndex, hmap, hmapWithIndex)
 import Unsafe.Coerce (unsafeCoerce)
+import Web.DOM (Element)
+import Web.DOM.Document (documentElement)
+import Web.HTML (Window, window)
+import Web.HTML.HTMLDocument as HTMLDocument
+import Web.HTML.Window (document)
 
 data DarkOrLightMode
   = DarkMode
   | LightMode
+
+derive instance eqDarkOrLightMode ∷ Eq DarkOrLightMode
 
 lightModeStyle ∷ Style
 lightModeStyle = unsafeCoerce lightModeVariables
@@ -27,6 +35,35 @@ lightMode = mkGlobal (Just LightMode)
 global ∷ Style
 global = mkGlobal Nothing
 
+foreign import data ComputedStyle ∷ Type
+
+foreign import getComputedStyleImpl ∷ EffectFn2 Element Window ComputedStyle
+
+getComputedStyle ∷ Element -> Window -> Effect ComputedStyle
+getComputedStyle = runEffectFn2 getComputedStyleImpl
+
+foreign import getPropertyValueImpl ∷ EffectFn2 String ComputedStyle String -- Not sure it always returns a string
+
+getPropertyValue ∷ String -> ComputedStyle -> Effect String
+getPropertyValue = runEffectFn2 getPropertyValueImpl
+
+getDarkOrLightMode ∷ Effect (Maybe DarkOrLightMode)
+getDarkOrLightMode =
+  runMaybeT do
+    win <- window # lift
+    htmlDoc <- document win # lift
+    let doc = HTMLDocument.toDocument htmlDoc
+    docElem ∷ Element <- documentElement doc # MaybeT
+    computedStyle <- getComputedStyle docElem win # lift
+    pv <- getPropertyValue "--theme-variant" computedStyle # lift
+    if pv == "dark" then
+      DarkMode # pure
+    else
+      if pv == "light" then
+        LightMode # pure
+      else
+        Nothing # pure # MaybeT
+
 mkGlobal ∷ Maybe DarkOrLightMode -> Style
 mkGlobal maybeMode =
   css
@@ -40,7 +77,12 @@ mkGlobal maybeMode =
             , transition: str "background,color 0.33s ease-in"
             }
     , ":root":
-      nested $ variables
+      nested
+        $ css
+            { "@media (prefers-color-scheme: dark)":
+              nest { "--theme-variant": str "dark" }
+            }
+        <> variables
         <> fontVariables { main: "Inter", mono: "Victor Mono, Menlo, Consolas, Monaco, Liberation Mono, Lucida Console" }
     , html:
       nested
@@ -358,6 +400,7 @@ variables =
     , "--s3": str "calc(var(--s2) * var(--ratio))"
     , "--s4": str "calc(var(--s3) * var(--ratio))"
     , "--s5": str "calc(var(--s4) * var(--ratio))"
+    , "--theme-variant": str "light"
     }
 
 fontVariables ∷ { main ∷ String, mono ∷ String } -> Style
