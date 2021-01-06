@@ -103,12 +103,13 @@ labelLarge { left, width, top } =
     , padding: _0
     , whiteSpace: nowrap -- force on one line
     , overflow: str "hidden"
+    , height: str "calc(var(--s0) * 0.95)"
     , maxWidth: str $ i width "px"
     , textOverflow: str "ellipsis"
     , marginTop: str "calc(var(--s-1) + var(--s-5))"
     , marginBottom: str $ i "calc(" "var(--s-1)" "+" "var(--s-5)" " + " top "px" ")"
     , marginLeft: str $ i left "px"
-    , marginRight: str "var(--input-side-padding)"
+    , marginRight: var "--input-side-padding"
     , color: str colour.placeholderText
     , fontWeight: str "400"
     , """&[data-required="true"]:after""":
@@ -117,6 +118,7 @@ labelLarge { left, width, top } =
         , color: str colour.required
         , fontFamily: str "Helvetica, Arial, Inter, sans-serif"
         , fontSize: str "calc(var(--s0))"
+        , lineHeight: str "calc(var(--s0) * 0.85)"
         }
     }
 
@@ -166,16 +168,7 @@ inputContainer props = theCss <>? props.css
       , "--input-side-padding": var "--s-1"
       , "--input-top-padding": var "--s-5"
       , "--input-bottom-padding": var "--s-5"
-      , alignItems: center
-      , justifyContent: center
-      , paddingLeft: str "calc(var(--input-side-padding) - var(--border-width))"
-      , paddingRight: str "calc(var(--input-side-padding) - var(--border-width))"
-      , paddingTop: str "calc(var(--input-top-padding) - var(--border-width))"
-      , paddingBottom: str "calc(var(--input-bottom-padding) - var(--border-width))"
-      , gap: str "calc(var(--input-side-padding) / 2)"
       , "--border-width": str "1px"
-      , border: str $ "var(--border-width) solid " <> colour.inputBorder
-      , borderRadius: var "--input-border-radius"
       , """&[data-invalid="false"]""":
         nest
           { borderColor: str colour.success
@@ -192,6 +185,16 @@ inputContainer props = theCss <>? props.css
           , borderColor: str colour.highlight
           , transition: str "border-color 0s linear 0.1s"
           }
+      , alignItems: center
+      , justifyContent: center
+      , border: str $ "var(--border-width) solid " <> colour.inputBorder
+      , paddingLeft: str "calc(var(--input-side-padding) - var(--border-width))"
+      , paddingRight: str "calc(var(--input-side-padding) - var(--border-width))"
+      , paddingTop: str "calc(var(--input-top-padding) - var(--border-width))"
+      , paddingBottom: str "calc(var(--input-bottom-padding) - var(--border-width))"
+      , height: str "calc(var(--s2) * 0.9)"
+      , gap: str "calc(var(--input-side-padding) / 2)"
+      , borderRadius: var "--input-border-radius"
       }
 
 inputWrapper ∷ Style

@@ -81,6 +81,7 @@ button =
         , "&:disabled":
           nest
             { background: str colour.highlightDisabled
+            , border: str $ i "1px solid transparent"
             }
         }
     , """&[data-button-type="dangerous"]""":

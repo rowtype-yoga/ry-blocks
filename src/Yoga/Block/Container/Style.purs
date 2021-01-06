@@ -192,8 +192,8 @@ defaultColours =
     , interfaceBackground: interfaceBackgroundDark
     , interfaceBackgroundDangerous: interfaceBackgroundDangerousDark
     , interfaceDangerousText: interfaceDangerousTextDark
-    , interfaceBackgroundDisabled: darken 0.3 interfaceBackgroundDark
-    , interfaceTextDisabled: (desaturate 0.3 >>> lighten 0.25) interfaceBackgroundDark
+    , interfaceBackgroundDisabled: lighten 0.14 >>> saturate 0.02 $ darkBg
+    , interfaceTextDisabled: (desaturate 0.3 >>> lighten 0.25 >>> desaturate 0.3) interfaceBackgroundDark
     , interfaceBackgroundHighlight: lighten 0.1 interfaceBackgroundDark
     , interfaceBackgroundShadow: darken 0.1 interfaceBackgroundDark
     , inputBackground: darkBg
@@ -211,7 +211,7 @@ defaultColours =
     , highlightRotatedBackwards: highlightDark # rotateHue (-30.0)
     , highlightText
     , text: lightBg
-    , placeholderText: darken 0.4 lightBg
+    , placeholderText: darken 0.4 white
     }
   }
   where
@@ -219,7 +219,7 @@ defaultColours =
 
   highlightDark = Color.rgb 0x88 0x33 0xFF
 
-  interfaceBackgroundDark = Color.hsl 240.0 0.10 0.33
+  interfaceBackgroundDark = lighten 0.14 >>> saturate 0.12 $ darkBg
 
   interfaceBackground = lightBg
 
