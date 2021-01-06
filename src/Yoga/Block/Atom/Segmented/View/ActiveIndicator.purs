@@ -80,10 +80,9 @@ component =
                   { className: "ry-active-segmented-element-wrapper"
                   , css: Style.activeElementWrapper
                   , children:
-                    [ Emotion.elementKeyed Motion.div
+                    [ Emotion.element Motion.div
                         { css: Style.activeElement
                         , layout: Motion.layout true
-                        , key: show (props.windowSize /\ scrollX /\ scrollY) -- to force rerender
                         , custom: Motion.customProp (({ childRefs: props.activeItemRefs, scrollX, scrollY }) ∷ Custom)
                         , variants
                         , className: "ry-active-segmented-element"
@@ -96,6 +95,7 @@ component =
                             { left: activeLeft
                             , width: activeWidth
                             }
+                        , whileTap: Motion.whileTap $ css { scaleY: 0.8, scaleX: 0.95, y: -1.0 }
                         , onDragStart:
                           Motion.onDragStart \_ pi -> do
                             maybeBbox <- getBoundingBoxFromRef (TwoOrMore.head props.activeItemRefs)
@@ -110,22 +110,19 @@ component =
                         , onDragEnd:
                           Motion.onDragEnd \_ pi -> do
                             let
-                              x =
-                                maybeDragX
-                                  # fromMaybe' \_ -> unsafeCrashWith "no x"
+                              x = maybeDragX # fromMaybe' \_ -> unsafeCrashWith "no x"
                               newIdx =
                                 findOverlapping
                                   props.activeItemIndex
                                   animationVariants
                                   x
-                              v =
-                                animationVariants TwoOrMore.!! newIdx
+                              v = animationVariants TwoOrMore.!! newIdx
                                   # fromMaybe' \_ -> unsafeCrashWith "omg"
-                            setDragX Nothing
                             activeLeft # MotionValue.set v.left
                             activeWidth # MotionValue.set v.width
                             props.updateActiveIndex newIdx
-                        , dragConstraints: Motion.dragConstraints { left: 0, right: 0 }
+                            setDragX Nothing
+                        , dragConstraints: Motion.dragConstraints { left: 0, right: 0, top: 0, bottom: 0 }
                         , dragElastic: Motion.dragElastic false
                         , transition:
                           Motion.transition
@@ -198,8 +195,8 @@ handleDrag { x, activeItemIndex, animationVariants } = do
       else
         closestVariant /\ baseVariant
   -- Total
-  let rangeStart = smaller.left + (smaller.width / 2.0)
-  let rangeEnd = greater.left + (greater.width / 2.0)
+  let rangeStart = smaller.left + smaller.width / 2.0
+  let rangeEnd = greater.left + greater.width / 2.0
   let range = rangeEnd - rangeStart
   let ratio = ((x - rangeStart) / range)
   let interpolatedWidth = (greater.width * ratio) + smaller.width * (1.0 - ratio)

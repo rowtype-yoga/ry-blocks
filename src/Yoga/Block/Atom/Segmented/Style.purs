@@ -47,7 +47,6 @@ activeElementWrapper =
     { position: relative
     , boxSizing: borderBox
     , width: str "0"
-    , height: str "100%"
     , overflow: visible
     , padding: _0
     , margin: _0
