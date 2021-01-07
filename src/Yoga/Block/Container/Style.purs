@@ -10,6 +10,7 @@ import Heterogeneous.Mapping (class HMapWithIndex, class MappingWithIndex, hmap,
 import Unsafe.Coerce (unsafeCoerce)
 import Web.DOM (Element)
 import Web.DOM.Document (documentElement)
+import Web.Event.Internal.Types (EventTarget)
 import Web.HTML (Window, window)
 import Web.HTML.HTMLDocument as HTMLDocument
 import Web.HTML.Window (document)
@@ -47,13 +48,33 @@ foreign import getPropertyValueImpl ∷ EffectFn2 String ComputedStyle String --
 getPropertyValue ∷ String -> ComputedStyle -> Effect String
 getPropertyValue = runEffectFn2 getPropertyValueImpl
 
+foreign import data ElementStyle ∷ Type
+
+foreign import getElementStyle ∷ Element -> Effect ElementStyle
+
+foreign import setStyleProperty ∷ String -> String -> ElementStyle -> Effect Unit
+
+foreign import data MediaQueryList ∷ Type
+
+foreign import matchMedia ∷ String -> Window -> Effect MediaQueryList
+
+foreign import matches ∷ MediaQueryList -> Effect Boolean
+
+toEventTarget ∷ MediaQueryList -> EventTarget
+toEventTarget = unsafeCoerce
+
+getDocumentElement ∷ MaybeT Effect Element
+getDocumentElement = do
+  win <- window # lift
+  htmlDoc <- document win # lift
+  let doc = HTMLDocument.toDocument htmlDoc
+  documentElement doc # MaybeT
+
 getDarkOrLightMode ∷ Effect (Maybe DarkOrLightMode)
 getDarkOrLightMode =
   runMaybeT do
     win <- window # lift
-    htmlDoc <- document win # lift
-    let doc = HTMLDocument.toDocument htmlDoc
-    docElem ∷ Element <- documentElement doc # MaybeT
+    docElem ∷ Element <- getDocumentElement
     computedStyle <- getComputedStyle docElem win # lift
     pv <- getPropertyValue "--theme-variant" computedStyle # lift
     if pv == "dark" then
@@ -63,6 +84,17 @@ getDarkOrLightMode =
         LightMode # pure
       else
         Nothing # pure # MaybeT
+
+setDarkOrLightMode ∷ DarkOrLightMode -> Effect Unit
+setDarkOrLightMode desiredMode =
+  runMaybeT_ do
+    docElem <- getDocumentElement
+    style <- getElementStyle docElem # lift
+    style
+      # setStyleProperty "--theme-variant" case desiredMode of
+          LightMode -> "light"
+          DarkMode -> "dark"
+      # lift
 
 mkGlobal ∷ Maybe DarkOrLightMode -> Style
 mkGlobal maybeMode =
