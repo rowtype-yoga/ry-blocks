@@ -13,4 +13,17 @@ spec =
           $ renderComponent Toggle.component
               { togglePosition: ToggleIsLeft
               , setTogglePosition: mempty
+              , ariaLabel: "Example Toggle"
               }
+      it "has an aria-label" do
+        { findByRole } <-
+          renderComponent Toggle.component
+            { togglePosition: ToggleIsLeft
+            , setTogglePosition: mempty
+            , ariaLabel: "Example Toggle"
+            }
+        elem <- findByRole "switch"
+        shouldHaveAttributeWithValue
+          elem
+          "aria-label"
+          "Example Toggle"

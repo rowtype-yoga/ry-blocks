@@ -57,7 +57,7 @@ mkHighlighterTheme theme =
       }
   , "hljs-keyword":
     css
-      { color: Color.cssStringRGBA theme.highlightColour
+      { color: "var(--highlight)"
       , fontWeight: "normal"
       }
   , "hljs-symbol":

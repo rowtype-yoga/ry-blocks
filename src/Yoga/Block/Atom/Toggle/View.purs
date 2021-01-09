@@ -24,18 +24,19 @@ import Yoga.Block.Atom.Toggle.Types (TogglePosition(..), flipToggle)
 import Yoga.Block.Container.Style (colour)
 import Yoga.Block.Icon.SVG as SVGIcon
 
-type PropsF f
-  = ( className ∷ f String
-    , left ∷ f JSX
-    , right ∷ f JSX
-    | Style.Props f (MandatoryProps InputProps)
-    )
+type PropsF f =
+  ( className ∷ f String
+  , left ∷ f JSX
+  , right ∷ f JSX
+  | Style.Props f (MandatoryProps InputProps)
+  )
 
-type MandatoryProps r
-  = ( togglePosition ∷ TogglePosition
-    , setTogglePosition ∷ TogglePosition -> Effect Unit
-    | r
-    )
+type MandatoryProps r =
+  ( togglePosition ∷ TogglePosition
+  , setTogglePosition ∷ TogglePosition -> Effect Unit
+  , ariaLabel ∷ String
+  | r
+  )
 
 data TappingState
   = TapAllowed
@@ -54,11 +55,11 @@ instance showDragState ∷ Show DragState where
     Dragging x -> "Dragging " <> show x
     DragDone x -> "DragDone " <> show x
 
-type Props
-  = PropsF Id
+type Props =
+  PropsF Id
 
-type PropsOptional
-  = PropsF OptionalProp
+type PropsOptional =
+  PropsF OptionalProp
 
 component ∷ ∀ p p_. Union p p_ Props => ReactComponent { | MandatoryProps p }
 component = rawComponent
@@ -67,8 +68,7 @@ rawComponent ∷ ∀ p. ReactComponent (Record p)
 rawComponent =
   mkForwardRefComponent "Toggle" do
     \(props ∷ { | PropsOptional }) ref -> React.do
-      let
-        disabled = props.disabled
+      let disabled = props.disabled
       buttonRef <- useRef null
       toggleRef <- useRef null
       tapState <- useRef TapNotAllowed
@@ -91,7 +91,6 @@ rawComponent =
           { left: { backgroundColor: (Emotion.str <<< Color.cssStringRGBA <$> props.backgroundLeft) ?|| Emotion.str colour.inputBackground }
           , right: { backgroundColor: (Emotion.str <<< Color.cssStringRGBA <$> props.backgroundRight) ?|| Emotion.str colour.success }
           }
-
         buttonVariant = Motion.makeVariantLabels buttonVariants
       -- components
       let
@@ -117,44 +116,45 @@ rawComponent =
                 ]
             , toggle
             ]
-
-        container =
-          Motion.button
-            </* { className: "ry-toggle" <>? props.className
-              , css: Style.button <>? props.css
-              , transition: Motion.transition { type: "tween", duration: 0.33, ease: "easeOut" }
-              , variants: Motion.variants buttonVariants
-              , animate:
-                  Motion.animate case props.togglePosition of
-                    ToggleIsRight -> buttonVariant.right
-                    ToggleIsLeft -> buttonVariant.left
-              , value: show props.togglePosition
-              , onClick: handler preventDefault \_ -> props.setTogglePosition (flipToggle props.togglePosition)
-              , style: props.style
-              , _data: Object.singleton "testid" "toggle-testid"
-              , role: "switch"
-              , _aria: Object.singleton "checked" "switch"
-              , ref: buttonRef
-              }
-
+        container children =
+          Motion.elementStyled
+            Motion.button
+            { className: "ry-toggle" <>? props.className
+            , css: Style.button <>? props.css
+            , transition: Motion.transition { type: "tween", duration: 0.33, ease: "easeOut" }
+            , variants: Motion.variants buttonVariants
+            , animate:
+              Motion.animate case props.togglePosition of
+                ToggleIsRight -> buttonVariant.right
+                ToggleIsLeft -> buttonVariant.left
+            , value: show props.togglePosition
+            , onClick: handler preventDefault \_ -> props.setTogglePosition (flipToggle props.togglePosition)
+            , style: props.style
+            , _data: Object.singleton "testid" "toggle-testid"
+            , role: "switch"
+            , _aria:
+              Object.fromHomogeneous
+                { checked: "switch"
+                , label: props.ariaLabel
+                }
+            , ref: buttonRef
+            , children
+            }
         textContainer =
           div
             </* { className: "ry-toggle-text"
               , css: Style.toggleTextContainer
               }
-
         textOnContainer =
           div
             </* { className: "ry-toggle-text-on"
               , css: Style.toggleText
               }
-
         textOffContainer =
           div
             </* { className: "ry-toggle-text-off"
               , css: Style.toggleText
               }
-
         textOn =
           Motion.div
             </ { className: "ry-toggle-text-container"
@@ -163,7 +163,6 @@ rawComponent =
               , animate: Motion.animate $ css { scale: 1, opacity: 1 }
               , exit: Motion.exit $ css { scale: 0, opacity: 0 }
               }
-
         textOff =
           Motion.div
             </ { className: "ry-toggle-text-container"
@@ -172,9 +171,7 @@ rawComponent =
               , animate: Motion.animate $ css { scale: 1, opacity: 1 }
               , exit: Motion.exit $ css { scale: 0, opacity: 0 }
               }
-
         animateTextPresence = Motion.animatePresence </ {}
-
         toggle =
           toggleCircle
             </> { buttonRef
@@ -215,8 +212,7 @@ toggleCircle =
               runMaybeT_ do
                 b <- getBoundingBoxFromRef buttonRef # MaybeT
                 t <- getBoundingBoxFromRef toggleRef # MaybeT
-                let
-                  ml = b.width - t.width - (2.0 * (t.left - b.left))
+                let ml = b.width - t.width - (2.0 * (t.left - b.left))
                 setMaxLeft (Just ml) # lift
             mempty
           let
@@ -224,7 +220,6 @@ toggleCircle =
               { left: { x: 0.0 }
               , right: { x: maxLeft # fromMaybe 0.0 }
               }
-
             toggleVariant = Motion.makeVariantLabels toggleVariants
           pure
             $ Motion.div
@@ -239,68 +234,66 @@ toggleCircle =
               , key: if isNothing maxLeft then "initialising" else "ready"
               , dragElastic: Motion.dragElastic false
               , dragConstraints:
-                  Motion.dragConstraints
-                    { left:
-                        case togglePosition of
-                          ToggleIsLeft -> zero
-                          ToggleIsRight -> -(maxLeft <#> (_ - Style.dragWidthDelta) # fromMaybe 0.0)
-                    , right:
-                        case togglePosition of
-                          ToggleIsRight -> zero
-                          ToggleIsLeft -> maxLeft <#> (_ - Style.dragWidthDelta) # fromMaybe 0.0
-                    }
+                Motion.dragConstraints
+                  { left:
+                    case togglePosition of
+                      ToggleIsLeft -> zero
+                      ToggleIsRight -> -(maxLeft <#> (_ - Style.dragWidthDelta) # fromMaybe 0.0)
+                  , right:
+                    case togglePosition of
+                      ToggleIsRight -> zero
+                      ToggleIsLeft -> maxLeft <#> (_ - Style.dragWidthDelta) # fromMaybe 0.0
+                  }
               , variants: Motion.variants toggleVariants
               , transition: Motion.transition { type: "tween", duration: 0.33, ease: "easeOut" }
               , whileTap:
-                  Motion.prop
-                    $ css
-                        { width: "calc(var(--s2)*0.85 + 10px)"
-                        , left:
-                            case togglePosition of
-                              ToggleIsLeft -> Style.toggleLeft
-                              ToggleIsRight -> "calc(" <> Style.toggleLeft <> " - 10px)"
-                        , transition: { type: "tween", duration: 0.10, ease: "easeInOut" }
-                        }
+                Motion.prop
+                  $ css
+                      { width: "calc(var(--s2)*0.85 + 10px)"
+                      , left:
+                        case togglePosition of
+                          ToggleIsLeft -> Style.toggleLeft
+                          ToggleIsRight -> "calc(" <> Style.toggleLeft <> " - 10px)"
+                      , transition: { type: "tween", duration: 0.10, ease: "easeInOut" }
+                      }
               , onTapStart: Motion.onTapStart \_ _ -> writeRef tapState TapAllowed
               , onTap:
-                  Motion.onTap \_ pi -> do
-                    ts <- readRef tapState
-                    case ts of
-                      TapAllowed -> setTogglePosition (flipToggle togglePosition)
-                      _ -> mempty
-                    mempty
+                Motion.onTap \_ pi -> do
+                  ts <- readRef tapState
+                  case ts of
+                    TapAllowed -> setTogglePosition (flipToggle togglePosition)
+                    _ -> mempty
+                  mempty
               , onTapCancel:
-                  Motion.onTapCancel \_ pi -> do
-                    writeRef tapState TapNotAllowed
-                    mempty
+                Motion.onTapCancel \_ pi -> do
+                  writeRef tapState TapNotAllowed
+                  mempty
               , initial: Motion.initial false
               , animate:
-                  Motion.animate case togglePosition of
-                    ToggleIsLeft -> toggleVariant.left
-                    ToggleIsRight -> toggleVariant.right
+                Motion.animate case togglePosition of
+                  ToggleIsLeft -> toggleVariant.left
+                  ToggleIsRight -> toggleVariant.right
               , onDragStart:
-                  Motion.onDragStart \_ pi -> do
-                    maybeBBox <- getBoundingBoxFromRef toggleRef
-                    let
-                      x = maybeBBox <#> \bbox -> bbox.left + (bbox.width / 2.0)
-                    setDragState
-                      $ Dragging
-                          { startX: x # fromMaybe pi.point.x, currentX: pi.point.x
-                          }
+                Motion.onDragStart \_ pi -> do
+                  maybeBBox <- getBoundingBoxFromRef toggleRef
+                  let x = maybeBBox <#> \bbox -> bbox.left + (bbox.width / 2.0)
+                  setDragState
+                    $ Dragging
+                        { startX: x # fromMaybe pi.point.x, currentX: pi.point.x
+                        }
               , onDrag:
-                  Motion.onDrag \_ pi -> do
-                    case dragState of
-                      Dragging { startX } -> do
-                        setDragState $ Dragging { startX, currentX: pi.point.x }
-                      other -> Console.warn $ i "Unexpected drag state " (show other) " in onDragEvent"
+                Motion.onDrag \_ pi -> do
+                  case dragState of
+                    Dragging { startX } -> do
+                      setDragState $ Dragging { startX, currentX: pi.point.x }
+                    other -> Console.warn $ i "Unexpected drag state " (show other) " in onDragEvent"
               , onDragEnd:
-                  Motion.onDragEnd \_ pi -> do
-                    case dragState of
-                      Dragging { startX } -> do
-                        maybeBBox <- getBoundingBoxFromRef toggleRef
-                        let
-                          x = maybeBBox <#> \bbox -> bbox.left + (bbox.width / 2.0)
-                        setDragState (DragDone { startX, endX: x # fromMaybe' \_ -> unsafeCrashWith "shit" })
-                      other -> Console.warn $ i "Unexpected drag state " (show other) " in onDragEvent"
+                Motion.onDragEnd \_ pi -> do
+                  case dragState of
+                    Dragging { startX } -> do
+                      maybeBBox <- getBoundingBoxFromRef toggleRef
+                      let x = maybeBBox <#> \bbox -> bbox.left + (bbox.width / 2.0)
+                      setDragState (DragDone { startX, endX: x # fromMaybe' \_ -> unsafeCrashWith "shit" })
+                    other -> Console.warn $ i "Unexpected drag state " (show other) " in onDragEvent"
               , ref: toggleRef
               }

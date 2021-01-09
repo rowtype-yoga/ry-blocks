@@ -36,6 +36,7 @@ lightMode = mkGlobal (Just LightMode)
 global ∷ Style
 global = mkGlobal Nothing
 
+-- [TODO] Move this all out
 foreign import data ComputedStyle ∷ Type
 
 foreign import getComputedStyleImpl ∷ EffectFn2 Element Window ComputedStyle
@@ -96,6 +97,8 @@ setDarkOrLightMode desiredMode =
           DarkMode -> "dark"
       # lift
 
+-- [TODO] Move out end
+--
 mkGlobal ∷ Maybe DarkOrLightMode -> Style
 mkGlobal maybeMode =
   css

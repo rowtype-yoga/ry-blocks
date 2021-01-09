@@ -19,39 +19,39 @@ type Props f r =
 sidebar ∷ ∀ p. { | Props OptionalProp p } -> Style
 sidebar props = styles <>? props.css
   where
-    adjustedSpace = props.space <#> \s -> if s == "0" then "0px" else s
+  adjustedSpace = props.space <#> \s -> if s == "0" then "0px" else s
 
-    space = adjustedSpace ?|| "1rem"
+  space = adjustedSpace ?|| "1rem"
 
-    side = props.side ?|| SidebarLeft
+  side = props.side ?|| SidebarLeft
 
-    contentMin = props.contentMin ?|| "50%"
+  contentMin = props.contentMin ?|| "50%"
 
-    nonSidebarStyle =
-      nest
-        { flexBasis: _0
-        , flexGrow: "999" # str
-        , minWidth: "calc(" <> contentMin <> " - " <> space <> ")" # str
-        }
+  nonSidebarStyle =
+    nest
+      { flexBasis: _0
+      , flexGrow: "999" # str
+      , minWidth: "calc(" <> contentMin <> " - " <> space <> ")" # str
+      }
 
-    styles =
-      css
-        { overflow: hidden
-        , "& > *":
-          nest
-            { display: flex
-            , flexWrap: wrap
-            , margin: "calc(" <> space <> "/2 * -1)" # str
-            , alignItems: props.noStretch # ifTrue "flex-start" "" # str
-            }
-        , "& > * > *":
-          nest
-            { margin: "calc(" <> space <> "/2)" # str
-            , flexGrow: "1" # str
-            , flexBasis: props.sideWidth # foldMap str
-            }
-            <> foldMap (nest <<< { flexBasis: _ } <<< str) props.sideWidth
-        }
-        <> case side of
-            SidebarLeft -> css { "& > * > :last-child": nonSidebarStyle }
-            SidebarRight -> css { "& > * > :first-child": nonSidebarStyle }
+  styles =
+    css
+      { overflow: hidden
+      , "& > *":
+        nest
+          { display: flex
+          , flexWrap: wrap
+          , margin: "calc(" <> space <> "/2 * -1)" # str
+          , alignItems: props.noStretch # ifTrue "flex-start" "" # str
+          }
+      , "& > * > *":
+        nest
+          { margin: "calc(" <> space <> "/2)" # str
+          , flexGrow: "1" # str
+          , flexBasis: props.sideWidth # foldMap str
+          }
+          <> foldMap (nest <<< { flexBasis: _ } <<< str) props.sideWidth
+      }
+      <> case side of
+          SidebarLeft -> css { "& > * > :last-child": nonSidebarStyle }
+          SidebarRight -> css { "& > * > :first-child": nonSidebarStyle }

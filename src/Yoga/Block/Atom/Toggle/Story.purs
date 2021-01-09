@@ -34,38 +34,40 @@ toggle = do
             ]
         ]
   where
-    mkBasicExample =
-      React.reactComponent "Toggle example" \p -> React.do
-        togglePosition /\ setTogglePosition <- React.useState' ToggleIsRight
-        pure
-          $ element Toggle.component
-              { togglePosition
-              , setTogglePosition
-              }
+  mkBasicExample =
+    React.reactComponent "Toggle example" \p -> React.do
+      togglePosition /\ setTogglePosition <- React.useState' ToggleIsRight
+      pure
+        $ element Toggle.component
+            { togglePosition
+            , setTogglePosition
+            , ariaLabel: "dark-light-toggle"
+            }
 
-    mkDarkLightToggle =
-      React.reactComponent "Toggle dark night example" \p -> React.do
-        togglePosition /\ setTogglePosition <- React.useState' ToggleIsLeft
-        theme /\ setTheme <- React.useState' Nothing
-        let
-          content =
-            element Toggle.component
-              { togglePosition: togglePosition
-              , setTogglePosition:
-                \newTogglePosition -> do
-                  setTogglePosition newTogglePosition
-                  setTheme case newTogglePosition of
-                    ToggleIsRight -> Just DarkMode
-                    ToggleIsLeft -> Just LightMode
-              , left: R.text "🌒"
-              , right: R.text "🌞"
-              , backgroundLeft:
-                Color.hsl 205.0 1.0 0.83
-              , backgroundRight:
-                Color.hsl 260.0 0.7 0.45
-              }
-        pure
-          $ element Block.container
-              { content
-              , themeVariant: theme
-              }
+  mkDarkLightToggle =
+    React.reactComponent "Toggle dark night example" \p -> React.do
+      togglePosition /\ setTogglePosition <- React.useState' ToggleIsLeft
+      theme /\ setTheme <- React.useState' Nothing
+      let
+        content =
+          element Toggle.component
+            { togglePosition: togglePosition
+            , ariaLabel: "dark-light-toggle"
+            , setTogglePosition:
+              \newTogglePosition -> do
+                setTogglePosition newTogglePosition
+                setTheme case newTogglePosition of
+                  ToggleIsRight -> Just DarkMode
+                  ToggleIsLeft -> Just LightMode
+            , left: R.text "🌒"
+            , right: R.text "🌞"
+            , backgroundLeft:
+              Color.hsl 205.0 1.0 0.83
+            , backgroundRight:
+              Color.hsl 260.0 0.7 0.45
+            }
+      pure
+        $ element Block.container
+            { content
+            , themeVariant: theme
+            }

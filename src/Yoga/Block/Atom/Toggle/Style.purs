@@ -15,7 +15,7 @@ button =
   css
     { position: relative
     , "&:focus": nest { outline: str "none" }
-    , border: str $ "1px solid " <> colour.inputBorder
+    , border: str $ "1px solid " <> colour.backgroundLayer2
     , "&:focus-visible":
       nest
         { boxShadow: str $ "0 0 0 var(--s-4) " <> colour.highlight
