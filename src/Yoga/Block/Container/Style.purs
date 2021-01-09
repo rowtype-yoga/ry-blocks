@@ -109,7 +109,6 @@ mkGlobal maybeMode =
             , minWidth: 100.0 # vw
             , lineHeight: str "1.15"
             , "WebkitTextSizeAdjust": _100percent
-            , transition: str "background,color 0.33s ease-in"
             }
     , ":root":
       nested
@@ -128,9 +127,10 @@ mkGlobal maybeMode =
       nested
         $ css
             { fontFamily: str "var(--main-font)"
-            , background: str colour.background
+            , backgroundColor: str colour.background
             , color: str colour.text
             , margin: str "0"
+            , transition: str "background-color 4000ms linear"
             }
         <> case maybeMode of
             Nothing -> autoSwitchColourTheme
@@ -176,23 +176,12 @@ mkGlobal maybeMode =
             }
     , a:
       nest
-        { color: str colour.text
-        , textDecorationColor: str colour.text
+        { color: str colour.link
+        , textDecoration: str "none"
         , "&:hover":
           nest
-            { color: str colour.text
-            , textDecorationColor: str colour.highlight
+            { textDecoration: str $ "underline " <> colour.link
             }
-        , "&:visited":
-          nest
-            { color: str colour.text
-            , textDecorationColor: str colour.backgroundLayer1
-            }
-        }
-    , "::selection":
-      nest
-        { color: str colour.highlightText
-        , background: str colour.highlight
         }
     , "*, *:before, *:after":
       nested
@@ -203,17 +192,17 @@ mkGlobal maybeMode =
                 { color: str colour.highlightText
                 , background: str colour.highlight
                 }
-            , fontFeatureSettings:
-              str
-                $ intercalate ","
-                $ show
-                <$> [ "ss03" -- curved r
-                  , "cv03" -- open six
-                  , "cv04" -- open nine
-                  -- , "cv05" -- lower case l with tail
-                  , "cv07" -- German double-s
-                  , "cv09" -- Flat top three
-                  ]
+            -- , fontFeatureSettings:
+            --   str
+            --     $ intercalate ","
+            --     $ show
+            --     <$> [ "ss03" -- curved r
+            --       , "cv03" -- open six
+            --       , "cv04" -- open nine
+            --       -- , "cv05" -- lower case l with tail
+            --       , "cv07" -- German double-s
+            --       , "cv09" -- Flat top three
+            --       ]
             }
     }
 
@@ -226,89 +215,105 @@ defaultColours ∷ Colours
 defaultColours =
   { light:
     { background: lightBg
+    , backgroundInverted: darken 0.85 lightBg
     , backgroundLayer1: darken 0.12 >>> rotateHue (0.0) >>> saturate 0.01 $ lightBg
     , backgroundLayer2: darken 0.09 >>> rotateHue (0.0) >>> saturate 0.02 $ lightBg
     , backgroundLayer3: darken 0.06 >>> rotateHue (0.0) >>> saturate 0.03 $ lightBg
     , backgroundLayer4: darken 0.03 >>> rotateHue (0.0) >>> saturate 0.04 $ lightBg
     , backgroundLayer5: lightBg
-    , backgroundInverted: darken 0.85 lightBg
-    , textInverted: lightBg
-    , success
-    , successText
-    , invalid
-    , invalidText
-    , required
-    , interfaceBackground
-    , interfaceBackgroundDangerous
-    , interfaceDangerousText
-    , interfaceBackgroundDisabled: darken 0.03 lightBg
-    , interfaceTextDisabled: darken 0.30 lightBg
-    , interfaceBackgroundHighlight: lighten 0.05 lightBg
+    , highlight
+    , highlightDarker: withAlpha 0.15 (Color.darken 0.5 highlight)
     , highlightDisabled: (desaturate 0.80 >>> lighten 0.28) highlight
-    , interfaceBackgroundShadow: darken 0.04 lightBg
+    , highlightLighter: withAlpha 0.2 (Color.lighten 0.5 highlight)
+    , highlightRotatedBackwards: highlight # rotateHue (-30.0)
+    , highlightRotatedForwards: highlight # rotateHue 30.0
+    , highlightText
     , inputBackground: lightBg
     , inputBorder: darken 0.1 lightBg
-    , highlight
-    , highlightLighter: withAlpha 0.2 (Color.lighten 0.5 highlight)
-    , highlightDarker: withAlpha 0.15 (Color.darken 0.5 highlight)
-    , highlightRotatedForwards: highlight # rotateHue 30.0
-    , highlightRotatedBackwards: highlight # rotateHue (-30.0)
-    , highlightText
-    , text: textLightTheme
+    , interfaceBackground
+    , interfaceBackgroundDangerous
+    , interfaceBackgroundDisabled: darken 0.03 lightBg
+    , interfaceBackgroundHighlight: lighten 0.05 lightBg
+    , interfaceBackgroundShadow: darken 0.04 lightBg
+    , interfaceDangerousText
+    , interfaceTextDisabled: darken 0.30 lightBg
+    , invalid
+    , invalidText
+    , link
     , placeholderText: lighten 0.4 darkBg
+    , required
+    , success
+    , successText
+    , text: textLightTheme
+    , textInverted: lightBg
     }
   , dark:
     { background: darkBg
-    , backgroundLayer5: lighten 0.30 >>> saturate 0.07 $ darkBg
-    , backgroundLayer4: lighten 0.21 >>> saturate 0.08 $ darkBg
-    , backgroundLayer3: lighten 0.14 >>> saturate 0.12 $ darkBg
-    , backgroundLayer2: lighten 0.07 >>> saturate 0.18 $ darkBg
-    , backgroundLayer1: darkBg
-    , textInverted: darkBg
     , backgroundInverted: lightBg
-    , interfaceBackground: interfaceBackgroundDark
-    , interfaceBackgroundDangerous: interfaceBackgroundDangerousDark
-    , interfaceDangerousText: interfaceDangerousTextDark
-    , interfaceBackgroundDisabled: lighten 0.14 >>> saturate 0.02 $ darkBg
-    , interfaceTextDisabled: (desaturate 0.3 >>> lighten 0.25 >>> desaturate 0.3) interfaceBackgroundDark
-    , interfaceBackgroundHighlight: lighten 0.1 interfaceBackgroundDark
-    , interfaceBackgroundShadow: darken 0.1 interfaceBackgroundDark
-    , inputBackground: darkBg
-    , inputBorder: lighten 0.17 darkBg
-    , success: successDark
-    , successText
-    , required
-    , invalid
-    , invalidText
+    , backgroundLayer1: darkBg
+    , backgroundLayer2: lighten 0.07 >>> saturate 0.18 $ darkBg
+    , backgroundLayer3: lighten 0.14 >>> saturate 0.12 $ darkBg
+    , backgroundLayer4: lighten 0.21 >>> saturate 0.08 $ darkBg
+    , backgroundLayer5: lighten 0.30 >>> saturate 0.07 $ darkBg
     , highlight: highlightDark
+    , highlightDarker: withAlpha 0.4 (Color.darken 0.5 highlightDark)
     , highlightDisabled: (desaturate 0.76 >>> darken 0.32) highlightDark
     , highlightLighter: withAlpha 0.2 (Color.lighten 0.5 highlightDark)
-    , highlightDarker: withAlpha 0.4 (Color.darken 0.5 highlightDark)
-    , highlightRotatedForwards: highlightDark # rotateHue 30.0
     , highlightRotatedBackwards: highlightDark # rotateHue (-30.0)
+    , highlightRotatedForwards: highlightDark # rotateHue 30.0
     , highlightText
-    , text: lightBg
+    , inputBackground: darkBg
+    , inputBorder: lighten 0.17 darkBg
+    , interfaceBackground: interfaceBackgroundDark
+    , interfaceBackgroundDangerous: interfaceBackgroundDangerousDark
+    , interfaceBackgroundDisabled: lighten 0.14 >>> saturate 0.02 $ darkBg
+    , interfaceBackgroundHighlight: lighten 0.1 interfaceBackgroundDark
+    , interfaceBackgroundShadow: darken 0.1 interfaceBackgroundDark
+    , interfaceDangerousText: interfaceDangerousTextDark
+    , interfaceTextDisabled: (desaturate 0.3 >>> lighten 0.25 >>> desaturate 0.3) interfaceBackgroundDark
+    , invalid
+    , invalidText
+    , link: linkDark
     , placeholderText: darken 0.4 white
+    , required
+    , success: successDark
+    , successText
+    , text: lightBg
+    , textInverted: darkBg
     }
   }
   where
+  darkBg = Color.hsl 240.0 0.07 0.10
+
   highlight = Color.hsl 320.0 0.62 0.49
 
-  highlightDark = Color.rgb 0x88 0x33 0xFF
+  highlightDark = Color.hsl 265.0 1.00 0.6
 
-  interfaceBackgroundDark = lighten 0.14 >>> saturate 0.12 $ darkBg
+  highlightText = Color.rgb 0xFF 0xFF 0xFF
 
   interfaceBackground = lightBg
 
   interfaceBackgroundDangerous = interfaceBackground
 
-  interfaceDangerousText = invalid
-
   interfaceBackgroundDangerousDark = Color.hsl 340.0 0.55 0.30
+
+  interfaceBackgroundDark = lighten 0.14 >>> saturate 0.12 $ darkBg
+
+  interfaceDangerousText = invalid
 
   interfaceDangerousTextDark = Color.hsl 340.0 1.0 0.90
 
-  highlightText = Color.rgb 0xFF 0xFF 0xFF
+  invalid = Color.rgb 220 40 70
+
+  invalidText = successText
+
+  lightBg = Color.hsl 5.0 0.27 0.99
+
+  link = Color.hsl 320.0 0.42 0.29
+
+  linkDark = Color.hsl 45.0 0.90 0.77
+
+  required = Color.rgb 200 50 80
 
   success = Color.rgb 10 150 25
 
@@ -316,17 +321,7 @@ defaultColours =
 
   successText = Color.rgb 250 250 250
 
-  invalid = Color.rgb 220 40 70
-
-  invalidText = successText
-
-  required = Color.rgb 200 50 80
-
   textLightTheme = Color.rgb 16 16 32
-
-  darkBg = Color.hsl 240.0 0.07 0.10
-
-  lightBg = Color.hsl 5.0 0.27 0.99
 
 type FlatTheme a =
   { background ∷ a
@@ -345,6 +340,7 @@ type FlatTheme a =
   , interfaceBackgroundShadow ∷ a
   , inputBackground ∷ a
   , inputBorder ∷ a
+  , link ∷ a
   , highlight ∷ a
   , highlightRotatedBackwards ∷ a
   , highlightRotatedForwards ∷ a
