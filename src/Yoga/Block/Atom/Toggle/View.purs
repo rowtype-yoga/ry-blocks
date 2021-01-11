@@ -134,7 +134,10 @@ rawComponent =
             , role: "switch"
             , _aria:
               Object.fromHomogeneous
-                { checked: "switch"
+                { checked:
+                  case props.togglePosition of
+                    ToggleIsLeft -> "false"
+                    ToggleIsRight -> "true"
                 , label: props.ariaLabel
                 }
             , ref: buttonRef

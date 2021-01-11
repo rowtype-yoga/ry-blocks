@@ -183,15 +183,15 @@ mkGlobal maybeMode =
             { textDecoration: str $ "underline " <> colour.link
             }
         }
+    , "::selection":
+      nest
+        { color: str colour.highlightText
+        , background: str colour.highlight
+        }
     , "*, *:before, *:after":
       nested
         $ css
             { boxSizing: str "inherit"
-            , "::selection":
-              nest
-                { color: str colour.highlightText
-                , background: str colour.highlight
-                }
             -- , fontFeatureSettings:
             --   str
             --     $ intercalate ","
@@ -244,7 +244,7 @@ defaultColours =
     , required
     , success
     , successText
-    , text: textLightTheme
+    , text: text
     , textInverted: lightBg
     }
   , dark:
@@ -278,7 +278,7 @@ defaultColours =
     , required
     , success: successDark
     , successText
-    , text: lightBg
+    , text: textDark
     , textInverted: darkBg
     }
   }
@@ -309,9 +309,9 @@ defaultColours =
 
   lightBg = Color.hsl 5.0 0.27 0.99
 
-  link = Color.hsl 320.0 0.42 0.29
+  link = Color.hsl 320.0 1.0 0.33
 
-  linkDark = Color.hsl 45.0 0.90 0.77
+  linkDark = Color.hsl 265.0 1.0 0.83
 
   required = Color.rgb 200 50 80
 
@@ -321,7 +321,9 @@ defaultColours =
 
   successText = Color.rgb 250 250 250
 
-  textLightTheme = Color.rgb 16 16 32
+  text = Color.rgb 16 16 32
+
+  textDark = Color.rgb 220 210 220
 
 type FlatTheme a =
   { background ∷ a
