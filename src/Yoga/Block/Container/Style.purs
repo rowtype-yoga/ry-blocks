@@ -18,7 +18,6 @@ import Web.HTML.Window (document)
 data DarkOrLightMode
   = DarkMode
   | LightMode
-
 derive instance eqDarkOrLightMode ∷ Eq DarkOrLightMode
 
 lightModeStyle ∷ Style
@@ -68,7 +67,8 @@ getDocumentElement ∷ MaybeT Effect Element
 getDocumentElement = do
   win <- window # lift
   htmlDoc <- document win # lift
-  let doc = HTMLDocument.toDocument htmlDoc
+  let
+    doc = HTMLDocument.toDocument htmlDoc
   documentElement doc # MaybeT
 
 getDarkOrLightMode ∷ Effect (Maybe DarkOrLightMode)
@@ -130,7 +130,7 @@ mkGlobal maybeMode =
             , backgroundColor: str colour.background
             , color: str colour.text
             , margin: str "0"
-            , transition: str "background-color 4000ms linear"
+            , transition: str "background-color 1500ms linear"
             }
         <> case maybeMode of
             Nothing -> autoSwitchColourTheme
@@ -325,45 +325,45 @@ defaultColours =
 
   textDark = Color.rgb 220 210 220
 
-type FlatTheme a =
-  { background ∷ a
-  , backgroundLayer1 ∷ a
-  , backgroundLayer2 ∷ a
-  , backgroundLayer3 ∷ a
-  , backgroundLayer4 ∷ a
-  , backgroundLayer5 ∷ a
-  , backgroundInverted ∷ a
-  , interfaceBackground ∷ a
-  , interfaceBackgroundDangerous ∷ a
-  , interfaceDangerousText ∷ a
-  , interfaceBackgroundDisabled ∷ a
-  , interfaceTextDisabled ∷ a
-  , interfaceBackgroundHighlight ∷ a
-  , interfaceBackgroundShadow ∷ a
-  , inputBackground ∷ a
-  , inputBorder ∷ a
-  , link ∷ a
-  , highlight ∷ a
-  , highlightRotatedBackwards ∷ a
-  , highlightRotatedForwards ∷ a
-  , highlightDarker ∷ a
-  , highlightLighter ∷ a
-  , highlightDisabled ∷ a
-  , highlightText ∷ a
-  , success ∷ a
-  , successText ∷ a
-  , invalid ∷ a
-  , invalidText ∷ a
-  , required ∷ a
-  , text ∷ a
-  , textInverted ∷ a
-  , placeholderText ∷ a
-  }
+type FlatTheme a
+  = { background ∷ a
+    , backgroundLayer1 ∷ a
+    , backgroundLayer2 ∷ a
+    , backgroundLayer3 ∷ a
+    , backgroundLayer4 ∷ a
+    , backgroundLayer5 ∷ a
+    , backgroundInverted ∷ a
+    , interfaceBackground ∷ a
+    , interfaceBackgroundDangerous ∷ a
+    , interfaceDangerousText ∷ a
+    , interfaceBackgroundDisabled ∷ a
+    , interfaceTextDisabled ∷ a
+    , interfaceBackgroundHighlight ∷ a
+    , interfaceBackgroundShadow ∷ a
+    , inputBackground ∷ a
+    , inputBorder ∷ a
+    , link ∷ a
+    , highlight ∷ a
+    , highlightRotatedBackwards ∷ a
+    , highlightRotatedForwards ∷ a
+    , highlightDarker ∷ a
+    , highlightLighter ∷ a
+    , highlightDisabled ∷ a
+    , highlightText ∷ a
+    , success ∷ a
+    , successText ∷ a
+    , invalid ∷ a
+    , invalidText ∷ a
+    , required ∷ a
+    , text ∷ a
+    , textInverted ∷ a
+    , placeholderText ∷ a
+    }
 
-type Colours =
-  { dark ∷ FlatTheme Color
-  , light ∷ FlatTheme Color
-  }
+type Colours
+  = { dark ∷ FlatTheme Color
+    , light ∷ FlatTheme Color
+    }
 
 data MakeCSSVarLabels
   = MakeCSSVarLabels

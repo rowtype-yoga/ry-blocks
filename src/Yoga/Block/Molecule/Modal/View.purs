@@ -1,4 +1,4 @@
-module Yoga.Block.Modal.View (component, Props) where
+module Yoga.Block.Molecule.Modal.View (component, Props) where
 
 import Yoga.Prelude.View
 import Data.Nullable as Nullable
@@ -61,15 +61,15 @@ window =
                 , css: Style.modal
                 , key: "ry-modal-window"
                 , children:
-                    [ Motion.div
-                        </* { className: "ry-modal"
-                          , css: Style.modal
-                          , drag: Motion.prop true
-                          , dragMomentum: Motion.prop false
-                          , dragConstraints: Motion.prop clickAwayRef
-                          }
-                        /> [ content ]
-                    ]
+                  [ Motion.div
+                      </* { className: "ry-modal"
+                        , css: Style.modal
+                        , drag: Motion.prop true
+                        , dragMomentum: Motion.prop false
+                        , dragConstraints: Motion.prop clickAwayRef
+                        }
+                      /> [ content ]
+                  ]
                 }
                   `withMotion`
                     { initial: css { transform: "translate(-50%, -50%) scale3d(0.1,0.1,0.1)", opacity: 0 }

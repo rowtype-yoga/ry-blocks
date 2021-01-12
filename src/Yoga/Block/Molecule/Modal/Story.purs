@@ -1,4 +1,4 @@
-module Yoga.Block.Modal.Story where
+module Yoga.Block.Molecule.Modal.Story where
 
 import Prelude
 import Data.Tuple.Nested ((/\))
@@ -34,22 +34,22 @@ modal ∷ Effect JSX
 modal = do
   pure $ React.element compo {}
   where
-    compo =
-      unsafePerformEffect
-        $ reactComponent "Modal Story" \{} -> React.do
-            isOpen /\ setIsOpen <- React.useState' true
-            pure
-              $ fragment
-                  [ R.h2_ [ R.text "No Options" ]
-                  , Y.el R.button'
-                      { onClick: handler_ (setIsOpen true)
-                      }
-                      [ R.text "Show Modal"
-                      ]
-                  , element Modal.component
-                      { content:
-                        Y.el Block.box {} [ R.text "hi" ]
-                      , isOpen
-                      , setIsOpen
-                      }
-                  ]
+  compo =
+    unsafePerformEffect
+      $ reactComponent "Modal Story" \{} -> React.do
+          isOpen /\ setIsOpen <- React.useState' true
+          pure
+            $ fragment
+                [ R.h2_ [ R.text "No Options" ]
+                , Y.el R.button'
+                    { onClick: handler_ (setIsOpen true)
+                    }
+                    [ R.text "Show Modal"
+                    ]
+                , element Modal.component
+                    { content:
+                      Y.el Block.box {} [ R.text "hi" ]
+                    , isOpen
+                    , setIsOpen
+                    }
+                ]

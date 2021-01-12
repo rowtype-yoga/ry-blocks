@@ -1,4 +1,4 @@
-module Yoga.Block.Modal
+module Yoga.Block.Molecule.Modal
   ( module Yoga.Block.Modal.View
   ) where
 
