@@ -2,11 +2,12 @@ module Yoga.Block.Molecule.TableOfContents.Story where
 
 import Prelude
 import Color as Color
-import Data.Array (intercalate, (..))
+import Data.Array (foldMap, intercalate, (..))
 import Data.Array as Array
 import Data.Either (Either(..), hush)
 import Data.Foldable (for_)
 import Data.Maybe (Maybe(..))
+import Data.Monoid (power)
 import Data.Nullable as Nullable
 import Data.Traversable (for, traverse)
 import Data.Tuple.Nested ((/\))
@@ -74,24 +75,26 @@ tableOfContents = do
               { items: headings <#> hush # Array.catMaybes
               }
               <> ( headings
-                    # map case _ of
-                        Left { level: 1, label } -> R.h1_ [ R.text label ]
-                        Left { level: 2, label } -> R.h2_ [ R.text label ]
-                        Left { level: 3, label } -> R.h3_ [ R.text label ]
-                        Left { level: 4, label } -> R.h4_ [ R.text label ]
-                        Right { level: 1, label, ref } -> R.h1 { ref, children: [ R.text label ] }
-                        Right { level: 2, label, ref } -> R.h2 { ref, children: [ R.text label ] }
-                        Right { level: 3, label, ref } -> R.h3 { ref, children: [ R.text label ] }
-                        Right { level: 4, label, ref } -> R.h4 { ref, children: [ R.text label ] }
+                    # foldMap case _ of
+                        Left { level: 1, label } -> fragment [ R.h1_ [ R.text label ], blabla 3 ]
+                        Left { level: 2, label } -> fragment [ R.h2_ [ R.text label ], blabla 1 ]
+                        Left { level: 3, label } -> fragment [ R.h3_ [ R.text label ], blabla 5 ]
+                        Left { level: 4, label } -> fragment [ R.h4_ [ R.text label ], blabla 2 ]
+                        Right { level: 1, label, ref } -> fragment [ R.h1 { ref, children: [ R.text label ] }, blabla 3 ]
+                        Right { level: 2, label, ref } -> fragment [ R.h2 { ref, children: [ R.text label ] }, blabla 7 ]
+                        Right { level: 3, label, ref } -> fragment [ R.h3 { ref, children: [ R.text label ] }, blabla 2 ]
+                        Right { level: 4, label, ref } -> fragment [ R.h4 { ref, children: [ R.text label ] }, blabla 1 ]
                         _ -> R.text "crappy"
-                    # intercalate blabla
                 )
           )
 
-blabla =
+blabla n =
   R.p_
     [ R.text
-        """
+        ( n
+            # power
+                """
   As a follow up to my post about Zippers for lists and binary trees, I wanted to create a zipper for a slightly more complex data structure. The Rose Tree is a tree structure where the number of branches a node may have is variable. An example of a rose tree would be the directory structure on your computer: each directory may contain 0 or more sub directories which, in turn, may contain addition subdirectories. With this example in mind, the zipper is analagous to you moving through your computers file system: starting at the root directory and using cd to move down a branch and cd .. to move back.
   """
+        )
     ]

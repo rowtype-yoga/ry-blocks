@@ -5,6 +5,7 @@ import Framer.Motion.Types (MotionProps)
 import Prim.Row (class Union)
 import React.Basic (ReactComponent)
 import React.Basic.DOM as DOM
+import React.Basic.DOM.Internal (SharedSVGProps)
 import React.Basic.DOM.SVG as SVG
 import Type.Row (type (+))
 
@@ -475,7 +476,7 @@ mask = motionComponentImpl "mask"
 metadata ∷ ∀ attrs attrs_. Union attrs attrs_ (MotionProps + SVG.Props_metadata) => ReactComponent { | attrs }
 metadata = motionComponentImpl "metadata"
 
-path ∷ ∀ attrs attrs_. Union attrs attrs_ (MotionProps + SVG.Props_path) => ReactComponent { | attrs }
+path ∷ ∀ attrs attrs_. Union attrs attrs_ (MotionProps + SharedSVGProps SVG.Props_path) => ReactComponent { | attrs }
 path = motionComponentImpl "path"
 
 pattern ∷ ∀ attrs attrs_. Union attrs attrs_ (MotionProps + SVG.Props_pattern) => ReactComponent { | attrs }

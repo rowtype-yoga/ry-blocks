@@ -31,6 +31,4 @@ onChange ∷ ∀ a. (a -> Effect Unit) -> MotionValue a -> Effect (Effect Unit)
 onChange = mkEffectFn1 >>> onChangeImpl
 
 useMotionValue ∷ ∀ a. a -> Hook (UseMotionValue a) (MotionValue a)
-useMotionValue initialValue =
-  unsafeHook do
-    runEffectFn1 useMotionValueImpl initialValue
+useMotionValue = unsafeHook <<< runEffectFn1 useMotionValueImpl

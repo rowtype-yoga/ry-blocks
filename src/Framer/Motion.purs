@@ -41,7 +41,7 @@ foreign import animateSharedLayout ∷
   Union attrs attrs_ AnimateSharedLayoutProps =>
   ReactComponent { | attrs }
 
-element ∷ ∀ p. ReactComponent { | p } -> { | p } -> JSX
+element ∷ ∀ p q. Union p q (MotionProps q) => ReactComponent { | p } -> { | p } -> JSX
 element = runFn2 motionElement_
 
 foreign import motionElement_ ∷
