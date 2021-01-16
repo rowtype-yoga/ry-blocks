@@ -2,13 +2,13 @@ module Yoga.Block.Molecule.Modal.Style where
 
 import Yoga.Prelude.Style
 
-type Props f r
-  = ( css ∷ f Style
-    , space ∷ f String
-    , justify ∷ f String
-    , align ∷ f String
-    | r
-    )
+type Props f r =
+  ( css ∷ f Style
+  , space ∷ f String
+  , justify ∷ f String
+  , align ∷ f String
+  | r
+  )
 
 modal ∷ Style
 modal = styles

@@ -1,5 +1,5 @@
 module Yoga.Block.Molecule.Modal
-  ( module Yoga.Block.Modal.View
+  ( module Yoga.Block.Molecule.Modal.View
   ) where
 
-import Yoga.Block.Modal.View (component, Props)
+import Yoga.Block.Molecule.Modal.View (component, Props)

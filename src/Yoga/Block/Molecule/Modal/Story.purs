@@ -13,7 +13,7 @@ import React.Basic.Hooks as React
 import Yoga as Y
 import Yoga.Block as Block
 import Yoga.Block.Container.Style as Styles
-import Yoga.Block.Modal as Modal
+import Yoga.Block.Molecule.Modal as Modal
 
 default ∷
   { decorators ∷ Array (Effect JSX -> JSX)

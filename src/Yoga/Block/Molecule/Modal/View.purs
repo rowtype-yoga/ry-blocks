@@ -10,14 +10,14 @@ import React.Basic.Emotion as Emotion
 import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
 import Yoga.Block.Layout.Imposter as Imposter
-import Yoga.Block.Modal.Style as Style
+import Yoga.Block.Molecule.Modal.Style as Style
 
-type Props
-  = { content ∷ JSX
-    , isOpen ∷ Boolean
-    , setIsOpen ∷ Boolean -> Effect Unit
-    | ()
-    }
+type Props =
+  { content ∷ JSX
+  , isOpen ∷ Boolean
+  , setIsOpen ∷ Boolean -> Effect Unit
+  | ()
+  }
 
 component ∷ ReactComponent Props
 component =

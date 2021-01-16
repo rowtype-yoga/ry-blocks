@@ -15,7 +15,7 @@ import Yoga.Block.Layout.Imposter as Imposter
 import Yoga.Block.Layout.Sidebar as Sidebar
 import Yoga.Block.Layout.Stack as Stack
 import Yoga.Block.Layout.Switcher as Switcher
-import Yoga.Block.Modal as Modal
+import Yoga.Block.Molecule.Modal as Modal
 
 box ∷ ∀ p q. Union p q Box.Props => ReactComponent { | p }
 box = Box.component
