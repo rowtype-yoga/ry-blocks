@@ -13,7 +13,11 @@ module Framer.Motion.Hook
   ) where
 
 import Prelude
+import Data.Array as Array
 import Data.Maybe (Maybe(..))
+import Data.Tuple.Nested ((/\), type (/\))
+import Data.TwoOrMore (TwoOrMore)
+import Data.TwoOrMore as TwoOrMore
 import Effect (Effect)
 import Effect.Uncurried (EffectFn2, EffectFn4, runEffectFn2, runEffectFn4)
 import Literals.Undefined (Undefined, undefined)
@@ -74,8 +78,8 @@ foreign import useTransformImpl ∷
     (MotionValue a)
 
 useTransform ∷
-  ∀ a. MotionValue a -> Array Number -> Array a -> Maybe (TransformOptions a) -> Hook (UseTransform a) (MotionValue a)
-useTransform motionValue numbers as options =
+  ∀ a. MotionValue a -> TwoOrMore (Number /\ a) -> Maybe (TransformOptions a) -> Hook (UseTransform a) (MotionValue a)
+useTransform motionValue mapping options =
   unsafeHook do
     runEffectFn4
       useTransformImpl
@@ -83,6 +87,8 @@ useTransform motionValue numbers as options =
       numbers
       as
       (maybeToUor $ transformOptionsToTransformOptionsImpl <$> options)
+  where
+  numbers /\ as = TwoOrMore.toArray mapping # Array.unzip
 
 -- UseSpring
 type SpringProps =
@@ -106,7 +112,7 @@ foreign import useSpringImpl ∷
     b
 
 useSpringWithMotionValue ∷
-  ∀ a opts. Castable opts SpringProps => MotionValue a -> opts -> Hook (UseSpring (MotionValue a)) a
+  ∀ a opts. Castable opts SpringProps => MotionValue a -> opts -> Hook (UseSpring (MotionValue a)) (MotionValue a)
 useSpringWithMotionValue motionValue springProps =
   unsafeHook do
     runEffectFn2

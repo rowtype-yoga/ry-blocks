@@ -1,15 +1,21 @@
 module Yoga.Block.Molecule.TableOfContents.Story where
 
 import Prelude
-import Color as Color
-import Data.Array (foldMap, intercalate, (..))
+import Control.Comonad.Cofree as Cofree
+import Data.Array (foldMap)
 import Data.Array as Array
 import Data.Either (Either(..), hush)
-import Data.Foldable (for_)
+import Data.Foldable (fold)
+import Data.FoldableWithIndex (foldMapWithIndex)
+import Data.List ((:))
+import Data.List as List
+import Data.List.Lazy (Step(..))
 import Data.Maybe (Maybe(..))
 import Data.Monoid (power)
-import Data.Nullable as Nullable
-import Data.Traversable (for, traverse)
+import Data.Traversable (for_, sequence, traverse)
+import Data.Tree (Forest, Tree, mkLeaf, mkTree)
+import Data.Tree.Zipper (fromTree)
+import Data.Tree.Zipper as Zipper
 import Data.Tuple.Nested ((/\))
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
@@ -17,12 +23,10 @@ import React.Basic (JSX, element, fragment)
 import React.Basic.DOM as R
 import React.Basic.Emotion as E
 import React.Basic.Hooks as React
-import Yoga.Block as Block
-import Yoga.Block.Container.Style (DarkOrLightMode(..))
+import Yoga ((/>), (</), (</>))
 import Yoga.Block.Container.Style as Styles
-import Yoga.Block.Internal (NodeRef, createRef)
+import Yoga.Block.Internal (createRef)
 import Yoga.Block.Molecule.TableOfContents as TableOfContents
-import Yoga.Block.Molecule.TableOfContents.Types (TableOfContentsPosition(..))
 
 default ∷
   { decorators ∷ Array (Effect JSX -> JSX)
@@ -52,42 +56,47 @@ tableOfContents = do
   where
   mkBasicExample =
     React.reactComponent "TableOfContents example" \p -> React.do
-      headings /\ setHeadings <-
-        React.useState'
-          [ Left { level: 1, label: "Heinzel Mann" }
-          , Left { level: 2, label: "Sub stuff of Heinzel Mann" }
-          , Left { level: 2, label: "Subbinger stuff of Heinzel Mann" }
-          , Left { level: 1, label: "Next thing" }
-          , Left { level: 2, label: "Below next thing" }
-          , Left { level: 4, label: "Even deeper" }
+      let
+        startHeadings ∷ Forest { label ∷ String }
+        startHeadings =
+          [ mkTree { label: "Heading 1" }
+              [ mkTree { label: "SubHeading 1" }
+                  [ mkLeaf { label: "SubsubHeading 1.1" }
+                  , mkLeaf { label: "SubsubHeading 1.2" }
+                  ]
+              ]
+          , mkTree { label: "Heading 2" } []
           ]
+      (tocData ∷ (Forest ({ label ∷ String, ref ∷ _ }))) /\ setTocData <- React.useState' []
       React.useEffectOnce do
-        refs <- headings # traverse (const createRef)
-        setHeadings
-          ( headings `Array.zip` refs
-              <#> \(blurb /\ ref) -> case blurb of
-                  Left { level, label } -> Right { level, label, ref }
-                  done -> done
-          )
+        (newHeadings ∷ Forest { label ∷ String, ref ∷ _ }) <-
+          startHeadings
+            # (traverse >>> traverse) \{ label } -> do
+                createRef # map { label, ref: _ }
+        setTocData newHeadings
         mempty
-      pure
-        $ ( element TableOfContents.component
-              { items: headings <#> hush # Array.catMaybes
-              }
-              <> ( headings
-                    # foldMap case _ of
-                        Left { level: 1, label } -> fragment [ R.h1_ [ R.text label ], blabla 3 ]
-                        Left { level: 2, label } -> fragment [ R.h2_ [ R.text label ], blabla 1 ]
-                        Left { level: 3, label } -> fragment [ R.h3_ [ R.text label ], blabla 5 ]
-                        Left { level: 4, label } -> fragment [ R.h4_ [ R.text label ], blabla 2 ]
-                        Right { level: 1, label, ref } -> fragment [ R.h1 { ref, children: [ R.text label ] }, blabla 3 ]
-                        Right { level: 2, label, ref } -> fragment [ R.h2 { ref, children: [ R.text label ] }, blabla 7 ]
-                        Right { level: 3, label, ref } -> fragment [ R.h3 { ref, children: [ R.text label ] }, blabla 2 ]
-                        Right { level: 4, label, ref } -> fragment [ R.h4 { ref, children: [ R.text label ] }, blabla 1 ]
-                        _ -> R.text "crappy"
-                )
-          )
+      pure do
+        let toc = element TableOfContents.component { items: tocData }
+        let
+          treeToHeading ∷ Tree _ -> JSX
+          treeToHeading = go 1
+            where
+            go ∷ Int -> Tree _ -> JSX
+            go depth tree = case Cofree.head tree, Cofree.tail tree of
+              { label, ref }, children -> do
+                let
+                  heading = case depth of
+                    1 -> R.h1'
+                    2 -> R.h2'
+                    3 -> R.h3'
+                    _ -> R.h4'
+                (fragment [ heading </ { ref } /> [ R.text label ], blabla depth ])
+                  <> foldMap (go (depth + 1)) children
+          content ∷ Array JSX
+          content = tocData <#> treeToHeading
+        toc <> fold content
 
+blabla ∷ Int -> JSX
 blabla n =
   R.p_
     [ R.text

@@ -69,8 +69,8 @@ component =
         -- Ensure redraw on window resize
         newWindowSize <- useResize
         useAff newWindowSize do
-          let δw = Math.abs (newWindowSize.width - windowSize.width)
-          let δh = Math.abs (newWindowSize.height - windowSize.height)
+          let δw = Math.abs (newWindowSize.innerWidth - windowSize.innerWidth)
+          let δh = Math.abs (newWindowSize.innerHeight - windowSize.innerHeight)
           delay
             if δw < 10.0 || δh < 10.0 then
               100.0 # Milliseconds

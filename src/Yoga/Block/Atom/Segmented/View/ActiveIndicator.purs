@@ -21,12 +21,13 @@ import React.Basic.Hooks as React
 import Unsafe.Coerce (unsafeCoerce)
 import Yoga.Block.Atom.Segmented.Style as Style
 import Yoga.Block.Hook.Scroll (useScrollPosition)
+import Yoga.Block.Hook.UseResize as UseResize
 
 type Props =
   { activeItemRefs ∷ TwoOrMore (Ref (Nullable Node))
   , activeItemIndex ∷ Int
   , updateActiveIndex ∷ Int -> Effect Unit
-  , windowSize ∷ { width ∷ Number, height ∷ Number }
+  , windowSize ∷ UseResize.Sizes
   }
 
 component ∷ ReactComponent Props
@@ -116,7 +117,8 @@ component =
                                   props.activeItemIndex
                                   animationVariants
                                   x
-                              v = animationVariants TwoOrMore.!! newIdx
+                              v =
+                                animationVariants TwoOrMore.!! newIdx
                                   # fromMaybe' \_ -> unsafeCrashWith "omg"
                             activeLeft # MotionValue.set v.left
                             activeWidth # MotionValue.set v.width
