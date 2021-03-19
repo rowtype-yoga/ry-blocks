@@ -116,83 +116,75 @@ let additions =
   }
 -------------------------------
 -}
-
-
 let upstream =
-      https://github.com/purescript/package-sets/releases/download/psc-0.13.8-20201223/packages.dhall sha256:a1a8b096175f841c4fef64c9b605fb0d691229241fd2233f6cf46e213de8a185
+      https://github.com/purescript/package-sets/releases/download/psc-0.14.0-20210318/packages.dhall sha256:98bbacd65191cef354ecbafa1610be13e183ee130491ab9c0ef6e3d606f781b5
 
 let overrides =
-      { spec-discovery = upstream.spec-discovery ⫽ { version = "master" } 
-      , react-testing-library = upstream.react-testing-library ⫽ { version = "main" } 
-      }
+      { spec-discovery = upstream.spec-discovery // { version = "master" } }
 
 let additions =
-      { literals =
-          { dependencies =
-              [ "assert"
-              , "effect"
-              , "console"
-              , "integers"
-              , "numbers"
-              , "partial"
-              , "psci-support"
-              , "unsafe-coerce"
-              , "typelevel-prelude"
-              ]
-          , repo = "https://github.com/jvliwanag/purescript-literal.git"
-          , version = "7b2ae20f77c67b7e419a92fdd0dc7a09b447b18e"
-          }
-      , justifill =
-          { dependencies = [ "record", "typelevel-prelude", "undefined" ]
-          , repo = "https://github.com/i-am-the-slime/purescript-justifill.git"
-          , version = "6c9300b7488dbf41a9381eecd9c5c8b886be1d42"
-          }
+      { react-testing-library =
+          ./../purescript-react-testing-library/spago.dhall as Location
+      , literals =
+        { dependencies =
+          [ "assert"
+          , "effect"
+          , "console"
+          , "integers"
+          , "numbers"
+          , "partial"
+          , "psci-support"
+          , "unsafe-coerce"
+          , "typelevel-prelude"
+          ]
+        , repo = "https://github.com/jvliwanag/purescript-literal.git"
+        , version = "7b2ae20f77c67b7e419a92fdd0dc7a09b447b18e"
+        }
       , untagged-union =
-          { dependencies =
-              [ "assert"
-              , "console"
-              , "effect"
-              , "foreign"
-              , "foreign-object"
-              , "literals"
-              , "maybe"
-              , "newtype"
-              , "proxy"
-              , "psci-support"
-              , "tuples"
-              , "unsafe-coerce"
-              ]
-          , repo = "https://github.com/jvliwanag/purescript-untagged-union.git"
-          , version = "master"
-          }
+        { dependencies =
+          [ "assert"
+          , "console"
+          , "effect"
+          , "foreign"
+          , "foreign-object"
+          , "literals"
+          , "maybe"
+          , "newtype"
+          , "psci-support"
+          , "tuples"
+          , "unsafe-coerce"
+          ]
+        , repo = "https://github.com/jvliwanag/purescript-untagged-union.git"
+        , version = "master"
+        }
       , react-basic-dom =
-          { dependencies =
-              [ "effect"
-              , "foreign-object"
-              , "react-basic"
-              , "unsafe-coerce"
-              , "web-dom"
-              , "web-events"
-              , "web-file"
-              , "web-html"
-              ]
-          , repo = "https://github.com/lumihq/purescript-react-basic-dom.git"
-          , version = "main"
-          }
+        { dependencies =
+          [ "effect"
+          , "foreign-object"
+          , "react-basic"
+          , "unsafe-coerce"
+          , "web-dom"
+          , "web-events"
+          , "web-file"
+          , "web-html"
+          ]
+        , repo = "https://github.com/lumihq/purescript-react-basic-dom.git"
+        , version = "main"
+        }
       , react-basic-emotion =
-          { dependencies =
-              [ "colors"
-              , "foreign"
-              , "numbers"
-              , "prelude"
-              , "react-basic"
-              , "typelevel-prelude"
-              , "unsafe-reference"
-              ]
-          , repo =
-              "https://github.com/i-am-the-slime/purescript-react-basic-emotion.git"
-          , version = "patch-1"
-          }
+        { dependencies =
+          [ "colors"
+          , "foreign"
+          , "numbers"
+          , "prelude"
+          , "react-basic"
+          , "typelevel-prelude"
+          , "unsafe-reference"
+          ]
+        , repo =
+            "https://github.com/i-am-the-slime/purescript-react-basic-emotion.git"
+        , version = "patch-1"
+        }
       }
 
-in  upstream ⫽ overrides ⫽ additions
+in  upstream // overrides // additions
