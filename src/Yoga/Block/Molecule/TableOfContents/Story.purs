@@ -6,6 +6,7 @@ import Data.Array (foldMap)
 import Data.Array as Array
 import Data.Either (Either(..), hush)
 import Data.Foldable (fold)
+import Data.Tuple.Nested ((/\))
 import Data.FoldableWithIndex (foldMapWithIndex)
 import Data.List ((:))
 import Data.List as List
@@ -16,7 +17,6 @@ import Data.Traversable (for_, sequence, traverse)
 import Data.Tree (Forest, Tree, mkLeaf, mkTree)
 import Data.Tree.Zipper (fromTree)
 import Data.Tree.Zipper as Zipper
-import Data.Tuple.Nested ((/\))
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
 import React.Basic (JSX, element, fragment)
