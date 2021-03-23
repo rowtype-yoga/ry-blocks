@@ -28,7 +28,7 @@ type PropsF f =
   ( className ∷ f String
   , left ∷ f JSX
   , right ∷ f JSX
-  | Style.Props f (MandatoryProps InputProps)
+  | Style.Props f (MandatoryProps InputWritableProps)
   )
 
 type MandatoryProps r =

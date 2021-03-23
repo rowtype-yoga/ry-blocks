@@ -2,7 +2,7 @@ module Framer.Motion.Types where
 
 import Prelude
 import Data.Nullable (Nullable)
-import Data.Symbol (class IsSymbol, SProxy, reflectSymbol)
+import Data.Symbol (class IsSymbol, reflectSymbol)
 import Effect (Effect)
 import Effect.Uncurried (EffectFn1, EffectFn2, mkEffectFn1, mkEffectFn2)
 import Foreign (Foreign, unsafeToForeign)
@@ -18,8 +18,49 @@ import Untagged.Union (type (|+|))
 import Web.DOM (Node)
 import Web.Event.Internal.Types (Event)
 import Web.UIEvent.MouseEvent (MouseEvent)
-import Yoga.Block.Internal (Id)
-import Type.Proxy (Proxy(..))
+import Type.Proxy (Proxy)
+
+type MotionPropsF :: (Type -> Type) -> Row Type -> Row Type
+type MotionPropsF f r =
+  ( animate ∷ f Animate
+  , custom ∷ f Foreign
+  , drag ∷ f Drag
+  , dragConstraints ∷ f DragConstraints
+  , dragElastic ∷ f DragElastic
+  , dragMomentum ∷ f DragMomentum
+  , dragPropagation ∷ f DragPropagation
+  , exit ∷ f Exit
+  , initial ∷ f Initial
+  , layout ∷ f Layout
+  , layoutId ∷ f LayoutId
+  , onAnimationComplete ∷ f OnAnimationComplete
+  , onDrag ∷ f OnDrag
+  , onDragEnd ∷ f OnDragEnd
+  , onDragStart ∷ f OnDragStart
+  , onHoverEnd ∷ f OnHoverEnd
+  , onHoverStart ∷ f OnHoverStart
+  , onLayoutAnimationComplete ∷ f OnLayoutAnimationComplete
+  , onTap ∷ f OnTap
+  , onTapCancel ∷ f OnTapCancel
+  , onTapEnd ∷ f OnTapEnd
+  , onTapStart ∷ f OnTapStart
+  , onViewPortBoxUpdate ∷ f OnViewPortBoxUpdate
+  , transition ∷ f Transition
+  , variants ∷ f Variants
+  , whileHover ∷ f WhileHover
+  , whileTap ∷ f WhileTap
+  | r
+  )
+
+
+type Id :: forall k. k -> k
+type Id a = a
+
+type Drag = Boolean |+| String |+| Undefined
+
+type MotionProps :: Row Type -> Row Type
+type MotionProps r =
+  MotionPropsF Id r
 
 type Transition =
   CSS |+| Undefined
@@ -56,8 +97,8 @@ type Variants =
 type LayoutTransition =
   Boolean |+| Undefined
 
-type Drag =
-  Boolean |+| String |+| Undefined
+-- type Drag =
+--   Boolean |+| String |+| Undefined
 
 type DragMomentum =
   Boolean |+| Undefined
@@ -126,15 +167,38 @@ onTap fn2 = cast (mkEffectFn2 fn2)
 onTapCancel ∷ (Event -> TapInfo -> Effect Unit) -> OnTap
 onTapCancel fn2 = cast (mkEffectFn2 fn2)
 
+type Axis =
+  { min ∷ Number, max ∷ Number }
+
+type AxisBox2D =
+  { x ∷ Axis
+  , y ∷ Axis
+  }
+
 type EventInfo =
   { point ∷ { x ∷ Number, y ∷ Number }
   }
 
-type WhileHover =
-  (EffectFn2 MouseEvent EventInfo Unit |+| Undefined)
+type AxisDelta =
+  { translate ∷ Number
+  , scale ∷ Number
+  , origin ∷ Number
+  , originPoint ∷ Number
+  }
 
-type OnHoverEnd =
-  (EffectFn2 MouseEvent EventInfo Unit |+| Undefined)
+type BoxDelta =
+  { x ∷ AxisDelta
+  , y ∷ AxisDelta
+  }
+
+-- [TODO]: Fix this eventually?
+type AnimationDefinition = Foreign -- VariantLabel |+| TargetAndTransition |+| TargetResolver
+
+type OnAnimationComplete =
+  (EffectFn1 AnimationDefinition Unit |+| Undefined)
+
+onAnimationComplete :: (AnimationDefinition -> Effect Unit) -> OnAnimationComplete
+onAnimationComplete = cast <<< toEffectFn
 
 type OnHoverStart =
   (EffectFn2 MouseEvent EventInfo Unit |+| Undefined)
@@ -142,11 +206,29 @@ type OnHoverStart =
 onHoverStart ∷ (MouseEvent -> EventInfo -> Effect Unit) -> OnHoverStart
 onHoverStart = cast <<< toEffectFn
 
+type OnHoverEnd =
+  (EffectFn2 MouseEvent EventInfo Unit |+| Undefined)
+
 onHoverEnd ∷ (MouseEvent -> EventInfo -> Effect Unit) -> OnHoverEnd
 onHoverEnd = cast <<< toEffectFn
 
+type WhileHover =
+  (EffectFn2 MouseEvent EventInfo Unit |+| Undefined)
+
 whileHover ∷ ∀ c. Castable c WhileHover => c -> WhileHover
 whileHover = cast
+
+type OnLayoutAnimationComplete =
+  (Effect Unit |+| Undefined)
+
+onLayoutAnimationComplete ∷ Effect Unit -> OnLayoutAnimationComplete
+onLayoutAnimationComplete = cast
+
+type OnViewPortBoxUpdate =
+  (EffectFn2 AxisBox2D BoxDelta Unit |+| Undefined)
+
+onViewPortBoxUpdate ∷ (AxisBox2D -> BoxDelta -> Effect Unit) -> OnViewPortBoxUpdate
+onViewPortBoxUpdate = cast <<< toEffectFn
 
 type TapInfo =
   { x ∷ Number, y ∷ Number }
@@ -190,37 +272,6 @@ type LayoutId =
 
 layoutId ∷ ∀ a. Castable a LayoutId => a -> LayoutId
 layoutId = cast
-
-type MotionPropsF f r =
-  ( initial ∷ f Initial
-  , animate ∷ f Animate
-  , custom ∷ f Foreign
-  , drag ∷ f Drag
-  , dragMomentum ∷ f DragMomentum
-  , dragElastic ∷ f DragElastic
-  , onDragStart ∷ f OnDragStart
-  , onDrag ∷ f OnDrag
-  , onDragEnd ∷ f OnDragEnd
-  , dragConstraints ∷ f DragConstraints
-  , dragPropagation ∷ f DragPropagation
-  , variants ∷ f Variants
-  , transition ∷ f Transition
-  , layout ∷ f Layout
-  , layoutId ∷ f LayoutId
-  , whileTap ∷ f WhileTap
-  , onTap ∷ f OnTap
-  , onTapStart ∷ f OnTapStart
-  , onTapEnd ∷ f OnTapEnd
-  , onTapCancel ∷ f OnTapCancel
-  , whileHover ∷ f WhileHover
-  , onHoverStart ∷ f OnHoverStart
-  , onHoverEnd ∷ f OnHoverEnd
-  , exit ∷ f Exit
-  | r
-  )
-
-type MotionProps r =
-  MotionPropsF Id r
 
 animate ∷ ∀ a. Castable a Animate => a -> Animate
 animate = cast

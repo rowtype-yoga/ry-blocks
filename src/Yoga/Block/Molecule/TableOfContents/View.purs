@@ -12,13 +12,13 @@ import Unsafe.Coerce (unsafeCoerce)
 import Web.HTML (window)
 import Yoga.Block.Container.Style (colour)
 import Yoga.Block.Molecule.TableOfContents.Style as Style
-import Yoga.Prelude.View (class Union, Id, InputProps, JSX, NodeRef, OptionalProp, ReactComponent, bind, mkForwardRefComponent, pure, (/>), (</))
+import Yoga.Prelude.View (class Union, Id, InputWritableProps, JSX, NodeRef, OptionalProp, ReactComponent, bind, mkForwardRefComponent, pure, (/>), (</))
 
 type PropsF f =
   ( className ∷ f String
   , left ∷ f JSX
   , right ∷ f JSX
-  | Style.Props f (MandatoryProps InputProps)
+  | Style.Props f (MandatoryProps InputWritableProps)
   )
 
 type MandatoryProps r =

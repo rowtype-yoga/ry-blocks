@@ -7,10 +7,14 @@ module Yoga.Block.Internal
   , dangerous
   , DivProps
   , DivPropsF
-  , InputProps
-  , InputPropsF
-  , ButtonProps
-  , ButtonPropsF
+  , InputReadableProps
+  , InputWritableProps
+  , InputReadablePropsF
+  , InputWritablePropsF
+  , ButtonWritableProps
+  , ButtonReadableProps
+  , ButtonReadablePropsF
+  , ButtonWritablePropsF
   , NodeRef
   , emotionDiv
   , emotionInput
@@ -51,7 +55,7 @@ import Web.DOM (Node)
 import Web.HTML.HTMLElement (DOMRect, HTMLElement, getBoundingClientRect)
 import Web.HTML.HTMLElement as HTMLElement
 import Yoga.Block.Internal.CSS (_0)
-import Yoga.Block.Internal.OptionalProp (Id, OptionalProp(..), appendIfDefined, getOr, getOrFlipped, ifTrue, isTruthy, maybeToOp, opToMaybe, setOrDelete, unsafeUnMaybe, unsafeUnOptional, (<>?), (?||), asOptional, composeHandler)
+import Yoga.Block.Internal.OptionalProp (Id, OptionalProp(..), appendIfDefined, asOptional, composeHandler, getOr, getOrFlipped, ifTrue, isTruthy, maybeToOp, opToMaybe, setOrDelete, unsafeUnMaybe, unsafeUnOptional, (<>?), (?||))
 
 foreign import mkForwardRefComponent ∷
   ∀ inputProps props a hooks.
@@ -138,9 +142,8 @@ pickDefined ref = runFn3 pickDefinedFn ref ks
 
 emotionInput_ ∷
   ∀ props props_.
-  Lacks "ref" props =>
-  Union props props_ ( className ∷ String, css ∷ Style, ref ∷ Ref (Nullable Node) | InputPropsF Id () ) =>
-  { | InputProps } ->
+  Union props props_ ( className ∷ String, css ∷ Style | InputWritablePropsF Id () ) =>
+  { | InputWritableProps } ->
   { className ∷ String
   , css ∷ Style
   | props
@@ -150,10 +153,9 @@ emotionInput_ = unsafeEmotion unsafeInput
 
 emotionInput ∷
   ∀ props props_ more.
-  Lacks "ref" props =>
-  Union props props_ ( className ∷ String, css ∷ Style, ref ∷ Ref (Nullable Node) | InputProps ) =>
+  Union props props_ ( className ∷ String, css ∷ Style | InputWritableProps ) =>
   Ref (Nullable Node) ->
-  { | InputPropsF OptionalProp more } ->
+  { | InputReadablePropsF OptionalProp more } ->
   { className ∷ String
   , css ∷ Style
   | props
@@ -161,7 +163,7 @@ emotionInput ∷
   JSX
 emotionInput ref = emotionInput_ <<< pickDefined ref <<< coerceUnOptional
   where
-  coerceUnOptional ∷ { | InputPropsF OptionalProp more } -> { | InputPropsF Id more }
+  coerceUnOptional ∷ { | InputReadablePropsF OptionalProp more } -> { | InputReadablePropsF Id more }
   coerceUnOptional = unsafeCoerce
 
 unsafeInput ∷ ∀ r. ReactComponent (Record r)
@@ -169,9 +171,8 @@ unsafeInput = dangerous "input"
 
 emotionButton_ ∷
   ∀ props props_.
-  Lacks "ref" props =>
-  Union props props_ ( className ∷ String, css ∷ Style | ButtonProps ) =>
-  { | ButtonProps } ->
+  Union props props_ ( className ∷ String, css ∷ Style | ButtonWritableProps ) =>
+  { | ButtonWritableProps } ->
   { className ∷ String
   , css ∷ Style
   | props
@@ -182,15 +183,18 @@ emotionButton_ = unsafeEmotion unsafeButton
 emotionButton ∷
   ∀ props props_ more.
   Lacks "ref" props =>
-  Union props props_ ( className ∷ String, css ∷ Style | ButtonProps ) =>
+  Union props props_ ( className ∷ String, css ∷ Style | ButtonWritableProps ) =>
   Ref (Nullable Node) ->
-  { | ButtonPropsF Id more } ->
+  { | ButtonReadablePropsF OptionalProp more } ->
   { className ∷ String
   , css ∷ Style
   | props
   } ->
   JSX
-emotionButton ref = emotionButton_ <<< pickDefined ref
+emotionButton ref = emotionButton_ <<< pickDefined ref <<< coerceUnOptional
+  where
+  coerceUnOptional ∷ { | ButtonReadablePropsF OptionalProp more } -> { | ButtonReadablePropsF Id more }
+  coerceUnOptional = unsafeCoerce
 
 unsafeButton ∷ ∀ r. ReactComponent (Record r)
 unsafeButton = dangerous "button"
@@ -335,10 +339,19 @@ type DivPropsF f more =
   | more
   )
 
-type InputProps =
-  InputPropsF Id ()
+type InputReadableProps =
+  InputReadablePropsF OptionalProp ()
 
-type InputPropsF f more =
+type InputWritableProps =
+  InputWritablePropsF Id ()
+
+type InputWritablePropsF f more =
+  InputReadablePropsF f
+    ( ref ∷ f (Ref (Nullable Node))
+    | more
+    )
+
+type InputReadablePropsF f more =
   ( _aria ∷ f (Object String)
   , _data ∷ f (Object String)
   , about ∷ f String
@@ -463,7 +476,7 @@ type InputPropsF f more =
   , prefix ∷ f String
   , property ∷ f String
   , radioGroup ∷ f String
-  , ref ∷ f (Ref (Nullable Node))
+  -- , ref ∷ f (Ref (Nullable Node))
   , readOnly ∷ f Boolean
   , required ∷ f Boolean
   , resource ∷ f String
@@ -484,7 +497,6 @@ type InputPropsF f more =
   , suppressContentEditableWarning ∷ f Boolean
   , tabIndex ∷ f Int
   , title ∷ f String
-  , title ∷ f String
   , type ∷ f String
   , typeof ∷ f String
   , unselectable ∷ f Boolean
@@ -498,10 +510,19 @@ type InputPropsF f more =
   | more
   )
 
-type ButtonProps =
-  ButtonPropsF Id ()
+type ButtonReadableProps =
+  ButtonReadablePropsF OptionalProp ()
 
-type ButtonPropsF f more =
+type ButtonWritableProps =
+  ButtonWritablePropsF Id ()
+
+type ButtonWritablePropsF f more =
+  ButtonReadablePropsF f
+    ( ref ∷ f (Ref (Nullable Node))
+    | more
+    )
+
+type ButtonReadablePropsF f more =
   ( _aria ∷ f (Object String)
   , _data ∷ f (Object String)
   , about ∷ f String
@@ -616,7 +637,6 @@ type ButtonPropsF f more =
   , property ∷ f String
   , radioGroup ∷ f String
   , readOnly ∷ f Boolean
-  , ref ∷ f (Ref (Nullable Node))
   , resource ∷ f String
   , role ∷ f String
   , rowSpan ∷ f Int

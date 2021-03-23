@@ -13,23 +13,23 @@ import React.Basic.Popper.Types (modifierArrow, modifierOffset, nullRef)
 import Unsafe.Coerce (unsafeCoerce)
 import Yoga.Block.Atom.Tooltip.Style as Style
 
-type PropsF f
-  = ( className ∷ f String
-    , hideDelay ∷ f Milliseconds
-    | Style.Props f (MandatoryProps ())
-    )
+type PropsF f =
+  ( className ∷ f String
+  , hideDelay ∷ f Milliseconds
+  | Style.Props f (MandatoryProps ())
+  )
 
-type MandatoryProps r
-  = ( theTip ∷ JSX
-    , target ∷ JSX
-    | r
-    )
+type MandatoryProps r =
+  ( theTip ∷ JSX
+  , target ∷ JSX
+  | r
+  )
 
-type Props
-  = PropsF Id
+type Props =
+  PropsF Id
 
-type PropsOptional
-  = PropsF OptionalProp
+type PropsOptional =
+  PropsF OptionalProp
 
 component ∷ ∀ p p_. Union p p_ Props => ReactComponent { | MandatoryProps p }
 component = rawComponent
@@ -45,9 +45,9 @@ rawComponent =
       { styles, attributes } <-
         usePopper referenceElement popperElement
           { modifiers:
-              [ modifierArrow arrowElement
-              , modifierOffset { x: 0.0, y: 12.0 }
-              ]
+            [ modifierArrow arrowElement
+            , modifierOffset { x: 0.0, y: 12.0 }
+            ]
           }
       visible /\ setVisible <- React.useState' false
       touching /\ setTouching <- React.useState' false
@@ -68,11 +68,8 @@ rawComponent =
       -- Handlers
       let
         hoveredIn = setHovering true
-
         hoveredOut = setHovering false
-
         touchStarted = setTouching true
-
         touchEnded = setTouching false
       -- Elements
       let
@@ -89,9 +86,7 @@ rawComponent =
                           ]
                   ]
               ]
-
         animatePresence = Motion.animatePresence </ { initial: false }
-
         content =
           Motion.div
             </* { className: "popper-element-content"
@@ -102,7 +97,6 @@ rawComponent =
               , transition: Motion.transition { duration: 0.2 }
               , key: "container"
               }
-
         popperEl =
           div
             </* { className: "popper-element"
@@ -111,7 +105,6 @@ rawComponent =
               , style: styles.popper
               , _data: attributes.popper
               }
-
         arrow =
           div
             </*> { className: "popper-arrow"
@@ -121,7 +114,6 @@ rawComponent =
               , style: styles.arrow
               , _data: attributes.arrow
               }
-
         refElem =
           Motion.div
             </ { ref: unsafeCoerce (mkEffectFn1 setReferenceElement)

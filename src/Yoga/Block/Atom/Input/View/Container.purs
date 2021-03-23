@@ -31,13 +31,6 @@ type PropsOptional =
 component ∷ ∀ p q. Union p q Props => ReactComponent { | MandatoryProps p }
 component = rawContainer
 
-type Propski =
-  { css ∷ OptionalProp Style
-  , hasFocus ∷ Boolean
-  , isInvalid ∷ OptionalProp Boolean
-  , children ∷ Array JSX
-  }
-
 rawContainer ∷ ∀ p. ReactComponent { | p }
 rawContainer =
   mkForwardRefComponent "InputContainer" do

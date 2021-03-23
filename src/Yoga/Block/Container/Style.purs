@@ -131,7 +131,6 @@ mkGlobal maybeMode =
             , backgroundColor: str colour.background
             , color: str colour.text
             , margin: str "0"
-            , transition: str "background-color 1500ms linear"
             }
         <> case maybeMode of
             Nothing -> autoSwitchColourTheme

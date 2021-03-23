@@ -4,9 +4,11 @@ import Prim.Row (class Union)
 import React.Basic (JSX, ReactComponent)
 import Yoga.Block.Atom.Button as Button
 import Yoga.Block.Atom.Icon as Icon
+import Yoga.Block.Atom.Input as Input
 import Yoga.Block.Atom.Range as Range
 import Yoga.Block.Atom.Segmented as Segmented
 import Yoga.Block.Atom.Toggle as Toggle
+import Yoga.Block.Atom.Tooltip as Tooltip
 import Yoga.Block.Container as Container
 import Yoga.Block.Layout.Box as Box
 import Yoga.Block.Layout.Centre as Centre
@@ -35,6 +37,9 @@ container = Container.component
 icon ∷ ∀ p q. Union p q Icon.Props => ReactComponent { | Icon.MandatoryProps p }
 icon = Icon.component
 
+input ∷ ∀ p q. Union p q Input.Props => ReactComponent { | p }
+input = Input.component
+
 imposter ∷ ∀ p q. Union p q Imposter.Props => ReactComponent { | p }
 imposter = Imposter.component
 
@@ -58,3 +63,6 @@ switcher = Switcher.component
 
 toggle ∷ ∀ p q. Union p q Toggle.Props => ReactComponent { | Toggle.MandatoryProps p }
 toggle = Toggle.component
+
+tooltip ∷ ∀ p q. Union p q Tooltip.Props => ReactComponent { | Tooltip.MandatoryProps p }
+tooltip = Tooltip.component

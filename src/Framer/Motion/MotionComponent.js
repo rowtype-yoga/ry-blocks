@@ -10,5 +10,5 @@ exports.motionComponentImpl = (str) => {
 }
 
 exports.custom = (component) => () => {
-    return framerMotion.motion.custom(component)
+    return framerMotion.motion(component)
 }

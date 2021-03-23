@@ -1,15 +1,18 @@
 module Yoga.Block.Atom.Input.View where
 
 import Yoga.Prelude.View
+
 import Data.String.NonEmpty (NonEmptyString)
-import Data.Symbol (SProxy(..))
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Framer.Motion as M
 import React.Basic.DOM (css)
 import React.Basic.DOM as R
+import React.Basic.Emotion as E
 import React.Basic.Hooks as React
 import Record.Builder as RB
+import Type.Prelude (Proxy(..))
+import Untagged.Union (UndefinedOr)
 import Web.HTML.HTMLInputElement as InputElement
 import Yoga.Block.Atom.Icon as Icon
 import Yoga.Block.Atom.Input.Style as Style
@@ -18,21 +21,24 @@ import Yoga.Block.Atom.Input.Types as InputTypes
 import Yoga.Block.Atom.Input.View.Container (rawContainer)
 import Yoga.Block.Atom.Input.View.HTMLInput as HTMLInput
 import Yoga.Block.Atom.Input.View.Label as Label
+import Yoga.Block.Container.Style (colour)
 import Yoga.Block.Icon.SVG as SVGIcon
+import Yoga.Prelude.View as Nullable
 
-type PropsF f =
+type PropsF :: forall k. (Type -> k) -> Row k -> Row k
+type PropsF f r =
   ( leading ∷ f JSX
   , trailing ∷ f JSX
   , label ∷ f NonEmptyString
   , type ∷ f HTMLInputType
-  | Style.Props f (InputPropsF f ())
+  | Style.Props f r
   )
 
 type Props =
-  PropsF Id
+  PropsF Id (InputWritableProps)
 
 type PropsOptional =
-  PropsF OptionalProp
+  PropsF OptionalProp (InputReadableProps)
 
 component ∷ ∀ p q. Union p q Props => ReactComponent { | p }
 component = rawComponent
@@ -57,6 +63,17 @@ rawComponent =
       parentRef ∷ NodeRef <- useRef null
       backupRef ∷ NodeRef <- useRef null
       let ref = forwardedRefAsMaybe propsRef # fromMaybe backupRef
+      -- Track input bounding box
+      maybeInputBbox /\ setInputBbox <- useState' (Nothing ∷ _ DOMRect)
+      maybeParentBbox /\ setParentBbox <- useState' (Nothing ∷ _ DOMRect)
+      useLayoutEffectAlways do
+        maybeBBox <- getBoundingBoxFromRef ref
+        unless (maybeBBox == maybeInputBbox) do setInputBbox maybeBBox
+        mempty
+      useLayoutEffectAlways do
+        maybeBBox <- getBoundingBoxFromRef parentRef
+        unless (maybeBBox == maybeParentBbox) do setParentBbox maybeBBox
+        mempty
       let
         focusInput =
           unless hasFocus do
@@ -76,19 +93,22 @@ rawComponent =
         maybeLabelText ∷ Maybe NonEmptyString
         maybeLabelText = props.label # opToMaybe
         mkLabel ∷ NonEmptyString -> JSX
-        mkLabel labelText =
-          Label.component
-            </> { onClickLargeLabel: handler preventDefault (const focusInput)
-              , isFocussed: hasFocus
-              , isRequired: aria # Object.lookup "required" # (_ == Just "true")
-              , isInvalid: aria # Object.lookup "invalid" # (_ == Just "true")
-              , renderLargeLabel
-              , labelId
-              , inputId: props.id ?|| "no-id" -- [TODO] Enforce ID?
-              , inputRef: ref
-              , parentRef
-              , labelText
-              }
+        mkLabel labelText = case maybeInputBbox, maybeParentBbox of
+          Just inputBbox, Just parentBbox ->
+            Label.component
+              </> { onClickLargeLabel: handler preventDefault (const focusInput)
+                , isFocussed: hasFocus
+                , isRequired: aria # Object.lookup "required" # (_ == Just "true")
+                , isInvalid: aria # Object.lookup "invalid" # (_ == Just "true")
+                , renderLargeLabel
+                , labelId
+                , inputId: props.id ?|| "no-id" -- [TODO] Enforce ID?
+                , inputBbox
+                , parentBbox
+                , labelText
+                , background: props.background ?|| E.str colour.interfaceBackground
+                }
+          _, _ -> mempty
         leading ∷ Maybe JSX
         leading =
           opToMaybe props.leading
@@ -113,26 +133,27 @@ rawComponent =
                   setHasValue (v /= "")
             )
         onFocus = handler preventDefault (const $ unless hasFocus $ setHasFocus true)
+        inputProps ∷ { | PropsOptional }
         inputProps =
           props
-            { onFocus = composeHandler onFocus props.onFocus
-            , onBlur = composeHandler onBlur props.onBlur
-            , ref = ref
+            { onFocus = cast (composeHandler onFocus props.onFocus)
+            , onBlur = cast (composeHandler onBlur props.onBlur)
             , placeholder = maybePlaceholder # maybeToOp
             , _aria =
               if props.label # opToMaybe # isJust then
-                aria # Object.insert "labelledby" labelId
+                cast (aria # Object.insert "labelledby" labelId)
               else
-                aria
+                cast (aria)
             }
         theInput =
           HTMLInput.componentOptional
-            </> ( (cast ∷ _ -> { | HTMLInput.PropsOptional })
+            </> ( (cast ∷ _ -> { | HTMLInput.PropsF OptionalProp (InputWritablePropsF OptionalProp ()) })
                   ( inputProps
                       # RB.build
-                          ( RB.delete (SProxy ∷ _ "leading")
-                              >>> RB.delete (SProxy ∷ _ "label")
-                              >>> RB.delete (SProxy ∷ _ "trailing")
+                          ( RB.delete (Proxy ∷ _ "leading")
+                              >>> RB.delete (Proxy ∷ _ "label")
+                              >>> RB.delete (Proxy ∷ _ "trailing")
+                              >>> RB.insert (Proxy :: _ "ref") ref
                           )
                   )
               )

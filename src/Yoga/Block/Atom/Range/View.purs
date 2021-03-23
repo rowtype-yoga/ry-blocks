@@ -13,7 +13,7 @@ type PropsF f =
   , min ∷ f Int
   , max ∷ f Int
   , value ∷ f Int
-  | Style.Props f (InputPropsF f ())
+  | Style.Props f (InputWritablePropsF f ())
   )
 
 type Props =

@@ -4,8 +4,10 @@ import Yoga.Prelude.Style
 import Data.Interpolate (i)
 import Yoga.Block.Container.Style (colour)
 
+type Props :: forall k. (Type -> k) -> Row k -> Row k
 type Props f r =
   ( css ∷ f Style
+  , background ∷ f StyleProperty
   | r
   )
 
@@ -51,8 +53,8 @@ labelContainer =
     , pointerEvents: none
     }
 
-labelSmall ∷ Style
-labelSmall =
+labelSmall ∷ StyleProperty -> Style
+labelSmall background =
   css
     { fontSize: var "--s-1"
     , marginTop: str "calc(var(--s-3) * -1)"
@@ -66,12 +68,12 @@ labelSmall =
       nest
         { fontWeight: str "500"
         , whiteSpace: str "nowrap"
-        , background: str colour.inputBackground
+        , background
         , color: str colour.text
         , borderRadius: var "--s-4"
         , paddingLeft: var "--s-4"
         , paddingRight: var "--s-4"
-        , paddingTop: var "--s-5"
+        -- , paddingTop: str "calc(var(--s-5)*0.67)"
         , paddingBottom: var "--s-5"
         }
     , """&[data-invalid="true"] > span""":
@@ -100,6 +102,7 @@ labelLarge ∷ { left ∷ Number, width ∷ Number, top ∷ Number } -> Style
 labelLarge { left, width, top } =
   css
     { fontSize: str "calc(var(--s0) * 0.85)"
+    , position: str "relative"
     , padding: _0
     , whiteSpace: nowrap -- force on one line
     , overflow: str "hidden"
@@ -157,18 +160,18 @@ inputContainer props = theCss <>? props.css
   where
   theCss =
     css
-      { position: relative
-      , boxSizing: borderBox
-      , backgroundColor: str colour.inputBackground
-      , display: flex
-      , width: str "calc(var(--s4) * 2)"
-      , "--left-icon-size": var "--s0"
+      {  "--left-icon-size": var "--s0"
       , "--right-icon-size": str "calc(var(--s0) * 1.2)"
       , "--input-border-radius": var "--s-1"
       , "--input-side-padding": var "--s-1"
       , "--input-top-padding": var "--s-5"
       , "--input-bottom-padding": var "--s-5"
       , "--border-width": str "1px"
+      , position: relative
+      , boxSizing: borderBox
+      , background: (props.background ?|| str colour.interfaceBackground)
+      , display: flex
+      , width: str "calc(var(--s4) * 2)"
       , """&[data-invalid="false"]""":
         nest
           { borderColor: str colour.success

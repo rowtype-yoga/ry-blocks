@@ -15,8 +15,8 @@ import Unsafe.Coerce (unsafeCoerce)
 import Untagged.Castable (class Castable, cast)
 import Untagged.Union (UndefinedOr, defined, fromUndefinedOr, maybeToUor, uorToMaybe)
 
-type Id a =
-  a
+type Id :: forall k. k -> k
+type Id a = a
 
 newtype OptionalProp a = OptionalProp (UndefinedOr a)
 

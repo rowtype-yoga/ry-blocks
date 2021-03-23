@@ -11,21 +11,22 @@ import Yoga.Block.Atom.Input.Style as Style
 import Yoga.Block.Atom.Input.Types (HTMLInputType)
 import Yoga.Block.Atom.Input.Types as HTMLInput
 
-type PropsF f =
+type PropsF :: forall k. (Type -> k) -> Row k -> Row k
+type PropsF f r =
   ( type ∷ f HTMLInputType
-  | Style.Props f (InputPropsF f ())
+  | Style.Props f r
   )
 
 type Props =
-  PropsF Id
+  PropsF Id (InputWritableProps)
 
 type PropsOptional =
-  PropsF OptionalProp
+  PropsF OptionalProp (InputReadableProps)
 
 component ∷ ∀ p q. Union p q Props => ReactComponent { | p }
 component = rawComponent
 
-componentOptional ∷ ∀ p q. Union p q PropsOptional => ReactComponent { | p }
+componentOptional ∷ ∀ p q. Union p q (PropsF OptionalProp (InputWritablePropsF OptionalProp ())) => ReactComponent { | p }
 componentOptional = rawComponent
 
 rawComponent ∷ ∀ p. ReactComponent { | p }

@@ -11,7 +11,7 @@ import Yoga.Block.Atom.CodeInput.Style as Style
 
 type PropsF f =
   ( 
-  | Style.Props f (InputPropsF f EmotionProps)
+  | Style.Props f (InputWritablePropsF f EmotionProps)
   )
 
 type Props =

@@ -6,19 +6,19 @@ import Foreign.Object as Object
 import Yoga.Block.Atom.Button.Style as Style
 import Yoga.Block.Atom.Button.Types (ButtonShape, ButtonType, renderButtonShape, renderButtonType)
 import Yoga.Block.Atom.Button.Types as Button
-import Yoga.Block.Internal (ButtonProps, emotionButton)
 
-type PropsF f =
+type PropsF :: forall k. (Type -> k) -> Row k -> Row k
+type PropsF f r =
   ( buttonType ∷ f ButtonType
   , buttonShape ∷ f ButtonShape
-  | Style.Props f ButtonProps
+  | Style.Props f r
   )
 
 type Props =
-  PropsF Id
+  PropsF Id (ButtonWritablePropsF Id ())
 
 type PropsOptional =
-  PropsF OptionalProp
+  PropsF OptionalProp (ButtonReadableProps)
 
 key ∷ ∀ t1. SProxy t1
 key = SProxy
