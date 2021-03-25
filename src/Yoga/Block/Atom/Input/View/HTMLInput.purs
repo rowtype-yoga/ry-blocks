@@ -7,6 +7,8 @@ module Yoga.Block.Atom.Input.View.HTMLInput
   ) where
 
 import Yoga.Prelude.View
+
+import Framer.Motion as M
 import Yoga.Block.Atom.Input.Style as Style
 import Yoga.Block.Atom.Input.Types (HTMLInputType)
 import Yoga.Block.Atom.Input.Types as HTMLInput
@@ -34,8 +36,7 @@ rawComponent =
   mkForwardRefComponent "Input" do
     \(props ∷ { | PropsOptional }) ref -> React.do
       let
-        result = inputWrapper [ input ]
         inputWrapper = div </* { className: "ry-input-wrapper", css: Style.inputWrapper }
         input = emotionInput ref inputProps { className: "ry-input", css: Style.input }
         inputProps = props { type = HTMLInput.toString <$> props.type }
-      pure result
+      pure do inputWrapper [ input ]

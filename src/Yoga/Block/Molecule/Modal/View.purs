@@ -30,10 +30,10 @@ component =
         let
           toRender ∷ JSX
           toRender =
-            Motion.div </ {}
-              /> [ Motion.animatePresence </ {} /> [ guard isOpen $ element clickaway { theRef: clickAwayRef, hide: setIsOpen false } ]
-                , Motion.animatePresence </ {} /> [ guard isOpen $ element window { clickAwayRef, hide: setIsOpen false, content } ]
-                ]
+            fragment
+              [ Motion.animatePresence </ {} /> [ guard isOpen $ element clickaway { theRef: clickAwayRef, hide: setIsOpen false } ]
+              , Motion.animatePresence </ {} /> [ guard isOpen $ element window { clickAwayRef, hide: setIsOpen false, content } ]
+              ]
         pure (createPortal toRender target)
 
 clickaway ∷ ReactComponent { theRef ∷ Ref (Nullable Node), hide ∷ Effect Unit }
@@ -67,7 +67,6 @@ window =
                         , drag: Motion.prop true
                         , dragMomentum: Motion.prop false
                         , dragConstraints: Motion.prop clickAwayRef
-                        , onAnimationComplete: Motion.onAnimationComplete \_ -> (log "Done!")
                         }
                       /> [ content ]
                   ]

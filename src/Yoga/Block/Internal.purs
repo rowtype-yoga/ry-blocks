@@ -26,6 +26,8 @@ module Yoga.Block.Internal
   , createRef
   , getBoundingBoxFromRef
   , getHTMLElementFromRef
+  , getOffsetHeightFromRef
+  , getOffsetWidthFromRef
   ) where
 
 import Prelude
@@ -52,7 +54,7 @@ import Type.Data.Row (RProxy(..))
 import Unsafe.Coerce (unsafeCoerce)
 import Untagged.Union (UndefinedOr, uorToMaybe)
 import Web.DOM (Node)
-import Web.HTML.HTMLElement (DOMRect, HTMLElement, getBoundingClientRect)
+import Web.HTML.HTMLElement (DOMRect, HTMLElement, getBoundingClientRect, offsetHeight, offsetWidth)
 import Web.HTML.HTMLElement as HTMLElement
 import Yoga.Block.Internal.CSS (_0)
 import Yoga.Block.Internal.OptionalProp (Id, OptionalProp(..), appendIfDefined, asOptional, composeHandler, getOr, getOrFlipped, ifTrue, isTruthy, maybeToOp, opToMaybe, setOrDelete, unsafeUnMaybe, unsafeUnOptional, (<>?), (?||))
@@ -78,6 +80,16 @@ getBoundingBoxFromRef ∷ Ref (Nullable Node) -> Effect (Maybe DOMRect)
 getBoundingBoxFromRef itemRef = do
   htmlElem <- getHTMLElementFromRef itemRef
   for htmlElem getBoundingClientRect
+
+getOffsetWidthFromRef ∷ Ref (Nullable Node) -> Effect (Maybe Number)
+getOffsetWidthFromRef itemRef = do
+  htmlElem <- getHTMLElementFromRef itemRef
+  for htmlElem offsetWidth
+
+getOffsetHeightFromRef ∷ Ref (Nullable Node) -> Effect (Maybe Number)
+getOffsetHeightFromRef itemRef = do
+  htmlElem <- getHTMLElementFromRef itemRef
+  for htmlElem offsetHeight
 
 getHTMLElementFromRef ∷ Ref (Nullable Node) -> Effect (Maybe HTMLElement)
 getHTMLElementFromRef itemRef =

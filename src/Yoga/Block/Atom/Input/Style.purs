@@ -1,7 +1,9 @@
 module Yoga.Block.Atom.Input.Style where
 
 import Yoga.Prelude.Style
+
 import Data.Interpolate (i)
+import Debug (spy)
 import Yoga.Block.Container.Style (colour)
 
 type Props :: forall k. (Type -> k) -> Row k -> Row k
@@ -98,11 +100,10 @@ labelSmall background =
         }
     }
 
-labelLarge ∷ { left ∷ Number, width ∷ Number, top ∷ Number } -> Style
-labelLarge { left, width, top } =
+labelLarge ∷ { left ∷ Number, width ∷ Number } -> Style
+labelLarge { left, width } =
   css
     { fontSize: str "calc(var(--s0) * 0.85)"
-    , position: str "relative"
     , padding: _0
     , whiteSpace: nowrap -- force on one line
     , overflow: str "hidden"
@@ -110,11 +111,12 @@ labelLarge { left, width, top } =
     , maxWidth: str $ i width "px"
     , textOverflow: str "ellipsis"
     , marginTop: str "calc(var(--s-1) + var(--s-5))"
-    , marginBottom: str $ i "calc(" "var(--s-1)" "+" "var(--s-5)" " + " top "px" ")"
-    , marginLeft: str $ i left "px"
+    -- , marginBottom: str $ i "calc(" "var(--s-1)" "+" "var(--s-5)" " + " top "px" ")"
+    , marginLeft: str $ i (spy "left" left) "px"
     , marginRight: var "--input-side-padding"
     , color: str colour.placeholderText
     , fontWeight: str "400"
+    -- , fontWeight: str "600"
     , """&[data-required="true"]:after""":
       nest
         { content: str "'*'"

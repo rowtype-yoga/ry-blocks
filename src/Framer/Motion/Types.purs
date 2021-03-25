@@ -34,6 +34,7 @@ type MotionPropsF f r =
   , layout ∷ f Layout
   , layoutId ∷ f LayoutId
   , onAnimationComplete ∷ f OnAnimationComplete
+  , onAnimationStart ∷ f OnAnimationStart
   , onDrag ∷ f OnDrag
   , onDragEnd ∷ f OnDragEnd
   , onDragStart ∷ f OnDragStart
@@ -44,7 +45,7 @@ type MotionPropsF f r =
   , onTapCancel ∷ f OnTapCancel
   , onTapEnd ∷ f OnTapEnd
   , onTapStart ∷ f OnTapStart
-  , onViewPortBoxUpdate ∷ f OnViewPortBoxUpdate
+  , onViewportBoxUpdate ∷ f OnViewportBoxUpdate
   , transition ∷ f Transition
   , variants ∷ f Variants
   , whileHover ∷ f WhileHover
@@ -200,6 +201,12 @@ type OnAnimationComplete =
 onAnimationComplete :: (AnimationDefinition -> Effect Unit) -> OnAnimationComplete
 onAnimationComplete = cast <<< toEffectFn
 
+type OnAnimationStart =
+  (Effect Unit |+| Undefined)
+
+onAnimationStart :: (Effect Unit) -> OnAnimationStart
+onAnimationStart = cast
+
 type OnHoverStart =
   (EffectFn2 MouseEvent EventInfo Unit |+| Undefined)
 
@@ -224,11 +231,11 @@ type OnLayoutAnimationComplete =
 onLayoutAnimationComplete ∷ Effect Unit -> OnLayoutAnimationComplete
 onLayoutAnimationComplete = cast
 
-type OnViewPortBoxUpdate =
+type OnViewportBoxUpdate =
   (EffectFn2 AxisBox2D BoxDelta Unit |+| Undefined)
 
-onViewPortBoxUpdate ∷ (AxisBox2D -> BoxDelta -> Effect Unit) -> OnViewPortBoxUpdate
-onViewPortBoxUpdate = cast <<< toEffectFn
+onViewportBoxUpdate ∷ (AxisBox2D -> BoxDelta -> Effect Unit) -> OnViewportBoxUpdate
+onViewportBoxUpdate = cast <<< toEffectFn
 
 type TapInfo =
   { x ∷ Number, y ∷ Number }

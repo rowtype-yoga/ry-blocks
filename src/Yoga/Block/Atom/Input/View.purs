@@ -12,7 +12,6 @@ import React.Basic.Emotion as E
 import React.Basic.Hooks as React
 import Record.Builder as RB
 import Type.Prelude (Proxy(..))
-import Untagged.Union (UndefinedOr)
 import Web.HTML.HTMLInputElement as InputElement
 import Yoga.Block.Atom.Icon as Icon
 import Yoga.Block.Atom.Input.Style as Style
@@ -23,7 +22,6 @@ import Yoga.Block.Atom.Input.View.HTMLInput as HTMLInput
 import Yoga.Block.Atom.Input.View.Label as Label
 import Yoga.Block.Container.Style (colour)
 import Yoga.Block.Icon.SVG as SVGIcon
-import Yoga.Prelude.View as Nullable
 
 type PropsF :: forall k. (Type -> k) -> Row k -> Row k
 type PropsF f r =
@@ -63,17 +61,6 @@ rawComponent =
       parentRef ∷ NodeRef <- useRef null
       backupRef ∷ NodeRef <- useRef null
       let ref = forwardedRefAsMaybe propsRef # fromMaybe backupRef
-      -- Track input bounding box
-      maybeInputBbox /\ setInputBbox <- useState' (Nothing ∷ _ DOMRect)
-      maybeParentBbox /\ setParentBbox <- useState' (Nothing ∷ _ DOMRect)
-      useLayoutEffectAlways do
-        maybeBBox <- getBoundingBoxFromRef ref
-        unless (maybeBBox == maybeInputBbox) do setInputBbox maybeBBox
-        mempty
-      useLayoutEffectAlways do
-        maybeBBox <- getBoundingBoxFromRef parentRef
-        unless (maybeBBox == maybeParentBbox) do setParentBbox maybeBBox
-        mempty
       let
         focusInput =
           unless hasFocus do
@@ -93,9 +80,8 @@ rawComponent =
         maybeLabelText ∷ Maybe NonEmptyString
         maybeLabelText = props.label # opToMaybe
         mkLabel ∷ NonEmptyString -> JSX
-        mkLabel labelText = case maybeInputBbox, maybeParentBbox of
-          Just inputBbox, Just parentBbox ->
-            Label.component
+        mkLabel labelText = 
+          Label.component
               </> { onClickLargeLabel: handler preventDefault (const focusInput)
                 , isFocussed: hasFocus
                 , isRequired: aria # Object.lookup "required" # (_ == Just "true")
@@ -103,12 +89,11 @@ rawComponent =
                 , renderLargeLabel
                 , labelId
                 , inputId: props.id ?|| "no-id" -- [TODO] Enforce ID?
-                , inputBbox
-                , parentBbox
+                , inputRef: ref
+                , parentRef
                 , labelText
                 , background: props.background ?|| E.str colour.interfaceBackground
                 }
-          _, _ -> mempty
         leading ∷ Maybe JSX
         leading =
           opToMaybe props.leading
@@ -153,7 +138,7 @@ rawComponent =
                           ( RB.delete (Proxy ∷ _ "leading")
                               >>> RB.delete (Proxy ∷ _ "label")
                               >>> RB.delete (Proxy ∷ _ "trailing")
-                              >>> RB.insert (Proxy :: _ "ref") ref
+                              >>> RB.insert (Proxy ∷ _ "ref") ref
                           )
                   )
               )
@@ -177,6 +162,7 @@ rawComponent =
                 div
                   </* { className: "ry-label-and-input-wrapper"
                     , css: Style.labelAndInputWrapper
+
                     }
                   /> [ inputContainer, mkLabel labelText ]
 

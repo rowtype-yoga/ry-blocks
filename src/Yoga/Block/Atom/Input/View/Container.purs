@@ -3,6 +3,7 @@ module Yoga.Block.Atom.Input.View.Container where
 import Yoga.Prelude.View
 import Data.Array as Array
 import Data.Interpolate (i)
+import Effect.Class.Console (log)
 import Foreign.Object as Object
 import Framer.Motion as M
 import Partial.Unsafe (unsafeCrashWith)
@@ -41,6 +42,7 @@ rawContainer =
             </* M.motion
                 { variants: M.variants containerVariants
                 , animate: M.animate if props.hasFocus then containerVariantLabels.focussed else containerVariantLabels.blurred
+                , onViewportBoxUpdate: M.onViewportBoxUpdate \_ _ -> log "hi"
                 }
                 { className: "ry-input-container"
                 , css: Style.inputContainer props

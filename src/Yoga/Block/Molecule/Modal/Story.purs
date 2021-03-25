@@ -65,7 +65,7 @@ modal = do
                     # foldMap \(modalElement ∷ Element) ->
                         element Modal.component
                           { content:
-                            Y.el Block.box {} [ Y.leaf Block.input { label: NonEmptyString "hi" } ]
+                            Y.el Block.box {} [ Y.leaf Block.input { label: NonEmptyString "A label that should fit" } ]
                           , isOpen
                           , setIsOpen
                           , target: modalElement
