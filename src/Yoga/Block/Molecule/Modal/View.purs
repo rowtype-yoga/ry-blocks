@@ -2,7 +2,7 @@ module Yoga.Block.Molecule.Modal.View (component, Props) where
 
 import Yoga.Prelude.View
 import Data.Nullable as Nullable
-import Effect.Class.Console (log)
+import Debug (traceM)
 import Effect.Unsafe (unsafePerformEffect)
 import Framer.Motion (withMotion)
 import Framer.Motion as Motion
@@ -10,7 +10,10 @@ import React.Basic.DOM (createPortal, css)
 import React.Basic.Emotion as Emotion
 import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
+import Unsafe.Reference (unsafeRefEq)
 import Web.DOM (Element)
+import Web.DOM.Element as Element
+import Web.Event.Internal.Types (EventTarget)
 import Yoga.Block.Layout.Imposter as Imposter
 import Yoga.Block.Molecule.Modal.Style as Style
 
@@ -55,11 +58,13 @@ window ∷ ReactComponent { clickAwayRef ∷ NodeRef, content ∷ JSX, hide ∷ 
 window =
   unsafePerformEffect
     $ reactComponent "Modal Window" \{ clickAwayRef, content, hide } -> React.do
+        imposterRef <- useRef null
         pure
-          $ Emotion.elementKeyed motionImposter
+          $ Emotion.element motionImposter
               ( { className: "ry-modal-window"
                 , css: Style.modal
-                , key: "ry-modal-window"
+                , ref: imposterRef
+                , onClick: handler_ hide
                 , children:
                   [ Motion.div
                       </* { className: "ry-modal"
@@ -67,6 +72,7 @@ window =
                         , drag: Motion.prop true
                         , dragMomentum: Motion.prop false
                         , dragConstraints: Motion.prop clickAwayRef
+                        , onClick: handler stopPropagation mempty
                         }
                       /> [ content ]
                   ]
@@ -77,5 +83,5 @@ window =
                     , exit: css { transform: "translate(-50%, -50%) scale3d(0.1,0.1,0.1)", opacity: 0 }
                     }
               )
-  where
-  motionImposter = unsafePerformEffect $ Motion.custom Imposter.component
+
+motionImposter = unsafePerformEffect $ Motion.custom Imposter.component

@@ -25,6 +25,6 @@ clickaway =
     , position: fixed
     , left: _0
     , top: _0
-    , backdropFilter: str "blur(4px) brightness(67%)"
+    , backdropFilter: str "blur(4px) brightness(80%)"
     , zIndex: str "3"
     }
