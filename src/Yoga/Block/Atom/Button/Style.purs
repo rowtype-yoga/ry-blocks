@@ -101,7 +101,7 @@ button =
         { boxShadow: str $ "inset 0 1px var(--s-1) rgba(0,0,0,0.20)"
         , borderTop: str $ i "1px solid " colour.interfaceBackgroundShadow
         , borderBottom: str $ i "1px solid " colour.interfaceBackgroundShadow
-        , transform: str "scale3d(0.95,0.95,0.95)"
+        , transform: str "scale3d(0.92,0.92,0.92)"
         , transition: str "transform 50ms ease"
         }
     , "&:disabled":

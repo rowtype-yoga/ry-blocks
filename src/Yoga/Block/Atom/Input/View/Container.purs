@@ -119,9 +119,9 @@ mkPath { width, height } = do
 
   heightWith2xBorder = height + border + border
 
-  border = 2.0
+  border = 2.2
 
-  cornerBorder = 4.2
+  cornerBorder = 4.5
 
   outerCornerBorder = 8.3
 

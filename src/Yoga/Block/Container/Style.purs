@@ -216,10 +216,10 @@ defaultColours =
   { light:
     { background: lightBg
     , backgroundInverted: darken 0.85 lightBg
-    , backgroundLayer1: darken 0.12 >>> rotateHue (0.0) >>> saturate 0.01 $ lightBg
-    , backgroundLayer2: darken 0.09 >>> rotateHue (0.0) >>> saturate 0.02 $ lightBg
-    , backgroundLayer3: darken 0.06 >>> rotateHue (0.0) >>> saturate 0.03 $ lightBg
-    , backgroundLayer4: darken 0.03 >>> rotateHue (0.0) >>> saturate 0.04 $ lightBg
+    , backgroundLayer1: darken 0.07 >>> rotateHue (200.0) >>> desaturate 0.2 $ lightBg
+    , backgroundLayer2: darken 0.06 >>> rotateHue (200.0) >>> desaturate 0.2 $ lightBg
+    , backgroundLayer3: darken 0.04 >>> rotateHue (0.0) >>> desaturate 0.1 $ lightBg
+    , backgroundLayer4: darken 0.02 >>> rotateHue (0.0) >>> desaturate 0.05 $ lightBg
     , backgroundLayer5: lightBg
     , highlight
     , highlightDarker: withAlpha 0.15 (Color.darken 0.5 highlight)
@@ -285,7 +285,7 @@ defaultColours =
   where
   darkBg = Color.hsl 240.0 0.07 0.10
 
-  highlight = Color.hsl 320.0 0.62 0.49
+  highlight = Color.hsl 275.0 0.82 0.4
 
   highlightDark = Color.hsl 265.0 1.00 0.6
 
