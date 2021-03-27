@@ -102,28 +102,28 @@ mkPath { width, height } = do
       ]
     outside =
       [ {-⌜    -} p zero zero
-      , {-⌞    -} p zero heightWithBorder
-      , {- .   -} p (widthWithBorder * 0.25) heightWithBorder
-      , {-  .  -} p (widthWithBorder * 0.5) heightWithBorder
-      , {-   . -} p (widthWithBorder * 0.75) heightWithBorder
-      , {-    ⌟-} p widthWithBorder heightWithBorder
-      , {-    ⌝-} p (widthWithBorder - zero) zero
-      , {-   ^ -} p (widthWithBorder * 0.25) zero
-      , {-  ^  -} p (widthWithBorder * 0.5) zero
-      , {- ^   -} p (widthWithBorder * 0.75) zero
+      , {-⌞    -} p zero heightWith2xBorder
+      , {- .   -} p (widthWith2xBorder * 0.25) heightWith2xBorder
+      , {-  .  -} p (widthWith2xBorder * 0.5) heightWith2xBorder
+      , {-   . -} p (widthWith2xBorder * 0.75) heightWith2xBorder
+      , {-    ⌟-} p widthWith2xBorder heightWith2xBorder
+      , {-    ⌝-} p widthWith2xBorder zero
+      , {-   ^ -} p (widthWith2xBorder * 0.25) zero
+      , {-  ^  -} p (widthWith2xBorder * 0.5) zero
+      , {- ^   -} p (widthWith2xBorder * 0.75) zero
       , {-⌜    -} p zero zero
       ]
   inside <> outside <> (Array.reverse inside)
   where
-  widthWithBorder = width + border
+  widthWith2xBorder = width + border + border
 
-  heightWithBorder = height + border
+  heightWith2xBorder = height + border + border
 
   border = 2.0
 
-  cornerBorder = 1.9 * border
+  cornerBorder = 4.2
 
-  outerCornerBorder = 4.0 * border
+  outerCornerBorder = 8.3
 
   p ∷ Number -> Number -> Point
   p x y = { x, y }
