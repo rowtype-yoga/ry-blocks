@@ -3,7 +3,6 @@ module Yoga.Block.Atom.Input.Style where
 import Yoga.Prelude.Style
 
 import Data.Interpolate (i)
-import Debug (spy)
 import Yoga.Block.Container.Style (colour)
 
 type Props :: forall k. (Type -> k) -> Row k -> Row k
@@ -41,6 +40,7 @@ labelAndInputWrapper =
     , "--right-icon-size": str "calc(var(--s0) * 1.2)"
     , "--input-border-radius": var "--s-1"
     , "--input-side-padding": var "--s-1"
+    , width: inherit
     }
 
 labelContainer ∷ Style
@@ -112,7 +112,7 @@ labelLarge { left, width } =
     , textOverflow: str "ellipsis"
     , marginTop: str "calc(var(--s-1) + var(--s-5))"
     -- , marginBottom: str $ i "calc(" "var(--s-1)" "+" "var(--s-5)" " + " top "px" ")"
-    , marginLeft: str $ i (spy "left" left) "px"
+    , marginLeft: str $ i left "px"
     , marginRight: var "--input-side-padding"
     , color: str colour.placeholderText
     , fontWeight: str "400"
@@ -189,6 +189,7 @@ inputContainer props = theCss <>? props.css
           { "--border-width": str "2px"
           , borderColor: str colour.highlight
           , transition: str "border-color 0s linear 0.1s"
+          -- , animation: plopAnimation <> str " 260ms ease-in"
           }
       , alignItems: center
       , justifyContent: center
@@ -209,6 +210,7 @@ inputWrapper =
     , minWidth: _0
     , padding: _0
     , flex: str "1"
+    , width: inherit
     }
 
 input ∷ Style
@@ -247,3 +249,13 @@ input =
         { outline: none
         }
     }
+
+
+plopAnimation ∷ StyleProperty
+plopAnimation =
+  keyframes
+    $ { "from": css { transform: str "scale3d(1.01,1.2,1)" }
+      , "67.7%": css { transform: str "scale3d(0.993,0.9,1)" }
+      , "86.7%": css { transform: str "scale3d(1.002,1.05,1)" }
+      , "to": css { transform: str "scale3d(1,1,1)" }
+      }

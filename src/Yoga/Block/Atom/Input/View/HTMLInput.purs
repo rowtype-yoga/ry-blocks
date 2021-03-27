@@ -8,7 +8,6 @@ module Yoga.Block.Atom.Input.View.HTMLInput
 
 import Yoga.Prelude.View
 
-import Framer.Motion as M
 import Yoga.Block.Atom.Input.Style as Style
 import Yoga.Block.Atom.Input.Types (HTMLInputType)
 import Yoga.Block.Atom.Input.Types as HTMLInput

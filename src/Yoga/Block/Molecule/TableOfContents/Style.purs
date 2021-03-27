@@ -3,12 +3,12 @@ module Yoga.Block.Molecule.TableOfContents.Style where
 import Yoga.Prelude.Style
 import Yoga.Block.Container.Style (colour)
 
-type Props f r
-  = ( css ∷ f Style
-    , backgroundLeft ∷ f Color
-    , backgroundRight ∷ f Color
-    | r
-    )
+type Props f r =
+  ( css ∷ f Style
+  , backgroundLeft ∷ f Color
+  , backgroundRight ∷ f Color
+  | r
+  )
 
 button ∷ Style
 button =

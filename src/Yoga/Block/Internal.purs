@@ -28,9 +28,11 @@ module Yoga.Block.Internal
   , getHTMLElementFromRef
   , getOffsetHeightFromRef
   , getOffsetWidthFromRef
+  , getOffsetDimensionsFromRef
   ) where
 
 import Prelude
+import Control.Monad.Cont.Trans (lift)
 import Control.Monad.Maybe.Trans (MaybeT(..), runMaybeT)
 import Data.Array as Array
 import Data.Function.Uncurried (Fn3, runFn3)
@@ -76,20 +78,29 @@ foreign import createRef ∷ ∀ a. Effect (Ref a)
 type NodeRef =
   Ref (Nullable Node)
 
-getBoundingBoxFromRef ∷ Ref (Nullable Node) -> Effect (Maybe DOMRect)
+getBoundingBoxFromRef ∷ NodeRef -> Effect (Maybe DOMRect)
 getBoundingBoxFromRef itemRef = do
   htmlElem <- getHTMLElementFromRef itemRef
   for htmlElem getBoundingClientRect
 
-getOffsetWidthFromRef ∷ Ref (Nullable Node) -> Effect (Maybe Number)
+getOffsetWidthFromRef ∷ NodeRef -> Effect (Maybe Number)
 getOffsetWidthFromRef itemRef = do
   htmlElem <- getHTMLElementFromRef itemRef
   for htmlElem offsetWidth
 
-getOffsetHeightFromRef ∷ Ref (Nullable Node) -> Effect (Maybe Number)
+getOffsetHeightFromRef ∷ NodeRef -> Effect (Maybe Number)
 getOffsetHeightFromRef itemRef = do
   htmlElem <- getHTMLElementFromRef itemRef
   for htmlElem offsetHeight
+
+getOffsetDimensionsFromRef ∷ NodeRef -> Effect (Maybe { height ∷ Number, width ∷ Number })
+getOffsetDimensionsFromRef itemRef =
+  runMaybeT do
+    node <- MaybeT $ readRefMaybe itemRef
+    elem <- MaybeT $ pure $ HTMLElement.fromNode node
+    width <- lift $ offsetWidth elem
+    height <- lift $ offsetHeight elem
+    pure { width, height }
 
 getHTMLElementFromRef ∷ Ref (Nullable Node) -> Effect (Maybe HTMLElement)
 getHTMLElementFromRef itemRef =

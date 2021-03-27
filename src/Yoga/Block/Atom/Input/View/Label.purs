@@ -3,9 +3,7 @@ module Yoga.Block.Atom.Input.View.Label where
 import Yoga.Prelude.View
 import Data.String.NonEmpty (NonEmptyString)
 import Data.String.NonEmpty as NonEmptyString
-import Debug (spy)
-import Effect.Class.Console (error, log, logShow, warn)
-import Effect.Class.Console as Log
+import Effect.Class.Console (warn)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object as Object
 import Framer.Motion as M
@@ -14,10 +12,6 @@ import React.Basic.Emotion (StyleProperty)
 import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
 import Record.Extra (sequenceRecord)
-import Unsafe.Reference (unsafeRefEq)
-import Web.DOM.Element as Element
-import Web.DOM.ResizeObserver as ResizeObserver
-import Web.HTML.HTMLElement (offsetWidth)
 import Yoga.Block.Atom.Input.Style as Style
 
 type Props =

@@ -2,13 +2,14 @@ module Yoga.Block.Atom.Input.View.Container where
 
 import Yoga.Prelude.View
 import Data.Array as Array
+import Data.Int (toNumber)
 import Data.Interpolate (i)
-import Effect.Class.Console (log)
 import Foreign.Object as Object
 import Framer.Motion as M
 import Partial.Unsafe (unsafeCrashWith)
 import React.Basic.DOM (CSS, css)
 import React.Basic.Emotion (Style)
+import React.Basic.Hooks as React
 import Yoga.Block.Atom.Input.Style as Style
 
 type PropsF f =
@@ -36,13 +37,24 @@ rawContainer ∷ ∀ p. ReactComponent { | p }
 rawContainer =
   mkForwardRefComponent "InputContainer" do
     \(props ∷ { | PropsOptional }) ref -> React.do
+      dimensions /\ setDimensions <- useState' zero
+      useEffectOnce do
+        maybeDimensions <- getOffsetDimensionsFromRef ref
+        for_ maybeDimensions setDimensions
+        mempty
       let
+        containerVariants = mkContainerVariants dimensions
+        containerVariantLabels = mkContainerVariantLabels containerVariants
         result =
           M.div
             </* M.motion
                 { variants: M.variants containerVariants
-                , animate: M.animate if props.hasFocus then containerVariantLabels.focussed else containerVariantLabels.blurred
-                , onViewportBoxUpdate: M.onViewportBoxUpdate \_ _ -> log "hi"
+                , animate:
+                  M.animate
+                    if props.hasFocus then
+                      containerVariantLabels.focussed
+                    else
+                      containerVariantLabels.blurred
                 }
                 { className: "ry-input-container"
                 , css: Style.inputContainer props
@@ -57,70 +69,95 @@ rawContainer =
             /> props.children
       pure result
 
-drawPathUntil ∷ Int -> Array Point -> String
-drawPathUntil idx thePath = do
+drawPathUntil ∷ { width ∷ Number, height ∷ Number } -> Int -> Array Point -> String
+drawPathUntil { width, height } idx thePath = do
   let
-    fn { x, y } = i x "%" " " y "%"
+    fn { x, y } = i x "px" " " y "px"
     firstFew = Array.take idx thePath
-    lastFew = Array.drop idx thePath $> (Array.last firstFew # fromMaybe' \_ -> unsafeCrashWith "ogod")
+    lastOne = Array.last firstFew # fromMaybe' \_ -> unsafeCrashWith "ogod"
+    lastFew =
+      Array.replicate
+        (Array.length thePath - Array.length firstFew)
+        lastOne
     rendered = intercalate "," $ fn <$> (firstFew <> lastFew)
   i "polygon(" rendered ")"
 
-path ∷ Array Point
-path = mkPath 4 8
-
-mkPath ∷ Int -> Int -> Array Point
-mkPath borderX borderY = do
+mkPath ∷ { width ∷ Number, height ∷ Number } -> Array Point
+mkPath { width, height } = do
   let
     inside =
-      [ {- ⌜ -} p borderX borderY
-      , {- ⌞ -} p borderX (100 - borderY)
-      , {- ⌟ -} p (100 - borderX) (100 - borderY)
-      , {- ⌝ -} p (100 - borderX) borderY
-      , {- ⌜ -} p borderX borderY
+      [ {- ⌜ -} p outerCornerBorder border
+      , {- ⌜ -} p cornerBorder cornerBorder
+      , {- ⌜ -} p border outerCornerBorder
+      , {- ⌞ -} p border (height - outerCornerBorder)
+      , {- ⌞ -} p cornerBorder (height - cornerBorder)
+      , {- ⌞ -} p outerCornerBorder (height - border)
+      , {- ⌟ -} p (width - outerCornerBorder) (height - border)
+      , {- ⌟ -} p (width - cornerBorder) (height - cornerBorder)
+      , {- ⌟ -} p (width - border) (height - outerCornerBorder)
+      , {- ⌝ -} p (width - border) outerCornerBorder
+      , {- ⌝ -} p (width - cornerBorder) cornerBorder
+      , {- ⌝ -} p (width - outerCornerBorder) border
+      , {- ⌜ -} p outerCornerBorder border
       ]
     outside =
-      [ {-⌜    -} p 0 0
-      , {-⌞    -} p 0 100
-      , {- .   -} p 25 100
-      , {-  .  -} p 50 100
-      , {-   . -} p 75 100
-      , {-    ⌟-} p 100 100
-      , {-    ⌝-} p 100 0
-      , {-   ^ -} p 75 0
-      , {-  ^  -} p 50 0
-      , {- ^   -} p 25 0
-      , {-⌜    -} p 0 0
+      [ {-⌜    -} p zero zero
+      , {-⌞    -} p zero heightWithBorder
+      , {- .   -} p (widthWithBorder * 0.25) heightWithBorder
+      , {-  .  -} p (widthWithBorder * 0.5) heightWithBorder
+      , {-   . -} p (widthWithBorder * 0.75) heightWithBorder
+      , {-    ⌟-} p widthWithBorder heightWithBorder
+      , {-    ⌝-} p (widthWithBorder - zero) zero
+      , {-   ^ -} p (widthWithBorder * 0.25) zero
+      , {-  ^  -} p (widthWithBorder * 0.5) zero
+      , {- ^   -} p (widthWithBorder * 0.75) zero
+      , {-⌜    -} p zero zero
       ]
   inside <> outside <> (Array.reverse inside)
   where
-  p ∷ Int -> Int -> Point
+  widthWithBorder = width + border
+
+  heightWithBorder = height + border
+
+  border = 2.0
+
+  cornerBorder = 1.9 * border
+
+  outerCornerBorder = 4.0 * border
+
+  p ∷ Number -> Number -> Point
   p x y = { x, y }
 
-containerVariantLabels ∷
+mkContainerVariantLabels ∷
+  { blurred ∷ CSS
+  , focussed ∷ CSS
+  } ->
   { blurred ∷ M.VariantLabel
   , focussed ∷ M.VariantLabel
   }
-containerVariantLabels = M.makeVariantLabels containerVariants
+mkContainerVariantLabels = M.makeVariantLabels
 
-containerVariants ∷
+mkContainerVariants ∷
+  { width ∷ Number, height ∷ Number } ->
   { blurred ∷ CSS
   , focussed ∷ CSS
   }
-containerVariants =
+mkContainerVariants dimensions =
   { focussed:
     css
-      { clipPath
+      { clipPath: clipPathFocussed
       , transition: { duration: 0.6 }
       }
   , blurred:
     css
       { clipPath:
-        drawPathUntil (Array.length path + 1) path
+        drawPathUntil dimensions (Array.length path + 1) path
       }
   }
   where
-  clipPath = 6 Array... (Array.length path) <#> \ln -> drawPathUntil ln path
+  path = mkPath dimensions
+
+  clipPathFocussed = 12 Array... (Array.length path) <#> \ln -> drawPathUntil dimensions ln path
 
 type Point =
-  { x ∷ Int, y ∷ Int }
+  { x ∷ Number, y ∷ Number }

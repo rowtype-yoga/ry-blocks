@@ -23,7 +23,7 @@ import Yoga.Block.Atom.Input.View.Label as Label
 import Yoga.Block.Container.Style (colour)
 import Yoga.Block.Icon.SVG as SVGIcon
 
-type PropsF :: forall k. (Type -> k) -> Row k -> Row k
+type PropsF ∷ ∀ k. (Type -> k) -> Row k -> Row k
 type PropsF f r =
   ( leading ∷ f JSX
   , trailing ∷ f JSX
@@ -161,7 +161,7 @@ rawComponent =
               Just labelText ->
                 div
                   </* { className: "ry-label-and-input-wrapper"
-                    , css: Style.labelAndInputWrapper
+                    , css: Style.labelAndInputWrapper <>? props.css
 
                     }
                   /> [ inputContainer, mkLabel labelText ]
