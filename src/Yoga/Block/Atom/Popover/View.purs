@@ -1,12 +1,13 @@
 module Yoga.Block.Atom.Popover.View (component, MandatoryProps, Props, PropsF) where
 
 import Yoga.Prelude.View
+
 import Effect.Uncurried (mkEffectFn1)
 import React.Basic.Hooks as React
+import React.Basic.Popper (modifierMatchReferenceSize, modifierOffset, nullRef)
 import React.Basic.Popper.Hook (usePopper)
 import React.Basic.Popper.Placement.Types (Placement)
 import React.Basic.Popper.Placement.Types as Placement
-import React.Basic.Popper.Types (modifierOffset, nullRef)
 import Unsafe.Coerce (unsafeCoerce)
 import Yoga.Block.Atom.Popover.Style as Style
 
@@ -42,6 +43,7 @@ rawComponent =
         usePopper props.referenceElement popperElement
           { modifiers:
             [ modifierOffset { x: 0.0, y: 0.0 }
+            , modifierMatchReferenceSize
             ]
           , placement: props.placement <#> Placement.render # unsafeUnOptional
           }

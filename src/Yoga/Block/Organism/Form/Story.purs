@@ -1,6 +1,7 @@
 module Yoga.Block.Organism.Form.Story where
 
 import Prelude
+import Data.Either (Either(..))
 import Data.Lens.Record (prop)
 import Data.Maybe (Maybe(..))
 import Data.String.NonEmpty (NonEmptyString, nes)
@@ -8,7 +9,7 @@ import Data.Tuple.Nested ((/\))
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object as Object
-import React.Basic (JSX, element)
+import React.Basic (JSX, element, fragment)
 import React.Basic.DOM as R
 import React.Basic.DOM.Events (preventDefault)
 import React.Basic.Emotion as E
@@ -40,11 +41,13 @@ default =
 type User =
   { firstName ∷ Form.Validated String
   , lastName ∷ Form.Validated String
+  , isAdmin ∷ Boolean
   }
 
 type ValidUser =
   { firstName ∷ NonEmptyString
   , lastName ∷ NonEmptyString
+  , isAdmin ∷ Boolean
   }
 
 aForm ∷ Effect JSX
@@ -58,24 +61,26 @@ aForm = do
       { setModified, reset, validated, form } <-
         Form.useForm userForm
           { initialState: formDefaults
-          , inlineTable: false
           , formProps:
             { readOnly: false
             }
           }
       pure
-        $ R.form -- Forms should be enclosed in a single "<form>" element to enable
-            -- default browser behavior, such as the enter key. Use "type=submit"
-            -- on the form's submit button and `preventDefault` to keep the browser
-            -- from reloading the page on submission.
-            { onSubmit:
-              handler preventDefault \_ -> case validated of
-                Nothing -> do
-                  setModified
-                Just { firstName, lastName } -> setUserDialog $ Just { firstName, lastName }
-            , style: R.css { alignSelf: "stretch" }
-            , children: [ form ]
-            }
+        $ fragment
+            [ R.form -- Forms should be enclosed in a single "<form>" element to enable
+                -- default browser behavior, such as the enter key. Use "type=submit"
+                -- on the form's submit button and `preventDefault` to keep the browser
+                -- from reloading the page on submission.
+                { onSubmit:
+                  handler preventDefault \_ -> case validated of
+                    Nothing -> do
+                      setModified
+                    Just { firstName, lastName } -> setUserDialog $ Just { firstName, lastName }
+                , style: R.css { alignSelf: "stretch" }
+                , children: [ form ]
+                }
+            , R.text $ show validated
+            ]
     where
     userForm ∷ ∀ props. FormBuilder { readOnly ∷ Boolean | props } User ValidUser
     userForm = ado
@@ -90,4 +95,8 @@ aForm = do
           $ Form.inputBox (nes (Proxy ∷ _ "Last Name")) Required
               { placeholder: "Last name"
               }
-      in { firstName, lastName }
+      isAdmin <-
+        Form.indent "Admin?" Neither
+          $ Form.focus (prop (Proxy ∷ _ "isAdmin"))
+          $ Form.toggle {}
+      in { firstName, lastName, isAdmin }

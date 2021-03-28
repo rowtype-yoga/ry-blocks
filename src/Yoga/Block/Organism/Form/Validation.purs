@@ -59,10 +59,8 @@ import Foreign.Generic (class Decode, class Encode, decode, encode)
 import Heterogeneous.Mapping (class MapRecordWithIndex, class Mapping, ConstMapping, hmap, mapping)
 import Prim.RowList as RL
 import React.Basic.DOM as R
-import Record (disjointUnion)
 import Yoga.Block as Block
-import Yoga.Block.Atom.Input as Input
-import Yoga.Block.Organism.Form.Internal (Forest, FormBuilder, formBuilder_, FormBuilder'(..), Tree(..))
+import Yoga.Block.Organism.Form.Internal (Forest, FormBuilder, FormBuilder'(..), Tree(..))
 
 -- | A `Validator` takes a possibly invalid form `result` and produces
 -- | a `valid` result, or an error message.

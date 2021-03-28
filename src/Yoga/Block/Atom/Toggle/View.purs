@@ -1,6 +1,5 @@
 module Yoga.Block.Atom.Toggle.View
   ( component
-  , MandatoryProps
   , Props
   , PropsF
   ) where
@@ -28,14 +27,10 @@ type PropsF f =
   ( className ∷ f String
   , left ∷ f JSX
   , right ∷ f JSX
-  | Style.Props f (MandatoryProps InputWritableProps)
-  )
-
-type MandatoryProps r =
-  ( togglePosition ∷ TogglePosition
-  , setTogglePosition ∷ TogglePosition -> Effect Unit
-  , ariaLabel ∷ String
-  | r
+  , ariaLabel ∷ f String
+  , value ∷ f TogglePosition
+  , onChange ∷ f (TogglePosition -> Effect Unit)
+  | Style.Props f (InputWritableProps)
   )
 
 data TappingState
@@ -61,7 +56,7 @@ type Props =
 type PropsOptional =
   PropsF OptionalProp
 
-component ∷ ∀ p p_. Union p p_ Props => ReactComponent { | MandatoryProps p }
+component ∷ ∀ p p_. Union p p_ Props => ReactComponent { | p }
 component = rawComponent
 
 rawComponent ∷ ∀ p. ReactComponent (Record p)
@@ -69,6 +64,11 @@ rawComponent =
   mkForwardRefComponent "Toggle" do
     \(props ∷ { | PropsOptional }) ref -> React.do
       let disabled = props.disabled
+      togglePosition /\ setTogglePositionState <- useState' (props.value ?|| ToggleIsLeft)
+      let
+        setTogglePosition newPos = do
+          for_ props.onChange (\f -> f newPos)
+          setTogglePositionState newPos
       buttonRef <- useRef null
       toggleRef <- useRef null
       tapState <- useRef TapNotAllowed
@@ -82,9 +82,9 @@ rawComponent =
             maybeBbox <- getBoundingBoxFromRef buttonRef
             for_ maybeBbox \bbox -> do
               if endX - startX <= (bbox.left - startX) + (bbox.width / 2.0) then do
-                props.setTogglePosition ToggleIsLeft
+                setTogglePosition ToggleIsLeft
               else do
-                props.setTogglePosition ToggleIsRight
+                setTogglePosition ToggleIsRight
         mempty
       let
         buttonVariants =
@@ -99,14 +99,14 @@ rawComponent =
             [ animateTextPresence
                 [ textContainer
                     [ textOnContainer
-                        [ guard (props.togglePosition == ToggleIsRight)
+                        [ guard (togglePosition == ToggleIsRight)
                             $ textOn
                                 [ props.left
                                     ?|| (Icon.component </> { icon: SVGIcon.on, stroke: Style.successTextColour })
                                 ]
                         ]
                     , textOffContainer
-                        [ guard (props.togglePosition == ToggleIsLeft)
+                        [ guard (togglePosition == ToggleIsLeft)
                             $ textOff
                                 [ props.right
                                     ?|| (Icon.component </> { icon: SVGIcon.off, stroke: Style.disabledTextColour })
@@ -124,22 +124,22 @@ rawComponent =
             , transition: Motion.transition { type: "tween", duration: 0.33, ease: "easeOut" }
             , variants: Motion.variants buttonVariants
             , animate:
-              Motion.animate case props.togglePosition of
+              Motion.animate case togglePosition of
                 ToggleIsRight -> buttonVariant.right
                 ToggleIsLeft -> buttonVariant.left
-            , value: show props.togglePosition
-            , onClick: handler preventDefault \_ -> props.setTogglePosition (flipToggle props.togglePosition)
+            , value: show togglePosition
+            , onClick: handler preventDefault \_ -> setTogglePosition (flipToggle togglePosition)
             , style: props.style
             , _data: Object.singleton "testid" "toggle-testid"
             , role: "switch"
             , _aria:
               Object.fromHomogeneous
                 { checked:
-                  case props.togglePosition of
+                  case togglePosition of
                     ToggleIsLeft -> "false"
                     ToggleIsRight -> "true"
-                , label: props.ariaLabel
                 }
+                <>? (props.ariaLabel <#> Object.singleton "label")
             , ref: buttonRef
             , children
             }
@@ -179,8 +179,8 @@ rawComponent =
           toggleCircle
             </> { buttonRef
               , toggleRef
-              , togglePosition: props.togglePosition
-              , setTogglePosition: props.setTogglePosition
+              , togglePosition
+              , onChange: setTogglePosition
               , dragState
               , setDragState
               , tapState
@@ -189,7 +189,7 @@ rawComponent =
 
 toggleCircle ∷
   ReactComponent
-    { setTogglePosition ∷ TogglePosition -> Effect Unit
+    { onChange ∷ TogglePosition -> Effect Unit
     , toggleRef ∷ NodeRef
     , buttonRef ∷ NodeRef
     , togglePosition ∷ TogglePosition
@@ -201,7 +201,7 @@ toggleCircle =
   unsafePerformEffect
     $ reactComponent "ToggleCircle" do
         \( { togglePosition
-          , setTogglePosition
+          , onChange
           , toggleRef
           , buttonRef
           , dragState
@@ -264,7 +264,7 @@ toggleCircle =
                 Motion.onTap \_ pi -> do
                   ts <- readRef tapState
                   case ts of
-                    TapAllowed -> setTogglePosition (flipToggle togglePosition)
+                    TapAllowed -> onChange (flipToggle togglePosition)
                     _ -> mempty
                   mempty
               , onTapCancel:

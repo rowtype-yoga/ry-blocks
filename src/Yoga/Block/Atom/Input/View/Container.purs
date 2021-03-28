@@ -2,7 +2,6 @@ module Yoga.Block.Atom.Input.View.Container where
 
 import Yoga.Prelude.View
 import Data.Array as Array
-import Data.Int (toNumber)
 import Data.Interpolate (i)
 import Foreign.Object as Object
 import Framer.Motion as M

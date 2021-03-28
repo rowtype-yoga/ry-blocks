@@ -11,15 +11,13 @@ spec =
       it "renders without errors" do
         void
           $ renderComponent Toggle.component
-              { togglePosition: ToggleIsLeft
-              , setTogglePosition: mempty
+              { value: ToggleIsLeft
               , ariaLabel: "Example Toggle"
               }
       it "has an aria-label" do
         { findByRole } <-
           renderComponent Toggle.component
-            { togglePosition: ToggleIsLeft
-            , setTogglePosition: mempty
+            { value: ToggleIsLeft
             , ariaLabel: "Example Toggle"
             }
         elem <- findByRole "switch"

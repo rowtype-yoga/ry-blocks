@@ -39,8 +39,8 @@ toggle = do
       togglePosition /\ setTogglePosition <- React.useState' ToggleIsRight
       pure
         $ element Toggle.component
-            { togglePosition
-            , setTogglePosition
+            { value: togglePosition
+            , onChange: setTogglePosition
             , ariaLabel: "dark-light-toggle"
             }
 
@@ -51,9 +51,9 @@ toggle = do
       let
         content =
           element Toggle.component
-            { togglePosition: togglePosition
+            { value: togglePosition
             , ariaLabel: "dark-light-toggle"
-            , setTogglePosition:
+            , onChange:
               \newTogglePosition -> do
                 setTogglePosition newTogglePosition
                 setTheme case newTogglePosition of

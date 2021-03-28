@@ -10,7 +10,7 @@ import React.Basic.DOM as R
 import React.Basic.Emotion as E
 import React.Basic.Hooks as React
 import React.Basic.Popper.Hook (usePopper)
-import React.Basic.Popper.Types (modifierArrow, modifierOffset)
+import React.Basic.Popper (modifierArrow, modifierOffset)
 import Unsafe.Coerce (unsafeCoerce)
 import Yoga.Block as Block
 import Yoga.Block.Container.Style as Styles
@@ -143,8 +143,7 @@ animatedPopper = do
           }
       on /\ setOn <- React.useState' true
       -- Handlers
-      let
-        buttonClicked = setOn (not on)
+      let buttonClicked = setOn (not on)
       -- Elements
       let
         result =

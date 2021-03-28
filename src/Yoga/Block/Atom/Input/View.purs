@@ -29,6 +29,8 @@ type PropsF f r =
   , trailing ∷ f JSX
   , label ∷ f NonEmptyString
   , type ∷ f HTMLInputType
+  , inputRef ∷ f NodeRef
+  , forceSmallLabel ∷ f Boolean
   | Style.Props f r
   )
 
@@ -58,7 +60,8 @@ rawComponent =
   mkForwardRefComponent "InputContainer" do
     \(props ∷ { | PropsOptional }) propsRef -> React.do
       hasFocus /\ setHasFocus <- useState' false
-      parentRef ∷ NodeRef <- useRef null
+      inputBackupRef ∷ NodeRef <- useRef null
+      let inputRef = props.inputRef ?|| inputBackupRef
       backupRef ∷ NodeRef <- useRef null
       let ref = forwardedRefAsMaybe propsRef # fromMaybe backupRef
       let
@@ -89,8 +92,8 @@ rawComponent =
                 , renderLargeLabel
                 , labelId
                 , inputId: props.id ?|| "no-id" -- [TODO] Enforce ID?
-                , inputRef: ref
-                , parentRef
+                , inputRef
+                , parentRef:ref
                 , labelText
                 , background: props.background ?|| E.str colour.interfaceBackground
                 }
@@ -138,7 +141,9 @@ rawComponent =
                           ( RB.delete (Proxy ∷ _ "leading")
                               >>> RB.delete (Proxy ∷ _ "label")
                               >>> RB.delete (Proxy ∷ _ "trailing")
-                              >>> RB.insert (Proxy ∷ _ "ref") ref
+                              >>> RB.delete (Proxy ∷ _ "inputRef")
+                              >>> RB.delete (Proxy ∷ _ "forceSmallLabel")
+                              >>> RB.insert (Proxy ∷ _ "ref") inputRef
                           )
                   )
               )
@@ -147,7 +152,7 @@ rawComponent =
             </ { hasFocus: hasFocus
               , isInvalid: aria # Object.lookup "invalid" <#> (_ == "true") # maybeToOp
               , css: props.css
-              , ref: parentRef
+              , ref
               }
             /> [ leading # foldMap \l -> div </ {} /> [ l ]
               , theInput

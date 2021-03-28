@@ -3,6 +3,7 @@ module Yoga.Block.Atom.Toggle.Style where
 import Yoga.Prelude.Style
 import Yoga.Block.Container.Style (colour)
 
+type Props :: forall k. (Type -> k) -> Row k -> Row k
 type Props f r =
   ( css ∷ f Style
   , backgroundLeft ∷ f Color

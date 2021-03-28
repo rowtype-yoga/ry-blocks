@@ -26,5 +26,5 @@ rawComponent =
         $ emotionDiv ref props
             { className: "ry-cluster " <>? props.className
             , css: Style.cluster props
-            , children: [ R.div' </ {} /> props.children ]
+            , children: [ R.div_ props.children ]
             }

@@ -2,7 +2,7 @@ module Yoga.Block.Organism.Form
   ( module Defaults
   , module Yoga.Block.Organism.Form.Internal
   , module Validation
-  , build
+  -- , build
   , build'
   , defaultRenderForm
   , defaultRenderForest
@@ -11,6 +11,7 @@ module Yoga.Block.Organism.Form
   , formState
   , inputBox
   , static
+  , toggle
   , focus
   , match
   , match_
@@ -47,6 +48,8 @@ import Yoga.Block as Block
 import Yoga.Block.Atom.Input as Input
 import Yoga.Block.Atom.Input.Types (HTMLInputType)
 import Yoga.Block.Atom.Input.Types as HTMLInputType
+import Yoga.Block.Atom.Toggle as Toggle
+import Yoga.Block.Atom.Toggle.Types (TogglePosition(..))
 import Yoga.Block.Organism.Form.Defaults (formDefaults) as Defaults
 import Yoga.Block.Organism.Form.Internal (Forest, FormBuilder, FormBuilder'(..), Tree(..), formBuilder, formBuilder_, pruneTree)
 import Yoga.Block.Organism.Form.Types (RequiredField(..))
@@ -62,7 +65,6 @@ build ∷
   ReactComponent
     { value ∷ unvalidated
     , onChange ∷ (unvalidated -> unvalidated) -> Effect Unit
-    , inlineTable ∷ Boolean
     , formProps ∷ { readOnly ∷ Boolean | props }
     }
 build = build' defaultRenderForm
@@ -104,20 +106,18 @@ build' render editor =
 -- | form fields.
 defaultRenderForm ∷
   ∀ props.
-  { inlineTable ∷ Boolean
-  } ->
+  {} ->
   { readOnly ∷ Boolean
   | props
   } ->
   Forest ->
   JSX
-defaultRenderForm renderProps@{ inlineTable } { readOnly } forest =
+defaultRenderForm _ { readOnly } forest =
   R.div
     { className:
       String.joinWith " "
         $ fold
             [ [ "lumi-form" ]
-            , guard inlineTable [ "inline-table" ]
             , guard readOnly [ "readOnly" ]
             ]
     , children:
@@ -165,7 +165,6 @@ useForm ∷
     unvalidated
     result ->
   { initialState ∷ unvalidated
-  , inlineTable ∷ Boolean
   , formProps ∷ { readOnly ∷ Boolean | props }
   } ->
   Hooks.Hook (Hooks.UseState unvalidated)
@@ -177,12 +176,7 @@ useForm ∷
     , form ∷ JSX
     }
 useForm editor props = Hooks.do
-  let
-    renderer =
-      defaultRenderForm
-        { inlineTable: props.inlineTable
-        }
-        props.formProps
+  let renderer = defaultRenderForm {} props.formProps
   f <- useForm' editor props.initialState props.formProps
   pure f { form = renderer f.form }
 
@@ -227,8 +221,6 @@ formState ∷
   Mapping Validation.ModifyValidated unvalidated unvalidated =>
   { initialState ∷ unvalidated
   , form ∷ FormBuilder { readOnly ∷ Boolean | props } unvalidated result
-  , inlineTable ∷ Boolean
-  , forceTopLabels ∷ Boolean
   , formProps ∷ { readOnly ∷ Boolean | props }
   , render ∷
     { formData ∷ unvalidated
@@ -247,7 +239,6 @@ formState =
       state <-
         useForm props.form
           { initialState: props.initialState
-          , inlineTable: props.inlineTable
           , formProps: props.formProps
           }
       pure (props.render state)
@@ -455,7 +446,7 @@ inputBox ∷
   Union p InputFixedProps q =>
   Union q r Input.Props =>
   Nub q q =>
-  NonEmptyString -> RequiredField -> (Record p) -> FormBuilder { readOnly ∷ Boolean | more } String String
+  NonEmptyString -> RequiredField -> Record p -> FormBuilder { readOnly ∷ Boolean | more } String String
 inputBox label requiredField inputProps =
   formBuilder_ \{ readOnly } s onChange ->
     element Input.component
@@ -472,5 +463,35 @@ inputBox label requiredField inputProps =
                 Optional -> mempty
                 Neither -> mempty
             , css: E.css { width: E.percent 100.0 }
+            }
+      )
+
+type ToggleFixedProps =
+  ( value ∷ TogglePosition
+  , onChange ∷ TogglePosition -> Effect Unit
+  , disabled ∷ Boolean
+  )
+
+-- | A toggle for Boolean values
+toggle ∷
+  ∀ p q r more.
+  Union p ToggleFixedProps q =>
+  Union q r Toggle.Props =>
+  Nub q q =>
+  (Record p) -> FormBuilder { readOnly ∷ Boolean | more } Boolean Boolean
+toggle toggleProps =
+  formBuilder_ \{ readOnly } value onChange ->
+    element Toggle.component
+      ( toggleProps
+          `disjointUnion`
+            { value:
+              case value of
+                false -> ToggleIsLeft
+                true -> ToggleIsRight
+            , onChange:
+              case _ of
+                ToggleIsLeft -> onChange false
+                ToggleIsRight -> onChange true
+            , disabled: readOnly
             }
       )

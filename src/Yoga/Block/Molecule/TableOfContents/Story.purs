@@ -3,27 +3,18 @@ module Yoga.Block.Molecule.TableOfContents.Story where
 import Prelude
 import Control.Comonad.Cofree as Cofree
 import Data.Array (foldMap)
-import Data.Array as Array
-import Data.Either (Either(..), hush)
 import Data.Foldable (fold)
 import Data.Tuple.Nested ((/\))
-import Data.FoldableWithIndex (foldMapWithIndex)
-import Data.List ((:))
-import Data.List as List
-import Data.List.Lazy (Step(..))
-import Data.Maybe (Maybe(..))
 import Data.Monoid (power)
-import Data.Traversable (for_, sequence, traverse)
+import Data.Traversable (traverse)
 import Data.Tree (Forest, Tree, mkLeaf, mkTree)
-import Data.Tree.Zipper (fromTree)
-import Data.Tree.Zipper as Zipper
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
 import React.Basic (JSX, element, fragment)
 import React.Basic.DOM as R
 import React.Basic.Emotion as E
 import React.Basic.Hooks as React
-import Yoga ((/>), (</), (</>))
+import Yoga ((/>), (</))
 import Yoga.Block.Container.Style as Styles
 import Yoga.Block.Internal (createRef)
 import Yoga.Block.Molecule.TableOfContents as TableOfContents

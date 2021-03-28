@@ -61,7 +61,7 @@ stack = Stack.component
 switcher ∷ ∀ p q. Union p q Switcher.Props => ReactComponent { | p }
 switcher = Switcher.component
 
-toggle ∷ ∀ p q. Union p q Toggle.Props => ReactComponent { | Toggle.MandatoryProps p }
+toggle ∷ ∀ p q. Union p q Toggle.Props => ReactComponent { | p }
 toggle = Toggle.component
 
 tooltip ∷ ∀ p q. Union p q Tooltip.Props => ReactComponent { | Tooltip.MandatoryProps p }

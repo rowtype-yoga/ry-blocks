@@ -46,10 +46,10 @@ switcher =
                             5
                       ]
                 ]
-            , R.h2_ [ R.text "Limit of 5 and 6 children" ]
+            , R.h2_ [ R.text "Limit of 4 and 5 children" ]
             , el Switcher.component
                 { style: css { backgroundColor: "darkslateblue" }
-                , limit: 200
+                , limit: 4
                 , space: "0"
                 }
                 [ R.div_
@@ -58,7 +58,7 @@ switcher =
                           , style: css { backgroundColor: "teal" }
                           }
                           `power`
-                            6
+                            5
                       ]
                 ]
             ]

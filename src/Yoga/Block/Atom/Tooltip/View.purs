@@ -9,7 +9,7 @@ import React.Basic.DOM as R
 import React.Basic.Hooks as React
 import React.Basic.Hooks.Aff (useAff)
 import React.Basic.Popper.Hook (usePopper)
-import React.Basic.Popper.Types (modifierArrow, modifierOffset, nullRef)
+import React.Basic.Popper (modifierArrow, modifierOffset, nullRef)
 import Unsafe.Coerce (unsafeCoerce)
 import Yoga.Block.Atom.Tooltip.Style as Style
 

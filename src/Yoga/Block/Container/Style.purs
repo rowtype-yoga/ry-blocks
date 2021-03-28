@@ -2,7 +2,7 @@ module Yoga.Block.Container.Style where
 
 import Yoga.Prelude.Style
 import Color as Color
-import Data.Symbol (class IsSymbol, SProxy, reflectSymbol)
+import Data.Symbol (class IsSymbol, reflectSymbol)
 import Effect.Uncurried (EffectFn2, runEffectFn2)
 import Foreign.Object (Object)
 import Foreign.Object as Object
@@ -14,7 +14,7 @@ import Web.Event.Internal.Types (EventTarget)
 import Web.HTML (Window, window)
 import Web.HTML.HTMLDocument as HTMLDocument
 import Web.HTML.Window (document)
-import Type.Proxy (Proxy(..))
+import Type.Proxy (Proxy)
 
 data DarkOrLightMode
   = DarkMode
@@ -222,6 +222,9 @@ defaultColours =
     , backgroundLayer4: darken 0.02 >>> rotateHue (0.0) >>> desaturate 0.05 $ lightBg
     , backgroundLayer5: lightBg
     , highlight
+    , highlightAlpha33: highlightBase 0.33
+    , highlightAlpha50: highlightBase 0.50
+    , highlightAlpha67: highlightBase 0.67
     , highlightDarker: withAlpha 0.15 (Color.darken 0.5 highlight)
     , highlightDisabled: (desaturate 0.80 >>> lighten 0.28) highlight
     , highlightLighter: withAlpha 0.2 (Color.lighten 0.5 highlight)
@@ -256,6 +259,9 @@ defaultColours =
     , backgroundLayer4: lighten 0.21 >>> saturate 0.08 $ darkBg
     , backgroundLayer5: lighten 0.30 >>> saturate 0.07 $ darkBg
     , highlight: highlightDark
+    , highlightAlpha33: highlightDarkBase 0.33
+    , highlightAlpha50: highlightDarkBase 0.50
+    , highlightAlpha67: highlightDarkBase 0.67
     , highlightDarker: withAlpha 0.4 (Color.darken 0.5 highlightDark)
     , highlightDisabled: (desaturate 0.76 >>> darken 0.32) highlightDark
     , highlightLighter: withAlpha 0.2 (Color.lighten 0.5 highlightDark)
@@ -285,9 +291,13 @@ defaultColours =
   where
   darkBg = Color.hsl 240.0 0.07 0.10
 
-  highlight = Color.hsl 275.0 0.82 0.4
+  highlightBase = Color.hsla 275.0 0.82 0.4
 
-  highlightDark = Color.hsl 265.0 1.00 0.6
+  highlight = highlightBase 1.0
+
+  highlightDarkBase = Color.hsla 265.0 1.00 0.6
+
+  highlightDark = Color.hsla 265.0 1.00 0.6 1.0
 
   highlightText = Color.rgb 0xFF 0xFF 0xFF
 
@@ -323,7 +333,7 @@ defaultColours =
 
   text = Color.rgb 16 16 32
 
-  textDark = Color.rgb 220 210 220
+  textDark = Color.rgb 230 230 250
 
 type FlatTheme a =
   { background ∷ a
@@ -344,6 +354,9 @@ type FlatTheme a =
   , inputBorder ∷ a
   , link ∷ a
   , highlight ∷ a
+  , highlightAlpha33 ∷ a
+  , highlightAlpha50 ∷ a
+  , highlightAlpha67 ∷ a
   , highlightRotatedBackwards ∷ a
   , highlightRotatedForwards ∷ a
   , highlightDarker ∷ a

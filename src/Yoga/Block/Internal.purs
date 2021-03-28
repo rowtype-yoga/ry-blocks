@@ -59,7 +59,7 @@ import Web.DOM (Node)
 import Web.HTML.HTMLElement (DOMRect, HTMLElement, getBoundingClientRect, offsetHeight, offsetWidth)
 import Web.HTML.HTMLElement as HTMLElement
 import Yoga.Block.Internal.CSS (_0)
-import Yoga.Block.Internal.OptionalProp (Id, OptionalProp(..), appendIfDefined, asOptional, composeHandler, getOr, getOrFlipped, ifTrue, isTruthy, maybeToOp, opToMaybe, setOrDelete, unsafeUnMaybe, unsafeUnOptional, (<>?), (?||))
+import Yoga.Block.Internal.OptionalProp (OptionalProp(..), Id, appendIfDefined, asOptional, composeHandler, getOr, getOrFlipped, ifTrue, isTruthy, maybeToOp, opToMaybe, setOrDelete, unsafeUnMaybe, unsafeUnOptional, (<>?), (?||))
 
 foreign import mkForwardRefComponent ∷
   ∀ inputProps props a hooks.

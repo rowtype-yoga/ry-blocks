@@ -2,11 +2,7 @@ module React.Basic.Popper.Types where
 
 import Foreign.Object (Object)
 import React.Basic.DOM (CSS)
-import Unsafe.Coerce (unsafeCoerce)
-import Yoga.Prelude.View (NodeRef, null)
-
-nullRef ∷ NodeRef
-nullRef = unsafeCoerce null
+import Yoga.Prelude.View (NodeRef)
 
 type ReferenceElement =
   NodeRef
@@ -27,12 +23,6 @@ type PopperData =
   { styles ∷ Styles, attributes ∷ DataAttributes }
 
 foreign import data Modifier ∷ Type
-
-modifierArrow ∷ ArrowElement -> Modifier
-modifierArrow element = unsafeCoerce { name: "arrow", options: { element } }
-
-modifierOffset ∷ { x ∷ Number, y ∷ Number } -> Modifier
-modifierOffset { x, y } = unsafeCoerce { name: "offset", options: { offset: [ x, y ] } }
 
 type Options =
   ( modifiers ∷ Array Modifier
