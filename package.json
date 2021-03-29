@@ -50,6 +50,7 @@
   "dependencies": {
     "@emotion/core": "^10.0.28",
     "@popperjs/core": "^2.6.0",
+    "focus-trap-react": "^8.4.2",
     "framer-motion": "^4.0.3",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",

@@ -7,6 +7,7 @@ import Effect.Class.Console (warn)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object as Object
 import Framer.Motion as M
+import React.Basic.DOM (css)
 import React.Basic.DOM as R
 import React.Basic.Emotion (StyleProperty)
 import React.Basic.Hooks (reactComponent)
@@ -15,8 +16,7 @@ import Record.Extra (sequenceRecord)
 import Yoga.Block.Atom.Input.Style as Style
 
 type Props =
-  { onClickLargeLabel ∷ EventHandler
-  , isRequired ∷ Boolean
+  { isRequired ∷ Boolean
   , isInvalid ∷ Boolean
   , isFocussed ∷ Boolean
   , renderLargeLabel ∷ Boolean
@@ -117,10 +117,10 @@ component =
                         }
           labelSpan =
             M.span
-              </ { onClick: props.onClickLargeLabel
-                , layout: M.layout true
+              </ { layout: M.layout true
                 , layoutId: M.layoutId "ry-input-label-text"
                 , htmlFor: props.inputId
+                , style: css { pointerEvents: "none" }
                 , id: props.labelId
                 }
         pure result

@@ -79,14 +79,13 @@ rawComponent =
         labelId ∷ String
         labelId = props.id # opToMaybe # fold # (_ <> "-label")
         renderLargeLabel ∷ Boolean
-        renderLargeLabel = not hasFocus && not hasValue
+        renderLargeLabel = not (isTruthy props.forceSmallLabel) && not hasFocus && not hasValue
         maybeLabelText ∷ Maybe NonEmptyString
         maybeLabelText = props.label # opToMaybe
         mkLabel ∷ NonEmptyString -> JSX
         mkLabel labelText = 
           Label.component
-              </> { onClickLargeLabel: handler preventDefault (const focusInput)
-                , isFocussed: hasFocus
+              </> { isFocussed: hasFocus
                 , isRequired: aria # Object.lookup "required" # (_ == Just "true")
                 , isInvalid: aria # Object.lookup "invalid" # (_ == Just "true")
                 , renderLargeLabel
