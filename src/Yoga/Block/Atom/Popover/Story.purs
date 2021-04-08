@@ -3,7 +3,7 @@ module Yoga.Block.Atom.Popover.Story where
 import Prelude
 import Data.Array as Array
 import Data.Foldable (for_, traverse_)
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), maybe)
 import Data.Monoid (guard)
 import Data.Nullable (null)
 import Data.String as String
@@ -13,13 +13,14 @@ import Data.Tuple.Nested ((/\))
 import Effect (Effect)
 import Effect.Uncurried (mkEffectFn1)
 import Effect.Unsafe (unsafePerformEffect)
+import Foreign.Object as Object
 import Framer.Motion (animatePresence)
 import Framer.Motion as Motion
-import React.Basic (JSX, ReactComponent, element, elementKeyed, fragment)
+import React.Basic (JSX, ReactComponent, element, fragment)
 import React.Basic.DOM (CSS, css)
 import React.Basic.DOM as R
 import React.Basic.DOM.Events (preventDefault, targetValue)
-import React.Basic.Emotion (str)
+import React.Basic.Emotion (elementKeyed, str)
 import React.Basic.Emotion as E
 import React.Basic.Events (handler, handler_)
 import React.Basic.Hooks (reactComponent, readRefMaybe)
@@ -30,7 +31,7 @@ import React.Basic.Popper.Placement.Types as Placement
 import Unsafe.Coerce (unsafeCoerce)
 import Web.HTML.HTMLElement (focus)
 import Web.HTML.HTMLElement as HTMLElement
-import Yoga ((/>), (</), (</*), (</>))
+import Yoga ((/>), (</), (</>))
 import Yoga.Block as Block
 import Yoga.Block.Atom.Icon as Icon
 import Yoga.Block.Atom.Input as Input
@@ -38,8 +39,9 @@ import Yoga.Block.Atom.Input.Types as HTMLInput
 import Yoga.Block.Atom.Popover as Popover
 import Yoga.Block.Container.Style (colour)
 import Yoga.Block.Container.Style as Styles
+import Yoga.Block.Hook.Key as KeyCode
+import Yoga.Block.Hook.UseKeyDown (useKeyDown)
 import Yoga.Block.Icon.SVG as Icons
-import Yoga.Block.Internal.CSS (nest)
 import Yoga.Block.Layout.Box as Box
 import Yoga.Block.Layout.Stack as Stack
 
@@ -78,19 +80,46 @@ popover = do
       referenceElement /\ setReferenceElement <- React.useState' nullRef
       inputRef <- React.useRef null
       text /\ setText <- React.useState' ""
+      active /\ modifyActive <- React.useState Nothing
       clicking /\ setClicking <- React.useState' false
       visible /\ setVisible <- React.useState' false
-      selectedAuthors /\ modSelectedAuthors' <- React.useState []
+      selectedAuthors /\ modSelectedAuthors <- React.useState []
       let
-        modSelectedAuthors f = modSelectedAuthors' (f >>> Array.sort)
+        addToSelected a = modSelectedAuthors (_ `Array.union` [ a ])
         matchingAuthors =
           authors
             # (_ Array.\\ selectedAuthors)
             # Array.filter
-                ( \a ->
-                    String.contains (String.Pattern (String.toLower text))
-                      (String.toLower a)
+                ( String.toLower
+                    >>> String.contains (String.Pattern (String.toLower text))
                 )
+      useKeyDown
+        $ case _ of
+            KeyCode.Down ->
+              when visible do
+                let first = Array.head matchingAuthors
+                modifyActive case _ of
+                  Just elem ->
+                    maybe first Just do
+                      idx <- Array.findIndex (eq elem) matchingAuthors
+                      Array.index matchingAuthors (idx + 1)
+                  Nothing -> first
+            KeyCode.Up ->
+              when visible do
+                let last = Array.last matchingAuthors
+                modifyActive case _ of
+                  Just elem ->
+                    maybe last Just do
+                      idx <- Array.findIndex (eq elem) matchingAuthors
+                      Array.index matchingAuthors (idx - 1)
+                  Nothing -> last
+            KeyCode.Return ->
+              when visible do
+                for_ active addToSelected
+            KeyCode.Backspace ->
+              when (text == "") do
+                modSelectedAuthors (Array.dropEnd 1)
+            _ -> mempty
       let
         inputWrapper = R.div' </ { ref: unsafeCoerce (mkEffectFn1 setReferenceElement) }
         pill t =
@@ -102,7 +131,8 @@ popover = do
                           { fontSize: "var(--s-1)"
                           , borderRadius: "var(--s-2)"
                           , padding: "var(--s-2)"
-                          , background: colour.highlightAlpha33
+                          , background: colour.highlightAlpha50
+                          , userSelect: "none"
                           }
                       , space: "4px"
                       , justify: "flex-end"
@@ -133,6 +163,12 @@ popover = do
                 }
                 {}
             /> pills
+        trailing =
+          R.div'
+            </ { style: css { fontSize: "var(--s1)", paddingBottom: "4px", userSelect: "none" }
+              , onClick: handler_ (setVisible true)
+              }
+            /> [ R.text "▾" ]
         input =
           Input.component
             </> { id: "author"
@@ -150,19 +186,21 @@ popover = do
                   else
                     text
               , onChange: handler targetValue $ traverse_ setText
-              , onBlur: handler preventDefault (const (setVisible false))
+              , onBlur: handler preventDefault (const $ unless clicking (setVisible false))
               , onFocus: handler_ (setVisible true)
               , leading
+              , trailing
+              , _data: Object.singleton "has-focus" (show visible)
               , autoComplete: "off"
               , css: E.css { width: E.percent 100.0 }
               }
         pop children =
-          elementKeyed motionPopover
+          Motion.elementKeyed motionPopover
             $ Motion.motion
                 { initial:
-                  css { maxHeight: 0, opacity: 1.0 }
+                  css { maxHeight: 0, opacity: 0.0 }
                 , exit:
-                  css { maxHeight: 0, opacity: 1.0 }
+                  css { maxHeight: 0, opacity: 0.0 }
                 , animate:
                   css
                     { maxHeight: 400
@@ -192,7 +230,7 @@ popover = do
                     , padding: "0"
                     }
                 , key: "popover"
-                , children
+                , children: [ R.ul' </ {} /> children ]
                 }
         box =
           Box.component
@@ -209,33 +247,34 @@ popover = do
                 , exit: Motion.exit containerVariant.exit
                 }
         entry a =
-          Motion.div
-            </* { key: a
-              , variants: Motion.variants itemVariants
-              , css:
-                E.css
-                  { "&:hover":
-                    nest
-                      { borderLeft: E.str $ "calc(var(--s-1) / 2) solid " <> colour.highlight
-                      , paddingLeft: E.str "calc(var(--s-1) / 2)"
-                      , background: E.str colour.backgroundLayer1
-                      }
-                  , padding: E.str "var(--s-1)"
-                  , borderBottom: E.str $ "solid 1px " <> colour.backgroundLayer1
-                  , background: E.str colour.backgroundLayer3
-                  , margin: E.str "0"
-                  , fontSize: E.str "calc(var(--s0) * 0.75)"
-                  }
-              , className: "item"
-              , onClick:
-                handler_ do
-                  maybeRefElem <- readRefMaybe inputRef
-                  for_ (maybeRefElem >>= HTMLElement.fromNode) focus
-                  modSelectedAuthors (_ `Array.union` [ a ])
-              , onMouseDown: handler_ (setClicking true)
-              , onMouseUp: handler_ (setClicking false)
-              }
-            /> [ R.text a ]
+          elementKeyed Motion.li
+            { key: a
+            , variants: Motion.variants itemVariants
+            , css:
+              E.css
+                { padding: E.str "var(--s-1)"
+                , borderBottom: E.str $ "solid 1px " <> colour.backgroundLayer1
+                , background: E.str colour.backgroundLayer3
+                , margin: E.str "0"
+                , fontSize: E.str "calc(var(--s0) * 0.75)"
+                }
+                <> ( guard (Just a == active)
+                      $ E.css
+                          { borderLeft: E.str $ "calc(var(--s-1) / 2) solid " <> colour.highlight
+                          , paddingLeft: E.str "calc(var(--s-1) / 2)"
+                          , background: E.str colour.backgroundLayer1
+                          }
+                  )
+            , className: "item"
+            , onClick:
+              handler_ do
+                maybeRefElem <- readRefMaybe inputRef
+                addToSelected a
+                for_ (maybeRefElem >>= HTMLElement.fromNode) focus
+            , onMouseDown: handler_ (setClicking true)
+            , onMouseUp: handler_ (setClicking false)
+            , children: [ R.text a ]
+            }
       pure
         $ fragment
             [ inputWrapper [ input ]

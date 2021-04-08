@@ -4,7 +4,8 @@ You can edit this file as you like.
 -}
 { name = "ry-blocks"
 , dependencies =
-  [ "console"
+  [ "aff-promise"
+  , "console"
   , "debug"
   , "effect"
   , "foreign-generic"

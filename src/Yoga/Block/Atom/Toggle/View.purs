@@ -237,7 +237,7 @@ toggleCircle =
               , key: if isNothing maxLeft then "initialising" else "ready"
               , dragElastic: Motion.dragElastic false
               , dragConstraints:
-                Motion.dragConstraints
+                Motion.dragConstraintsBoundingBox
                   { left:
                     case togglePosition of
                       ToggleIsLeft -> zero

@@ -8,3 +8,5 @@ exports.setImpl = v => render => mv => () => {
 exports.isAnimating = mv => () => { return mv.isAnimating() }
 exports.stop = mv => () => { return mv.stop() }
 exports.onChangeImpl = callback => mv => { return () => mv.onChange(callback); }
+exports.animateImpl = framerMotion.animate
+exports.stopAnimation = (playbackControls) => playbackControls.stop

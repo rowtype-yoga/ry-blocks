@@ -8,10 +8,12 @@ import Foreign.Object as Object
 import Framer.Motion as M
 import React.Basic.DOM (css)
 import React.Basic.DOM as R
-import React.Basic.Emotion as E
 import React.Basic.Hooks as React
 import Record.Builder as RB
 import Type.Prelude (Proxy(..))
+import Web.DOM.Node (toEventTarget)
+import Web.Event.Event (EventType(..))
+import Web.Event.EventTarget (addEventListener, eventListener, removeEventListener)
 import Web.HTML.HTMLInputElement as InputElement
 import Yoga.Block.Atom.Icon as Icon
 import Yoga.Block.Atom.Input.Style as Style
@@ -78,8 +80,9 @@ rawComponent =
         aria = props._aria # opToMaybe # fold
         labelId ∷ String
         labelId = props.id # opToMaybe # fold # (_ <> "-label")
+        renderSmallLabel = isTruthy props.forceSmallLabel || hasFocus || hasValue
         renderLargeLabel ∷ Boolean
-        renderLargeLabel = not (isTruthy props.forceSmallLabel) && not hasFocus && not hasValue
+        renderLargeLabel = not renderSmallLabel
         maybeLabelText ∷ Maybe NonEmptyString
         maybeLabelText = props.label # opToMaybe
         mkLabel ∷ NonEmptyString -> JSX
@@ -94,7 +97,8 @@ rawComponent =
                 , inputRef
                 , parentRef:ref
                 , labelText
-                , background: props.background ?|| E.str colour.interfaceBackground
+                , background: props.background ?|| colour.interfaceBackground
+                , textColour: props.textColour ?|| colour.text
                 }
         leading ∷ Maybe JSX
         leading =
@@ -110,21 +114,35 @@ rawComponent =
           given <- props.placeholder # opToMaybe
           if isJust maybeLabelText && hasFocus then Just given else Nothing
         onBlur =
-          handler preventDefault
-            ( const do
+            const do
                 when hasFocus $ setHasFocus false
-                el <- getHTMLElementFromRef ref
+                el <- getHTMLElementFromRef inputRef
                 let inputEl = InputElement.fromHTMLElement =<< el
                 for_ inputEl \ie -> do
                   v <- InputElement.value ie
                   setHasValue (v /= "")
-            )
-        onFocus = handler preventDefault (const $ unless hasFocus $ setHasFocus true)
+ 
+        onFocus = const $ unless hasFocus $ setHasFocus true
+      useEffectAlways do
+        maybeInputRef <- readRefMaybe inputRef
+        case maybeInputRef of
+          Nothing ->  mempty
+          Just theRef -> do
+            let target = toEventTarget theRef
+            blurListener <- eventListener onBlur
+            focusListener <- eventListener onFocus
+            addEventListener (EventType "blur") blurListener true target
+            addEventListener (EventType "focus") focusListener true target
+            pure do
+              removeEventListener (EventType "blur") blurListener true target
+              removeEventListener (EventType "focus") focusListener true target
+
+      let
         inputProps ∷ { | PropsOptional }
         inputProps =
           props
-            { onFocus = cast (composeHandler onFocus props.onFocus)
-            , onBlur = cast (composeHandler onBlur props.onBlur)
+            { onFocus = props.onFocus
+            , onBlur = props.onBlur
             , placeholder = maybePlaceholder # maybeToOp
             , _aria =
               if props.label # opToMaybe # isJust then
@@ -151,6 +169,9 @@ rawComponent =
             </ { hasFocus: hasFocus
               , isInvalid: aria # Object.lookup "invalid" <#> (_ == "true") # maybeToOp
               , css: props.css
+              , background: props.background
+              , borderColour: props.borderColour
+              , textColor: props.textColour
               , ref
               }
             /> [ leading # foldMap \l -> div </ {} /> [ l ]
@@ -224,7 +245,7 @@ password =
                     ref
                     (props { type = InputTypes.toString <$> props.type })
                     { className: "ry-input"
-                    , css: Style.input
+                    , css: Style.input props
                     , type: if hidePassword then "password" else "text"
                     }
                 ]

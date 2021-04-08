@@ -8,7 +8,10 @@ import Yoga.Block.Container.Style (colour)
 type Props :: forall k. (Type -> k) -> Row k -> Row k
 type Props f r =
   ( css ∷ f Style
-  , background ∷ f StyleProperty
+  , background ∷ f String
+  , textColour ∷ f String
+  , placeholderColour ∷ f String
+  , borderColour ∷ f String
   | r
   )
 
@@ -55,8 +58,8 @@ labelContainer =
     , pointerEvents: none
     }
 
-labelSmall ∷ StyleProperty -> Style
-labelSmall background =
+labelSmall ∷ String -> String -> Style
+labelSmall background textColour =
   css
     { fontSize: var "--s-1"
     , marginTop: str "calc(var(--s-3) * -1)"
@@ -70,8 +73,8 @@ labelSmall background =
       nest
         { fontWeight: str "500"
         , whiteSpace: str "nowrap"
-        , background
-        , color: str colour.text
+        , background: str $ i "linear-gradient(" background "51%, transparent 51%, transparent)"
+        , color: str textColour
         , borderRadius: var "--s-4"
         , paddingLeft: var "--s-4"
         , paddingRight: var "--s-4"
@@ -107,11 +110,10 @@ labelLarge { left, width } =
     , padding: _0
     , whiteSpace: nowrap -- force on one line
     , overflow: str "hidden"
-    , height: str "calc(var(--s0) * 0.95)"
-    , maxWidth: str $ i width "px"
+    , height: str "calc(var(--s0))"
+    , maxWidth: str $ i  "calc(" width "px - 2ch)"
     , textOverflow: str "ellipsis"
     , marginTop: str "calc(var(--s-1) + var(--s-5))"
-    -- , marginBottom: str $ i "calc(" "var(--s-1)" "+" "var(--s-5)" " + " top "px" ")"
     , marginLeft: str $ i left "px"
     , marginRight: var "--input-side-padding"
     , color: str colour.placeholderText
@@ -171,7 +173,7 @@ inputContainer props = theCss <>? props.css
       , "--border-width": str "1px"
       , position: relative
       , boxSizing: borderBox
-      , background: (props.background ?|| str colour.interfaceBackground)
+      , background: str (props.background ?|| colour.interfaceBackground)
       , display: flex
       , width: str "calc(var(--s4) * 2)"
       , """&[data-invalid="false"]""":
@@ -213,13 +215,13 @@ inputWrapper =
     , width: inherit
     }
 
-input ∷ Style
-input =
+input ∷ ∀ r. { | Props OptionalProp r } -> Style
+input props =
   css
     { "&[type=text],&[type=search],&[type=password],&[type=number],&:not([type])":
       nest
         { background: str "transparent"
-        , color: str colour.text
+        , color: str (props.textColour ?|| colour.text)
         , width: _100percent
         , minWidth: _0
         , margin: _0
@@ -230,6 +232,10 @@ input =
         , fontSize: str "calc(var(--s0) * 0.85)"
         , "--padding-top": var "--s-1"
         , "--padding-bottom": var "--s-1"
+        , "&::placeholder":
+          nest
+            { color: str (props.placeholderColour ?|| colour.placeholderText)
+            }
         , "&[aria-labelledby]":
           nest
             { paddingTop: str "calc(var(--padding-top) + (var(--s-5)/2))"
@@ -239,7 +245,7 @@ input =
         }
     , "&[type=search]":
       nest
-        { "&::-webkit-search-decoration, &::-webkit-search-cancel-button, &::-webkit-serch-results-button, &::-webkit-search-results-decoration":
+        { "&::-webkit-search-decoration, &::-webkit-search-cancel-button, &::-webkit-search-results-button, &::-webkit-search-results-decoration":
           nest
             { "WebkitAppearance": none
             }
@@ -249,7 +255,6 @@ input =
         { outline: none
         }
     }
-
 
 plopAnimation ∷ StyleProperty
 plopAnimation =

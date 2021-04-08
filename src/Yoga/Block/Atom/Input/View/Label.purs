@@ -25,7 +25,8 @@ type Props =
   , inputRef ∷ NodeRef
   , parentRef ∷ NodeRef
   , labelText ∷ NonEmptyString
-  , background ∷ StyleProperty
+  , background ∷ String
+  , textColour ∷ String
   }
 
 component ∷ ReactComponent Props
@@ -82,7 +83,7 @@ component =
                       </* { className: "ry-input-label-small"
                         , layout: M.layout true
                         , layoutId: M.layoutId "ry-input-label"
-                        , css: Style.labelSmall props.background
+                        , css: Style.labelSmall props.background props.textColour
                         , transition: M.transition { duration: 0.18, ease: "easeOut" }
                         , _data:
                           Object.fromHomogeneous
@@ -105,7 +106,7 @@ component =
                           if props.renderLargeLabel then
                             Style.labelLarge { left: largeLeft, width: largeWidth }
                           else
-                            Style.labelSmall props.background
+                            Style.labelSmall props.background props.textColour
                         , transition: M.transition { duration: 0.18, ease: "easeOut" }
                         , _data:
                           Object.fromHomogeneous

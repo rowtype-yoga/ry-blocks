@@ -1,20 +1,18 @@
 module Yoga.Block.Organism.Form.Story where
 
 import Prelude
-import Data.Either (Either(..))
 import Data.Lens.Record (prop)
 import Data.Maybe (Maybe(..))
 import Data.String.NonEmpty (NonEmptyString, nes)
 import Data.Tuple.Nested ((/\))
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
-import Foreign.Object as Object
 import React.Basic (JSX, element, fragment)
 import React.Basic.DOM as R
 import React.Basic.DOM.Events (preventDefault)
 import React.Basic.Emotion as E
 import React.Basic.Events (handler)
-import React.Basic.Hooks (reactComponent, useState, useState')
+import React.Basic.Hooks (reactComponent, useState')
 import React.Basic.Hooks as React
 import Type.Prelude (Proxy(..))
 import Yoga ((</>))

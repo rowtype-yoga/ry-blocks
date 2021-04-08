@@ -18,9 +18,11 @@ data KeyCode
   | Right
   | Down
   | Delete
+  | Backspace
 
 keyCodeToInt ∷ KeyCode -> Int
 keyCodeToInt = case _ of
+  Backspace -> 8
   Return -> 13
   Escape -> 27
   End -> 35
@@ -33,6 +35,7 @@ keyCodeToInt = case _ of
 
 intToKeyCode ∷ Int -> Maybe KeyCode
 intToKeyCode = case _ of
+  8 -> Just Backspace
   13 -> Just Return
   27 -> Just Escape
   35 -> Just End

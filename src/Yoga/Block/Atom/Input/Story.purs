@@ -14,6 +14,7 @@ import Yoga ((/>), (</), (</>))
 import Yoga.Block as Block
 import Yoga.Block.Atom.Input as Input
 import Yoga.Block.Atom.Input.Types as HTMLInput
+import Yoga.Block.Container.Style (colour)
 import Yoga.Block.Container.Style as Styles
 
 default ∷
@@ -45,6 +46,26 @@ input = do
                   , element Input.component { label: nes (SProxy ∷ _ "Pig nose"), leading: R.text "🐽🤣" }
                   , element Input.component { label: nes (SProxy ∷ _ "Pig nose"), trailing: R.text "🤫" }
                   , element Input.component { label: nes (SProxy ∷ _ "Pig nose"), leading: R.text "🌭" }
+                  , Block.box
+                      </ { background: colour.backgroundLayer3
+                        }
+                      /> [ element Input.component
+                            { label: nes (SProxy ∷ _ "Different background")
+                            , leading: R.text "🌭"
+                            , forceSmallLabel: true
+                            }
+                        ]
+                  , Block.box
+                      </ { background: colour.backgroundLayer1
+                        }
+                      /> [ element Input.component
+                            { label: nes (SProxy ∷ _ "Another background")
+                            , background: colour.backgroundLayer3
+                            , textColour: "blue"
+                            , placeholderColour: colour.backgroundLayer4
+                            , leading: R.text "🌭"
+                            }
+                        ]
                   , element Input.component { label: nes (SProxy ∷ _ "Pig nose"), leading: R.text "⭐", trailing: R.text "🔮" }
                   ]
             , R.h2_ [ R.text "Generic Input" ]

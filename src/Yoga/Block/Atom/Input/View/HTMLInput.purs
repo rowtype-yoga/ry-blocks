@@ -36,6 +36,6 @@ rawComponent =
     \(props ∷ { | PropsOptional }) ref -> React.do
       let
         inputWrapper = div </* { className: "ry-input-wrapper", css: Style.inputWrapper }
-        input = emotionInput ref inputProps { className: "ry-input", css: Style.input }
+        input = emotionInput ref inputProps { className: "ry-input" , css: Style.input props }
         inputProps = props { type = HTMLInput.toString <$> props.type }
       pure do inputWrapper [ input ]

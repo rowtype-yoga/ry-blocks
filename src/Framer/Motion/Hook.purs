@@ -1,5 +1,7 @@
 module Framer.Motion.Hook
   ( useViewportScroll
+  , useAnimation
+  , UseAnimation
   , UseViewportScroll
   , useTransform
   , useSpringWithMotionValue
@@ -20,6 +22,7 @@ import Data.TwoOrMore (TwoOrMore)
 import Data.TwoOrMore as TwoOrMore
 import Effect (Effect)
 import Effect.Uncurried (EffectFn2, EffectFn4, runEffectFn2, runEffectFn4)
+import Framer.Motion (AnimationControls)
 import Literals.Undefined (Undefined, undefined)
 import MotionValue (MotionValue)
 import React.Basic.Hooks (Hook, unsafeHook)
@@ -121,10 +124,17 @@ useSpringWithMotionValue motionValue springProps =
       (cast springProps)
 
 useSpringWithNumber ∷
-  ∀ opts. Castable opts SpringProps => Number -> opts -> Hook (UseSpring Number) Number
+  ∀ opts. Castable opts SpringProps => Number -> opts -> Hook (UseSpring (MotionValue Number)) (MotionValue Number)
 useSpringWithNumber number springProps =
   unsafeHook do
     runEffectFn2
       useSpringImpl
       (cast number ∷ MotionValue Number |+| Number)
       (cast springProps)
+
+foreign import data UseAnimation ∷ Type -> Type
+
+foreign import useAnimationImpl ∷ Effect AnimationControls
+
+useAnimation ∷ Hook UseAnimation AnimationControls
+useAnimation = unsafeHook useAnimationImpl

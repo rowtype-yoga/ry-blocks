@@ -11,9 +11,9 @@ import Web.Event.EventTarget (addEventListener, eventListener, removeEventListen
 import Web.HTML (window)
 import Web.HTML.Window as Win
 
-newtype UseKeyDown hooks
-  = UseKeyDown
+newtype UseKeyDown hooks = UseKeyDown
   (UseEffect Unit hooks)
+
 derive instance ntUseKeyDown ∷ Newtype (UseKeyDown hooks) _
 
 useKeyDown ∷ (KeyCode -> Effect Unit) -> Hook UseKeyDown Unit
@@ -30,4 +30,4 @@ useKeyDown doWhat = do
       pure $ removeEventListener eventTypeKeyDown listener false (Win.toEventTarget win)
 
 eventTypeKeyDown ∷ EventType
-eventTypeKeyDown = EventType "keydown"
+eventTypeKeyDown = EventType "keypress"

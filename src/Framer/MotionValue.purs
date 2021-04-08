@@ -2,7 +2,8 @@ module MotionValue where
 
 import Prelude
 import Effect (Effect)
-import Effect.Uncurried (EffectFn1, mkEffectFn1, runEffectFn1)
+import Effect.Uncurried (EffectFn1, EffectFn3, mkEffectFn1, runEffectFn1, runEffectFn3)
+import Framer.Motion.Types (AnimationPlaybackControls)
 import React.Basic.Hooks (Hook, unsafeHook)
 
 foreign import data MotionValue ∷ Type -> Type
@@ -32,3 +33,10 @@ onChange = mkEffectFn1 >>> onChangeImpl
 
 useMotionValue ∷ ∀ a. a -> Hook (UseMotionValue a) (MotionValue a)
 useMotionValue = unsafeHook <<< runEffectFn1 useMotionValueImpl
+
+foreign import animateImpl ∷ ∀ a options. EffectFn3 (MotionValue a) a { | options } AnimationPlaybackControls
+
+animate ∷ ∀ a options. a -> Record options -> MotionValue a -> Effect AnimationPlaybackControls
+animate target opts value = runEffectFn3 animateImpl value target opts
+
+foreign import stopAnimation ∷ AnimationPlaybackControls -> Effect Unit

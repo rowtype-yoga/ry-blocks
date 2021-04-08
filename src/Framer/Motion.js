@@ -2,9 +2,9 @@ const framerMotion = require("framer-motion")
 const React = require("react")
 const Emotion = require("@emotion/core")
 
-exports.animatePresence = () => framerMotion.AnimatePresence
+exports.animatePresenceImpl = framerMotion.AnimatePresence
 
-exports.animateSharedLayout = () => framerMotion.AnimateSharedLayout
+exports.animateSharedLayoutImpl = framerMotion.AnimateSharedLayout
 
 const flattenDataProp = (props) => {
     let data = null;
@@ -64,3 +64,6 @@ exports.styledMotionElement_ = (component, props, areChildrenDynamic) => {
 
 exports.styledMotionElementKeyed_ = (component, props) =>
     exports.styledMotionElement_(component, props, true);
+
+exports.startImpl = (args) => (controls) => controls.start(args)
+exports.stopImpl = (controls) => controls.stop

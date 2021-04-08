@@ -38,6 +38,9 @@ type MotionPropsF f r =
   , onDrag ∷ f OnDrag
   , onDragEnd ∷ f OnDragEnd
   , onDragStart ∷ f OnDragStart
+  , onPan ∷ f OnPan
+  , onPanEnd ∷ f OnPanEnd
+  , onPanStart ∷ f OnPanStart
   , onHoverEnd ∷ f OnHoverEnd
   , onHoverStart ∷ f OnHoverStart
   , onLayoutAnimationComplete ∷ f OnLayoutAnimationComplete
@@ -76,6 +79,7 @@ type Exit =
 
 foreign import data AnimationControls ∷ Type
 
+
 prop ∷ ∀ a b. Castable a b => a -> b
 prop = cast
 
@@ -110,11 +114,13 @@ dragMomentum = cast
 type DragConstraints =
   Ref (Nullable Node) |+| BoundingBox2D |+| Undefined
 
-type DragElastic =
-  Boolean |+| Number |+| Undefined
+type DragElastic = Boolean |+| Number |+| BoundingBox2D |+| Undefined
 
 dragElastic ∷ ∀ c. Castable c DragElastic => c -> DragElastic
 dragElastic = cast
+
+dragElasticBoundingBox ∷ ∀ a. Castable a BoundingBox2D => a -> DragElastic
+dragElasticBoundingBox x = cast ((cast x) ∷ BoundingBox2D)
 
 type BoundingBox2D =
   { left ∷ Int |+| Number |+| Undefined
@@ -139,6 +145,15 @@ type OnDragEnd =
   (EffectFn2 Event PanInfo Unit |+| Undefined)
 
 type OnDrag =
+  (EffectFn2 Event PanInfo Unit |+| Undefined)
+
+type OnPanStart =
+  (EffectFn2 Event PanInfo Unit |+| Undefined)
+
+type OnPanEnd =
+  (EffectFn2 Event PanInfo Unit |+| Undefined)
+
+type OnPan =
   (EffectFn2 Event PanInfo Unit |+| Undefined)
 
 type WhileTap =
@@ -271,6 +286,15 @@ onDragEnd = cast <<< toEffectFn
 onDrag ∷ (Event -> PanInfo -> Effect Unit) -> OnDrag
 onDrag fn2 = cast (mkEffectFn2 fn2)
 
+onPanStart ∷ (Event -> PanInfo -> Effect Unit) -> OnPanStart
+onPanStart = cast <<< toEffectFn
+
+onPanEnd ∷ (Event -> PanInfo -> Effect Unit) -> OnPanEnd
+onPanEnd = cast <<< toEffectFn
+
+onPan ∷ (Event -> PanInfo -> Effect Unit) -> OnPan
+onPan fn2 = cast (mkEffectFn2 fn2)
+
 customProp ∷ ∀ a. a -> Foreign
 customProp = unsafeToForeign
 
@@ -292,8 +316,11 @@ transition = cast <<< css
 drag ∷ ∀ a. Castable a Drag => a -> Drag
 drag = cast
 
-dragConstraints ∷ ∀ a. Castable a BoundingBox2D => a -> DragConstraints
-dragConstraints x = cast ((cast x) ∷ BoundingBox2D)
+dragConstraints ∷ ∀ a. Castable a DragConstraints => a -> DragConstraints
+dragConstraints = cast
+
+dragConstraintsBoundingBox ∷ ∀ a. Castable a BoundingBox2D => a -> DragConstraints
+dragConstraintsBoundingBox x = cast ((cast x) ∷ BoundingBox2D)
 
 dragPropagation ∷ ∀ a. Castable a DragPropagation => a -> DragPropagation
 dragPropagation = cast
@@ -345,3 +372,5 @@ switch = AnimateSharedLayoutType "switch"
 
 crossfade ∷ AnimateSharedLayoutType
 crossfade = AnimateSharedLayoutType "crossfade"
+
+foreign import data AnimationPlaybackControls ∷ Type

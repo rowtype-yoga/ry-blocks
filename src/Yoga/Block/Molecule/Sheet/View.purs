@@ -1,0 +1,180 @@
+module Yoga.Block.Molecule.Sheet.View (component, Props) where
+
+import Yoga.Prelude.View (Effect, JSX, Maybe(..), Node, NodeRef, Nullable, ReactComponent, Ref, Unit, bind, discard, element, for_, fromMaybe, getOffsetHeightFromRef, guard, handler_, maybe, mempty, min, negate, null, pure, useEffectAlways, useRef, when, ($), (+), (-), (/), (/>), (<), (<#>), (<$>), (<*>), (</), (</*), (=<<), (==), (>), (>>=))
+import Data.Int as Int
+import Data.Nullable as Nullable
+import Data.Traversable (sequence)
+import Debug (spy)
+import Effect.Class.Console (log)
+import Effect.Unsafe (unsafePerformEffect)
+import Framer.Motion as Motion
+import Math as Math
+import MotionValue (useMotionValue)
+import MotionValue as MotionValue
+import React.Basic.DOM (createPortal, css)
+import React.Basic.DOM as R
+import React.Basic.Emotion as Emotion
+import React.Basic.Hooks (reactComponent)
+import React.Basic.Hooks as React
+import React.FocusTrap (focusTrap)
+import Web.DOM (Element)
+import Web.DOM.Node (isEqualNode)
+import Web.DOM.Node as Node
+import Web.Event.Event as Event
+import Web.HTML as HTML
+import Web.HTML.Window (innerHeight)
+import Yoga.Block.Hook.Key as KeyCode
+import Yoga.Block.Hook.UseKeyDown (useKeyDown)
+import Yoga.Block.Molecule.Sheet.Style as Style
+
+type Props =
+  { content ∷ JSX
+  , isOpen ∷ Boolean
+  , onDismiss ∷ Effect Unit
+  , target ∷ Element
+  | ()
+  }
+
+component ∷ ReactComponent Props
+component =
+  unsafePerformEffect
+    $ reactComponent "Sheet Wrapper" \{ content, isOpen, onDismiss, target } -> React.do
+        useKeyDown case _ of
+          KeyCode.Escape -> onDismiss
+          _ -> mempty
+        clickAwayRef <- React.useRef Nullable.null
+        let
+          toRender ∷ JSX
+          toRender =
+            React.element focusTrap
+              { active: isOpen
+              , children:
+                R.div' </ {}
+                  /> [ Motion.animatePresence </ {} /> [ guard isOpen $ element clickaway { theRef: clickAwayRef, onDismiss } ]
+                    , element window { clickAwayRef, onDismiss, content, isOpen }
+                    ]
+              }
+        pure (createPortal toRender target)
+
+clickaway ∷ ReactComponent { theRef ∷ Ref (Nullable Node), onDismiss ∷ Effect Unit }
+clickaway =
+  unsafePerformEffect
+    $ reactComponent "Sheet Clickaway" \{ theRef, onDismiss } -> React.do
+        pure $ Emotion.elementKeyed Motion.div
+          $ { key: "ry-modal-clickaway"
+            , onClick: handler_ onDismiss
+            , className: "ry-modal-clickaway"
+            , css: Style.clickaway
+            , initial: Motion.prop $ css { opacity: 0.0 }
+            , animate: Motion.prop $ css { opacity: 1.0 }
+            , exit: Motion.prop $ css { opacity: 0.0 }
+            , ref: theRef
+            }
+
+type WindowProps =
+  { clickAwayRef ∷ NodeRef, content ∷ JSX, isOpen ∷ Boolean, onDismiss ∷ Effect Unit }
+
+window ∷ ReactComponent WindowProps
+window =
+  unsafePerformEffect
+    $ reactComponent "Sheet Window" \({ clickAwayRef, content, onDismiss, isOpen } ∷ WindowProps) -> React.do
+        ref ∷ NodeRef <- useRef null
+        contentRef <- useRef null
+        velocityRef <- useRef 0.0
+        animationRef <- useRef Nothing
+        top <- useMotionValue 0.0
+        let
+          getWindowHeight = do
+            HTML.window >>= innerHeight <#> Int.toNumber
+          getMaxHeight ∷ Effect Number
+          getMaxHeight = do
+            wh <- getWindowHeight
+            maybeOffsetHeight <- getOffsetHeightFromRef contentRef
+            pure $ maybe (0.0) (\x -> min wh (wh - x)) maybeOffsetHeight
+          targetIsContentNode ev = do
+            maybeContentNode <- React.readRefMaybe contentRef
+            fromMaybe false <$> (sequence $ isEqualNode <$> maybeContentNode <*> (Node.fromEventTarget =<< Event.target ev))
+        useEffectAlways do
+          maxHeight <- getMaxHeight
+          MotionValue.set maxHeight top
+          mempty
+        pure
+          $ Motion.animatePresence
+          </ {}
+          /> [ guard isOpen $ Motion.div
+                </* { className: "ry-sheet-background"
+                  , css: Style.sheet
+                  , layout: Motion.layout true
+                  , style: css { top }
+                  , ref
+                  , initial: Motion.initial $ css { y: "100%" }
+                  , animate:
+                    Motion.animate
+                      $ css
+                          { y: "0%"
+                          , transition: { type: "spring", stiffness: 1200.0, damping: 90.0 }
+                          }
+                  , exit: Motion.exit $ css { top: "100%" }
+                  , onPanStart:
+                    Motion.onPanStart \ev pi -> do
+                      maybeRunningAnimation <- React.readRef animationRef
+                      for_ maybeRunningAnimation MotionValue.stopAnimation
+                      React.writeRef animationRef Nothing
+                  , onPan:
+                    Motion.onPan \ev pi -> do
+                      oldY <- MotionValue.get top
+                      maxHeight <- getMaxHeight
+                      React.writeRef velocityRef pi.velocity.y
+                      let
+                        newNaiveValue = pi.delta.y + oldY
+                        newY =
+                          if newNaiveValue < maxHeight then
+                            negate (Math.pow (negate pi.delta.y) 0.33) + oldY
+                          else
+                            newNaiveValue
+                      when (Math.abs pi.velocity.y > 100.0) do
+                        MotionValue.set newY top
+                  , onPanEnd:
+                    Motion.onPanEnd \ev pi -> do
+                      velocity <- React.readRef velocityRef
+                      let _ = spy "shit" velocity
+                      yValue <- MotionValue.get top
+                      maxHeight <- getMaxHeight
+                      windowHeight <- getWindowHeight
+                      let percentPosition = spy "per " $ ((yValue - maxHeight) / (windowHeight - maxHeight))
+                      let
+                        target =
+                          if percentPosition > 0.7 then
+                            windowHeight
+                          else
+                            if percentPosition < 0.2 then
+                              maxHeight
+                            else
+                              if velocity > 70.0 then
+                                windowHeight
+                              else
+                                maxHeight
+                      animation <-
+                        MotionValue.animate target
+                          { type: "spring"
+                          , velocity: pi.velocity.y
+                          , stiffness: 1200.0
+                          , damping: 90.0
+                          , onComplete:
+                            do
+                              log "complete"
+                              React.writeRef animationRef Nothing
+                              when (target == windowHeight) do
+                                onDismiss
+                          }
+                          top
+                      React.writeRef animationRef (Just animation)
+                  }
+                /> [ R.div'
+                      </* { ref: contentRef
+                        , css: Style.sheetContent
+                        , className: "ry-sheet-content"
+                        }
+                      /> [ R.div_ [ content ] ]
+                  ]
+            ]
