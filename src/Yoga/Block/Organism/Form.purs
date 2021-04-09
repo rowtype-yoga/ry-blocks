@@ -46,10 +46,12 @@ import Record (disjointUnion)
 import Unsafe.Coerce (unsafeCoerce)
 import Yoga.Block as Block
 import Yoga.Block.Atom.Input as Input
+import Yoga.Block.Atom.Input.Style (labelSmall)
 import Yoga.Block.Atom.Input.Types (HTMLInputType)
 import Yoga.Block.Atom.Input.Types as HTMLInputType
 import Yoga.Block.Atom.Toggle as Toggle
 import Yoga.Block.Atom.Toggle.Types (TogglePosition(..))
+import Yoga.Block.Container.Style (colour)
 import Yoga.Block.Organism.Form.Defaults (formDefaults) as Defaults
 import Yoga.Block.Organism.Form.Internal (Forest, FormBuilder, FormBuilder'(..), Tree(..), formBuilder, formBuilder_, pruneTree)
 import Yoga.Block.Organism.Form.Types (RequiredField(..))
@@ -117,7 +119,7 @@ defaultRenderForm _ { readOnly } forest =
     { className:
       String.joinWith " "
         $ fold
-            [ [ "lumi-form" ]
+            [ [ "ry-form" ]
             , guard readOnly [ "readOnly" ]
             ]
     , children:
@@ -128,7 +130,11 @@ defaultRenderForm _ { readOnly } forest =
       ]
     }
   where
-  fieldDivider = R.hr { className: "lumi field-divider" }
+  fieldDivider =
+    R.hr
+      { className: "ry field-divider"
+      , style: R.css { border: "1px solid " <> colour.backgroundLayer3 }
+      }
 
 defaultRenderForest ∷
   Forest ->
@@ -145,14 +151,17 @@ defaultRenderForest =
         $ children
     Node { label, key, required, validationError, children } ->
       maybe identity keyed key
-        $ Block.cluster
-        </ {}
-        /> ( [ label ]
-              <> [ intercalate fieldDivider (defaultRenderForest children) ]
-              <> [ foldMap R.text validationError ]
-          )
+        $ fragment
+            ( [ R.div' </* { className: "ry-form-label", css: labelSmall colour.background colour.text } /> [ label ] ]
+                <> [ intercalate fieldDivider (defaultRenderForest children) ]
+                <> [ foldMap R.text validationError ]
+            )
   where
-  fieldDivider = R.hr {}
+  fieldDivider =
+    R.hr
+      { className: "ry field-divider"
+      , style: R.css { border: "1px solid pink" }
+      }
 
 -- | Render a form with state managed automatically.
 useForm ∷
@@ -449,22 +458,24 @@ inputBox ∷
   NonEmptyString -> RequiredField -> Record p -> FormBuilder { readOnly ∷ Boolean | more } String String
 inputBox label requiredField inputProps =
   formBuilder_ \{ readOnly } s onChange ->
-    element Input.component
-      ( inputProps
-          `disjointUnion`
-            { value: s
-            , onChange: handler targetValue (traverse_ onChange)
-            , readOnly: readOnly
-            , label
-            , type: HTMLInputType.Text
-            , _aria:
-              case requiredField of
-                Required -> Object.singleton "required" "true"
-                Optional -> mempty
-                Neither -> mempty
-            , css: E.css { width: E.percent 100.0 }
-            }
-      )
+    Block.box </ { padding: E.var "--s-1" }
+      /> [ element Input.component
+            ( inputProps
+                `disjointUnion`
+                  { value: s
+                  , onChange: handler targetValue (traverse_ onChange)
+                  , readOnly: readOnly
+                  , label
+                  , type: HTMLInputType.Text
+                  , _aria:
+                    case requiredField of
+                      Required -> Object.singleton "required" "true"
+                      Optional -> mempty
+                      Neither -> mempty
+                  , css: E.css { width: E.percent 100.0 }
+                  }
+            )
+        ]
 
 type ToggleFixedProps =
   ( value ∷ TogglePosition

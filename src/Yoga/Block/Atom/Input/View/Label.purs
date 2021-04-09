@@ -3,13 +3,13 @@ module Yoga.Block.Atom.Input.View.Label where
 import Yoga.Prelude.View
 import Data.String.NonEmpty (NonEmptyString)
 import Data.String.NonEmpty as NonEmptyString
-import Effect.Class.Console (warn)
+import Debug (spy)
+import Effect.Class.Console (log, warn)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object as Object
 import Framer.Motion as M
 import React.Basic.DOM (css)
 import React.Basic.DOM as R
-import React.Basic.Emotion (StyleProperty)
 import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
 import Record.Extra (sequenceRecord)
@@ -36,6 +36,8 @@ component =
         maybeOffsets /\ setOffsets <- useState' Nothing
         -- this is so complicated because we need to take scale into account
         useLayoutEffectAlways do
+          log $ "render large label " <> show props.renderLargeLabel
+          let _ = spy "help" props
           inputWidth <- getOffsetWidthFromRef inputRef
           inputRect <- getBoundingBoxFromRef inputRef
           parentWidth <- getOffsetWidthFromRef parentRef
@@ -74,7 +76,6 @@ component =
                   ]
               ]
           container = div </* { className: "ry-input-label-container", css: Style.labelContainer }
-          renderLargeLabel = props.renderLargeLabel
           labelContainer =
             maybeOffsets
               # foldMap case _ of

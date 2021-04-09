@@ -30,4 +30,4 @@ useKeyDown doWhat = do
       pure $ removeEventListener eventTypeKeyDown listener false (Win.toEventTarget win)
 
 eventTypeKeyDown ∷ EventType
-eventTypeKeyDown = EventType "keypress"
+eventTypeKeyDown = EventType "keydown"

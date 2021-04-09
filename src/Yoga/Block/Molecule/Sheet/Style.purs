@@ -2,7 +2,6 @@ module Yoga.Block.Molecule.Sheet.Style where
 
 import Yoga.Prelude.Style
 
-import Data.Interpolate (i)
 import Yoga.Block.Container.Style (colour)
 
 type Props :: forall k. (Type -> k) -> Row k -> Row k
@@ -20,8 +19,9 @@ sheet = styles
       , position: fixed
       , left: str "0"
       , width: str "100vw"
-      , background: str colour.backgroundLayer5
-      , borderRadius: str $ "var(--s2) var(--s2) 0 0" 
+      , background: str colour.backgroundLayer3
+      , borderRadius: str $ "var(--s1) var(--s1) 0 0" 
+      , borderTop: str $ "1px solid " <>  colour.backgroundLayer5
       , boxShadow: str $ "0 0 var(--s3) rgba(0,0,0,0.1)"
       , height: str "100vh"
       }

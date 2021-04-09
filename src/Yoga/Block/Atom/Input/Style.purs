@@ -38,12 +38,13 @@ labelAndInputWrapper ∷ Style
 labelAndInputWrapper =
   css
     { position: relative
-    , display: inlineBlock
+    -- , display: inlineBlock
     , "--left-icon-size": var "--s0"
     , "--right-icon-size": str "calc(var(--s0) * 1.2)"
     , "--input-border-radius": var "--s-1"
     , "--input-side-padding": var "--s-1"
     , width: inherit
+    , margin: _0
     }
 
 labelContainer ∷ Style

@@ -1,10 +1,9 @@
 module Yoga.Block.Molecule.Sheet.View (component, Props) where
 
-import Yoga.Prelude.View (Effect, JSX, Maybe(..), Node, NodeRef, Nullable, ReactComponent, Ref, Unit, bind, discard, element, for_, fromMaybe, getOffsetHeightFromRef, guard, handler_, maybe, mempty, min, negate, null, pure, useEffectAlways, useRef, when, ($), (+), (-), (/), (/>), (<), (<#>), (<$>), (<*>), (</), (</*), (=<<), (==), (>), (>>=))
+import Yoga.Prelude.View
 import Data.Int as Int
 import Data.Nullable as Nullable
 import Data.Traversable (sequence)
-import Debug (spy)
 import Effect.Class.Console (log)
 import Effect.Unsafe (unsafePerformEffect)
 import Framer.Motion as Motion
@@ -25,6 +24,7 @@ import Web.HTML as HTML
 import Web.HTML.Window (innerHeight)
 import Yoga.Block.Hook.Key as KeyCode
 import Yoga.Block.Hook.UseKeyDown (useKeyDown)
+import Yoga.Block.Hook.UseResize (useResize)
 import Yoga.Block.Molecule.Sheet.Style as Style
 
 type Props =
@@ -79,6 +79,7 @@ window =
   unsafePerformEffect
     $ reactComponent "Sheet Window" \({ clickAwayRef, content, onDismiss, isOpen } ∷ WindowProps) -> React.do
         ref ∷ NodeRef <- useRef null
+        sizes <- useResize
         contentRef <- useRef null
         velocityRef <- useRef 0.0
         animationRef <- useRef Nothing
@@ -112,7 +113,11 @@ window =
                     Motion.animate
                       $ css
                           { y: "0%"
-                          , transition: { type: "spring", stiffness: 1200.0, damping: 90.0 }
+                          , transition:
+                            { type: "spring"
+                            , stiffness: 1200.0
+                            , damping: 90.0
+                            }
                           }
                   , exit: Motion.exit $ css { top: "100%" }
                   , onPanStart:
@@ -128,20 +133,21 @@ window =
                       let
                         newNaiveValue = pi.delta.y + oldY
                         newY =
-                          if newNaiveValue < maxHeight then
+                          if (newNaiveValue < maxHeight) && (pi.delta.y < zero) then
                             negate (Math.pow (negate pi.delta.y) 0.33) + oldY
                           else
-                            newNaiveValue
-                      when (Math.abs pi.velocity.y > 100.0) do
-                        MotionValue.set newY top
+                            if (newNaiveValue < maxHeight) && (pi.delta.y > zero) then
+                              (Math.pow (pi.delta.y) 0.33) + oldY
+                            else
+                              newNaiveValue
+                      MotionValue.set newY top
                   , onPanEnd:
                     Motion.onPanEnd \ev pi -> do
                       velocity <- React.readRef velocityRef
-                      let _ = spy "shit" velocity
                       yValue <- MotionValue.get top
                       maxHeight <- getMaxHeight
                       windowHeight <- getWindowHeight
-                      let percentPosition = spy "per " $ ((yValue - maxHeight) / (windowHeight - maxHeight))
+                      let percentPosition = ((yValue - maxHeight) / (windowHeight - maxHeight))
                       let
                         target =
                           if percentPosition > 0.7 then

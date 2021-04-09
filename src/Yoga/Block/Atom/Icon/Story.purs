@@ -17,12 +17,12 @@ default ∷
 default =
   { title: "Atom/Icon"
   , decorators:
-      [ \storyFn ->
-          R.div_
-            [ element E.global { styles: Styles.global }
-            , unsafePerformEffect storyFn
-            ]
-      ]
+    [ \storyFn ->
+        R.div_
+          [ element E.global { styles: Styles.global }
+          , unsafePerformEffect storyFn
+          ]
+    ]
   }
 
 icon ∷ Effect JSX
@@ -31,9 +31,19 @@ icon = do
     $ fragment
         [ R.div_
             [ R.h2_ [ R.text "Icon" ]
-            , element Icon.component { icon: SVGIcon.on }
-            , element Icon.component { icon: SVGIcon.off }
-            , element Icon.component { icon: SVGIcon.sun }
-            , element Icon.component { icon: SVGIcon.moon }
+            , element Icon.component { icon: SVGIcon.on, size: E.str "var(--s2)" }
+            , element Icon.component { icon: SVGIcon.off, size: E.str "var(--s2)" }
+            , element Icon.component { icon: SVGIcon.sun, size: E.str "var(--s2)" }
+            , element Icon.component { icon: SVGIcon.moon, size: E.str "var(--s2)" }
+            , element Icon.component { icon: SVGIcon.eyeClosed, size: E.str "var(--s2)" }
+            , element Icon.component { icon: SVGIcon.eyeOpen, size: E.str "var(--s2)" }
+            , element Icon.component { icon: SVGIcon.bin, size: E.str "var(--s2)" }
+            , element Icon.component { icon: SVGIcon.cross, size: E.str "var(--s2)" }
+            , element Icon.component { icon: SVGIcon.folder, size: E.str "var(--s2)" }
+            , element Icon.component { icon: SVGIcon.key, size: E.str "var(--s2)" }
+            , element Icon.component { icon: SVGIcon.magnifyingGlass, size: E.str "var(--s2)" }
+            , element Icon.component { icon: SVGIcon.simpleKey, size: E.str "var(--s2)" }
+            , element Icon.component { icon: SVGIcon.questionMark, size: E.str "var(--s2)" }
+            , element Icon.component { icon: SVGIcon.plus, size: E.str "var(--s2)" }
             ]
         ]

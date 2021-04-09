@@ -144,7 +144,7 @@ mkGlobal maybeMode =
       nest
         { lineHeight: var "--line-height-small"
         , fontWeight: str "700"
-        , marginTop: str "var(--s-3)"
+        , margin: _0
         }
     , h1:
       nested
@@ -152,6 +152,8 @@ mkGlobal maybeMode =
             { "--h1size": str "calc( min( var(--s2) + 2vw , var(--s4) ) )"
             , fontSize: var "--h1size"
             , letterSpacing: str "calc(var(--h1size) * -0.04)"
+            , marginBottom: var "--s0"
+            , marginTop: var "--s-1"
             }
     , h2:
       nested
@@ -159,6 +161,8 @@ mkGlobal maybeMode =
             { "--h2size": str "calc( min( (var(--s1)*1.1) + 2vw , var(--s3) ) )"
             , fontSize: var "--h2size"
             , letterSpacing: str "calc(var(--h2size) * -0.035)"
+            , marginBottom: var "--s-1"
+            , marginTop: var "--s-2"
             }
     , h3:
       nested
@@ -166,6 +170,8 @@ mkGlobal maybeMode =
             { "--h3size": str "calc( min( var(--s0) + 2vw , var(--s2) ) )"
             , fontSize: var "--h3size"
             , letterSpacing: str "calc(var(--h3size) * -0.03)"
+            , marginBottom: var "--s-2"
+            , marginTop: var "--s-3"
             }
     , p:
       nested
@@ -216,10 +222,10 @@ defaultColours =
   { light:
     { background: lightBg
     , backgroundInverted: darken 0.85 lightBg
-    , backgroundLayer1: darken 0.07 >>> rotateHue (200.0) >>> desaturate 0.2 $ lightBg
-    , backgroundLayer2: darken 0.06 >>> rotateHue (200.0) >>> desaturate 0.2 $ lightBg
-    , backgroundLayer3: darken 0.04 >>> rotateHue (0.0) >>> desaturate 0.1 $ lightBg
-    , backgroundLayer4: darken 0.02 >>> rotateHue (0.0) >>> desaturate 0.05 $ lightBg
+    , backgroundLayer1: darken 0.07 >>> desaturate 0.2 $ lightBg
+    , backgroundLayer2: darken 0.06 >>> desaturate 0.2 $ lightBg
+    , backgroundLayer3: darken 0.04 >>> desaturate 0.1 $ lightBg
+    , backgroundLayer4: darken 0.02 >>> desaturate 0.05 $ lightBg
     , backgroundLayer5: lightBg
     , highlight
     , highlightAlpha33: highlightBase 0.33

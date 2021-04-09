@@ -3,6 +3,7 @@ module Yoga.Block.Atom.Input.View where
 import Yoga.Prelude.View
 
 import Data.String.NonEmpty (NonEmptyString)
+import Effect.Class.Console (log)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Framer.Motion as M
@@ -11,9 +12,6 @@ import React.Basic.DOM as R
 import React.Basic.Hooks as React
 import Record.Builder as RB
 import Type.Prelude (Proxy(..))
-import Web.DOM.Node (toEventTarget)
-import Web.Event.Event (EventType(..))
-import Web.Event.EventTarget (addEventListener, eventListener, removeEventListener)
 import Web.HTML.HTMLInputElement as InputElement
 import Yoga.Block.Atom.Icon as Icon
 import Yoga.Block.Atom.Input.Style as Style
@@ -74,8 +72,11 @@ rawComponent =
       let
         maybeValue ∷ Maybe String
         maybeValue = props.value # opToMaybe
-      hasValue /\ setHasValue <- useState' ((maybeValue # isJust) && (maybeValue /= Just ""))
+      internalValue /\ setValue <- useState' ""
       let
+        hasValue = case maybeValue of 
+          Just v -> v /= ""
+          Nothing -> internalValue /= "" 
         aria ∷ Object String
         aria = props._aria # opToMaybe # fold
         labelId ∷ String
@@ -113,36 +114,30 @@ rawComponent =
         maybePlaceholder = do
           given <- props.placeholder # opToMaybe
           if isJust maybeLabelText && hasFocus then Just given else Nothing
+
         onBlur =
-            const do
+          handler preventDefault
+            ( const do
+                log "onBlör"
                 when hasFocus $ setHasFocus false
-                el <- getHTMLElementFromRef inputRef
+                el <- getHTMLElementFromRef ref
                 let inputEl = InputElement.fromHTMLElement =<< el
                 for_ inputEl \ie -> do
                   v <- InputElement.value ie
-                  setHasValue (v /= "")
- 
-        onFocus = const $ unless hasFocus $ setHasFocus true
-      useEffectAlways do
-        maybeInputRef <- readRefMaybe inputRef
-        case maybeInputRef of
-          Nothing ->  mempty
-          Just theRef -> do
-            let target = toEventTarget theRef
-            blurListener <- eventListener onBlur
-            focusListener <- eventListener onFocus
-            addEventListener (EventType "blur") blurListener true target
-            addEventListener (EventType "focus") focusListener true target
-            pure do
-              removeEventListener (EventType "blur") blurListener true target
-              removeEventListener (EventType "focus") focusListener true target
+                  setValue v
+            )
+
+        onFocus = handler preventDefault (const $ unless hasFocus $ setHasFocus true)
+
+        onChange = handler targetValue (setValue <<< fromMaybe "")
 
       let
         inputProps ∷ { | PropsOptional }
         inputProps =
           props
-            { onFocus = props.onFocus
-            , onBlur = props.onBlur
+            { onFocus = cast (composeHandler onFocus props.onFocus)
+            , onBlur = cast (composeHandler onBlur props.onBlur)
+            , onChange = cast (composeHandler onChange props.onChange)
             , placeholder = maybePlaceholder # maybeToOp
             , _aria =
               if props.label # opToMaybe # isJust then
