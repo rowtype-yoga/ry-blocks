@@ -424,7 +424,7 @@ errorChild =
               E.css
                 { fontSize: E.str "calc(var(--s0) * 0.8)"
                 , fontWeight: E.str "400"
-                , height: E.str "calc(var(--s0) + var(--s-4))"
+                , height: E.str "calc(var(--s0) + var(--s-3))"
                 , margin: E.str "0 var(--s-1) 0 var(--s-1)"
                 , overflow: E.str $ if expanded then "visible" else "hidden"
                 }
@@ -442,9 +442,8 @@ errorChild =
                               E.css
                                 { color: E.str colour.invalidText
                                 , background: E.str colour.invalid
-                                , padding: E.str "4px"
-                                , paddingTop: E.str "2px"
-                                , borderRadius: E.str "0 0 8px 8px"
+                                , padding: E.str "var(--s-5) var(--s-3) var(--s-4) var(--s-3)"
+                                , borderRadius: E.str "0 0 var(--s-3) var(--s-3)"
                                 }
                             }
                           /> [ motionReadMore

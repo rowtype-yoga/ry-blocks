@@ -43,7 +43,9 @@ import React.Basic.DOM as R
 import React.Basic.Emotion as E
 import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as Hooks
+import React.DndKit as Dnd
 import Record (disjointUnion)
+import Record.Builder as RB
 import Unsafe.Coerce (unsafeCoerce)
 import Yoga.Block as Block
 import Yoga.Block.Atom.Input as Input
@@ -564,7 +566,10 @@ array { label, addLabel, defaultValue, editor } =
       wrapper children =
         [ Wrapper
             { key: Nothing
-            , wrap: Block.box </ { style: R.css { paddingTop: 0 } }
+            , wrap:
+              \kids ->
+                Block.box </ { style: R.css { paddingTop: 0 } }
+                  /> kids
             , children
             }
         ]
@@ -606,10 +611,34 @@ array { label, addLabel, defaultValue, editor } =
                           /> [ Block.button
                                 </ { onClick: handler preventDefault (const (onChange $ flip append [ defaultValue ]))
                                   }
-                                /> [ R.text $ "+ " <> addLabel
-                                  ]
+                                /> [ R.text $ "+ " <> addLabel ]
                             ]
                       }
                   )
       , validate: traverse (un FormBuilder editor props >>> _.validate) xs
       }
+  where
+  itemComponent =
+    unsafePerformEffect
+      $ reactComponent "Form Array" \(props ∷ { id ∷ String }) -> Hooks.do
+          { attributes, listeners, setNodeRef, transform, transition } <- Dnd.useSortable { id: props.id }
+          let
+            style = R.css { transform: Dnd.cssToString, transition }
+            attrs =
+              RB.build
+                ( RB.disjointUnion listeners
+                    >>> RB.disjointUnion attributes
+                )
+                { ref: setNodeRef, style }
+          pure $ R.li'
+            </ attrs
+            /> []
+
+  arrayComponent =
+    unsafePerformEffect
+      $ reactComponent "Form Array" \(props ∷ { kids ∷ Array JSX }) -> React.do
+          pure $ Dnd.dndContext </ {}
+            /> [ Dnd.sortableContext
+                  </ {}
+                  /> props.kids
+              ]

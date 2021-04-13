@@ -187,7 +187,7 @@ inputContainer props = theCss <>? props.css
       , """&[data-invalid="true"]""":
         nest
           { borderColor: str colour.invalid
-          , "--border-width": str "2px)"
+          , "--border-width": str "2px"
           }
       , "&:focus-within":
         nest

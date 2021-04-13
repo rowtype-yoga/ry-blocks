@@ -102,20 +102,24 @@ mkPath { width, height } = do
       , {- ⌜ -} p outerCornerBorder border
       ]
     outside =
-      [ {-⌜    -} p zero zero
-      , {-⌞    -} p zero heightWith2xBorder
+      [ {-⌜    -} p topBorder topBorder
+      , {-⌜    -} p topBorder topBorder
+      , {-⌜    -} p topBorder topBorder
+      , {-⌞    -} p topBorder heightWith2xBorder
       , {- .   -} p (widthWith2xBorder * 0.25) heightWith2xBorder
       , {-  .  -} p (widthWith2xBorder * 0.5) heightWith2xBorder
       , {-   . -} p (widthWith2xBorder * 0.75) heightWith2xBorder
       , {-    ⌟-} p widthWith2xBorder heightWith2xBorder
-      , {-    ⌝-} p widthWith2xBorder zero
-      , {-   ^ -} p (widthWith2xBorder * 0.25) zero
-      , {-  ^  -} p (widthWith2xBorder * 0.5) zero
-      , {- ^   -} p (widthWith2xBorder * 0.75) zero
-      , {-⌜    -} p zero zero
+      , {-    ⌝-} p widthWith2xBorder topBorder
+      , {-   ^ -} p (widthWith2xBorder * 0.25) topBorder
+      , {-  ^  -} p (widthWith2xBorder * 0.5) topBorder
+      , {- ^   -} p (widthWith2xBorder * 0.75) topBorder
+      , {-⌜    -} p topBorder topBorder
       ]
   inside <> outside <> (Array.reverse inside)
   where
+  topBorder = -border - border
+
   widthWith2xBorder = width + border + border
 
   heightWith2xBorder = height + border + border
@@ -158,7 +162,7 @@ mkContainerVariants dimensions =
   where
   path = mkPath dimensions
 
-  clipPathFocussed = 12 Array... (Array.length path) <#> \ln -> drawPathUntil dimensions ln path
+  clipPathFocussed = 13 Array... (Array.length path) <#> \ln -> drawPathUntil dimensions ln path
 
 type Point =
   { x ∷ Number, y ∷ Number }

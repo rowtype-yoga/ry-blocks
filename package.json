@@ -48,6 +48,10 @@
     "build-storybook": "build-storybook"
   },
   "dependencies": {
+    "@dnd-kit/core": "^2.1.2",
+    "@dnd-kit/modifiers": "^1.0.5",
+    "@dnd-kit/sortable": "^2.0.1",
+    "@dnd-kit/utilities": "^1.0.3",
     "@emotion/core": "^10.0.28",
     "@popperjs/core": "^2.6.0",
     "focus-trap-react": "^8.4.2",
