@@ -13,12 +13,15 @@ module Yoga.Block.Icon.SVG
   , module Yoga.Block.Icon.SVG.Moon
   , module Yoga.Block.Icon.SVG.Bin
   , module Yoga.Block.Icon.SVG.Plus
+  , module Yoga.Block.Icon.SVG.Warn
+  , module Yoga.Block.Icon.SVG.Checkmark
   ) where
 
 import Yoga.Block.Icon.SVG.Bin (bin)
 import Yoga.Block.Icon.SVG.Plus (plus)
 import Yoga.Block.Icon.SVG.Cross (cross)
 import Yoga.Block.Icon.SVG.EyeClosed (eyeClosed)
+import Yoga.Block.Icon.SVG.Checkmark (checkmark)
 import Yoga.Block.Icon.SVG.EyeOpen (eyeOpen)
 import Yoga.Block.Icon.SVG.Folder (folder)
 import Yoga.Block.Icon.SVG.Key (key)
@@ -29,3 +32,4 @@ import Yoga.Block.Icon.SVG.On (on)
 import Yoga.Block.Icon.SVG.QuestionMark (questionMark)
 import Yoga.Block.Icon.SVG.SimpleKey (simpleKey)
 import Yoga.Block.Icon.SVG.Sun (sun)
+import Yoga.Block.Icon.SVG.Warn (warn)

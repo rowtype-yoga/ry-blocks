@@ -1,11 +1,10 @@
 module Yoga.Block.Atom.Input.Style where
 
 import Yoga.Prelude.Style
-
 import Data.Interpolate (i)
 import Yoga.Block.Container.Style (colour)
 
-type Props :: forall k. (Type -> k) -> Row k -> Row k
+-- type Props :: forall k. (Type -> k) -> Row k -> Row k
 type Props f r =
   ( css ∷ f Style
   , background ∷ f String
@@ -89,20 +88,23 @@ labelSmall background textColour =
         }
     , """&[data-has-focus="true"] > span""":
       nest
-        { background:
-          str
-            $ i "linear-gradient(225deg,"
-                colour.highlightLighter
-                ","
-                colour.highlightDarker
-                "), linear-gradient(225deg,"
-                colour.highlightRotatedBackwards
-                ","
-                colour.highlightRotatedForwards
-                ")"
+        { background: labelSmallFocusBackground
         , color: str colour.highlightText
         }
     }
+
+labelSmallFocusBackground ∷ StyleProperty
+labelSmallFocusBackground =
+  str
+    $ i "linear-gradient(225deg,"
+        colour.highlightLighter
+        ","
+        colour.highlightDarker
+        "), linear-gradient(225deg,"
+        colour.highlightRotatedBackwards
+        ","
+        colour.highlightRotatedForwards
+        ")"
 
 labelLarge ∷ { left ∷ Number, width ∷ Number } -> Style
 labelLarge { left, width } =
@@ -112,7 +114,7 @@ labelLarge { left, width } =
     , whiteSpace: nowrap -- force on one line
     , overflow: str "hidden"
     , height: str "calc(var(--s0))"
-    , maxWidth: str $ i  "calc(" width "px - 2ch)"
+    , maxWidth: str $ i "calc(" width "px - 2ch)"
     , textOverflow: str "ellipsis"
     , marginTop: str "calc(var(--s-1) + var(--s-5))"
     , marginLeft: str $ i left "px"
@@ -165,7 +167,7 @@ inputContainer props = theCss <>? props.css
   where
   theCss =
     css
-      {  "--left-icon-size": var "--s0"
+      { "--left-icon-size": var "--s0"
       , "--right-icon-size": str "calc(var(--s0) * 1.2)"
       , "--input-border-radius": var "--s-1"
       , "--input-side-padding": var "--s-1"

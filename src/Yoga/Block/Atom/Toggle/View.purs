@@ -88,7 +88,7 @@ rawComponent =
         mempty
       let
         buttonVariants =
-          { left: { backgroundColor: (Emotion.str <<< Color.cssStringRGBA <$> props.backgroundLeft) ?|| Emotion.str colour.inputBackground }
+          { left: { backgroundColor: (Emotion.str <<< Color.cssStringRGBA <$> props.backgroundLeft) ?|| Emotion.str colour.backgroundLayer3 }
           , right: { backgroundColor: (Emotion.str <<< Color.cssStringRGBA <$> props.backgroundRight) ?|| Emotion.str colour.success }
           }
         buttonVariant = Motion.makeVariantLabels buttonVariants
@@ -121,8 +121,8 @@ rawComponent =
             Motion.button
             { className: "ry-toggle" <>? props.className
             , css: Style.button <>? props.css
-            , transition: Motion.transition { type: "tween", duration: 0.33, ease: "easeOut" }
             , variants: Motion.variants buttonVariants
+            , initial: Motion.initial false
             , animate:
               Motion.animate case togglePosition of
                 ToggleIsRight -> buttonVariant.right
@@ -210,7 +210,12 @@ toggleCircle =
           }
         ) -> React.do
           maxLeft /\ setMaxLeft <- useState' Nothing
+          yPos /\ setYPos <- useState' Nothing
           useEffectAlways do
+            bbox <- getBoundingBoxFromRef buttonRef
+            let top = bbox <#> _.top
+            unless (yPos == top) do -- there was a reflow in the layout
+              setYPos top
             when (maxLeft == Nothing) do
               runMaybeT_ do
                 b <- getBoundingBoxFromRef buttonRef # MaybeT
@@ -234,7 +239,7 @@ toggleCircle =
               , css: Style.theToggle
               , drag: Motion.drag "x"
               , dragMomentum: Motion.dragMomentum false
-              , key: if isNothing maxLeft then "initialising" else "ready"
+              , key: if isNothing maxLeft then "initialising" else show yPos
               , dragElastic: Motion.dragElastic false
               , dragConstraints:
                 Motion.dragConstraintsBoundingBox

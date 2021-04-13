@@ -72,4 +72,7 @@ import Yoga.Block.Internal
   , getOffsetHeightFromRef
   , getOffsetWidthFromRef
   , getOffsetDimensionsFromRef
+  , getScrollHeightFromRef
+  , getScrollWidthFromRef
+  , getScrollDimensionsFromRef
   )

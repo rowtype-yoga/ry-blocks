@@ -3,12 +3,12 @@ module Yoga.Block.Organism.Form
   , module Yoga.Block.Organism.Form.Internal
   , module Validation
   -- , build
+  , array
   , build'
   , defaultRenderForm
   , defaultRenderForest
   , useForm
   , useForm'
-  , formState
   , inputBox
   , static
   , toggle
@@ -33,6 +33,7 @@ import Data.Lens (Lens', Prism, Prism', matching, review, view)
 import Data.Newtype (un)
 import Data.String as String
 import Data.String.NonEmpty (NonEmptyString)
+import Data.Traversable (traverse)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object (Object)
 import Foreign.Object as Object
@@ -46,16 +47,18 @@ import Record (disjointUnion)
 import Unsafe.Coerce (unsafeCoerce)
 import Yoga.Block as Block
 import Yoga.Block.Atom.Input as Input
-import Yoga.Block.Atom.Input.Style (labelSmall)
+import Yoga.Block.Atom.Input.Style (labelContainer, labelSmall, labelSmallFocusBackground)
 import Yoga.Block.Atom.Input.Types (HTMLInputType)
 import Yoga.Block.Atom.Input.Types as HTMLInputType
 import Yoga.Block.Atom.Toggle as Toggle
 import Yoga.Block.Atom.Toggle.Types (TogglePosition(..))
 import Yoga.Block.Container.Style (colour)
+import Yoga.Block.Icon.SVG as Icons
+import Yoga.Block.Internal.CSS (nest)
 import Yoga.Block.Organism.Form.Defaults (formDefaults) as Defaults
-import Yoga.Block.Organism.Form.Internal (Forest, FormBuilder, FormBuilder'(..), Tree(..), formBuilder, formBuilder_, pruneTree)
+import Yoga.Block.Organism.Form.Internal (Forest, FormBuilder'(..), Tree(..), FormBuilder, formBuilder, formBuilder_, pruneTree)
 import Yoga.Block.Organism.Form.Types (RequiredField(..))
-import Yoga.Block.Organism.Form.Validation (ModifyValidated(..), Validated(..), Validator, _Validated, fromValidated, mustBe, mustEqual, nonEmpty, nonEmptyArray, nonNull, nonEmpty', nonEmptyArray', nonNull', optional, setFresh, setModified, validDate, validInt, validNumber, validDate', validInt', validNumber', validated, warn) as Validation
+import Yoga.Block.Organism.Form.Validation (ModifyValidated(..), Validated(..), Validator, _Validated, fromValidated, mustBe, mustEqual, nonEmpty, nonEmptyArray, nonNull, nonEmpty', nonEmptyArray', nonNull', optional, setFresh, setModified, validDate, validInt, validNumber, validDate', validInt', validNumber', validated, validNatBetween', validNatBetween) as Validation
 
 -- | Create a React component for a form from a `FormBuilder`.
 -- |
@@ -115,26 +118,29 @@ defaultRenderForm ∷
   Forest ->
   JSX
 defaultRenderForm _ { readOnly } forest =
-  R.div
-    { className:
-      String.joinWith " "
-        $ fold
-            [ [ "ry-form" ]
-            , guard readOnly [ "readOnly" ]
-            ]
-    , children:
-      [ surround fieldDivider
+  R.div'
+    </ { className:
+        String.joinWith " "
+          $ fold
+              [ [ "ry-form" ]
+              , guard readOnly [ "readOnly" ]
+              ]
+      }
+    /> [ surround fieldDivider
           $ defaultRenderForest
           $ Array.mapMaybe pruneTree
           $ forest
       ]
-    }
   where
   fieldDivider =
-    R.hr
-      { className: "ry field-divider"
-      , style: R.css { border: "1px solid " <> colour.backgroundLayer3 }
-      }
+    R.div'
+      </*> { className: "ry field-divider"
+        , css:
+          E.css
+            { height: E.str $ "var(--s-2)"
+            , width: E.str "100%"
+            }
+        }
 
 defaultRenderForest ∷
   Forest ->
@@ -145,34 +151,73 @@ defaultRenderForest =
     Wrapper { key, wrap: f, children } ->
       maybe identity keyed key
         $ f
-        $ intercalate [ fieldDivider ]
+        $ fold -- intercalate [ fieldDivider ]
         $ map pure
         $ defaultRenderForest
         $ children
     Node { label, key, required, validationError, children } ->
       maybe identity keyed key
-        $ fragment
-            ( [ R.div' </* { className: "ry-form-label", css: labelSmall colour.background colour.text } /> [ label ] ]
-                <> [ intercalate fieldDivider (defaultRenderForest children) ]
-                <> [ foldMap R.text validationError ]
-            )
+        $ Block.box
+        </ { css:
+            E.css
+              { border: E.str $ "1px solid " <> colour.inputBorder
+              , borderRadius: E.var "--s-1"
+              , marginTop: E.str "var(--s0)"
+              , "--label-bg": E.str colour.background
+              , "--label-fg": E.str colour.text
+              , "&:focus-within":
+                nest
+                  { "--label-bg": labelSmallFocusBackground
+                  , "--label-fg": E.str colour.highlightText
+                  }
+              }
+          , padding: E.str "0"
+          } --space: E.var "--s-2", css: E.css { marginTop: E.var "--s-1" } }
+        /> ( [ R.div'
+                </* { className: "ry-form-label"
+                  , css:
+                    labelSmall colour.background colour.text
+                      <> E.css
+                          { position: E.absolute
+                          , display: E.inlineBlock
+                          , "& > span":
+                            nest
+                              { background: E.var "--label-bg"
+                              , color: E.var "--label-fg"
+                              }
+                          }
+                  }
+                /> [ R.span_ [ label ] ]
+            ]
+              <> [ Block.box
+                    </ { padding: E.var "--s-2"
+                      , css: E.css { marginTop: E.var "--s0" }
+                      }
+                    /> [ intercalate fieldDivider (defaultRenderForest children) ]
+                ]
+              <> [ foldMap R.text validationError
+                ]
+          )
   where
   fieldDivider =
-    R.hr
-      { className: "ry field-divider"
-      , style: R.css { border: "1px solid pink" }
-      }
+    R.div'
+      </*> { className: "ry field-divider"
+        , css:
+          E.css
+            { height: E.str $ "var(--s-2)"
+            , width: E.str "100%"
+            }
+        }
 
+-- , layout: Motion.layout false
+-- , initial: Motion.initial $ R.css { scale: 0 }
+-- , animate: Motion.animate $ R.css { scale: 1 }
+-- , exit: Motion.exit $ R.css { scale: 0 }
 -- | Render a form with state managed automatically.
 useForm ∷
   ∀ props unvalidated result.
   Mapping Validation.ModifyValidated unvalidated unvalidated =>
-  FormBuilder
-    { readOnly ∷ Boolean
-    | props
-    }
-    unvalidated
-    result ->
+  FormBuilder { readOnly ∷ Boolean | props } unvalidated result ->
   { initialState ∷ unvalidated
   , formProps ∷ { readOnly ∷ Boolean | props }
   } ->
@@ -218,39 +263,6 @@ useForm' editor initialState props = Hooks.do
     , validated
     , form: ui
     }
-
--- | Consume `useForm` as a render-prop component. Useful when `useForm`
--- | would be preferred but you don't want to migrate an entire component
--- | to React's hooks API.
--- |
--- | _Note_: this function should be fully applied, to avoid remounting
--- | the component on each render.
-formState ∷
-  ∀ props unvalidated result.
-  Mapping Validation.ModifyValidated unvalidated unvalidated =>
-  { initialState ∷ unvalidated
-  , form ∷ FormBuilder { readOnly ∷ Boolean | props } unvalidated result
-  , formProps ∷ { readOnly ∷ Boolean | props }
-  , render ∷
-    { formData ∷ unvalidated
-    , setFormData ∷ (unvalidated -> unvalidated) -> Effect Unit
-    , setModified ∷ Effect Unit
-    , reset ∷ Effect Unit
-    , validated ∷ Maybe result
-    , form ∷ JSX
-    } ->
-    JSX
-  } ->
-  JSX
-formState =
-  unsafePerformEffect do
-    Hooks.component "FormState" \props -> Hooks.do
-      state <-
-        useForm props.form
-          { initialState: props.initialState
-          , formProps: props.formProps
-          }
-      pure (props.render state)
 
 -- | Create an always-valid `FormBuilder` that renders the supplied `JSX`.
 static ∷ ∀ props value. JSX -> FormBuilder props value Unit
@@ -439,43 +451,69 @@ withKey key editor =
       , validate
       }
 
-type InputFixedProps =
+type ValidatedInputFixedProps =
   ( value ∷ String
   , onChange ∷ EventHandler
   , label ∷ NonEmptyString
-  , type ∷ HTMLInputType
   , _aria ∷ Object String
   , css ∷ E.Style
   , readOnly ∷ Boolean
+  , trailing ∷ JSX
   )
 
--- | A configurable input box makes a `FormBuilder` for strings
 inputBox ∷
   ∀ p q r more.
-  Union p InputFixedProps q =>
+  Union p ValidatedInputFixedProps q =>
   Union q r Input.Props =>
   Nub q q =>
-  NonEmptyString -> RequiredField -> Record p -> FormBuilder { readOnly ∷ Boolean | more } String String
+  NonEmptyString -> RequiredField -> Record p -> FormBuilder { readOnly ∷ Boolean, validationError ∷ Maybe (Maybe String) | more } String String
 inputBox label requiredField inputProps =
-  formBuilder_ \{ readOnly } s onChange ->
-    Block.box </ { padding: E.var "--s-1" }
-      /> [ element Input.component
-            ( inputProps
-                `disjointUnion`
-                  { value: s
-                  , onChange: handler targetValue (traverse_ onChange)
-                  , readOnly: readOnly
-                  , label
-                  , type: HTMLInputType.Text
-                  , _aria:
-                    case requiredField of
-                      Required -> Object.singleton "required" "true"
-                      Optional -> mempty
-                      Neither -> mempty
-                  , css: E.css { width: E.percent 100.0 }
-                  }
-            )
-        ]
+  FormBuilder \props value ->
+    let
+      { edit, validate } = f props value
+    in
+      { edit:
+        \onChange ->
+          [ Child
+              { key: Nothing
+              , child: edit onChange
+              }
+          ]
+      , validate
+      }
+  where
+  f { readOnly, validationError } s =
+    { edit:
+      \onChange ->
+        R.div' </* { className: "ry-form-input-box", css: E.css { width: E.percent 100.0 } }
+          /> [ element Input.component
+                ( inputProps
+                    `disjointUnion`
+                      { value: s
+                      , onChange: handler targetValue (traverse_ (onChange <<< const))
+                      , readOnly: readOnly
+                      , label
+                      , trailing:
+                        case validationError of
+                          Nothing -> mempty
+                          Just (Just err) -> Block.icon </> { icon: Icons.warn, stroke: E.str colour.invalid }
+                          Just Nothing -> Block.icon </> { icon: Icons.checkmark, stroke: E.str colour.success }
+                      , _aria:
+                        ( case validationError of
+                            Nothing {- not validated yet -} -> mempty
+                            Just Nothing {- validated and fine -} -> mempty --Object.singleton "invalid" "false"
+                            Just (Just msg) {- validated with an error -} -> Object.singleton "invalid" "true"
+                        )
+                          <> case requiredField of
+                              Required -> Object.singleton "required" "true"
+                              Optional -> mempty
+                              Neither -> mempty
+                      , css: E.css { width: E.percent 100.0 }
+                      }
+                )
+            ]
+    , validate: pure s
+    }
 
 type ToggleFixedProps =
   ( value ∷ TogglePosition
@@ -506,3 +544,72 @@ toggle toggleProps =
             , disabled: readOnly
             }
       )
+
+-- | Edit an `Array` of values.
+-- |
+-- | This `FormBuilder` displays a removable section for each array element,
+-- | along with an "Add..." button in the final row.
+array ∷
+  ∀ props u a.
+  { label ∷ String
+  , addLabel ∷ String
+  , defaultValue ∷ u
+  , editor ∷ FormBuilder { readOnly ∷ Boolean | props } u a
+  } ->
+  FormBuilder { readOnly ∷ Boolean | props } (Array u) (Array a)
+array { label, addLabel, defaultValue, editor } =
+  FormBuilder \props@{ readOnly } xs ->
+    let
+      editAt i f xs' = fromMaybe xs' (Array.modifyAt i f xs')
+      wrapper children =
+        [ Wrapper
+            { key: Nothing
+            , wrap: Block.box </ { style: R.css { paddingTop: 0 } }
+            , children
+            }
+        ]
+    in
+      { edit:
+        \onChange -> do
+          let
+            deleteButton i =
+              R.a'
+                </ { onClick:
+                    handler preventDefault
+                      $ const
+                      $ onChange (\xs' -> fromMaybe xs' (Array.deleteAt i xs'))
+                  }
+                /> [ R.text "×" ]
+          wrapper $ xs
+            # Array.mapWithIndex
+                ( \i x ->
+                    Node
+                      { label:
+                        fragment
+                          [ if readOnly then empty else deleteButton i
+                          , R.text $ " " <> label <> " #" <> show (i + 1)
+                          ]
+                      , key: Nothing
+                      , required: Neither
+                      , validationError: Nothing
+                      , children: (un FormBuilder editor props x).edit (onChange <<< editAt i)
+                      }
+                )
+            # if readOnly then
+                identity
+              else
+                flip Array.snoc
+                  ( Child
+                      { key: Nothing
+                      , child:
+                        Block.cluster </ { justify: "flex-end" }
+                          /> [ Block.button
+                                </ { onClick: handler preventDefault (const (onChange $ flip append [ defaultValue ]))
+                                  }
+                                /> [ R.text $ "+ " <> addLabel
+                                  ]
+                            ]
+                      }
+                  )
+      , validate: traverse (un FormBuilder editor props >>> _.validate) xs
+      }

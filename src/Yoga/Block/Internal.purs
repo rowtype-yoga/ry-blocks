@@ -29,6 +29,9 @@ module Yoga.Block.Internal
   , getOffsetHeightFromRef
   , getOffsetWidthFromRef
   , getOffsetDimensionsFromRef
+  , getScrollHeightFromRef
+  , getScrollWidthFromRef
+  , getScrollDimensionsFromRef
   ) where
 
 import Prelude
@@ -55,7 +58,9 @@ import Record.Extra (class Keys, keys)
 import Type.Data.Row (RProxy(..))
 import Unsafe.Coerce (unsafeCoerce)
 import Untagged.Union (UndefinedOr, uorToMaybe)
-import Web.DOM (Node)
+import Web.DOM (Element, Node)
+import Web.DOM.Element (scrollHeight, scrollWidth)
+import Web.DOM.Element as Element
 import Web.HTML.HTMLElement (DOMRect, HTMLElement, getBoundingClientRect, offsetHeight, offsetWidth)
 import Web.HTML.HTMLElement as HTMLElement
 import Yoga.Block.Internal.CSS (_0)
@@ -102,11 +107,36 @@ getOffsetDimensionsFromRef itemRef =
     height <- lift $ offsetHeight elem
     pure { width, height }
 
+getScrollWidthFromRef ∷ NodeRef -> Effect (Maybe Number)
+getScrollWidthFromRef itemRef = do
+  elem <- getElementFromRef itemRef
+  for elem scrollWidth
+
+getScrollHeightFromRef ∷ NodeRef -> Effect (Maybe Number)
+getScrollHeightFromRef itemRef = do
+  elem <- getElementFromRef itemRef
+  for elem scrollHeight
+
+getScrollDimensionsFromRef ∷ NodeRef -> Effect (Maybe { height ∷ Number, width ∷ Number })
+getScrollDimensionsFromRef itemRef =
+  runMaybeT do
+    node <- MaybeT $ readRefMaybe itemRef
+    elem <- MaybeT $ pure $ Element.fromNode node
+    width <- lift $ scrollWidth elem
+    height <- lift $ scrollHeight elem
+    pure { width, height }
+
 getHTMLElementFromRef ∷ Ref (Nullable Node) -> Effect (Maybe HTMLElement)
 getHTMLElementFromRef itemRef =
   runMaybeT do
     node <- MaybeT $ readRefMaybe itemRef
     MaybeT $ pure $ HTMLElement.fromNode node
+
+getElementFromRef ∷ Ref (Nullable Node) -> Effect (Maybe Element)
+getElementFromRef itemRef =
+  runMaybeT do
+    node <- MaybeT $ readRefMaybe itemRef
+    MaybeT $ pure $ Element.fromNode node
 
 forwardedRefAsMaybe ∷ ∀ a. Ref a -> Maybe (Ref a)
 forwardedRefAsMaybe r = safelyWrapped # uorToMaybe >>= Nullable.toMaybe

@@ -10,6 +10,7 @@ import React.Basic.DOM (CSS, css)
 import React.Basic.Emotion (Style)
 import React.Basic.Hooks as React
 import Yoga.Block.Atom.Input.Style as Style
+import Yoga.Block.Hook.UseResize (useResize)
 
 type PropsF f =
   ( css ∷ f Style
@@ -36,8 +37,9 @@ rawContainer ∷ ∀ p. ReactComponent { | p }
 rawContainer =
   mkForwardRefComponent "InputContainer" do
     \(props ∷ { | PropsOptional }) ref -> React.do
+      sizes <- useResize
       dimensions /\ setDimensions <- useState' zero
-      useEffectOnce do
+      useEffect sizes.innerWidth do
         maybeDimensions <- getOffsetDimensionsFromRef ref
         for_ maybeDimensions setDimensions
         mempty
@@ -46,25 +48,25 @@ rawContainer =
         containerVariantLabels = mkContainerVariantLabels containerVariants
         result =
           M.div
-            </* M.motion
-                { variants: M.variants containerVariants
-                , animate:
-                  M.animate
-                    if props.hasFocus then
-                      containerVariantLabels.focussed
-                    else
-                      containerVariantLabels.blurred
-                }
-                { className: "ry-input-container"
-                , css: Style.inputContainer props
-                , _data:
-                  props.isInvalid
-                    # foldMap \isInvalid ->
-                        Object.fromHomogeneous
-                          { "invalid": show isInvalid
-                          }
-                , ref
-                }
+            </* { variants: M.variants containerVariants
+              , initial: M.initial false
+              , animate:
+                M.animate
+                  if props.hasFocus then
+                    containerVariantLabels.focussed
+                  else
+                    containerVariantLabels.blurred
+              , className: "ry-input-container"
+              , key: show sizes.innerWidth -- redraw
+              , css: Style.inputContainer props
+              , _data:
+                props.isInvalid
+                  # foldMap \isInvalid ->
+                      Object.fromHomogeneous
+                        { "invalid": show isInvalid
+                        }
+              , ref
+              }
             /> props.children
       pure result
 

@@ -45,5 +45,6 @@ icon = do
             , element Icon.component { icon: SVGIcon.simpleKey, size: E.str "var(--s2)" }
             , element Icon.component { icon: SVGIcon.questionMark, size: E.str "var(--s2)" }
             , element Icon.component { icon: SVGIcon.plus, size: E.str "var(--s2)" }
+            , element Icon.component { icon: SVGIcon.warn, size: E.str "var(--s2)" }
             ]
         ]

@@ -4,7 +4,6 @@ import Prelude
 import Data.Foldable (foldMap)
 import Data.Maybe (Maybe(..), isNothing)
 import Data.Monoid (power)
-import Data.String.NonEmpty.Internal (NonEmptyString(..))
 import Data.Time.Duration (Seconds(..), fromDuration)
 import Data.Tuple.Nested ((/\))
 import Effect (Effect)
@@ -22,11 +21,9 @@ import Web.DOM.NonElementParentNode (getElementById)
 import Web.HTML (window)
 import Web.HTML.HTMLDocument (toNonElementParentNode)
 import Web.HTML.Window (document)
-import Yoga ((/>), (</), (</>))
-import Yoga as Y
+import Yoga ((/>), (</))
 import Yoga.Block as Block
 import Yoga.Block.Atom.Button.Types as ButtonType
-import Yoga.Block.Container.Style (colour)
 import Yoga.Block.Container.Style as Styles
 import Yoga.Block.Molecule.Sheet as Sheet
 

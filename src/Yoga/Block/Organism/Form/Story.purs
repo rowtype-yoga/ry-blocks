@@ -14,10 +14,12 @@ import React.Basic.Emotion as E
 import React.Basic.Events (handler)
 import React.Basic.Hooks (reactComponent, useState')
 import React.Basic.Hooks as React
+import Type.Data.Peano as Peano
 import Type.Prelude (Proxy(..))
 import Yoga ((</>))
+import Yoga.Block.Atom.Input.Types as InputType
 import Yoga.Block.Container.Style as Styles
-import Yoga.Block.Organism.Form (FormBuilder, formDefaults)
+import Yoga.Block.Organism.Form (FormBuilder, Validated(..), formDefaults)
 import Yoga.Block.Organism.Form as Form
 import Yoga.Block.Organism.Form.Types (RequiredField(..))
 
@@ -40,12 +42,24 @@ type User =
   { firstName ∷ Form.Validated String
   , lastName ∷ Form.Validated String
   , isAdmin ∷ Boolean
+  , friends ∷ Array Friend
   }
 
 type ValidUser =
   { firstName ∷ NonEmptyString
   , lastName ∷ NonEmptyString
   , isAdmin ∷ Boolean
+  , friends ∷ Array ValidFriend
+  }
+
+type Friend =
+  { nickname ∷ Form.Validated String
+  , age ∷ Form.Validated String
+  }
+
+type ValidFriend =
+  { nickname ∷ NonEmptyString
+  , age ∷ Int
   }
 
 aForm ∷ Effect JSX
@@ -80,21 +94,45 @@ aForm = do
             , R.text $ show validated
             ]
     where
+    friendForm ∷ ∀ props. FormBuilder { readOnly ∷ Boolean | props } Friend ValidFriend
+    friendForm = ado
+      nickname <-
+        Form.focus (prop (Proxy ∷ _ "nickname"))
+          $ Form.validated (Form.nonEmpty "Nickname")
+          $ Form.inputBox (nes (Proxy ∷ _ "Nickname")) Required
+              { placeholder: "for example Eddy..." }
+      age <-
+        Form.focus (prop (Proxy ∷ _ "age"))
+          $ Form.validated (Form.validNatBetween (Proxy ∷ _ "18") (Proxy ∷ _ "150") "Age")
+          $ Form.inputBox (nes (Proxy ∷ _ "Age")) Required
+              { placeholder: "for example 78..."
+              , min: "1"
+              , max: (show (top ∷ Int))
+              , type: InputType.Number
+              }
+      in { nickname, age }
+
     userForm ∷ ∀ props. FormBuilder { readOnly ∷ Boolean | props } User ValidUser
     userForm = ado
       firstName <-
         Form.focus (prop (Proxy ∷ _ "firstName"))
-          $ Form.validated (Form.nonEmpty "First name")
+          $ Form.validated (Form.nonEmpty' "You must have a first name")
           $ Form.inputBox (nes (Proxy ∷ _ "First Name")) Required
               { placeholder: "First name" }
       lastName <-
         Form.focus (prop (Proxy ∷ _ "lastName"))
-          $ Form.validated (Form.nonEmpty "Last name")
+          $ Form.validated
+              ( Form.nonEmpty' "I am telling you now for the very last time that you need to make sure Last name is provided to me so I can create a user for you"
+              )
           $ Form.inputBox (nes (Proxy ∷ _ "Last Name")) Required
               { placeholder: "Last name"
               }
+      friends <-
+        Form.indent "Friends" Neither
+          $ Form.focus (prop (Proxy ∷ _ "friends"))
+          $ Form.array { label: "Friends", addLabel: "Friend", defaultValue: { nickname: Fresh "", age: Fresh "" }, editor: friendForm }
       isAdmin <-
         Form.indent "Admin?" Neither
           $ Form.focus (prop (Proxy ∷ _ "isAdmin"))
           $ Form.toggle {}
-      in { firstName, lastName, isAdmin }
+      in { firstName, lastName, isAdmin, friends }

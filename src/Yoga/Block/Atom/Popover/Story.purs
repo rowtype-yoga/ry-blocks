@@ -2,7 +2,6 @@ module Yoga.Block.Atom.Popover.Story where
 
 import Prelude
 import Data.Array as Array
-import Data.Foldable (for_, traverse_)
 import Data.Maybe (Maybe(..), maybe)
 import Data.Monoid (guard)
 import Data.Nullable (null)
@@ -19,7 +18,8 @@ import Framer.Motion as Motion
 import React.Basic (JSX, ReactComponent, element, fragment)
 import React.Basic.DOM (CSS, css)
 import React.Basic.DOM as R
-import React.Basic.DOM.Events (preventDefault, targetValue)
+import React.Basic.DOM.Events (preventDefault)
+import React.Basic.DOM.Events as RE
 import React.Basic.Emotion (elementKeyed, str)
 import React.Basic.Emotion as E
 import React.Basic.Events (handler, handler_)
@@ -29,8 +29,6 @@ import React.Basic.Popper (nullRef)
 import React.Basic.Popper.Placement.Types (Placement(..))
 import React.Basic.Popper.Placement.Types as Placement
 import Unsafe.Coerce (unsafeCoerce)
-import Web.HTML.HTMLElement (focus)
-import Web.HTML.HTMLElement as HTMLElement
 import Yoga ((/>), (</), (</>))
 import Yoga.Block as Block
 import Yoga.Block.Atom.Icon as Icon
@@ -74,7 +72,7 @@ popover = do
   mkAutosuggest ∷ Effect (ReactComponent {})
   mkAutosuggest = do
     motionStack <- Motion.custom Stack.component
-    motionCluster <- Motion.custom Block.cluster
+    -- motionCluster <- Motion.custom Block.cluster
     motionPopover <- Motion.custom Popover.component
     reactComponent "PopoverExample" \props -> React.do
       referenceElement /\ setReferenceElement <- React.useState' nullRef
@@ -85,7 +83,9 @@ popover = do
       visible /\ setVisible <- React.useState' false
       selectedAuthors /\ modSelectedAuthors <- React.useState []
       let
-        addToSelected a = modSelectedAuthors (_ `Array.union` [ a ])
+        addToSelected a = do
+          modSelectedAuthors (_ `Array.union` [ a ])
+          setText ""
         matchingAuthors =
           authors
             # (_ Array.\\ selectedAuthors)
@@ -113,9 +113,6 @@ popover = do
                       idx <- Array.findIndex (eq elem) matchingAuthors
                       Array.index matchingAuthors (idx - 1)
                   Nothing -> last
-            KeyCode.Return ->
-              when visible do
-                for_ active addToSelected
             KeyCode.Backspace ->
               when (text == "") do
                 modSelectedAuthors (Array.dropEnd 1)
@@ -123,45 +120,36 @@ popover = do
       let
         inputWrapper = R.div' </ { ref: unsafeCoerce (mkEffectFn1 setReferenceElement) }
         pill t =
-          animatePresence </ {}
-            /> [ motionCluster
-                  </ Motion.withMotion
-                      { style:
-                        css
-                          { fontSize: "var(--s-1)"
-                          , borderRadius: "var(--s-2)"
-                          , padding: "var(--s-2)"
-                          , background: colour.highlightAlpha50
-                          , userSelect: "none"
-                          }
-                      , space: "4px"
-                      , justify: "flex-end"
-                      }
-                      { initial: Motion.initial $ css { scale: 0.95, opacity: 0.5 }
-                      , animate: Motion.animate $ css { scale: 1, opacity: 1 }
-                      , exit: Motion.exit $ css { scale: 0.7, opacity: 0 }
-                      , transition: Motion.transition { duration: 0.4 }
-                      }
-                  /> [ R.text t
-                    , Motion.div
-                        </ { onClick: handler_ (modSelectedAuthors (Array.delete t)) }
-                        /> [ Icon.component
-                              </> { icon: Icons.cross, size: str "var(--s-1)" }
-                          ]
-                    ]
-              ]
+          React.elementKeyed Block.cluster
+            $ { style:
+                css
+                  { fontSize: "var(--s-1)"
+                  , borderRadius: "var(--s-2)"
+                  , padding: "var(--s-2)"
+                  , background: colour.highlightAlpha50
+                  , userSelect: "none"
+                  , display: "inline-block"
+                  }
+              , space: "4px"
+              , key: t
+              , justify: "flex-end"
+              , children:
+                [ R.text t
+                , Motion.div
+                    </ { onClick: handler_ (modSelectedAuthors (Array.delete t)) }
+                    /> [ Icon.component
+                          </> { icon: Icons.cross, size: str "var(--s-1)" }
+                      ]
+                ]
+              }
         pills = pill <$> selectedAuthors
         leading =
-          motionCluster
-            </ Motion.withMotion
-                { style:
-                  css
-                    { marginLeft: "-6px"
-                    }
-                , space: "var(--s-5)"
-                , justify: "flex-start"
-                }
-                {}
+          Motion.span
+            </ { style: css { overflowX: "scroll", maxWidth: "33%" }
+              , variants: Motion.variants containerVariants
+              , initial: Motion.initial containerVariant.hidden
+              , animate: Motion.animate containerVariant.visible
+              }
             /> pills
         trailing =
           R.div'
@@ -185,7 +173,11 @@ popover = do
                     " "
                   else
                     text
-              , onChange: handler targetValue $ traverse_ setText
+              , onChange:
+                handler RE.targetValue do
+                  case _ of
+                    Just txt -> setText txt
+                    _ -> mempty
               , onBlur: handler preventDefault (const $ unless clicking (setVisible false))
               , onFocus: handler_ (setVisible true)
               , leading
@@ -220,17 +212,26 @@ popover = do
                 , style:
                   css
                     { boxShadow: "0px 2px 4px rgba(40,40,40,0.5)"
-                    , background: colour.interfaceBackground
-                    , borderRadius: "0 0 9px 9px"
+                    , background: colour.backgroundAlpha25
+                    , borderRadius: "var(--s0)"
                     , borderTop: "solid 1px " <> colour.interfaceBackgroundHighlight
                     , borderBottom: "solid 1px " <> colour.interfaceBackgroundShadow
                     , overflowY: "scroll"
                     , maxHeight: "400px"
                     , margin: "0"
+                    , marginTop: "calc(var(--s-3) * -1)"
                     , padding: "0"
                     }
                 , key: "popover"
-                , children: [ R.ul' </ {} /> children ]
+                , children:
+                  [ R.ul'
+                      </ { style:
+                          css
+                            { padding: "0"
+                            }
+                        }
+                      /> children
+                  ]
                 }
         box =
           Box.component
@@ -254,9 +255,9 @@ popover = do
               E.css
                 { padding: E.str "var(--s-1)"
                 , borderBottom: E.str $ "solid 1px " <> colour.backgroundLayer1
-                , background: E.str colour.backgroundLayer3
                 , margin: E.str "0"
                 , fontSize: E.str "calc(var(--s0) * 0.75)"
+                , listStyleType: E.none
                 }
                 <> ( guard (Just a == active)
                       $ E.css
@@ -270,7 +271,6 @@ popover = do
               handler_ do
                 maybeRefElem <- readRefMaybe inputRef
                 addToSelected a
-                for_ (maybeRefElem >>= HTMLElement.fromNode) focus
             , onMouseDown: handler_ (setClicking true)
             , onMouseUp: handler_ (setClicking false)
             , children: [ R.text a ]
@@ -299,15 +299,18 @@ popover = do
         css
           { x: 0
           , opacity: 1
+          , y: "0%"
+          , transition: { type: "tween", duration: 0.267 }
           }
       , hidden:
         css
           { opacity: 0.8
-          , x: -20
+          , y: "100%"
           }
       , exit:
         css
           { opacity: 1.0
+          , x: "100%"
           }
       }
 
@@ -352,6 +355,21 @@ popover = do
       , exit ∷ Motion.VariantLabel
       }
     containerVariant = Motion.makeVariantLabels containerVariants
+
+    pillVariants ∷
+      { hidden ∷ CSS
+      , visible ∷ CSS
+      }
+    pillVariants =
+      { visible: css { x: "0%" }
+      , hidden: css { x: "-100%" }
+      }
+
+    pillVariant ∷
+      { hidden ∷ Motion.VariantLabel
+      , visible ∷ Motion.VariantLabel
+      }
+    pillVariant = Motion.makeVariantLabels pillVariants
 
     authors =
       Array.sort

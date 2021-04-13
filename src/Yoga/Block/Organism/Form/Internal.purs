@@ -188,7 +188,13 @@ formBuilder f =
     let
       { edit, validate } = f props value
     in
-      { edit: \onChange -> [ Child { key: Nothing, child: edit onChange } ]
+      { edit:
+        \onChange ->
+          [ Child
+              { key: Nothing
+              , child: edit onChange
+              }
+          ]
       , validate: validate
       }
 

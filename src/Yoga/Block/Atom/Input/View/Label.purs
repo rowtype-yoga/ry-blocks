@@ -3,8 +3,7 @@ module Yoga.Block.Atom.Input.View.Label where
 import Yoga.Prelude.View
 import Data.String.NonEmpty (NonEmptyString)
 import Data.String.NonEmpty as NonEmptyString
-import Debug (spy)
-import Effect.Class.Console (log, warn)
+import Effect.Class.Console (warn)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object as Object
 import Framer.Motion as M
@@ -36,8 +35,6 @@ component =
         maybeOffsets /\ setOffsets <- useState' Nothing
         -- this is so complicated because we need to take scale into account
         useLayoutEffectAlways do
-          log $ "render large label " <> show props.renderLargeLabel
-          let _ = spy "help" props
           inputWidth <- getOffsetWidthFromRef inputRef
           inputRect <- getBoundingBoxFromRef inputRef
           parentWidth <- getOffsetWidthFromRef parentRef

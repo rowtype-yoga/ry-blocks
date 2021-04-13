@@ -13,6 +13,8 @@ module Yoga.Block.Organism.Form.Validation
   , validInt
   , validDate
   , validNumber'
+  , validNatBetween'
+  , validNatBetween
   , validInt'
   , validDate'
   , optional
@@ -31,7 +33,7 @@ module Yoga.Block.Organism.Form.Validation
   , modified
   , fromValidated
   , validated
-  , warn
+  -- , warn
   ) where
 
 import Yoga.Prelude.View
@@ -54,12 +56,24 @@ import Data.String.Common (split)
 import Data.String.NonEmpty (NonEmptyString)
 import Data.String.NonEmpty (fromString) as NES
 import Data.String.Pattern (Pattern(..))
+import Data.Symbol (class IsSymbol, reflectSymbol, reifySymbol)
 import Data.Traversable (traverse)
+import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Generic (class Decode, class Encode, decode, encode)
+import Framer.Motion (makeVariantLabels)
+import Framer.Motion as Motion
 import Heterogeneous.Mapping (class MapRecordWithIndex, class Mapping, ConstMapping, hmap, mapping)
+import Prim.Row (class Cons)
 import Prim.RowList as RL
 import React.Basic.DOM as R
+import React.Basic.Emotion as E
+import React.Basic.Hooks (reactComponent)
+import React.Basic.Hooks as React
+import Record.Unsafe (unsafeSet)
+import Type.Data.Peano as Peano
+import Type.Prelude (Proxy(..))
 import Yoga.Block as Block
+import Yoga.Block.Container.Style (colour)
 import Yoga.Block.Organism.Form.Internal (Forest, FormBuilder, FormBuilder'(..), Tree(..))
 
 -- | A `Validator` takes a possibly invalid form `result` and produces
@@ -114,6 +128,41 @@ validNumber name = validNumber' (name <> " must be a number")
 -- | `validNumber`, but the argument is the entire validation message.
 validNumber' ∷ String -> Validator String Number
 validNumber' msg = note msg <<< Number.fromString
+
+-- | A `Validator`, which ensures a number is inclusively between two positive 
+-- | integers
+validNatBetween ∷
+  ∀ minStr maxStr min max subtracted.
+  Peano.ParseNat minStr min =>
+  Peano.ParseNat maxStr max =>
+  Peano.IsNat min =>
+  Peano.IsNat max =>
+  Peano.IsNat subtracted =>
+  Peano.SumInt (Peano.Pos max) (Peano.Neg min) (Peano.Pos subtracted) =>
+  Proxy minStr -> Proxy maxStr -> String -> Validator String Int
+validNatBetween minProxy maxProxy name = do
+  validNatBetween' minProxy maxProxy \min max ->
+    name <> " must be between " <> show min <> " and " <> show max
+
+validNatBetween' ∷
+  ∀ minSymbol maxSymbol min max subtracted.
+  Peano.ParseNat minSymbol min =>
+  Peano.ParseNat maxSymbol max =>
+  Peano.IsNat min =>
+  Peano.IsNat max =>
+  Peano.IsNat subtracted =>
+  Peano.SumInt (Peano.Pos max) (Peano.Neg min) (Peano.Pos subtracted) =>
+  Proxy minSymbol -> Proxy maxSymbol -> (Int -> Int -> String) -> Validator String Int
+validNatBetween' minSymbolProxy maxSymbolProxy msg rawString = case Int.fromString rawString of
+  Just parseableInt
+    | between minInt maxInt parseableInt -> Right parseableInt
+  _ -> Left (msg minInt maxInt)
+  where
+  minInt ∷ Int
+  minInt = Peano.reflectNat (Peano.parseNat minSymbolProxy)
+
+  maxInt ∷ Int
+  maxInt = Peano.reflectNat (Peano.parseNat maxSymbolProxy)
 
 -- | A `Validator` which verifies that its input can be parsed as an integer.
 validInt ∷ String -> Validator String Int
@@ -297,25 +346,38 @@ validated ∷
   ∀ props unvalidated validated result result_.
   CanValidate unvalidated validated =>
   Validator result_ result ->
-  FormBuilder { readOnly ∷ Boolean | props } unvalidated result_ ->
+  FormBuilder { readOnly ∷ Boolean, validationError ∷ Maybe (Maybe String) | props } unvalidated result_ ->
   FormBuilder { readOnly ∷ Boolean | props } (Validated validated) result
 validated runValidator editor =
-  FormBuilder \props@{ readOnly } v ->
+  FormBuilder \props@{ readOnly } (v ∷ Validated validated) -> do
     let
+      value ∷ unvalidated
       value = fromValidated v
       innerColumn_ =
-        Block.cluster
-          </ { style: R.css { maxWidth: "100%", maxHeight: "100%" }
+        Block.stack
+          </* { className: "ry-form-inner-column"
+            , space: E.str "0"
+            , css:
+              E.css
+                { maxWidth: E.str "100%"
+                , margin: E.str "0"
+                }
             }
-      { edit, validate } = un FormBuilder editor props value
+      validationMessage ∷ Maybe validated
+      validationMessage = case v of
+        Fresh _ -> Nothing
+        Modified m -> Just m
+      { edit, validate } = un FormBuilder editor (props # upsert (Proxy ∷ _ "validationError") (Nothing)) value
       modify ∷ Maybe String -> Forest -> Forest
       modify message forest = case Array.unsnoc forest of
-        Nothing -> [ Child { key: Nothing, child: errLine } ]
-        Just { init, last: Child c } -> Array.snoc init (Child c { child = innerColumn_ [ c.child, errLine ] })
+        Nothing -> [ Child { key: Nothing, child: errChild } ]
+        Just { init, last: Child c } -> Array.snoc init (Child c { child = innerColumn_ [ c.child, errChild ] })
         Just { init, last: Wrapper c } -> Array.snoc init (Wrapper c { children = modify message c.children })
         Just { init, last: Node n } -> Array.snoc init (Node n { validationError = message })
         where
         errLine = guard (not readOnly) message # foldMap R.text
+
+        errChild = errorChild </> { errorLine: errLine, message }
       -- The validation can produce either a valid result, an error message, or
       -- none in the case where the form is Fresh.
       res ∷ Maybe (Either String result)
@@ -325,56 +387,135 @@ validated runValidator editor =
           Fresh _ -> pure <$> hush (runValidator valid)
           _ -> pure $ runValidator valid
       err = either pure (const Nothing) =<< res
-    in
-      { edit:
-        \onChange ->
-          (modify err <<< edit)
-            ( onChange
-                <<< \f -> case _ of
-                    v'@(Fresh u) -> review modified (f (fromValidated v'))
-                    v'@(Modified u) -> review modified (f (fromValidated v'))
-            )
-      , validate: hush =<< res
-      }
+      finalResult = un FormBuilder editor (props # upsert (Proxy ∷ _ "validationError") (res <#> either Just (const Nothing))) value
+    { edit:
+      \onChange ->
+        (modify err <<< finalResult.edit)
+          ( onChange
+              <<< \f -> case _ of
+                  v'@(Fresh u) -> review modified (f (fromValidated v'))
+                  v'@(Modified u) -> review modified (f (fromValidated v'))
+          )
+    , validate: hush =<< res
+    }
 
--- | Attach a validation function to a `FormBuilder p u a`, producing a new
--- | `FormBuilder` that takes a `Validated u` as form state and displays a
--- | warning message if its form data triggers a warning, while still allowing
--- | the form to proceed.
-warn ∷
-  ∀ props unvalidated validated result.
-  CanValidate unvalidated validated =>
-  WarningValidator result ->
-  FormBuilder { readOnly ∷ Boolean | props } unvalidated result ->
-  FormBuilder { readOnly ∷ Boolean | props } (Validated validated) result
-warn warningValidator editor =
-  FormBuilder \props@{ readOnly } v ->
-    let
-      { edit, validate } = un FormBuilder editor props (fromValidated v)
-      innerColumn_ =
-        Block.cluster
-          </ { style: R.css { maxWidth: "100%", maxHeight: "100%" }
+errorChild ∷ ReactComponent { errorLine ∷ JSX, message ∷ Maybe _ }
+errorChild =
+  unsafePerformEffect
+    $ reactComponent "Error Child" \{ message, errorLine } -> React.do
+        expanded /\ setExpanded <- React.useState' false
+        let
+          variants =
+            { hidden:
+              const
+                { y: "-100%"
+                , height: "auto"
+                }
+            , visible:
+              { y: "0%"
+              , transition: { type: "tween", delay: 0.75 }
+              }
             }
-      modify ∷ Forest -> Forest
-      modify forest = case Array.unsnoc forest of
-        Nothing -> [ Child { key: Nothing, child: errLine } ]
-        Just { init, last: Child c } -> Array.snoc init (Child c { child = innerColumn_ [ c.child, errLine ] })
-        Just { init, last: Wrapper c } -> Array.snoc init (Wrapper c { children = modify c.children })
-        Just { init, last: Node n } -> Array.snoc init (Node n { validationError = message })
-      errLine ∷ JSX
-      errLine = guard (not readOnly) message # foldMap R.text
-      message ∷ Maybe String
-      message = case v of
-        Fresh _ -> Nothing
-        _ -> warningValidator =<< validate
-    in
-      { edit:
-        \onChange ->
-          (modify <<< edit)
-            ( onChange
-                <<< \f -> case _ of
-                    v'@(Fresh u) -> review modified (f (fromValidated v'))
-                    v'@(Modified u) -> review modified (f (fromValidated v'))
-            )
-      , validate
-      }
+        let variant = makeVariantLabels variants
+        pure
+          $ R.div'
+          </* { className: "ry-validation-error"
+            , css:
+              E.css
+                { fontSize: E.str "calc(var(--s0) * 0.8)"
+                , fontWeight: E.str "400"
+                , height: E.str "calc(var(--s0) + var(--s-4))"
+                , margin: E.str "0 var(--s-1) 0 var(--s-1)"
+                , overflow: E.str $ if expanded then "visible" else "hidden"
+                }
+            }
+          /> [ Motion.animatePresence </ {}
+                /> case message of
+                    Just vm ->
+                      [ Motion.div
+                          </* { variants: Motion.variants variants
+                            , initial: Motion.initial variant.hidden
+                            , animate: Motion.animate variant.visible
+                            , exit: Motion.exit $ variant.hidden
+                            , className: "ry-validation-error"
+                            , css:
+                              E.css
+                                { color: E.str colour.invalidText
+                                , background: E.str colour.invalid
+                                , padding: E.str "4px"
+                                , paddingTop: E.str "2px"
+                                , borderRadius: E.str "0 0 8px 8px"
+                                }
+                            }
+                          /> [ motionReadMore
+                                </ Motion.withMotion
+                                    { background: colour.invalid
+                                    , onMoreClicked: setExpanded true
+                                    , onLessClicked: setExpanded false
+                                    }
+                                    { layout: Motion.layout false
+                                    }
+                                /> [ R.span'
+                                      </* { className: "ry-validation-error"
+                                        , css: E.css {}
+                                        }
+                                      /> [ errorLine ]
+                                  ]
+                            ]
+                      ]
+                    _ -> mempty
+            ]
+  where
+  motionReadMore = unsafePerformEffect $ Motion.custom Block.readMore
+
+upsert ∷
+  ∀ proxy r1 r2 r l a.
+  IsSymbol l =>
+  Cons l a r r2 =>
+  proxy l ->
+  a ->
+  Record r1 ->
+  Record r2
+upsert l a r = unsafeSet (reflectSymbol l) a r
+
+-- -- | Attach a validation function to a `FormBuilder p u a`, producing a new
+-- -- | `FormBuilder` that takes a `Validated u` as form state and displays a
+-- -- | warning message if its form data triggers a warning, while still allowing
+-- -- | the form to proceed.
+-- warn ∷
+--   ∀ props unvalidated validated result.
+--   CanValidate unvalidated validated =>
+--   WarningValidator result ->
+--   FormBuilder { readOnly ∷ Boolean | props } unvalidated result ->
+--   FormBuilder { readOnly ∷ Boolean | props } (Validated validated) result
+-- warn warningValidator editor =
+--   FormBuilder \props@{ readOnly } v ->
+--     let
+--       { edit, validate } = un FormBuilder editor props (fromValidated v)
+--       innerColumn_ =
+--         Block.cluster
+--           </ { style: R.css { maxWidth: "100%", maxHeight: "100%" }
+--             }
+--       modify ∷ Forest -> Forest
+--       modify forest = case Array.unsnoc forest of
+--         Nothing -> [ Child { key: Nothing, child: errLine  } ]
+--         Just { init, last: Child c } -> Array.snoc init (Child c { child = innerColumn_ [ c.child, errLine ] })
+--         Just { init, last: Wrapper c } -> Array.snoc init (Wrapper c { children = modify c.children })
+--         Just { init, last: Node n } -> Array.snoc init (Node n { validationError = message })
+--       errLine ∷ JSX
+--       errLine = guard (not readOnly) message # foldMap R.text
+--       message ∷ Maybe String
+--       message = case v of
+--         Fresh _ -> Nothing
+--         _ -> warningValidator =<< validate
+--     in
+--       { edit:
+--         \onChange ->
+--           (modify <<< edit)
+--             ( onChange
+--                 <<< \f -> case _ of
+--                     v'@(Fresh u) -> review modified (f (fromValidated v'))
+--                     v'@(Modified u) -> review modified (f (fromValidated v'))
+--             )
+--       , validate
+--       }

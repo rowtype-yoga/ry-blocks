@@ -182,11 +182,12 @@ mkGlobal maybeMode =
             }
     , a:
       nest
-        { color: str colour.link
-        , textDecoration: str "none"
+        { fontWeight: str "600"
+        , textDecoration: str "underline"
+        , cursor: str "pointer"
         , "&:hover":
           nest
-            { textDecoration: str $ "underline " <> colour.link
+            { textDecoration: str "none"
             }
         }
     , "::selection":
@@ -221,6 +222,9 @@ defaultColours ∷ Colours
 defaultColours =
   { light:
     { background: lightBg
+    , backgroundAlpha25: withAlpha 0.25 lightBg
+    , backgroundAlpha50: withAlpha 0.5 lightBg
+    , backgroundAlpha75: withAlpha 0.75 lightBg
     , backgroundInverted: darken 0.85 lightBg
     , backgroundLayer1: darken 0.07 >>> desaturate 0.2 $ lightBg
     , backgroundLayer2: darken 0.06 >>> desaturate 0.2 $ lightBg
@@ -238,7 +242,7 @@ defaultColours =
     , highlightRotatedForwards: highlight # rotateHue 30.0
     , highlightText
     , inputBackground: lightBg
-    , inputBorder: darken 0.1 lightBg
+    , inputBorder: darken 0.06 >>> desaturate 0.2 $ lightBg
     , interfaceBackground
     , interfaceBackgroundDangerous
     , interfaceBackgroundDisabled: darken 0.03 lightBg
@@ -258,6 +262,9 @@ defaultColours =
     }
   , dark:
     { background: darkBg
+    , backgroundAlpha25: withAlpha 0.25 darkBg
+    , backgroundAlpha50: withAlpha 0.5 darkBg
+    , backgroundAlpha75: withAlpha 0.75 darkBg
     , backgroundInverted: lightBg
     , backgroundLayer1: darkBg
     , backgroundLayer2: lighten 0.07 >>> saturate 0.18 $ darkBg
@@ -283,8 +290,8 @@ defaultColours =
     , interfaceBackgroundShadow: darken 0.1 interfaceBackgroundDark
     , interfaceDangerousText: interfaceDangerousTextDark
     , interfaceTextDisabled: (desaturate 0.3 >>> lighten 0.25 >>> desaturate 0.3) interfaceBackgroundDark
-    , invalid
-    , invalidText
+    , invalid: invalidDark
+    , invalidText: invalidTextDark
     , link: linkDark
     , placeholderText: darken 0.4 white
     , required
@@ -319,9 +326,13 @@ defaultColours =
 
   interfaceDangerousTextDark = Color.hsl 340.0 1.0 0.90
 
-  invalid = Color.rgb 220 40 70
+  invalidDark = Color.rgb 230 30 60
 
-  invalidText = successText
+  invalid = Color.rgb 173 0 69
+
+  invalidText = Color.white
+
+  invalidTextDark = successText
 
   lightBg = Color.hsl 5.0 0.27 0.99
 
@@ -343,6 +354,9 @@ defaultColours =
 
 type FlatTheme a =
   { background ∷ a
+  , backgroundAlpha25 ∷ a
+  , backgroundAlpha50 ∷ a
+  , backgroundAlpha75 ∷ a
   , backgroundLayer1 ∷ a
   , backgroundLayer2 ∷ a
   , backgroundLayer3 ∷ a

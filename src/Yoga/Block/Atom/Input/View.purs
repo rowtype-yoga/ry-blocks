@@ -118,7 +118,6 @@ rawComponent =
         onBlur =
           handler preventDefault
             ( const do
-                log "onBlör"
                 when hasFocus $ setHasFocus false
                 el <- getHTMLElementFromRef ref
                 let inputEl = InputElement.fromHTMLElement =<< el

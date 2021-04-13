@@ -18,6 +18,7 @@ import Yoga.Block.Layout.Sidebar as Sidebar
 import Yoga.Block.Layout.Stack as Stack
 import Yoga.Block.Layout.Switcher as Switcher
 import Yoga.Block.Molecule.Modal as Modal
+import Yoga.Block.Molecule.ReadMore as ReadMore
 
 box ∷ ∀ p q. Union p q Box.Props => ReactComponent { | p }
 box = Box.component
@@ -66,3 +67,6 @@ toggle = Toggle.component
 
 tooltip ∷ ∀ p q. Union p q Tooltip.Props => ReactComponent { | Tooltip.MandatoryProps p }
 tooltip = Tooltip.component
+
+readMore ∷ ∀ p q. Union p q ReadMore.Props => ReactComponent (Record p)
+readMore = ReadMore.component
