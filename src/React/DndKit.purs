@@ -1,7 +1,7 @@
 module React.DndKit where
 
 import Prelude
-import Data.Function.Uncurried (Fn3, runFn3)
+import Data.Function.Uncurried (Fn2, Fn3, runFn2, runFn3)
 import Data.Maybe (Maybe)
 import Data.Nullable (Nullable, toMaybe)
 import Effect.Uncurried (EffectFn1, runEffectFn1)
@@ -10,8 +10,8 @@ import Foreign.Object (Object)
 import Foreign.Object as Object
 import Prim.Row (class Union)
 import React.Basic (Ref)
-import React.Basic.Events (EventFn, EventHandler, SyntheticEvent, unsafeEventFn)
-import React.Basic.Hooks (Hook, JSX, ReactComponent, unsafeHook)
+import React.Basic.Events (EventFn, SyntheticEvent, EventHandler, unsafeEventFn)
+import React.Basic.Hooks (JSX, ReactComponent, Hook, unsafeHook)
 import Record.Builder as Builder
 import Type.Prelude (Proxy(..))
 import Unsafe.Coerce (unsafeCoerce)
@@ -23,12 +23,12 @@ type DndContextProps =
   ( children ∷ Array JSX
   , onDragEnd ∷ EventHandler
   , modifiers ∷ Array Modifier
-  , sensors ∷ ∀ a. Array (SensorDescriptor a)
+  , sensors ∷ Sensors
   , collisionDetection ∷ CollisionDetection
   -- , onDragStart: ?(event: DragStartEvent): void
   -- , onDragMove?(event: DragMoveEvent): void
   -- , onDragOver?(event: DragOverEvent): void
-  -- , onDragEnd?(event: DragEndEvent): void
+  , onDragEnd ∷ EventHandler
   -- , onDragCancel?(): void
   )
 
@@ -38,13 +38,13 @@ foreign import closestCenter ∷ CollisionDetection
 
 foreign import closestCorners ∷ CollisionDetection
 
-foreign import data SensorDescriptor ∷ Type -> Type
+foreign import data SensorDescriptor ∷ Type
 
 dndContext ∷ ∀ p q. Union p q DndContextProps => ReactComponent { | p }
 dndContext = dndContextImpl
 
-active ∷ EventFn SyntheticEvent Draggable
-active = unsafeEventFn \e -> (unsafeCoerce e).active
+active ∷ EventFn SyntheticEvent (Maybe Draggable)
+active = unsafeEventFn \e -> toMaybe (unsafeCoerce e).active
 
 over ∷ EventFn SyntheticEvent (Maybe Draggable)
 over = unsafeEventFn \e -> toMaybe (unsafeCoerce e).over
@@ -54,6 +54,7 @@ type Draggable =
 
 type SortableContextProps =
   ( children ∷ Array JSX
+  , strategy ∷ SortingStrategy
   , items ∷ Array String
   )
 
@@ -145,9 +146,41 @@ foreign import restrictToFirstScrollableAncestor ∷ Modifier
 
 foreign import restrictToWindowEdges ∷ Modifier
 
-arrayMove ∷ ∀ a. Array a -> Int -> Int -> Array a
-arrayMove = runFn3 arrayMoveImpl
+arrayMove ∷ ∀ a. Int -> Int -> Array a -> Array a
+arrayMove source target arr = runFn3 arrayMoveImpl arr source target
 
 foreign import arrayMoveImpl ∷ ∀ a. Fn3 (Array a) Int Int (Array a)
 
 foreign import cssToString ∷ Foreign -> String
+
+foreign import data Sensor ∷ Type
+
+foreign import data Sensors ∷ Type
+
+foreign import keyboardSensor ∷ Sensor
+
+foreign import pointerSensor ∷ Sensor
+
+foreign import data UseSensor ∷ Type -> Type
+
+foreign import useSensorImpl ∷ ∀ args. Fn2 Sensor { | args } SensorDescriptor
+
+useSensor ∷ ∀ r. Sensor -> Record r -> SensorDescriptor
+useSensor sensor args = runFn2 useSensorImpl sensor args
+
+foreign import data UseSensors ∷ Type -> Type
+
+foreign import useSensorsImpl ∷ EffectFn1 (Array SensorDescriptor) Sensors
+
+useSensors ∷ ∀ hooks. Array SensorDescriptor -> Hook hooks Sensors
+useSensors args =
+  unsafeHook
+    $ runEffectFn1 useSensorsImpl args
+
+foreign import data CoordinateGetter ∷ Type
+
+foreign import sortableKeyboardCoordinates ∷ CoordinateGetter
+
+foreign import data SortingStrategy ∷ Type
+
+foreign import verticalListSortingStrategy ∷ SortingStrategy

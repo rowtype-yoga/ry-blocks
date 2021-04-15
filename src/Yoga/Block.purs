@@ -5,6 +5,7 @@ import React.Basic (JSX, ReactComponent)
 import Yoga.Block.Atom.Button as Button
 import Yoga.Block.Atom.Icon as Icon
 import Yoga.Block.Atom.Input as Input
+import Yoga.Block.Atom.Popover as Popover
 import Yoga.Block.Atom.Range as Range
 import Yoga.Block.Atom.Segmented as Segmented
 import Yoga.Block.Atom.Toggle as Toggle
@@ -43,6 +44,9 @@ input = Input.component
 
 imposter ∷ ∀ p q. Union p q Imposter.Props => ReactComponent { | p }
 imposter = Imposter.component
+
+popover ∷ ∀ p p_. Union p p_ Popover.Props => ReactComponent { | Popover.MandatoryProps p }
+popover = Popover.component
 
 modal ∷ ReactComponent Modal.Props
 modal = Modal.component

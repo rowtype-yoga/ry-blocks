@@ -35,7 +35,7 @@ import Yoga.Block.Atom.Icon as Icon
 import Yoga.Block.Atom.Input as Input
 import Yoga.Block.Atom.Input.Types as HTMLInput
 import Yoga.Block.Atom.Popover as Popover
-import Yoga.Block.Container.Style (colour)
+import Yoga.Block.Container.Style (colour, size)
 import Yoga.Block.Container.Style as Styles
 import Yoga.Block.Hook.Key as KeyCode
 import Yoga.Block.Hook.UseKeyDown (useKeyDown)
@@ -61,14 +61,48 @@ default =
 popover ∷ Effect JSX
 popover = do
   autosuggest <- mkAutosuggest
+  basic <- mkBasic
   pure
     $ fragment
         [ R.div_
-            [ R.h2_ [ R.text "Autosuggest" ]
+            [ R.h2_ [ R.text "Basic Popover" ]
+            , Block.stack </ { space: E.str size."3xl" }
+                /> [ Block.cluster </ { justify: "space-between" }
+                      /> [ basic </> { placement: Placement.Placement Placement.Left Nothing }
+                        , basic </> { placement: Placement.Placement Placement.Bottom Nothing }
+                        , basic </> { placement: Placement.Placement Placement.Auto Nothing }
+                        , basic </> { placement: Placement.Placement Placement.Top Nothing }
+                        , basic </> { placement: Placement.Placement Placement.Right Nothing }
+                        ]
+                  , Block.cluster </ { justify: "space-between" }
+                      /> [ basic </> { placement: Placement.Placement Placement.Left (Just Placement.End) }
+                        , basic </> { placement: Placement.Placement Placement.Bottom (Just Placement.End) }
+                        , basic </> { placement: Placement.Placement Placement.Auto (Just Placement.End) }
+                        , basic </> { placement: Placement.Placement Placement.Top (Just Placement.End) }
+                        , basic </> { placement: Placement.Placement Placement.Right (Just Placement.End) }
+                        ]
+                  ]
+            , R.h2_ [ R.text "Autosuggest" ]
             , autosuggest </> {}
             ]
         ]
   where
+  mkBasic ∷ Effect (ReactComponent { placement ∷ Placement })
+  mkBasic = do
+    reactComponent "PopoverExample" \({ placement }) -> React.do
+      referenceElement /\ setReferenceElement <- React.useState' nullRef
+      let
+        box =
+          R.span'
+            </ { ref: unsafeCoerce (mkEffectFn1 setReferenceElement)
+              , style: R.css { background: "hotpink" }
+              }
+            /> [ R.text "target" ]
+        thePopover =
+          Block.popover </ { referenceElement, placement, renderArrow: true }
+            /> [ Block.box </ { padding: E.str size.xs } /> [ R.text $ Placement.render placement ] ]
+      pure $ fragment [ box, thePopover ]
+
   mkAutosuggest ∷ Effect (ReactComponent {})
   mkAutosuggest = do
     motionStack <- Motion.custom Stack.component
@@ -76,6 +110,7 @@ popover = do
     motionPopover <- Motion.custom Popover.component
     reactComponent "PopoverExample" \props -> React.do
       referenceElement /\ setReferenceElement <- React.useState' nullRef
+      arrowElement /\ setArrowElement <- React.useState' nullRef
       inputRef <- React.useRef null
       text /\ setText <- React.useState' ""
       active /\ modifyActive <- React.useState Nothing
@@ -214,12 +249,9 @@ popover = do
                     { boxShadow: "0px 2px 4px rgba(40,40,40,0.5)"
                     , background: colour.backgroundAlpha25
                     , borderRadius: "var(--s0)"
-                    , borderTop: "solid 1px " <> colour.interfaceBackgroundHighlight
-                    , borderBottom: "solid 1px " <> colour.interfaceBackgroundShadow
                     , overflowY: "scroll"
                     , maxHeight: "400px"
                     , margin: "0"
-                    , marginTop: "calc(var(--s-3) * -1)"
                     , padding: "0"
                     }
                 , key: "popover"
@@ -228,6 +260,7 @@ popover = do
                       </ { style:
                           css
                             { padding: "0"
+                            , margin: size.xs
                             }
                         }
                       /> children
@@ -253,17 +286,17 @@ popover = do
             , variants: Motion.variants itemVariants
             , css:
               E.css
-                { padding: E.str "var(--s-1)"
+                { padding: E.str size.xs
                 , borderBottom: E.str $ "solid 1px " <> colour.backgroundLayer1
                 , margin: E.str "0"
-                , fontSize: E.str "calc(var(--s0) * 0.75)"
+                , fontSize: E.str size.s
                 , listStyleType: E.none
+                , borderRadius: E.str size.xxs
                 }
                 <> ( guard (Just a == active)
                       $ E.css
-                          { borderLeft: E.str $ "calc(var(--s-1) / 2) solid " <> colour.highlight
-                          , paddingLeft: E.str "calc(var(--s-1) / 2)"
-                          , background: E.str colour.backgroundLayer1
+                          { background: E.str colour.highlight
+                          , color: E.str colour.highlightText
                           }
                   )
             , className: "item"

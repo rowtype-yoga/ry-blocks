@@ -8,8 +8,8 @@ import Yoga.Block.Internal (NodeRef)
 nullRef ∷ NodeRef
 nullRef = unsafeCoerce null
 
-modifierArrow ∷ ArrowElement -> Modifier
-modifierArrow element = unsafeCoerce { name: "arrow", options: { element } }
+modifierArrow ∷ { element ∷ ArrowElement, padding ∷ Int } -> Modifier
+modifierArrow options = unsafeCoerce { name: "arrow", options }
 
 modifierOffset ∷ { x ∷ Number, y ∷ Number } -> Modifier
 modifierOffset { x, y } = unsafeCoerce { name: "offset", options: { offset: [ x, y ] } }

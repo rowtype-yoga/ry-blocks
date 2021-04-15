@@ -15,6 +15,8 @@ module Yoga.Block.Icon.SVG
   , module Yoga.Block.Icon.SVG.Plus
   , module Yoga.Block.Icon.SVG.Warn
   , module Yoga.Block.Icon.SVG.Checkmark
+  , module Yoga.Block.Icon.SVG.DraggableIndicator
+  , module Yoga.Block.Icon.SVG.Ellipsis
   ) where
 
 import Yoga.Block.Icon.SVG.Bin (bin)
@@ -33,3 +35,5 @@ import Yoga.Block.Icon.SVG.QuestionMark (questionMark)
 import Yoga.Block.Icon.SVG.SimpleKey (simpleKey)
 import Yoga.Block.Icon.SVG.Sun (sun)
 import Yoga.Block.Icon.SVG.Warn (warn)
+import Yoga.Block.Icon.SVG.DraggableIndicator (draggableIndicator)
+import Yoga.Block.Icon.SVG.Ellipsis (ellipsis)

@@ -7,6 +7,7 @@ import Effect.Uncurried (EffectFn2, runEffectFn2)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Heterogeneous.Mapping (class HMapWithIndex, class MappingWithIndex, hmap, hmapWithIndex)
+import Type.Proxy (Proxy)
 import Unsafe.Coerce (unsafeCoerce)
 import Web.DOM (Element)
 import Web.DOM.Document (documentElement)
@@ -14,7 +15,6 @@ import Web.Event.Internal.Types (EventTarget)
 import Web.HTML (Window, window)
 import Web.HTML.HTMLDocument as HTMLDocument
 import Web.HTML.Window (document)
-import Type.Proxy (Proxy)
 
 data DarkOrLightMode
   = DarkMode
@@ -230,6 +230,9 @@ defaultColours =
     , backgroundLayer2: darken 0.06 >>> desaturate 0.2 $ lightBg
     , backgroundLayer3: darken 0.04 >>> desaturate 0.1 $ lightBg
     , backgroundLayer4: darken 0.02 >>> desaturate 0.05 $ lightBg
+    , popperBackground: (withAlpha 0.9 >>> darken 0.07 >>> desaturate 0.3) lightBg
+    , popperInnerBorder: (withAlpha 0.9 >>> darken 0.25 >>> desaturate 0.3) lightBg
+    , popperOuterBorder: (withAlpha 0.9 >>> darken 0.1 >>> desaturate 0.3) lightBg
     , backgroundLayer5: lightBg
     , highlight
     , highlightAlpha33: highlightBase 0.33
@@ -268,9 +271,12 @@ defaultColours =
     , backgroundInverted: lightBg
     , backgroundLayer1: darkBg
     , backgroundLayer2: lighten 0.07 >>> saturate 0.18 $ darkBg
-    , backgroundLayer3: lighten 0.14 >>> saturate 0.12 $ darkBg
-    , backgroundLayer4: lighten 0.21 >>> saturate 0.08 $ darkBg
-    , backgroundLayer5: lighten 0.30 >>> saturate 0.07 $ darkBg
+    , backgroundLayer3: lighten 0.16 >>> saturate 0.12 $ darkBg
+    , backgroundLayer4: lighten 0.25 >>> saturate 0.08 $ darkBg
+    , backgroundLayer5: lighten 0.35 >>> saturate 0.07 $ darkBg
+    , popperBackground: (withAlpha 0.8 >>> lighten 0.09 >>> saturate 0.05) darkBg
+    , popperInnerBorder: (withAlpha 0.9 >>> darken 0.7 >>> desaturate 0.3) lightBg
+    , popperOuterBorder: withAlpha 0.8 $ darkBg
     , highlight: highlightDark
     , highlightAlpha33: highlightDarkBase 0.33
     , highlightAlpha50: highlightDarkBase 0.50
@@ -354,6 +360,9 @@ defaultColours =
 
 type FlatTheme a =
   { background ∷ a
+  , popperBackground ∷ a
+  , popperInnerBorder ∷ a
+  , popperOuterBorder ∷ a
   , backgroundAlpha25 ∷ a
   , backgroundAlpha50 ∷ a
   , backgroundAlpha75 ∷ a
@@ -455,6 +464,7 @@ variables =
     { "--ratio": "1.61" # str
     , "--line-height": str "var(--ratio)"
     , "--line-height-small": str "calc(var(--ratio) * 0.8)"
+    , "--s-6": str "calc(var(--s-5) / var(--ratio))"
     , "--s-5": str "calc(var(--s-4) / var(--ratio))"
     , "--s-4": str "calc(var(--s-3) / var(--ratio))"
     , "--s-3": str "calc(var(--s-2) / var(--ratio))"
@@ -466,8 +476,30 @@ variables =
     , "--s3": str "calc(var(--s2) * var(--ratio))"
     , "--s4": str "calc(var(--s3) * var(--ratio))"
     , "--s5": str "calc(var(--s4) * var(--ratio))"
+    , "--s6": str "calc(var(--s5) * var(--ratio))"
     , "--theme-variant": str "light"
     }
+
+size ∷ _
+size =
+  { "5xs": "var(--s-6)"
+  , "4xs": "var(--s-5)"
+  , "3xs": "var(--s-4)"
+  , xxs: "var(--s-3)"
+  , xs: "var(--s-2)"
+  , s: "var(--s-1)"
+  , m: "var(--s0)"
+  , l: "var(--s1)"
+  , xl: "var(--s2)"
+  , xxl: "var(--s3)"
+  , "3xl": "var(--s4)"
+  , "4xl": "var(--s5)"
+  , "5xl": "var(--s6)"
+  , text:
+    { label: "var(--s-1)"
+    , interactive: "calc(var(--s0) * 0.85)"
+    }
+  }
 
 fontVariables ∷ { main ∷ String, mono ∷ String } -> Style
 fontVariables { main, mono } =

@@ -15,3 +15,9 @@ exports.restrictToFirstScrollableAncestor =
   dndKitModifiers.restrictToFirstScrollableAncestor
 exports.restrictToWindowEdges = dndKitModifiers.restrictToWindowEdges
 exports.cssToString = dndKitUtilities.CSS.Transform.toString
+exports.keyboardSensor = dndKitCore.KeyboardSensor
+exports.pointerSensor = dndKitCore.PointerSensor
+exports.useSensorImpl = dndKitCore.useSensor
+exports.useSensorsImpl = (args) => dndKitCore.useSensors.apply(args)
+exports.sortableKeyboardCoordinates = dndKitSortable.sortableKeyboardCoordinates
+exports.verticalListSortingStrategy = dndKitSortable.verticalListSortingStrategy

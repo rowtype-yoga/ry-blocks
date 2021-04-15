@@ -1,8 +1,9 @@
 module Yoga.Block.Atom.Button.Style where
 
 import Yoga.Prelude.Style
+
 import Data.Interpolate (i)
-import Yoga.Block.Container.Style (colour)
+import Yoga.Block.Container.Style (colour, size)
 
 type Props :: forall k. (Type -> k) -> Row k -> Row k
 type Props f r =
@@ -47,8 +48,9 @@ button =
     , alignItems: center
     , borderRadius: var "--s-1"
     , color: str colour.text
+    , touchAction: manipulation
     , boxSizing: borderBox
-    , fontSize: var "--s0"
+    , fontSize: str size.text.interactive
     , fontFamily: var "--mainFont"
     , fontWeight: str "450"
     , letterSpacing: str "calc(var(--s-5)* (-0.1))"
@@ -100,8 +102,7 @@ button =
     , """&:active""":
       nest
         { boxShadow: str $ "inset 0 1px var(--s-1) rgba(0,0,0,0.20)"
-        , borderTop: str $ i "1px solid " colour.interfaceBackgroundShadow
-        , borderBottom: str $ i "1px solid " colour.interfaceBackgroundShadow
+        , border: str $ i "1px solid " colour.interfaceBackgroundShadow
         , transform: str "scale3d(0.92,0.92,0.92)"
         , transition: str "transform 50ms ease"
         }

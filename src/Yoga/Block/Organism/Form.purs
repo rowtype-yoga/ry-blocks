@@ -4,6 +4,7 @@ module Yoga.Block.Organism.Form
   , module Validation
   -- , build
   , array
+  , sortableArray
   , build'
   , defaultRenderForm
   , defaultRenderForest
@@ -29,20 +30,25 @@ module Yoga.Block.Organism.Form
 import Yoga.Prelude.View
 import Data.Array as Array
 import Data.Foldable (surround)
+import Data.Int as Int
 import Data.Lens (Lens', Prism, Prism', matching, review, view)
 import Data.Newtype (un)
 import Data.String as String
 import Data.String.NonEmpty (NonEmptyString)
 import Data.Traversable (traverse)
+import Effect.Uncurried (mkEffectFn1)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Heterogeneous.Mapping (class Mapping)
+import Partial.Unsafe (unsafeCrashWith)
 import Prim.Row (class Lacks, class Nub)
 import React.Basic.DOM as R
 import React.Basic.Emotion as E
 import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as Hooks
+import React.Basic.Popper (nullRef)
+import React.Basic.Popper.Placement.Types as Placement
 import React.DndKit as Dnd
 import Record (disjointUnion)
 import Record.Builder as RB
@@ -617,28 +623,228 @@ array { label, addLabel, defaultValue, editor } =
                   )
       , validate: traverse (un FormBuilder editor props >>> _.validate) xs
       }
+
+-- | Edit an `Array` of values.
+-- |
+-- | This `FormBuilder` displays a removable section for each array element,
+-- | along with an "Add..." button in the final row.
+sortableArray ∷
+  ∀ props u a.
+  { label ∷ String
+  , addLabel ∷ String
+  , defaultValue ∷ u
+  , editor ∷ FormBuilder { readOnly ∷ Boolean | props } u a
+  } ->
+  FormBuilder { readOnly ∷ Boolean | props } (Array u) (Array a)
+sortableArray { label, addLabel, defaultValue, editor } =
+  FormBuilder \props@{ readOnly } xs -> do
+    { edit:
+      \(onChange ∷ (Array u -> Array u) -> Effect Unit) -> do
+        let
+          addButton =
+            Block.cluster </ { justify: "flex-end" }
+              /> [ Block.button
+                    </ { onClick: handler preventDefault (const (onChange $ flip append [ defaultValue ]))
+                      , disabled: readOnly
+                      }
+                    /> [ R.text $ "+ " <> addLabel ]
+                ]
+          appendAddButton items =
+            if readOnly then
+              items
+            else
+              Array.snoc items $ Child { key: Nothing, child: addButton }
+          mkNode i x =
+            Node
+              { label: R.text $ " " <> label <> " #" <> show (i + 1)
+              , key: Nothing
+              , required: Neither
+              , validationError: Nothing
+              , children: (un FormBuilder editor props x).edit (onChange <<< editAt i)
+              }
+        wrapper readOnly onChange $ xs
+          # Array.mapWithIndex mkNode
+          # appendAddButton
+    , validate: traverse (un FormBuilder editor props >>> _.validate) xs
+    }
   where
+  editAt i f xs' = fromMaybe xs' (Array.modifyAt i f xs')
+
+  wrapper readOnly onChange children =
+    [ Wrapper
+        { key: Nothing
+        , wrap:
+          \kids ->
+            Block.box </ { style: R.css { paddingTop: 0 } }
+              /> [ formArray </> { kids, onChange, readOnly } ]
+        , children
+        }
+    ]
+
+  formArray =
+    unsafePerformEffect
+      $ reactComponent "Form Array" \( props ∷
+            { kids ∷ Array JSX
+            , onChange ∷ (Array u -> Array u) -> Effect Unit
+            , readOnly ∷ Boolean
+            }
+        ) -> Hooks.do
+          let children = if props.readOnly then props.kids else Array.dropEnd 1 props.kids
+          let addButton = guard (not props.readOnly) (Array.last props.kids # Array.fromFoldable)
+          items /\ setItems <- Hooks.useState' []
+          currentKeyRef <- Hooks.useRef 0
+          let numberOfChildren = Array.length children
+          let numberOfItems = Array.length items
+          useEffect numberOfChildren do
+            when (numberOfChildren > numberOfItems) do
+              currentKey <- Hooks.readRef currentKeyRef
+              let newKey = currentKey + 1
+              Hooks.writeRef currentKeyRef newKey
+              setItems (Array.snoc items (show newKey))
+            mempty
+          let
+            onDragEnd =
+              handler (merge { active: Dnd.active, over: Dnd.over }) case _ of
+                { active: Just active, over: Just over } ->
+                  when (active.id /= over.id) do
+                    case Array.findIndex (_ == active.id) items, Array.findIndex (_ == over.id) items of
+                      Just oldIndex, Just newIndex -> do
+                        setItems $ Dnd.arrayMove oldIndex newIndex items
+                        props.onChange (\xs' -> Dnd.arrayMove oldIndex newIndex xs')
+                      _, _ -> mempty
+                _ -> mempty
+          pure $ Dnd.dndContext
+            </ { collisionDetection: Dnd.closestCenter
+              , onDragEnd
+              }
+            /> [ Dnd.sortableContext
+                  </ { items
+                    , strategy: Dnd.verticalListSortingStrategy
+                    }
+                  /> ( Array.zip children items
+                        # Array.mapWithIndex case _, _ of
+                            i, kid /\ id -> do
+                              Hooks.elementKeyed itemComponent
+                                { id
+                                , kid
+                                , key: id
+                                , readOnly: props.readOnly
+                                , delete:
+                                  do
+                                    props.onChange \xs' -> fromMaybe xs' (Array.deleteAt i xs')
+                                    setItems $ fromMaybe items (Array.deleteAt i items)
+                                }
+                    )
+              ]
+            <> addButton
+
   itemComponent =
     unsafePerformEffect
-      $ reactComponent "Form Array" \(props ∷ { id ∷ String }) -> Hooks.do
-          { attributes, listeners, setNodeRef, transform, transition } <- Dnd.useSortable { id: props.id }
+      $ reactComponent "Form Item" \(props ∷ { id ∷ String, delete ∷ Effect Unit, readOnly ∷ Boolean, kid ∷ JSX }) -> Hooks.do
+          { attributes
+          , listeners
+          , setNodeRef
+          , transform
+          , transition
+          } <-
+            Dnd.useSortable { id: props.id }
+          showMenu /\ setShowMenu <- Hooks.useState' false
+          referenceElement /\ setReferenceElement <- Hooks.useState' nullRef
           let
-            style = R.css { transform: Dnd.cssToString, transition }
+            style =
+              R.css
+                { transform: Dnd.cssToString transform
+                , transition
+                , listStyleType: "none"
+                , borderRadius: "var(--s-1)"
+                }
             attrs =
               RB.build
-                ( RB.disjointUnion listeners
-                    >>> RB.disjointUnion attributes
+                -- RB.disjointUnion listeners >>> 
+                ( RB.disjointUnion attributes
                 )
-                { ref: setNodeRef, style }
-          pure $ R.li'
-            </ attrs
-            /> []
-
-  arrayComponent =
-    unsafePerformEffect
-      $ reactComponent "Form Array" \(props ∷ { kids ∷ Array JSX }) -> React.do
-          pure $ Dnd.dndContext </ {}
-            /> [ Dnd.sortableContext
-                  </ {}
-                  /> props.kids
+                { ref: setNodeRef
+                , style
+                , css:
+                  E.css
+                    { "&:focus":
+                      E.nested
+                        $ E.css
+                            { outlineColor: E.str colour.highlight
+                            }
+                    , transition: E.str "box-shadow 0.8s ease"
+                    , position: E.relative
+                    , boxSizing: E.contentBox
+                    , overflow: E.visible
+                    }
+                , className: "ry-draggable-array-element"
+                }
+            circleStyle =
+              E.css
+                { position: E.absolute
+                , background: E.str colour.inputBackground
+                , border: E.str $ "1px solid " <> colour.inputBorder
+                , boxShadow: E.str "0 0 var(--s-2) rgba(50,50,50,0.1)"
+                , boxSizing: E.borderBox
+                , touchAction: E.none
+                , borderRadius: E.int 888
+                , zIndex: E.str "8"
+                , display: E.flex
+                , alignItems: E.center
+                , justifyContent: E.center
+                , width: E.str "calc(var(--s2))"
+                , height: E.str "calc(var(--s2))"
+                , top: E.str "calc(var(--s1) * -0.75)"
+                }
+            dragHandleAttrs =
+              RB.build
+                ( RB.disjointUnion listeners
+                )
+                { className: "ry-draggable-array-drag-handle"
+                , css:
+                  circleStyle
+                    <> E.css
+                        { right: E.str "var(--s-1)"
+                        , cursor: E.str "grab"
+                        }
+                }
+            dragIcon = Block.icon </> { icon: Icons.draggableIndicator, size: E.str "var(--s1)", colour: E.str colour.text }
+            dragHandle = R.div' </* dragHandleAttrs /> [ dragIcon ]
+            -- Delete
+            deleteButtonAttrs =
+              { className: "ry-draggable-array-delete-button"
+              , css:
+                circleStyle
+                  <> E.css
+                      { right: E.str "calc(var(--s-1) + var(--s-1) + var(--s2) + var(--s-3))"
+                      }
+              , onClick: handler preventDefault (const props.delete)
+              , ref: unsafeCoerce $ mkEffectFn1 setReferenceElement
+              }
+            deleteIcon = Block.icon </> { icon: Icons.bin, size: E.str "var(--s1)", colour: E.str colour.invalid }
+            deleteButton = if props.readOnly then empty else R.div' </* deleteButtonAttrs /> [ deleteIcon ]
+            -- Menu
+            menuButtonAttrs =
+              { className: "ry-draggable-array-delete-button"
+              , css:
+                circleStyle
+                  <> E.css
+                      { right: E.str "calc(var(--s-1) + var(--s-1) + var(--s2) + var(--s-3))"
+                      }
+              , onClick: handler_ (setShowMenu (not showMenu))
+              , ref: unsafeCoerce $ mkEffectFn1 setReferenceElement
+              }
+            menuIcon = Block.icon </> { icon: Icons.ellipsis, size: E.str "var(--s1)", colour: E.str colour.text }
+            menuButton = if props.readOnly then empty else R.div' </* menuButtonAttrs /> [ menuIcon ]
+            menuPopover =
+              if showMenu then
+                Block.popover </ { referenceElement, placement: Placement.Placement Placement.Bottom (Just Placement.End), renderArrow: true }
+                  /> [ Block.box </ {} /> [ R.text "Sure?" ] ]
+              else
+                mempty
+          pure $ R.li' </* attrs
+            /> [ dragHandle
+              , menuButton
+              , props.kid
+              , menuPopover
               ]

@@ -14,7 +14,6 @@ import React.Basic.Emotion as E
 import React.Basic.Events (handler)
 import React.Basic.Hooks (reactComponent, useState')
 import React.Basic.Hooks as React
-import Type.Data.Peano as Peano
 import Type.Prelude (Proxy(..))
 import Yoga ((</>))
 import Yoga.Block.Atom.Input.Types as InputType
@@ -41,6 +40,7 @@ default =
 type User =
   { firstName ∷ Form.Validated String
   , lastName ∷ Form.Validated String
+  , tags ∷ Array (Form.Validated String)
   , isAdmin ∷ Boolean
   , friends ∷ Array Friend
   }
@@ -49,6 +49,7 @@ type ValidUser =
   { firstName ∷ NonEmptyString
   , lastName ∷ NonEmptyString
   , isAdmin ∷ Boolean
+  , tags ∷ Array NonEmptyString
   , friends ∷ Array ValidFriend
   }
 
@@ -94,6 +95,14 @@ aForm = do
             , R.text $ show validated
             ]
     where
+    tagsForm ∷ ∀ props. FormBuilder { readOnly ∷ Boolean | props } (Form.Validated String) NonEmptyString
+    tagsForm =
+      Form.validated
+        ( Form.nonEmpty' "I am telling you now for the very last time that you need to make sure Last name is provided to me so I can create a user for you"
+        )
+        $ Form.inputBox (nes (Proxy ∷ _ "Tag")) Required
+            { placeholder: "Tag" }
+
     friendForm ∷ ∀ props. FormBuilder { readOnly ∷ Boolean | props } Friend ValidFriend
     friendForm = ado
       nickname <-
@@ -127,12 +136,26 @@ aForm = do
           $ Form.inputBox (nes (Proxy ∷ _ "Last Name")) Required
               { placeholder: "Last name"
               }
+      tags <-
+        Form.indent "Tags" Neither
+          $ Form.focus (prop (Proxy ∷ _ "tags"))
+          $ Form.sortableArray
+              { label: "Tag"
+              , addLabel: "Add Tag"
+              , defaultValue: formDefaults
+              , editor: tagsForm
+              }
       friends <-
         Form.indent "Friends" Neither
           $ Form.focus (prop (Proxy ∷ _ "friends"))
-          $ Form.array { label: "Friends", addLabel: "Friend", defaultValue: { nickname: Fresh "", age: Fresh "" }, editor: friendForm }
+          $ Form.array
+              { label: "Friends"
+              , addLabel: "Add Friend"
+              , defaultValue: { nickname: Fresh "", age: Fresh "" }
+              , editor: friendForm
+              }
       isAdmin <-
         Form.indent "Admin?" Neither
           $ Form.focus (prop (Proxy ∷ _ "isAdmin"))
           $ Form.toggle {}
-      in { firstName, lastName, isAdmin, friends }
+      in { firstName, lastName, isAdmin, friends, tags }
