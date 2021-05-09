@@ -15,7 +15,8 @@ import React.Basic.Events (handler)
 import React.Basic.Hooks (reactComponent, useState')
 import React.Basic.Hooks as React
 import Type.Prelude (Proxy(..))
-import Yoga ((</>))
+import Yoga ((/>), (</), (</>))
+import Yoga.Block as Block
 import Yoga.Block.Atom.Input.Types as InputType
 import Yoga.Block.Container.Style as Styles
 import Yoga.Block.Organism.Form (FormBuilder, Validated(..), formDefaults)
@@ -30,10 +31,11 @@ default =
   { title: "Organism/Form"
   , decorators:
     [ \storyFn ->
-        R.div_
-          [ element E.global { styles: Styles.global }
-          , unsafePerformEffect storyFn
-          ]
+        Block.container
+          </ {}
+          /> [ element E.global { styles: Styles.global }
+            , unsafePerformEffect storyFn
+            ]
     ]
   }
 
@@ -70,8 +72,8 @@ aForm = do
   where
   mkExample =
     reactComponent "FormExample" \_ -> React.do
-      userDialog /\ setUserDialog <- useState' Nothing
-      { setModified, reset, validated, form } <-
+      _userDialog /\ setUserDialog <- useState' Nothing
+      { setModified, reset: _reset, validated, form } <-
         Form.useForm userForm
           { initialState: formDefaults
           , formProps:
@@ -98,7 +100,7 @@ aForm = do
     tagsForm ∷ ∀ props. FormBuilder { readOnly ∷ Boolean | props } (Form.Validated String) NonEmptyString
     tagsForm =
       Form.validated
-        ( Form.nonEmpty' "I am telling you now for the very last time that you need to make sure Last name is provided to me so I can create a user for you"
+        ( Form.nonEmpty' "You need to provide some tags"
         )
         $ Form.inputBox (nes (Proxy ∷ _ "Tag")) Required
             { placeholder: "Tag" }
@@ -112,7 +114,7 @@ aForm = do
               { placeholder: "for example Eddy..." }
       age <-
         Form.focus (prop (Proxy ∷ _ "age"))
-          $ Form.validated (Form.validNatBetween (Proxy ∷ _ "18") (Proxy ∷ _ "150") "Age")
+          $ Form.validated (Form.validNatBetween (Proxy ∷ _ "18") (Proxy ∷ _ "69") "Age")
           $ Form.inputBox (nes (Proxy ∷ _ "Age")) Required
               { placeholder: "for example 78..."
               , min: "1"

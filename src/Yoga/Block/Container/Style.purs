@@ -226,16 +226,17 @@ defaultColours =
     , backgroundAlpha50: withAlpha 0.5 lightBg
     , backgroundAlpha75: withAlpha 0.75 lightBg
     , backgroundInverted: darken 0.85 lightBg
-    , backgroundLayer1: darken 0.07 >>> desaturate 0.2 $ lightBg
-    , backgroundLayer2: darken 0.06 >>> desaturate 0.2 $ lightBg
-    , backgroundLayer3: darken 0.04 >>> desaturate 0.1 $ lightBg
-    , backgroundLayer4: darken 0.02 >>> desaturate 0.05 $ lightBg
+    , backgroundLayer1: darken 0.09 >>> desaturate 0.2 $ lightBg
+    , backgroundLayer2: darken 0.07 >>> desaturate 0.2 $ lightBg
+    , backgroundLayer3: darken 0.05 >>> desaturate 0.1 $ lightBg
+    , backgroundLayer4: darken 0.025 >>> desaturate 0.05 $ lightBg
     , popperBackground: (withAlpha 0.9 >>> darken 0.07 >>> desaturate 0.3) lightBg
+    , popperBackgroundNoAlpha: (darken 0.07 >>> desaturate 0.3) lightBg
     , popperInnerBorder: (withAlpha 0.9 >>> darken 0.25 >>> desaturate 0.3) lightBg
-    , popperOuterBorder: (withAlpha 0.9 >>> darken 0.1 >>> desaturate 0.3) lightBg
+    , popperOuterBorder: transparent
     , backgroundLayer5: lightBg
     , highlight
-    , highlightAlpha33: highlightBase 0.33
+    , highlightAlpha25: highlightBase 0.25
     , highlightAlpha50: highlightBase 0.50
     , highlightAlpha67: highlightBase 0.67
     , highlightDarker: withAlpha 0.15 (Color.darken 0.5 highlight)
@@ -261,6 +262,7 @@ defaultColours =
     , success
     , successText
     , text: text
+    , textPaler
     , textInverted: lightBg
     }
   , dark:
@@ -275,10 +277,11 @@ defaultColours =
     , backgroundLayer4: lighten 0.25 >>> saturate 0.08 $ darkBg
     , backgroundLayer5: lighten 0.35 >>> saturate 0.07 $ darkBg
     , popperBackground: (withAlpha 0.8 >>> lighten 0.09 >>> saturate 0.05) darkBg
+    , popperBackgroundNoAlpha: (lighten 0.09 >>> saturate 0.05) darkBg
     , popperInnerBorder: (withAlpha 0.9 >>> darken 0.7 >>> desaturate 0.3) lightBg
-    , popperOuterBorder: withAlpha 0.8 $ darkBg
+    , popperOuterBorder: darkBg
     , highlight: highlightDark
-    , highlightAlpha33: highlightDarkBase 0.33
+    , highlightAlpha25: highlightDarkBase 0.25
     , highlightAlpha50: highlightDarkBase 0.50
     , highlightAlpha67: highlightDarkBase 0.67
     , highlightDarker: withAlpha 0.4 (Color.darken 0.5 highlightDark)
@@ -304,6 +307,7 @@ defaultColours =
     , success: successDark
     , successText
     , text: textDark
+    , textPaler: textDarkPaler
     , textInverted: darkBg
     }
   }
@@ -340,7 +344,7 @@ defaultColours =
 
   invalidTextDark = successText
 
-  lightBg = Color.hsl 5.0 0.27 0.99
+  lightBg = Color.hsl 200.0 0.2 0.985
 
   link = Color.hsl 320.0 1.0 0.33
 
@@ -356,11 +360,16 @@ defaultColours =
 
   text = Color.rgb 16 16 32
 
+  textPaler = Color.rgb 100 100 110
+
   textDark = Color.rgb 230 230 250
+
+  textDarkPaler = Color.rgb 190 190 210
 
 type FlatTheme a =
   { background ∷ a
   , popperBackground ∷ a
+  , popperBackgroundNoAlpha ∷ a
   , popperInnerBorder ∷ a
   , popperOuterBorder ∷ a
   , backgroundAlpha25 ∷ a
@@ -383,7 +392,7 @@ type FlatTheme a =
   , inputBorder ∷ a
   , link ∷ a
   , highlight ∷ a
-  , highlightAlpha33 ∷ a
+  , highlightAlpha25 ∷ a
   , highlightAlpha50 ∷ a
   , highlightAlpha67 ∷ a
   , highlightRotatedBackwards ∷ a
@@ -398,6 +407,7 @@ type FlatTheme a =
   , invalidText ∷ a
   , required ∷ a
   , text ∷ a
+  , textPaler ∷ a
   , textInverted ∷ a
   , placeholderText ∷ a
   }

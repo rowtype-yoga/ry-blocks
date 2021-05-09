@@ -2,7 +2,7 @@ module Yoga.Block.Organism.Form
   ( module Defaults
   , module Yoga.Block.Organism.Form.Internal
   , module Validation
-  -- , build
+  , build
   , array
   , sortableArray
   , build'
@@ -30,7 +30,6 @@ module Yoga.Block.Organism.Form
 import Yoga.Prelude.View
 import Data.Array as Array
 import Data.Foldable (surround)
-import Data.Int as Int
 import Data.Lens (Lens', Prism, Prism', matching, review, view)
 import Data.Newtype (un)
 import Data.String as String
@@ -41,7 +40,6 @@ import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Heterogeneous.Mapping (class Mapping)
-import Partial.Unsafe (unsafeCrashWith)
 import Prim.Row (class Lacks, class Nub)
 import React.Basic.DOM as R
 import React.Basic.Emotion as E
@@ -55,9 +53,7 @@ import Record.Builder as RB
 import Unsafe.Coerce (unsafeCoerce)
 import Yoga.Block as Block
 import Yoga.Block.Atom.Input as Input
-import Yoga.Block.Atom.Input.Style (labelContainer, labelSmall, labelSmallFocusBackground)
-import Yoga.Block.Atom.Input.Types (HTMLInputType)
-import Yoga.Block.Atom.Input.Types as HTMLInputType
+import Yoga.Block.Atom.Input.Style (labelSmall, labelSmallFocusBackground)
 import Yoga.Block.Atom.Toggle as Toggle
 import Yoga.Block.Atom.Toggle.Types (TogglePosition(..))
 import Yoga.Block.Container.Style (colour)
@@ -163,7 +159,7 @@ defaultRenderForest =
         $ map pure
         $ defaultRenderForest
         $ children
-    Node { label, key, required, validationError, children } ->
+    Node { label, key, required: _required, validationError, children } ->
       maybe identity keyed key
         $ Block.box
         </ { css:
@@ -504,13 +500,13 @@ inputBox label requiredField inputProps =
                       , trailing:
                         case validationError of
                           Nothing -> mempty
-                          Just (Just err) -> Block.icon </> { icon: Icons.warn, stroke: E.str colour.invalid }
+                          Just (Just _) -> Block.icon </> { icon: Icons.warn, stroke: E.str colour.invalid }
                           Just Nothing -> Block.icon </> { icon: Icons.checkmark, stroke: E.str colour.success }
                       , _aria:
                         ( case validationError of
                             Nothing {- not validated yet -} -> mempty
                             Just Nothing {- validated and fine -} -> mempty --Object.singleton "invalid" "false"
-                            Just (Just msg) {- validated with an error -} -> Object.singleton "invalid" "true"
+                            Just (Just _) {- validated with an error -} -> Object.singleton "invalid" "true"
                         )
                           <> case requiredField of
                               Required -> Object.singleton "required" "true"
@@ -787,7 +783,7 @@ sortableArray { label, addLabel, defaultValue, editor } =
                 , boxShadow: E.str "0 0 var(--s-2) rgba(50,50,50,0.1)"
                 , boxSizing: E.borderBox
                 , touchAction: E.none
-                , borderRadius: E.int 888
+                , borderRadius: E.str "888"
                 , zIndex: E.str "8"
                 , display: E.flex
                 , alignItems: E.center
@@ -839,7 +835,11 @@ sortableArray { label, addLabel, defaultValue, editor } =
             menuPopover =
               if showMenu then
                 Block.popover </ { referenceElement, placement: Placement.Placement Placement.Bottom (Just Placement.End), renderArrow: true }
-                  /> [ Block.box </ {} /> [ R.text "Sure?" ] ]
+                  /> [ Block.box </ {}
+                        /> [ R.text "Sure?"
+                          , deleteButton
+                          ]
+                    ]
               else
                 mempty
           pure $ R.li' </* attrs

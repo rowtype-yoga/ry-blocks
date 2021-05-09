@@ -14,7 +14,6 @@ export default create({
   appBg: '#10354a',
   appContentBg: '#203f50',
   appBorderColor: '#002334',
-  appBorderRadius: 20,
 
   // Typography
   fontBase: '-apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Ubuntu, Arial, sans-serif',
@@ -22,7 +21,7 @@ export default create({
 
   // Text colors
   textColor: 'white',
-  
+
   textInverseColor: 'rgba(255,255,255,0.9)',
 
   brandTitle: 'Rowtype Yoga',

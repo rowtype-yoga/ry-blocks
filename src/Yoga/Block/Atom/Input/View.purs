@@ -1,14 +1,15 @@
 module Yoga.Block.Atom.Input.View where
 
 import Yoga.Prelude.View
-
 import Data.String.NonEmpty (NonEmptyString)
 import Effect.Class.Console (log)
+import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Framer.Motion as M
 import React.Basic.DOM (css)
 import React.Basic.DOM as R
+import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
 import Record.Builder as RB
 import Type.Prelude (Proxy(..))
@@ -23,7 +24,7 @@ import Yoga.Block.Atom.Input.View.Label as Label
 import Yoga.Block.Container.Style (colour)
 import Yoga.Block.Icon.SVG as SVGIcon
 
-type PropsF ∷ ∀ k. (Type -> k) -> Row k -> Row k
+-- type PropsF ∷ ∀ k. (Type -> k) -> Row k -> Row k
 type PropsF f r =
   ( leading ∷ f JSX
   , trailing ∷ f JSX
@@ -74,9 +75,9 @@ rawComponent =
         maybeValue = props.value # opToMaybe
       internalValue /\ setValue <- useState' ""
       let
-        hasValue = case maybeValue of 
+        hasValue = case maybeValue of
           Just v -> v /= ""
-          Nothing -> internalValue /= "" 
+          Nothing -> internalValue /= ""
         aria ∷ Object String
         aria = props._aria # opToMaybe # fold
         labelId ∷ String
@@ -87,20 +88,20 @@ rawComponent =
         maybeLabelText ∷ Maybe NonEmptyString
         maybeLabelText = props.label # opToMaybe
         mkLabel ∷ NonEmptyString -> JSX
-        mkLabel labelText = 
+        mkLabel labelText =
           Label.component
-              </> { isFocussed: hasFocus
-                , isRequired: aria # Object.lookup "required" # (_ == Just "true")
-                , isInvalid: aria # Object.lookup "invalid" # (_ == Just "true")
-                , renderLargeLabel
-                , labelId
-                , inputId: props.id ?|| "no-id" -- [TODO] Enforce ID?
-                , inputRef
-                , parentRef:ref
-                , labelText
-                , background: props.background ?|| colour.interfaceBackground
-                , textColour: props.textColour ?|| colour.text
-                }
+            </> { isFocussed: hasFocus
+              , isRequired: aria # Object.lookup "required" # (_ == Just "true")
+              , isInvalid: aria # Object.lookup "invalid" # (_ == Just "true")
+              , renderLargeLabel
+              , labelId
+              , inputId: props.id ?|| "no-id" -- [TODO] Enforce ID?
+              , inputRef
+              , parentRef: ref
+              , labelText
+              , background: props.background ?|| colour.interfaceBackground
+              , textColour: props.textColour ?|| colour.text
+              }
         leading ∷ Maybe JSX
         leading =
           opToMaybe props.leading
@@ -114,7 +115,6 @@ rawComponent =
         maybePlaceholder = do
           given <- props.placeholder # opToMaybe
           if isJust maybeLabelText && hasFocus then Just given else Nothing
-
         onBlur =
           handler preventDefault
             ( const do
@@ -125,11 +125,8 @@ rawComponent =
                   v <- InputElement.value ie
                   setValue v
             )
-
         onFocus = handler preventDefault (const $ unless hasFocus $ setHasFocus true)
-
         onChange = handler targetValue (setValue <<< fromMaybe "")
-
       let
         inputProps ∷ { | PropsOptional }
         inputProps =
@@ -173,75 +170,56 @@ rawComponent =
               , trailing # foldMap \t -> div </ {} /> [ t ]
               ]
       pure
-        $ case props.type # opToMaybe of
-            Just InputTypes.Password -> password </> props
-            _ -> case maybeLabelText of
-              Nothing -> inputContainer
-              Just labelText ->
-                div
-                  </* { className: "ry-label-and-input-wrapper"
-                    , css: Style.labelAndInputWrapper <>? props.css
+        $ case maybeLabelText of
+            Nothing -> inputContainer
+            Just labelText ->
+              div
+                </* { className: "ry-label-and-input-wrapper"
+                  , css: Style.labelAndInputWrapper <>? props.css
+                  }
+                /> [ inputContainer, mkLabel labelText ]
 
-                    }
-                  /> [ inputContainer, mkLabel labelText ]
-
-password ∷ ∀ p. ReactComponent { | p }
-password =
-  mkForwardRefComponent "Password" do
-    \(props ∷ { | PropsOptional }) ref -> React.do
-      hidePassword /\ modifyHidePassword <- useState true
-      let
-        eyeCon =
-          div
-            </* { onClick: handler preventDefault \_ -> modifyHidePassword not
-              , className: "ry-input-right-icon-container"
-              , css: Style.rightIconContainer
-              }
-            /> [ M.animatePresence
-                  </ { exitBeforeEnter: true
-                    }
-                  /> [ if hidePassword then
-                        M.div
-                          </ { key: "eyeOpen"
-                            , initial: M.initial $ css { scaleY: 0.2 }
-                            , animate: M.animate $ css { scaleY: 1.0 }
-                            , exit: M.exit $ css {}
-                            , transition: M.transition { scaleY: { type: "spring", duration: 0.12, bounce: 0.00 } }
-                            }
-                          /> [ Icon.component
-                                </> { size: Style.rightIconSize
-                                  , icon: SVGIcon.eyeOpen
-                                  }
-                            ]
-                      else
-                        M.div
-                          </ { key: "eyeClosed"
-                            , initial: M.initial $ css { scaleY: 1.0 }
-                            , animate: M.animate $ css { scaleY: 0.4 }
-                            , exit: M.exit $ css { scaleY: 0.2 }
-                            , transition: M.transition { scaleY: { type: "spring", duration: 0.12, bounce: 0.00 } }
-                            }
-                          /> [ Icon.component
-                                </> { size: Style.rightIconSize
-                                  , icon: SVGIcon.eyeClosed
-                                  }
-                            ]
-                    ]
-              ]
-      let trailing = props.trailing ?|| eyeCon
-      let leading = props.leading ?|| mempty
-      pure
-        $ div
-        </* { className: "ry-input-wrapper", css: Style.inputContainer props }
-        /> [ leading
-          , R.div' </ {}
-              /> [ emotionInput
-                    ref
-                    (props { type = InputTypes.toString <$> props.type })
-                    { className: "ry-input"
-                    , css: Style.input props
-                    , type: if hidePassword then "password" else "text"
-                    }
-                ]
-          , trailing
-          ]
+passwordIcon ∷
+  ReactComponent
+    { hidePassword ∷ Boolean
+    , modifyHidePassword ∷ (Boolean -> Boolean) -> Effect Unit
+    }
+passwordIcon =
+  unsafePerformEffect
+    $ reactComponent "Password Icon" \props -> React.do
+        pure $ div
+          </* { onClick: handler preventDefault \_ -> props.modifyHidePassword not
+            , className: "ry-input-right-icon-container"
+            , css: Style.rightIconContainer
+            }
+          /> [ M.animatePresence
+                </ { exitBeforeEnter: true
+                  }
+                /> [ if props.hidePassword then
+                      M.div
+                        </ { key: "eyeOpen"
+                          , initial: M.initial $ css { scaleY: 0.2 }
+                          , animate: M.animate $ css { scaleY: 1.0 }
+                          , exit: M.exit $ css {}
+                          , transition: M.transition { scaleY: { type: "spring", duration: 0.12, bounce: 0.00 } }
+                          }
+                        /> [ Icon.component
+                              </> { size: Style.rightIconSize
+                                , icon: SVGIcon.eyeOpen
+                                }
+                          ]
+                    else
+                      M.div
+                        </ { key: "eyeClosed"
+                          , initial: M.initial $ css { scaleY: 1.0 }
+                          , animate: M.animate $ css { scaleY: 0.4 }
+                          , exit: M.exit $ css { scaleY: 0.2 }
+                          , transition: M.transition { scaleY: { type: "spring", duration: 0.12, bounce: 0.00 } }
+                          }
+                        /> [ Icon.component
+                              </> { size: Style.rightIconSize
+                                , icon: SVGIcon.eyeClosed
+                                }
+                          ]
+                  ]
+            ]

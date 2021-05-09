@@ -6,6 +6,7 @@ import Yoga.Block.Layout.Cluster.Style as Style
 
 type PropsF f =
   ( className ∷ f String
+  , wrapper ∷ f (Array JSX -> JSX)
   | Style.Props f DivProps
   )
 
@@ -22,9 +23,10 @@ rawComponent ∷ ∀ p. ReactComponent { | p }
 rawComponent =
   mkForwardRefComponent "Cluster" do
     \(props ∷ { | PropsOptional }) ref -> React.do
+      let wrap = props.wrapper ?|| R.div_
       pure
         $ emotionDiv ref props
             { className: "ry-cluster " <>? props.className
             , css: Style.cluster props
-            , children: [ R.div_ props.children ]
+            , children: [ wrap props.children ]
             }

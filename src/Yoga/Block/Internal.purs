@@ -25,6 +25,7 @@ module Yoga.Block.Internal
   , unsafeMergeSecond
   , createRef
   , getBoundingBoxFromRef
+  , getElementFromRef
   , getHTMLElementFromRef
   , getOffsetHeightFromRef
   , getOffsetWidthFromRef
@@ -32,6 +33,8 @@ module Yoga.Block.Internal
   , getScrollHeightFromRef
   , getScrollWidthFromRef
   , getScrollDimensionsFromRef
+  , findElementByIdInDocument
+  , focusNodeRef
   ) where
 
 import Prelude
@@ -42,7 +45,7 @@ import Data.Function.Uncurried (Fn3, runFn3)
 import Data.Maybe (Maybe)
 import Data.Nullable (Nullable)
 import Data.Nullable as Nullable
-import Data.Traversable (for)
+import Data.Traversable (for, for_)
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object (Object)
@@ -59,10 +62,16 @@ import Type.Data.Row (RProxy(..))
 import Unsafe.Coerce (unsafeCoerce)
 import Untagged.Union (UndefinedOr, uorToMaybe)
 import Web.DOM (Element, Node)
+import Web.DOM.Document (createElement)
 import Web.DOM.Element (scrollHeight, scrollWidth)
 import Web.DOM.Element as Element
-import Web.HTML.HTMLElement (DOMRect, HTMLElement, getBoundingClientRect, offsetHeight, offsetWidth)
+import Web.DOM.Node (insertBefore)
+import Web.DOM.NonElementParentNode (getElementById)
+import Web.HTML (window)
+import Web.HTML.HTMLDocument as HTMLDocument
+import Web.HTML.HTMLElement (DOMRect, HTMLElement, focus, getBoundingClientRect, offsetHeight, offsetWidth)
 import Web.HTML.HTMLElement as HTMLElement
+import Web.HTML.Window (document)
 import Yoga.Block.Internal.CSS (_0)
 import Yoga.Block.Internal.OptionalProp (OptionalProp(..), Id, appendIfDefined, asOptional, composeHandler, getOr, getOrFlipped, ifTrue, isTruthy, maybeToOp, opToMaybe, setOrDelete, unsafeUnMaybe, unsafeUnOptional, (<>?), (?||))
 
@@ -82,6 +91,17 @@ foreign import createRef ∷ ∀ a. Effect (Ref a)
 
 type NodeRef =
   Ref (Nullable Node)
+
+focusNodeRef ∷ NodeRef -> Effect Unit
+focusNodeRef ref = do
+  maybeHTMLElement <- getHTMLElementFromRef ref
+  for_ maybeHTMLElement focus
+
+findElementByIdInDocument ∷ String -> Effect (Maybe Element)
+findElementByIdInDocument id = do
+  doc <- window >>= document
+  let node = HTMLDocument.toNonElementParentNode doc
+  getElementById id node
 
 getBoundingBoxFromRef ∷ NodeRef -> Effect (Maybe DOMRect)
 getBoundingBoxFromRef itemRef = do

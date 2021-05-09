@@ -147,7 +147,7 @@ rightIconContainer =
             }
         , ".ry-icon":
           nest
-            { "--stroke-colour": str colour.highlight
+            { "--stroke-colour": str colour.text
             }
         }
 

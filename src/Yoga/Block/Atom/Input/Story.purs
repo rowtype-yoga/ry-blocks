@@ -1,6 +1,7 @@
 module Yoga.Block.Atom.Input.Story where
 
 import Prelude
+import Data.Foldable (traverse_)
 import Data.String.NonEmpty.Internal (NonEmptyString(..), nes)
 import Data.Symbol (SProxy(..))
 import Effect (Effect)
@@ -8,12 +9,17 @@ import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object as Object
 import React.Basic (JSX, element, fragment)
 import React.Basic.DOM as R
+import React.Basic.DOM.Events (targetValue)
 import React.Basic.Emotion as E
-import React.Basic.Events (handler_)
+import React.Basic.Events (handler, handler_)
+import React.Basic.Hooks (reactComponent, (/\))
+import React.Basic.Hooks as React
+import Type.Proxy (Proxy(..))
 import Yoga ((/>), (</), (</>))
 import Yoga.Block as Block
 import Yoga.Block.Atom.Input as Input
 import Yoga.Block.Atom.Input.Types as HTMLInput
+import Yoga.Block.Atom.Input.View (passwordIcon)
 import Yoga.Block.Container.Style (colour)
 import Yoga.Block.Container.Style as Styles
 
@@ -91,7 +97,7 @@ input = do
                   , label: nes (SProxy ∷ _ "You can avoid this problem by setting a custom width")
                   }
             , R.h2_ [ R.text "Password" ]
-            , element Input.component { type: HTMLInput.Password }
+            , passComponent </> {}
             , R.h2_ [ R.text "Text Input" ]
             , element Input.component { type: HTMLInput.Text, value: "Some text", onChange: handler_ mempty }
             , element Input.component { type: HTMLInput.Text, placeholder: "Placeholder", onChange: handler_ mempty }
@@ -111,3 +117,21 @@ input = do
             -- , element Input.component { type: "number" }
             ]
         ]
+  where
+  passComponent =
+    unsafePerformEffect
+      $ reactComponent "Password Example" do
+          \{} -> React.do
+            password /\ setPassword <- React.useState' ""
+            hidePassword /\ modifyHidePassword <- React.useState true
+            pure
+              $ Input.component
+              </> { type: if hidePassword then HTMLInput.Password else HTMLInput.Text
+                , trailing:
+                  Block.tooltip
+                    </> { target: passwordIcon </> { hidePassword, modifyHidePassword }, theTip: R.text if hidePassword then "Show Password" else "Hide Password"
+                      }
+                , value: password
+                , onChange: handler targetValue (traverse_ setPassword)
+                , label: nes (Proxy ∷ _ "Password")
+                }

@@ -1,6 +1,7 @@
 module Yoga.Block.Atom.Popover.Style where
 
 import Yoga.Prelude.Style
+import Data.Interpolate (i)
 import Yoga.Block.Container.Style (colour, size)
 
 type Props f r =
@@ -19,66 +20,66 @@ popper background =
   css
     { "&[data-popper-placement^='top'] > #arrow":
       nest
-        { bottom: px (-4)
+        { bottom: px (arrowSize / -2)
         , "&::before, &::after":
           nest
             { borderTopColor: str "transparent"
             , borderLeftColor: str "transparent"
-            , clipPath: str "polygon(8px 8px, 0px 8px, 8px 0px)"
+            , clipPath: str $ i "polygon( " arrowSize "px " arrowSize "px, 0px " arrowSize "px, " arrowSize "px 0px)"
             }
         , "&::after": nest { bottom: px zero }
         , "&::before": nest { bottom: px (1) }
         }
     , "&[data-popper-placement^='bottom'] > #arrow":
       nest
-        { top: px (-4)
+        { top: px (arrowSize / -2)
         , "&::before, &::after":
           nest
             { borderBottomColor: str "transparent"
             , borderRightColor: str "transparent"
-            , clipPath: str "polygon(0px 0px, 8px 0px, 0px 8px)"
+            , clipPath: str $ i "polygon(0px 0px, " arrowSize "px 0px, 0px " arrowSize "px)"
             }
         , "&::after": nest { top: px zero }
         , "&::before": nest { top: px (1) }
         }
     , "&[data-popper-placement^='left'] > #arrow":
       nest
-        { right: px (-4)
+        { right: px (arrowSize / -2)
         , "&::before, &::after":
           nest
             { borderBottomColor: str "transparent"
             , borderLeftColor: str "transparent"
-            , clipPath: str "polygon(0px 0px, 8px 0px, 8px 8px)"
+            , clipPath: str $ i "polygon(0px 0px, " arrowSize "px 0px, " arrowSize "px " arrowSize "px)"
             }
         , "&::after": nest { right: px zero }
         , "&::before": nest { right: px (1) }
         }
     , "&[data-popper-placement^='right'] > #arrow":
       nest
-        { left: px (-4)
+        { left: px (arrowSize / -2)
         , "&::before, &::after":
           nest
             { borderTopColor: str "transparent"
             , borderRightColor: str "transparent"
-            , clipPath: str "polygon(8px 8px, 0px 8px, 0px 0px)"
+            , clipPath: str $ i "polygon(" arrowSize "px " arrowSize "px, 0px " arrowSize "px, 0px 0px)"
             }
         , "&::after": nest { left: px zero }
         , "&::before": nest { left: px (1) }
         }
     , zIndex: str "6"
     , border: str $ "1px solid " <> colour.popperOuterBorder
-    , boxShadow: str $ "var(--s-5) 0 var(--s-2) rgba(0,0,0,0.1)"
     , boxSizing: contentBox
-    , borderRadius: str size.xs
+    , borderRadius: str size.s
     , position: relative
-    , background: str colour.popperBackground
-    , backdropFilter: str "blur(10px)"
     , "&:before":
       nest
         { content: str "''"
         , position: absolute
         , border: str $ "1px solid " <> colour.popperInnerBorder
-        , borderRadius: str $ "calc(" <> size.xs <> " - 1px" <> ")"
+        , borderRadius: str $ "calc(" <> size.s <> " - 1px" <> ")"
+        , boxShadow: str $ "var(--s-5) 0 var(--s-2) rgba(0,0,0,0.1)"
+        , background: str colour.popperBackground
+        , backdropFilter: str "blur(10px)"
         , zIndex: str "-1"
         , top: px 0
         , boxSizing: contentBox
@@ -101,8 +102,7 @@ arrow =
                 , content: str "''"
                 , transform: str "rotate(45deg)"
                 , border: str $ "1px solid " <> colour.popperInnerBorder
-                , background: str colour.popperBackground
-                , backdropFilter: str "blur(10px)"
+                , background: str colour.popperBackgroundNoAlpha
                 }
         , "&::after":
           nested
@@ -112,7 +112,6 @@ arrow =
                 , content: str "''"
                 , transform: str "rotate(45deg)"
                 , border: str $ "1px solid " <> colour.popperOuterBorder
-                -- , background: str "transparent"
                 , zIndex: str "-1"
                 }
         }
@@ -120,7 +119,9 @@ arrow =
   common =
     css
       { position: absolute
-      , width: px 8
-      , height: px 8
+      , width: px arrowSize
+      , height: px arrowSize
       , boxSizing: borderBox
       }
+
+arrowSize = 14

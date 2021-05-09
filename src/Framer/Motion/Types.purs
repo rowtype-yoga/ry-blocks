@@ -1,6 +1,7 @@
 module Framer.Motion.Types where
 
 import Prelude
+
 import Data.Nullable (Nullable)
 import Data.Symbol (class IsSymbol, reflectSymbol)
 import Effect (Effect)
@@ -12,13 +13,14 @@ import Literals.Undefined (Undefined)
 import React.Basic (JSX)
 import React.Basic.DOM (CSS, css)
 import React.Basic.Hooks (Ref)
+import Type.Proxy (Proxy)
 import Unsafe.Coerce (unsafeCoerce)
 import Untagged.Castable (class Castable, cast)
 import Untagged.Union (type (|+|))
 import Web.DOM (Node)
 import Web.Event.Internal.Types (Event)
 import Web.UIEvent.MouseEvent (MouseEvent)
-import Type.Proxy (Proxy)
+import Yoga.Block.Internal (Id)
 
 type MotionPropsF :: (Type -> Type) -> Row Type -> Row Type
 type MotionPropsF f r =
@@ -56,9 +58,6 @@ type MotionPropsF f r =
   | r
   )
 
-
-type Id :: forall k. k -> k
-type Id a = a
 
 type Drag = Boolean |+| String |+| Undefined
 

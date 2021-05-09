@@ -56,7 +56,7 @@ import Data.String.Common (split)
 import Data.String.NonEmpty (NonEmptyString)
 import Data.String.NonEmpty (fromString) as NES
 import Data.String.Pattern (Pattern(..))
-import Data.Symbol (class IsSymbol, reflectSymbol, reifySymbol)
+import Data.Symbol (class IsSymbol, reflectSymbol)
 import Data.Traversable (traverse)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Generic (class Decode, class Encode, decode, encode)
@@ -363,11 +363,11 @@ validated runValidator editor =
                 , margin: E.str "0"
                 }
             }
-      validationMessage ∷ Maybe validated
-      validationMessage = case v of
-        Fresh _ -> Nothing
-        Modified m -> Just m
-      { edit, validate } = un FormBuilder editor (props # upsert (Proxy ∷ _ "validationError") (Nothing)) value
+      -- validationMessage ∷ Maybe validated
+      -- validationMessage = case v of
+      --   Fresh _ -> Nothing
+      --   Modified m -> Just m
+      { validate } = un FormBuilder editor (props # upsert (Proxy ∷ _ "validationError") (Nothing)) value
       modify ∷ Maybe String -> Forest -> Forest
       modify message forest = case Array.unsnoc forest of
         Nothing -> [ Child { key: Nothing, child: errChild } ]
@@ -393,8 +393,8 @@ validated runValidator editor =
         (modify err <<< finalResult.edit)
           ( onChange
               <<< \f -> case _ of
-                  v'@(Fresh u) -> review modified (f (fromValidated v'))
-                  v'@(Modified u) -> review modified (f (fromValidated v'))
+                  v'@(Fresh _) -> review modified (f (fromValidated v'))
+                  v'@(Modified _) -> review modified (f (fromValidated v'))
           )
     , validate: hush =<< res
     }
@@ -431,7 +431,7 @@ errorChild =
             }
           /> [ Motion.animatePresence </ {}
                 /> case message of
-                    Just vm ->
+                    Just _ ->
                       [ Motion.div
                           </* { variants: Motion.variants variants
                             , initial: Motion.initial variant.hidden

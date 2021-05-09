@@ -8,8 +8,8 @@ import React.Basic.DOM (css)
 import React.Basic.DOM as R
 import React.Basic.Hooks as React
 import React.Basic.Hooks.Aff (useAff)
-import React.Basic.Popper.Hook (usePopper)
 import React.Basic.Popper (modifierArrow, modifierOffset, nullRef)
+import React.Basic.Popper.Hook (usePopper)
 import Unsafe.Coerce (unsafeCoerce)
 import Yoga.Block.Atom.Tooltip.Style as Style
 
@@ -37,7 +37,7 @@ component = rawComponent
 rawComponent ∷ ∀ p. ReactComponent (Record p)
 rawComponent =
   mkForwardRefComponent "Tooltip" do
-    \(props ∷ { | PropsOptional }) ref -> React.do
+    \(props ∷ { | PropsOptional }) _ref -> React.do
       -- Hooks
       referenceElement /\ setReferenceElement <- React.useState' nullRef
       popperElement /\ setPopperElement <- React.useState' nullRef
@@ -45,7 +45,7 @@ rawComponent =
       { styles, attributes } <-
         usePopper referenceElement popperElement
           { modifiers:
-            [ modifierArrow arrowElement
+            [ modifierArrow { element: arrowElement, padding: 8 }
             , modifierOffset { x: 0.0, y: 12.0 }
             ]
           }

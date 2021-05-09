@@ -3,7 +3,7 @@ module Yoga.Block.Atom.Icon.Style where
 import Yoga.Prelude.Style
 import Yoga.Block.Container.Style (colour)
 
-type Props :: forall k. (Type -> k) -> Row k -> Row k
+type Props ∷ forall k. (Type -> k) -> Row k -> Row k
 type Props f r =
   ( css ∷ f Style
   , colour ∷ f StyleProperty
@@ -12,20 +12,22 @@ type Props f r =
   , size ∷ f StyleProperty
   , width ∷ f StyleProperty
   , height ∷ f StyleProperty
+  , focusColour ∷ f StyleProperty
   | r
   )
 
 span ∷ ∀ r. { | Props OptionalProp r } -> Style
 span props =
   css
-    { "--stroke-colour": (props.stroke <|> props.colour) ?|| (str colour.text)
-    , "--fill-colour": (props.fill <|> props.colour) ?|| (str "transparent")
-    , display: inlineBlock
+    { "--stroke-colour": strokeColour
+    , "--fill-colour": fillColour
     , margin: _0
     , padding: _0
-    , width
-    , height
-    , overflow: hidden
+    , display: inlineFlex
+    , justifyContent: center
+    , alignItems: center
+    , width: auto
+    , height: auto
     , "& > svg":
       nest
         { width
@@ -35,6 +37,11 @@ span props =
         }
     }
   where
-    width = (props.width <|> props.size) ?|| (str "1em")
 
-    height = (props.height <|> props.size) ?|| (str "1em")
+  strokeColour = (props.stroke <|> props.colour) ?|| (str colour.text)
+
+  fillColour = (props.fill <|> props.colour) ?|| (str "transparent")
+
+  width = (props.width <|> props.size) ?|| (str "1em")
+
+  height = (props.height <|> props.size) ?|| (str "1em")

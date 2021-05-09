@@ -47,14 +47,14 @@ popper = do
   nullRef = unsafeCoerce null
 
   mkBasicExample =
-    React.reactComponent "Popper example" \p -> React.do
+    React.reactComponent "Popper example" \_p -> React.do
       referenceElement /\ setReferenceElement <- React.useState' nullRef
       popperElement /\ setPopperElement <- React.useState' nullRef
       arrowElement /\ setArrowElement <- React.useState' nullRef
       { styles, attributes } <-
         usePopper referenceElement popperElement
           { modifiers:
-            [ modifierArrow arrowElement
+            [ modifierArrow { element: arrowElement, padding: 4 }
             , modifierOffset { x: 0.0, y: 8.0 }
             ]
           }
@@ -129,7 +129,7 @@ animatedPopper = do
   nullRef = unsafeCoerce null
 
   mkBasicExample =
-    React.reactComponent "Popper example" \p -> React.do
+    React.reactComponent "Popper example" \_p -> React.do
       -- Hooks
       referenceElement /\ setReferenceElement <- React.useState' nullRef
       popperElement /\ setPopperElement <- React.useState' nullRef
@@ -137,7 +137,7 @@ animatedPopper = do
       { styles, attributes } <-
         usePopper referenceElement popperElement
           { modifiers:
-            [ modifierArrow arrowElement
+            [ modifierArrow { element: arrowElement, padding: 4 }
             , modifierOffset { x: 0.0, y: 12.0 }
             ]
           }

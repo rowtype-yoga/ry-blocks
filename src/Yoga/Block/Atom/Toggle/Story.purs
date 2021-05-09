@@ -8,6 +8,7 @@ import Effect (Effect)
 import React.Basic (JSX, element, fragment)
 import React.Basic.DOM as R
 import React.Basic.Hooks as React
+import Yoga ((/>), (</))
 import Yoga.Block as Block
 import Yoga.Block.Atom.Toggle as Toggle
 import Yoga.Block.Atom.Toggle.Types (TogglePosition(..))
@@ -35,7 +36,7 @@ toggle = do
         ]
   where
   mkBasicExample =
-    React.reactComponent "Toggle example" \p -> React.do
+    React.reactComponent "Toggle example" \_p -> React.do
       togglePosition /\ setTogglePosition <- React.useState' ToggleIsRight
       pure
         $ element Toggle.component
@@ -45,7 +46,7 @@ toggle = do
             }
 
   mkDarkLightToggle =
-    React.reactComponent "Toggle dark night example" \p -> React.do
+    React.reactComponent "Toggle dark night example" \_p -> React.do
       togglePosition /\ setTogglePosition <- React.useState' ToggleIsLeft
       theme /\ setTheme <- React.useState' Nothing
       let
@@ -67,7 +68,6 @@ toggle = do
               Color.hsl 260.0 0.7 0.45
             }
       pure
-        $ element Block.container
-            { content
-            , themeVariant: theme
-            }
+        $ Block.container
+        </ { themeVariant: theme }
+        /> [ content ]
