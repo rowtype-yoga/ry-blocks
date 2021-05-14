@@ -70,7 +70,7 @@ activeElement =
     }
 
 button ∷ { isFirst ∷ Boolean, isLast ∷ Boolean } -> Style
-button { isFirst, isLast } =
+button _ =
   css
     { background: color transparent
     , appearance: none

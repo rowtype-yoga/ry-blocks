@@ -1,4 +1,5 @@
 {
     "editor.formatOnSave": true,
-    "workbench.colorTheme": "Tailwind Breeze"
+    "workbench.colorTheme": "Irul Theme",
+    "search.useGlobalIgnoreFiles": true
 }

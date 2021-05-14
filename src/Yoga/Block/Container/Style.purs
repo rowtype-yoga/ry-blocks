@@ -222,6 +222,7 @@ defaultColours ∷ Colours
 defaultColours =
   { light:
     { background: lightBg
+    , backgroundAlpha0: withAlpha 0.0 lightBg
     , backgroundAlpha25: withAlpha 0.25 lightBg
     , backgroundAlpha50: withAlpha 0.5 lightBg
     , backgroundAlpha75: withAlpha 0.75 lightBg
@@ -230,20 +231,21 @@ defaultColours =
     , backgroundLayer2: darken 0.07 >>> desaturate 0.2 $ lightBg
     , backgroundLayer3: darken 0.05 >>> desaturate 0.1 $ lightBg
     , backgroundLayer4: darken 0.025 >>> desaturate 0.05 $ lightBg
+    , backgroundLayer5: lightBg
+    , backgroundCard: lightBg
     , popperBackground: (withAlpha 0.9 >>> darken 0.07 >>> desaturate 0.3) lightBg
     , popperBackgroundNoAlpha: (darken 0.07 >>> desaturate 0.3) lightBg
     , popperInnerBorder: (withAlpha 0.9 >>> darken 0.25 >>> desaturate 0.3) lightBg
     , popperOuterBorder: transparent
-    , backgroundLayer5: lightBg
     , highlight
     , highlightAlpha25: highlightBase 0.25
     , highlightAlpha50: highlightBase 0.50
     , highlightAlpha67: highlightBase 0.67
     , highlightDarker: withAlpha 0.15 (Color.darken 0.5 highlight)
-    , highlightDisabled: (desaturate 0.80 >>> lighten 0.28) highlight
+    , highlightDisabled: (desaturate 0.60 >>> lighten 0.5) highlight
     , highlightLighter: withAlpha 0.2 (Color.lighten 0.5 highlight)
-    , highlightRotatedBackwards: highlight # rotateHue (-30.0)
-    , highlightRotatedForwards: highlight # rotateHue 30.0
+    , highlightRotatedBackwards: highlight # rotateHue (-13.0) # darken 0.05
+    , highlightRotatedForwards: highlight # rotateHue 3.0 # lighten 0.05 # saturate 0.1
     , highlightText
     , inputBackground: lightBg
     , inputBorder: darken 0.06 >>> desaturate 0.2 $ lightBg
@@ -264,18 +266,21 @@ defaultColours =
     , text: text
     , textPaler
     , textInverted: lightBg
+    , boxShadow
     }
   , dark:
     { background: darkBg
+    , backgroundAlpha0: withAlpha 0.0 darkBg
     , backgroundAlpha25: withAlpha 0.25 darkBg
     , backgroundAlpha50: withAlpha 0.5 darkBg
     , backgroundAlpha75: withAlpha 0.75 darkBg
     , backgroundInverted: lightBg
-    , backgroundLayer1: darkBg
-    , backgroundLayer2: lighten 0.07 >>> saturate 0.18 $ darkBg
-    , backgroundLayer3: lighten 0.16 >>> saturate 0.12 $ darkBg
-    , backgroundLayer4: lighten 0.25 >>> saturate 0.08 $ darkBg
-    , backgroundLayer5: lighten 0.35 >>> saturate 0.07 $ darkBg
+    , backgroundLayer1: lighten 0.1 >>> saturate 0.18 $ darkBg
+    , backgroundLayer2: lighten 0.15 >>> saturate 0.10 $ darkBg
+    , backgroundLayer3: lighten 0.22 >>> saturate 0.11 $ darkBg
+    , backgroundLayer4: lighten 0.32 >>> saturate 0.11 $ darkBg
+    , backgroundLayer5: lighten 0.37 >>> saturate 0.11 $ darkBg
+    , backgroundCard: lighten 0.05 >>> saturate 0.1 $ darkBg
     , popperBackground: (withAlpha 0.8 >>> lighten 0.09 >>> saturate 0.05) darkBg
     , popperBackgroundNoAlpha: (lighten 0.09 >>> saturate 0.05) darkBg
     , popperInnerBorder: (withAlpha 0.9 >>> darken 0.7 >>> desaturate 0.3) lightBg
@@ -309,13 +314,17 @@ defaultColours =
     , text: textDark
     , textPaler: textDarkPaler
     , textInverted: darkBg
+    , boxShadow: boxShadowDark
     }
   }
   where
-  darkBg = Color.hsl 240.0 0.07 0.10
+  darkBg = Color.hsl 240.0 0.07 0.02
 
-  highlightBase = Color.hsla 275.0 0.82 0.4
+  -- highlightBase = Color.hsla 275.0 0.82 0.4
+  -- brightPurpleBase = Color.hsla 275.0 0.82 0.4
+  highlightBase = Color.hsla 220.0 0.60 0.5
 
+  -- highlightBase = Color.hsla 212.0 0.47 0.45
   highlight = highlightBase 1.0
 
   highlightDarkBase = Color.hsla 265.0 1.00 0.6
@@ -366,12 +375,17 @@ defaultColours =
 
   textDarkPaler = Color.rgb 190 190 210
 
+  boxShadow = Color.rgba 0 0 0 0.2
+
+  boxShadowDark = Color.rgba 0 0 0 0.6
+
 type FlatTheme a =
   { background ∷ a
   , popperBackground ∷ a
   , popperBackgroundNoAlpha ∷ a
   , popperInnerBorder ∷ a
   , popperOuterBorder ∷ a
+  , backgroundAlpha0 ∷ a
   , backgroundAlpha25 ∷ a
   , backgroundAlpha50 ∷ a
   , backgroundAlpha75 ∷ a
@@ -381,6 +395,7 @@ type FlatTheme a =
   , backgroundLayer4 ∷ a
   , backgroundLayer5 ∷ a
   , backgroundInverted ∷ a
+  , backgroundCard ∷ a
   , interfaceBackground ∷ a
   , interfaceBackgroundDangerous ∷ a
   , interfaceDangerousText ∷ a
@@ -410,6 +425,7 @@ type FlatTheme a =
   , textPaler ∷ a
   , textInverted ∷ a
   , placeholderText ∷ a
+  , boxShadow ∷ a
   }
 
 type Colours =
@@ -490,7 +506,27 @@ variables =
     , "--theme-variant": str "light"
     }
 
-size ∷ _
+type Sizes =
+  { "3xl" ∷ String
+  , "3xs" ∷ String
+  , "4xl" ∷ String
+  , "4xs" ∷ String
+  , "5xl" ∷ String
+  , "5xs" ∷ String
+  , l ∷ String
+  , m ∷ String
+  , s ∷ String
+  , text ∷
+    { interactive ∷ String
+    , label ∷ String
+    }
+  , xl ∷ String
+  , xs ∷ String
+  , xxl ∷ String
+  , xxs ∷ String
+  }
+
+size ∷ Sizes
 size =
   { "5xs": "var(--s-6)"
   , "4xs": "var(--s-5)"

@@ -5,6 +5,7 @@ import Data.Interpolate (i)
 import Foreign.Object as Object
 import Unsafe.Coerce (unsafeCoerce)
 
+type Props :: forall k. (Type -> k) -> Row k -> Row k
 type Props f r =
   ( css ∷ f Style
   , space ∷ f String

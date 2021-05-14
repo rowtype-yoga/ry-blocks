@@ -2,13 +2,11 @@ module Yoga.Block.Atom.Input.View where
 
 import Yoga.Prelude.View
 import Data.String.NonEmpty (NonEmptyString)
-import Effect.Class.Console (log)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Framer.Motion as M
 import React.Basic.DOM (css)
-import React.Basic.DOM as R
 import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
 import Record.Builder as RB
@@ -24,7 +22,7 @@ import Yoga.Block.Atom.Input.View.Label as Label
 import Yoga.Block.Container.Style (colour)
 import Yoga.Block.Icon.SVG as SVGIcon
 
--- type PropsF ∷ ∀ k. (Type -> k) -> Row k -> Row k
+type PropsF ∷ ∀ k. (Type -> k) -> Row k -> Row k
 type PropsF f r =
   ( leading ∷ f JSX
   , trailing ∷ f JSX
@@ -65,11 +63,6 @@ rawComponent =
       let inputRef = props.inputRef ?|| inputBackupRef
       backupRef ∷ NodeRef <- useRef null
       let ref = forwardedRefAsMaybe propsRef # fromMaybe backupRef
-      let
-        focusInput =
-          unless hasFocus do
-            maybeHTMLElement <- getHTMLElementFromRef ref
-            for_ maybeHTMLElement focus
       let
         maybeValue ∷ Maybe String
         maybeValue = props.value # opToMaybe

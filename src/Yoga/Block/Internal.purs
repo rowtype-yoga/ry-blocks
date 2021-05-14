@@ -62,10 +62,8 @@ import Type.Data.Row (RProxy(..))
 import Unsafe.Coerce (unsafeCoerce)
 import Untagged.Union (UndefinedOr, uorToMaybe)
 import Web.DOM (Element, Node)
-import Web.DOM.Document (createElement)
 import Web.DOM.Element (scrollHeight, scrollWidth)
 import Web.DOM.Element as Element
-import Web.DOM.Node (insertBefore)
 import Web.DOM.NonElementParentNode (getElementById)
 import Web.HTML (window)
 import Web.HTML.HTMLDocument as HTMLDocument
@@ -589,12 +587,14 @@ type ButtonReadableProps =
 type ButtonWritableProps =
   ButtonWritablePropsF Id ()
 
+type ButtonWritablePropsF :: forall k. (Type -> k) -> Row k -> Row k
 type ButtonWritablePropsF f more =
   ButtonReadablePropsF f
     ( ref ∷ f (Ref (Nullable Node))
     | more
     )
 
+type ButtonReadablePropsF :: forall k. (Type -> k) -> Row k -> Row k
 type ButtonReadablePropsF f more =
   ( _aria ∷ f (Object String)
   , _data ∷ f (Object String)

@@ -3,7 +3,6 @@ module Yoga.Block.Molecule.Sheet.View (component, Props) where
 import Yoga.Prelude.View
 import Data.Int as Int
 import Data.Nullable as Nullable
-import Data.Traversable (sequence)
 import Effect.Class.Console (log)
 import Effect.Unsafe (unsafePerformEffect)
 import Framer.Motion as Motion
@@ -17,14 +16,10 @@ import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
 import React.FocusTrap (focusTrap)
 import Web.DOM (Element)
-import Web.DOM.Node (isEqualNode)
-import Web.DOM.Node as Node
-import Web.Event.Event as Event
 import Web.HTML as HTML
 import Web.HTML.Window (innerHeight)
 import Yoga.Block.Hook.Key as KeyCode
 import Yoga.Block.Hook.UseKeyDown (useKeyDown)
-import Yoga.Block.Hook.UseResize (useResize)
 import Yoga.Block.Molecule.Sheet.Style as Style
 
 type Props =
@@ -51,7 +46,7 @@ component =
               , children:
                 R.div' </ {}
                   /> [ Motion.animatePresence </ {} /> [ guard isOpen $ element clickaway { theRef: clickAwayRef, onDismiss } ]
-                    , element window { clickAwayRef, onDismiss, content, isOpen }
+                    , element window { onDismiss, content, isOpen }
                     ]
               }
         pure (createPortal toRender target)
@@ -72,14 +67,13 @@ clickaway =
             }
 
 type WindowProps =
-  { clickAwayRef ∷ NodeRef, content ∷ JSX, isOpen ∷ Boolean, onDismiss ∷ Effect Unit }
+  { content ∷ JSX, isOpen ∷ Boolean, onDismiss ∷ Effect Unit }
 
 window ∷ ReactComponent WindowProps
 window =
   unsafePerformEffect
-    $ reactComponent "Sheet Window" \({ clickAwayRef, content, onDismiss, isOpen } ∷ WindowProps) -> React.do
+    $ reactComponent "Sheet Window" \({ content, onDismiss, isOpen } ∷ WindowProps) -> React.do
         ref ∷ NodeRef <- useRef null
-        sizes <- useResize
         contentRef <- useRef null
         velocityRef <- useRef 0.0
         animationRef <- useRef Nothing
@@ -92,9 +86,6 @@ window =
             wh <- getWindowHeight
             maybeOffsetHeight <- getOffsetHeightFromRef contentRef
             pure $ maybe (0.0) (\x -> min wh (wh - x)) maybeOffsetHeight
-          targetIsContentNode ev = do
-            maybeContentNode <- React.readRefMaybe contentRef
-            fromMaybe false <$> (sequence $ isEqualNode <$> maybeContentNode <*> (Node.fromEventTarget =<< Event.target ev))
         useEffectAlways do
           maxHeight <- getMaxHeight
           MotionValue.set maxHeight top
@@ -121,12 +112,12 @@ window =
                           }
                   , exit: Motion.exit $ css { top: "100%" }
                   , onPanStart:
-                    Motion.onPanStart \ev pi -> do
+                    Motion.onPanStart \_ _ -> do
                       maybeRunningAnimation <- React.readRef animationRef
                       for_ maybeRunningAnimation MotionValue.stopAnimation
                       React.writeRef animationRef Nothing
                   , onPan:
-                    Motion.onPan \ev pi -> do
+                    Motion.onPan \_ pi -> do
                       oldY <- MotionValue.get top
                       maxHeight <- getMaxHeight
                       React.writeRef velocityRef pi.velocity.y
@@ -142,7 +133,7 @@ window =
                               newNaiveValue
                       MotionValue.set newY top
                   , onPanEnd:
-                    Motion.onPanEnd \ev pi -> do
+                    Motion.onPanEnd \_ pi -> do
                       velocity <- React.readRef velocityRef
                       yValue <- MotionValue.get top
                       maxHeight <- getMaxHeight

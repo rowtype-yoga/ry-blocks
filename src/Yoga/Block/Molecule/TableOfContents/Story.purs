@@ -46,7 +46,7 @@ tableOfContents = do
         ]
   where
   mkBasicExample =
-    React.reactComponent "TableOfContents example" \p -> React.do
+    React.reactComponent "TableOfContents example" \_ -> React.do
       let
         startHeadings ∷ Forest { label ∷ String }
         startHeadings =

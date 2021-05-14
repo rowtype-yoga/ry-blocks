@@ -3,6 +3,7 @@ module Yoga.Block.Layout.Imposter.Style where
 import Yoga.Prelude.Style
 import Data.Interpolate (i)
 
+type Props :: forall k. (Type -> k) -> Row k -> Row k
 type Props f r =
   ( css ∷ f Style
   , margin ∷ f String

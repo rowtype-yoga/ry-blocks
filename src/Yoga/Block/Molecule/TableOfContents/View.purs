@@ -8,11 +8,9 @@ module Yoga.Block.Molecule.TableOfContents.View
 import Data.Tree (Forest)
 import React.Basic.DOM (css)
 import React.Basic.DOM as R
-import Unsafe.Coerce (unsafeCoerce)
-import Web.HTML (window)
 import Yoga.Block.Container.Style (colour)
 import Yoga.Block.Molecule.TableOfContents.Style as Style
-import Yoga.Prelude.View (class Union, Id, InputWritableProps, JSX, NodeRef, OptionalProp, ReactComponent, bind, mkForwardRefComponent, pure, (/>), (</))
+import Yoga.Prelude.View (class Union, Id, InputWritableProps, JSX, NodeRef, OptionalProp, ReactComponent, mkForwardRefComponent, pure, (/>), (</))
 
 type PropsF f =
   ( className ∷ f String
@@ -38,12 +36,7 @@ component = rawComponent
 rawComponent ∷ ∀ p. ReactComponent (Record p)
 rawComponent =
   mkForwardRefComponent "TableOfContents" do
-    \(props ∷ { | PropsOptional }) ref -> React.do
-      let
-        onClickLink top event = do
-          win <- window
-          (unsafeCoerce win).scrollTo
-            { top, behavior: "smooth" }
+    \(_ ∷ { | PropsOptional }) ref -> React.do
       pure do
         R.div'
           </ { style:
@@ -53,6 +46,7 @@ rawComponent =
                 , padding: 0
                 , margin: 0
                 }
+            , ref
             }
           /> [ R.div'
                 </ { style:

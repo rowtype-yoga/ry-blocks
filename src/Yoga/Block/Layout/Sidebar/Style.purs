@@ -6,6 +6,7 @@ data SidebarSide
   = SidebarLeft
   | SidebarRight
 
+type Props :: forall k. (Type -> k) -> Row k -> Row k
 type Props f r =
   ( css ∷ f Style
   , space ∷ f String

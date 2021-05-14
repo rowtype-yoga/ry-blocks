@@ -2,7 +2,7 @@ module Yoga.Block.Molecule.ReadMore.Style where
 
 import Yoga.Prelude.Style
 
-import Yoga.Block.Container.Style (colour)
+import Yoga.Block.Container.Style (colour, withAlpha)
 
 type Props :: forall k. (Type -> k) -> Row k -> Row k
 type Props f r =
@@ -28,7 +28,7 @@ contractedText = styles
       , minWidth: _0
       }
 
-fadeBlock :: OptionalProp String -> Style
+fadeBlock :: OptionalProp Color -> Style
 fadeBlock background = css
   { zIndex: str $ "1"
   , position: relative
@@ -40,12 +40,16 @@ fadeBlock background = css
     , height: str "100%"
     , overflow: str "visible"
     , background: str 
-       $ "linear-gradient(90deg, transparent 0%, " <> 
-       (background ?|| colour.background) <> " 90%, " <> 
-       (background ?|| colour.background) <> " 100%)"
+       $ "linear-gradient(90deg, "<> 
+       bgTransparent <>"  0%, " <> 
+       bg <> " 90%, " <> 
+       bg <> " 100%)"
     , zIndex: str $ "2"
     }
   }
+  where
+  bg = (cssStringRGBA <$> background) ?|| colour.background
+  bgTransparent = ((withAlpha 0.0 >>> cssStringRGBA) <$> background) ?|| colour.backgroundAlpha0
 
 expandedText ∷ Style
 expandedText = styles

@@ -5,7 +5,9 @@ import Effect (Effect)
 import React.Basic (JSX, element)
 import React.Basic.DOM (css)
 import React.Basic.DOM as R
-import Yoga (el, styledLeaf)
+import React.Basic.Emotion as E
+import Yoga (el, styledLeaf, (/>), (</))
+import Yoga.Block as Block
 import Yoga.Block.Container as Container
 import Yoga.Block.Container.Style (colour, inputFocus)
 import Yoga.Block.Layout.Box as Box
@@ -30,6 +32,27 @@ container =
                       ]
                   ]
               ]
+          , Block.box </ {}
+              /> [ Block.stack </ { space: E.str "10px" }
+                    /> [ el Box.component
+                          { style:
+                            css
+                              { background: colour.highlight
+                              , color: colour.highlightText
+                              }
+                          }
+                          [ R.text "Highlight" ]
+                      , el Box.component
+                          { style:
+                            css
+                              { background:
+                                "linear-gradient(90deg," <> colour.highlightRotatedForwards <> "," <> colour.highlightRotatedBackwards <> ")"
+                              , color: colour.highlightText
+                              }
+                          }
+                          [ R.text "Highlight gradient" ]
+                      ]
+                ]
           , R.text "Content"
           , el Stack.component {}
               [ el Cluster.component {}

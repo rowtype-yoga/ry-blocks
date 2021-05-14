@@ -160,8 +160,8 @@ instance altSeqFormBuilder ∷ Monoid ui => Alt (SeqFormBuilder' ui props unvali
     SeqFormBuilder
       $ FormBuilder \props unvalidated ->
           let
-            rf@{ edit: editF, validate: validateF } = un FormBuilder f props unvalidated
-            rg@{ edit: editG, validate: validateG } = un FormBuilder g props unvalidated
+            rf@{ validate: validateF } = un FormBuilder f props unvalidated
+            rg@{ validate: validateG } = un FormBuilder g props unvalidated
           in
             case validateF, validateG of
               Just _, _ -> rf

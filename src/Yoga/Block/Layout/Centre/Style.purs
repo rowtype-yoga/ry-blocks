@@ -2,6 +2,7 @@ module Yoga.Block.Layout.Centre.Style where
 
 import Yoga.Prelude.Style
 
+type Props :: forall k. (Type -> k) -> Row k -> Row k
 type Props f r =
   ( css ∷ f Style
   , maxWidth ∷ f StyleProperty

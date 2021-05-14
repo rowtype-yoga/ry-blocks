@@ -4,7 +4,7 @@ import Yoga.Prelude.Style
 import Data.Interpolate (i)
 import Yoga.Block.Container.Style (colour)
 
--- type Props :: forall k. (Type -> k) -> Row k -> Row k
+type Props :: forall k. (Type -> k) -> Row k -> Row k
 type Props f r =
   ( css ∷ f Style
   , background ∷ f String
@@ -119,6 +119,7 @@ labelLarge { left, width } =
     , marginTop: str "calc(var(--s-1) + var(--s-5))"
     , marginLeft: str $ i left "px"
     , marginRight: var "--input-side-padding"
+
     , color: str colour.placeholderText
     , fontWeight: str "400"
     -- , fontWeight: str "600"
@@ -224,15 +225,17 @@ input props =
     { "&[type=text],&[type=search],&[type=password],&[type=number],&:not([type])":
       nest
         { background: str "transparent"
+        , touchAction: manipulation
         , color: str (props.textColour ?|| colour.text)
         , width: _100percent
         , minWidth: _0
         , margin: _0
         , paddingTop: var "--padding-top"
         , paddingBottom: var "--padding-bottom"
-        , paddingLeft: _0
+        , paddingLeft: _0    
         , paddingRight: _0
-        , fontSize: str "calc(var(--s0) * 0.85)"
+        -- , fontSize: str "calc(var(--s0) * 0.85)"
+        , fontSize: str "calc(var(--s0))"
         , "--padding-top": var "--s-1"
         , "--padding-bottom": var "--s-1"
         , "&::placeholder":

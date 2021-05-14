@@ -62,8 +62,7 @@ component = rawComponent
 rawComponent ∷ ∀ p. ReactComponent (Record p)
 rawComponent =
   mkForwardRefComponent "Toggle" do
-    \(props ∷ { | PropsOptional }) ref -> React.do
-      let disabled = props.disabled
+    \(props ∷ { | PropsOptional }) _ref -> React.do
       togglePosition /\ setTogglePositionState <- useState' (props.value ?|| ToggleIsLeft)
       let
         setTogglePosition newPos = do
@@ -76,7 +75,7 @@ rawComponent =
       useEffect dragState do
         case dragState of
           NotDragging -> mempty
-          Dragging { startX, currentX } -> do
+          Dragging _ -> do
             writeRef tapState TapNotAllowed
           DragDone { startX, endX } -> do
             maybeBbox <- getBoundingBoxFromRef buttonRef
@@ -88,41 +87,30 @@ rawComponent =
         mempty
       let
         buttonVariants =
-          { left: { backgroundColor: (Emotion.str <<< Color.cssStringRGBA <$> props.backgroundLeft) ?|| Emotion.str colour.backgroundLayer3 }
-          , right: { backgroundColor: (Emotion.str <<< Color.cssStringRGBA <$> props.backgroundRight) ?|| Emotion.str colour.success }
+          { left:
+            { backgroundColor:
+              (Emotion.str <<< Color.cssStringRGBA <$> props.backgroundLeft)
+                ?|| (Emotion.str colour.backgroundLayer3)
+            }
+          , right:
+            { backgroundColor:
+              (Emotion.str <<< Color.cssStringRGBA <$> props.backgroundRight)
+                ?|| (Emotion.str colour.success)
+            }
           }
         buttonVariant = Motion.makeVariantLabels buttonVariants
       -- components
       let
-        result =
-          container
-            [ animateTextPresence
-                [ textContainer
-                    [ textOnContainer
-                        [ guard (togglePosition == ToggleIsRight)
-                            $ textOn
-                                [ props.left
-                                    ?|| (Icon.component </> { icon: SVGIcon.on, stroke: Style.successTextColour })
-                                ]
-                        ]
-                    , textOffContainer
-                        [ guard (togglePosition == ToggleIsLeft)
-                            $ textOff
-                                [ props.right
-                                    ?|| (Icon.component </> { icon: SVGIcon.off, stroke: Style.disabledTextColour })
-                                ]
-                        ]
-                    ]
-                ]
-            , toggle
-            ]
         container children =
           Motion.elementStyled
             Motion.button
             { className: "ry-toggle" <>? props.className
             , css: Style.button <>? props.css
             , variants: Motion.variants buttonVariants
-            , initial: Motion.initial false
+            , initial:
+              Motion.initial case togglePosition of
+                ToggleIsRight -> buttonVariant.right
+                ToggleIsLeft -> buttonVariant.left
             , animate:
               Motion.animate case togglePosition of
                 ToggleIsRight -> buttonVariant.right
@@ -153,16 +141,28 @@ rawComponent =
             </* { className: "ry-toggle-text-on"
               , css: Style.toggleText
               }
+            /> [ guard (togglePosition == ToggleIsRight)
+                  $ textOn
+                      [ props.left
+                          ?|| (Icon.component </> { icon: SVGIcon.on, stroke: Style.successTextColour })
+                      ]
+              ]
         textOffContainer =
           div
             </* { className: "ry-toggle-text-off"
               , css: Style.toggleText
               }
+            /> [ guard (togglePosition == ToggleIsLeft)
+                  $ textOff
+                      [ props.right
+                          ?|| (Icon.component </> { icon: SVGIcon.off, stroke: Style.disabledTextColour })
+                      ]
+              ]
         textOn =
           Motion.div
             </ { className: "ry-toggle-text-container"
               , key: "ry-toggle-text-on-container"
-              , initial: Motion.initial $ css { scale: 0, opacity: 0 }
+              , initial: Motion.initial $ false
               , animate: Motion.animate $ css { scale: 1, opacity: 1 }
               , exit: Motion.exit $ css { scale: 0, opacity: 0 }
               }
@@ -170,7 +170,7 @@ rawComponent =
           Motion.div
             </ { className: "ry-toggle-text-container"
               , key: "ry-toggle-text-off-container"
-              , initial: Motion.initial $ css { scale: 0, opacity: 0 }
+              , initial: Motion.initial $ false
               , animate: Motion.animate $ css { scale: 1, opacity: 1 }
               , exit: Motion.exit $ css { scale: 0, opacity: 0 }
               }
@@ -185,7 +185,12 @@ rawComponent =
               , setDragState
               , tapState
               }
-      pure result
+      pure
+        $ container
+            [ animateTextPresence
+                [ textContainer [ textOnContainer, textOffContainer ] ]
+            , toggle
+            ]
 
 toggleCircle ∷
   ReactComponent
@@ -264,16 +269,17 @@ toggleCircle =
                           ToggleIsRight -> "calc(" <> Style.toggleLeft <> " - 10px)"
                       , transition: { type: "tween", duration: 0.10, ease: "easeInOut" }
                       }
-              , onTapStart: Motion.onTapStart \_ _ -> writeRef tapState TapAllowed
+              , onTapStart:
+                Motion.onTapStart \_ _ -> writeRef tapState TapAllowed
               , onTap:
-                Motion.onTap \_ pi -> do
+                Motion.onTap \_ _ -> do
                   ts <- readRef tapState
                   case ts of
                     TapAllowed -> onChange (flipToggle togglePosition)
                     _ -> mempty
                   mempty
               , onTapCancel:
-                Motion.onTapCancel \_ pi -> do
+                Motion.onTapCancel \_ _ -> do
                   writeRef tapState TapNotAllowed
                   mempty
               , initial: Motion.initial false
@@ -296,12 +302,12 @@ toggleCircle =
                       setDragState $ Dragging { startX, currentX: pi.point.x }
                     other -> Console.warn $ i "Unexpected drag state " (show other) " in onDragEvent"
               , onDragEnd:
-                Motion.onDragEnd \_ pi -> do
+                Motion.onDragEnd \_ _ -> do
                   case dragState of
                     Dragging { startX } -> do
                       maybeBBox <- getBoundingBoxFromRef toggleRef
                       let x = maybeBBox <#> \bbox -> bbox.left + (bbox.width / 2.0)
                       setDragState (DragDone { startX, endX: x # fromMaybe' \_ -> unsafeCrashWith "shit" })
-                    other -> Console.warn $ i "Unexpected drag state " (show other) " in onDragEvent"
+                    other -> Console.warn $ i "Unexpected drag state " (show other) " in onDragEndEvent"
               , ref: toggleRef
               }

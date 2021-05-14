@@ -1,17 +1,19 @@
 module Yoga.Block.Molecule.ReadMore.View (component, Props, PropsR) where
 
 import Yoga.Prelude.View
+
+import Color (Color)
 import Framer.Motion as Motion
 import React.Basic.DOM as R
 import React.Basic.Hooks as React
 import Yoga.Block.Molecule.ReadMore.Style as Style
 
--- type PropsR ∷ forall k. (Type -> k) -> Row k
+type PropsR ∷ forall k. (Type -> k) -> Row k
 type PropsR f =
   ( children ∷ f (Array JSX)
   , moreLabel ∷ f JSX
   , lessLabel ∷ f JSX
-  , background ∷ f String
+  , background ∷ f Color
   , onMoreClicked ∷ f (Effect Unit)
   , onLessClicked ∷ f (Effect Unit)
   | ()

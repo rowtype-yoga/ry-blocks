@@ -109,7 +109,7 @@ component =
                               for_ maybeBbox \bbox ->
                                 setDragX (Just (pi.point.x - bbox.left))
                         , onDragEnd:
-                          Motion.onDragEnd \_ pi -> do
+                          Motion.onDragEnd \_ _ -> do
                             let
                               x = maybeDragX # fromMaybe' \_ -> unsafeCrashWith "no x"
                               newIdx =
@@ -141,10 +141,10 @@ getStyles ∷ TwoOrMore (Ref (Nullable Node)) -> Effect (TwoOrMore BBox)
 getStyles itemRefs = do
   maybeBBs ∷ TwoOrMore (Maybe DOMRect) <- traverse getBoundingBoxFromRef itemRefs
   let boundingBoxes = maybeBBs <#> (_ # fromMaybe' \_ -> unsafeCrashWith "something's wrong")
-  pure (boundingBoxes # mapWithIndex (fn boundingBoxes))
+  pure (boundingBoxes # map (fn boundingBoxes))
   where
-  fn ∷ TwoOrMore DOMRect -> Int -> DOMRect -> BBox
-  fn boundingBoxes i bb = do
+  fn ∷ TwoOrMore DOMRect -> DOMRect -> BBox
+  fn boundingBoxes bb = do
     let first = TwoOrMore.head boundingBoxes
     { width: bb.width
     , height: bb.height
@@ -164,7 +164,6 @@ type BBox =
 findOverlapping ∷ Int -> TwoOrMore BBox -> Number -> Int
 findOverlapping activeIndex styles x =
   fromMaybe activeIndex do
-    curr <- styles TwoOrMore.!! activeIndex
     let fst = TwoOrMore.head styles
     let lst = TwoOrMore.last styles
     let inside e = (e.left < x) && (e.left + e.width) >= x

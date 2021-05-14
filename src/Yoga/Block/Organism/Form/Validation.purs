@@ -75,6 +75,7 @@ import Type.Prelude (Proxy(..))
 import Yoga.Block as Block
 import Yoga.Block.Container.Style (colour)
 import Yoga.Block.Organism.Form.Internal (Forest, FormBuilder, FormBuilder'(..), Tree(..))
+import Yoga.Block.Palette as Palette
 
 -- | A `Validator` takes a possibly invalid form `result` and produces
 -- | a `valid` result, or an error message.
@@ -399,7 +400,7 @@ validated runValidator editor =
     , validate: hush =<< res
     }
 
-errorChild ∷ ReactComponent { errorLine ∷ JSX, message ∷ Maybe _ }
+errorChild ∷ ReactComponent { errorLine ∷ JSX, message ∷ Maybe String }
 errorChild =
   unsafePerformEffect
     $ reactComponent "Error Child" \{ message, errorLine } -> React.do
@@ -410,6 +411,7 @@ errorChild =
               const
                 { y: "-100%"
                 , height: "auto"
+                , transition: { type: "tween", delay: 0.75 }
                 }
             , visible:
               { y: "0%"
@@ -441,14 +443,14 @@ errorChild =
                             , css:
                               E.css
                                 { color: E.str colour.invalidText
-                                , background: E.str colour.invalid
+                                , background: E.color Palette.pink.dark
                                 , padding: E.str "var(--s-5) var(--s-3) var(--s-4) var(--s-3)"
                                 , borderRadius: E.str "0 0 var(--s-3) var(--s-3)"
                                 }
                             }
                           /> [ motionReadMore
                                 </ Motion.withMotion
-                                    { background: colour.invalid
+                                    { background: Palette.pink.dark
                                     , onMoreClicked: setExpanded true
                                     , onLessClicked: setExpanded false
                                     }

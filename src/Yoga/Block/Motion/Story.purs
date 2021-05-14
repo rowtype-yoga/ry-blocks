@@ -6,7 +6,7 @@ import Data.Tuple (Tuple(..))
 import Data.Tuple.Nested ((/\))
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
-import Framer.Motion (animateSharedLayout, makeVariantLabels, withMotion)
+import Framer.Motion (animateSharedLayout, withMotion)
 import Framer.Motion as M
 import React.Basic (JSX, element, fragment)
 import React.Basic.DOM (css)
@@ -32,12 +32,12 @@ default ∷
 default =
   { title: "Motion"
   , decorators:
-      [ \storyFn ->
-          R.div_
-            [ element E.global { styles: Styles.global }
-            , unsafePerformEffect storyFn
-            ]
-      ]
+    [ \storyFn ->
+        R.div_
+          [ element E.global { styles: Styles.global }
+          , unsafePerformEffect storyFn
+          ]
+    ]
   }
 
 motion ∷ Effect JSX
@@ -55,17 +55,17 @@ motion = do
                 { className: "bg"
                 , css: backgroundStyle
                 , children:
-                    [ E.element motionCentre
-                        ( { className: "parent"
-                          , css: parentStyle <> if isOpen then parentStyleOpen else mempty
-                          , onClick: handler_ (setIsOpen not)
-                          }
-                            `withMotion`
-                              { layout: true
-                              , initial: css { borderRadius: 50, y: 0 }
-                              }
-                        )
-                    ]
+                  [ E.element motionCentre
+                      ( { className: "parent"
+                        , css: parentStyle <> if isOpen then parentStyleOpen else mempty
+                        , onClick: handler_ (setIsOpen not)
+                        }
+                          `withMotion`
+                            { layout: true
+                            , initial: css { borderRadius: 50, y: 0 }
+                            }
+                      )
+                  ]
                 }
             ]
 
@@ -94,17 +94,6 @@ motion = do
       , background: E.str "linear-gradient(145deg, #e93aec, #c431c7)"
       }
 
-  childStyle ∷ E.Style
-  childStyle =
-    E.css
-      { background: E.str "hotpink"
-      , width: E.px 40
-      , height: E.px 40
-      , borderRadius: E.percent 50.0
-      , padding: _0
-      , margin: _0
-      }
-
   parentStyleOpen ∷ E.Style
   parentStyleOpen =
     E.css
@@ -131,17 +120,16 @@ layoutTrans = do
             , onClick: handler_ (setSidebarOpen not)
             , transition: M.transition { delay: 0.2, type: "spring", damping: 30, stiffness: 200 }
             , style:
-                css
-                  { height: "200px"
-                  , width: "200px"
-                  , borderRadius: "50%"
-                  , border: "4px solid darkslateblue"
-                  , backgroundImage: "url('https://pbs.twimg.com/profile_images/1166763324723404801/nAUqF6tX.jpg')"
-                  , backgroundSize: "cover"
-                  }
+              css
+                { height: "200px"
+                , width: "200px"
+                , borderRadius: "50%"
+                , border: "4px solid darkslateblue"
+                , backgroundImage: "url('https://pbs.twimg.com/profile_images/1166763324723404801/nAUqF6tX.jpg')"
+                , backgroundSize: "cover"
+                }
             }
             []
-
         ava2 =
           el M.div
             { layout: cast true
@@ -149,30 +137,29 @@ layoutTrans = do
             , key: "ava"
             , onClick: handler_ (setSidebarOpen not)
             , style:
-                css
-                  { height: "100px"
-                  , width: "100px"
-                  , backgroundImage: "url('https://pbs.twimg.com/profile_images/1166763324723404801/nAUqF6tX.jpg')"
-                  , backgroundSize: "cover"
-                  , borderRadius: "50%"
-                  , border: "2px solid darkslateblue"
-                  }
+              css
+                { height: "100px"
+                , width: "100px"
+                , backgroundImage: "url('https://pbs.twimg.com/profile_images/1166763324723404801/nAUqF6tX.jpg')"
+                , backgroundSize: "cover"
+                , borderRadius: "50%"
+                , border: "2px solid darkslateblue"
+                }
             }
             []
-
         ava3 =
           el M.div
             { onClick: handler_ (setSidebarOpen not)
             , exit: M.exit (css { scale: 1.4, opacity: 0 })
             , transition: M.transition { duration: 0.19 }
             , style:
-                css
-                  { height: "100px"
-                  , width: "100px"
-                  , background: "oldlace"
-                  , borderRadius: "50%"
-                  , border: "4px solid darkslateblue"
-                  }
+              css
+                { height: "100px"
+                , width: "100px"
+                , background: "oldlace"
+                , borderRadius: "50%"
+                , border: "4px solid darkslateblue"
+                }
             }
             []
       pure
@@ -233,13 +220,6 @@ animatedSidebar = do
                     ]
                 ]
             ]
-
-  variantLabels = makeVariantLabels variants
-
-  variants =
-    { hidden: { width: 30, height: 30, borderRadius: "50%" }
-    , show: { width: "inherit", height: "100%" }
-    }
 
   sidebarContainerStyle ∷ E.Style
   sidebarContainerStyle =

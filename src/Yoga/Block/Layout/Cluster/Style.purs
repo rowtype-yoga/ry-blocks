@@ -18,16 +18,17 @@ cluster props = styles <>? props.css
 
   styles =
     css
-      { "& > *":
+      { "--space": str space
+      , "& > *":
         nest
           { display: flex
           , flexWrap: wrap
           , alignItems: (str <$> props.align) ?|| center
           , justifyContent: (str <$> props.justify) ?|| flexStart
-          , margin: "calc(" <> space <> " / 2 * -1)" # str
+          , margin: "calc(var(--space) / 2 * -1)" # str
           }
       , "& > * > *":
         nest
-          { margin: "calc(" <> space <> " / 2)" # str
+          { margin: "calc(var(--space) / 2)" # str
           }
       }

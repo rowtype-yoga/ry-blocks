@@ -70,8 +70,8 @@ rawContainer =
             /> props.children
       pure result
 
-drawPathUntil ∷ { width ∷ Number, height ∷ Number } -> Int -> Array Point -> String
-drawPathUntil { width, height } idx thePath = do
+drawPathUntil ∷ Int -> Array Point -> String
+drawPathUntil idx thePath = do
   let
     fn { x, y } = i x "px" " " y "px"
     firstFew = Array.take idx thePath
@@ -156,13 +156,13 @@ mkContainerVariants dimensions =
   , blurred:
     css
       { clipPath:
-        drawPathUntil dimensions (Array.length path + 1) path
+        drawPathUntil (Array.length path + 1) path
       }
   }
   where
   path = mkPath dimensions
 
-  clipPathFocussed = 13 Array... (Array.length path) <#> \ln -> drawPathUntil dimensions ln path
+  clipPathFocussed = 13 Array... (Array.length path) <#> \ln -> drawPathUntil ln path
 
 type Point =
   { x ∷ Number, y ∷ Number }

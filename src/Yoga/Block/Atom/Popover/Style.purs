@@ -4,6 +4,7 @@ import Yoga.Prelude.Style
 import Data.Interpolate (i)
 import Yoga.Block.Container.Style (colour, size)
 
+type Props :: forall k. (Type -> k) -> Row k -> Row k
 type Props f r =
   ( css ∷ f Style
   | r
@@ -16,7 +17,7 @@ content =
     }
 
 popper ∷ OptionalProp String -> Style
-popper background =
+popper _ =
   css
     { "&[data-popper-placement^='top'] > #arrow":
       nest
@@ -124,4 +125,5 @@ arrow =
       , boxSizing: borderBox
       }
 
+arrowSize :: Int
 arrowSize = 14

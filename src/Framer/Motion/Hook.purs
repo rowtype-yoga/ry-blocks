@@ -49,11 +49,13 @@ data Ease
   | EaseFns (Array (Number -> Number))
 
 -- UseTransform
+type TransformOptionsImpl :: forall k. k -> Type
 type TransformOptionsImpl a =
   { clamp ∷ UndefinedOr Boolean
   , ease ∷ UndefinedOr ((Number -> Number) |+| (Array (Number -> Number)))
   }
 
+type TransformOptions :: forall k. k -> Type
 type TransformOptions a =
   { clamp ∷ Maybe Boolean
   , ease ∷ Maybe Ease

@@ -39,7 +39,7 @@ theToggle =
   css
     { width: str "calc(var(--s2) * 0.85)"
     , height: str "calc(var(--s2) * 0.85)"
-    , background: str $ colour.backgroundLayer4
+    , background: str $ "white"
     , border: none
     , borderRadius: str $ "calc(var(--s2) / 2)"
     , position: absolute

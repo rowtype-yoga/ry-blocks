@@ -14,6 +14,7 @@ import Yoga.Block.Container as Container
 import Yoga.Block.Layout.Box as Box
 import Yoga.Block.Layout.Centre as Centre
 import Yoga.Block.Layout.Cluster as Cluster
+import Yoga.Block.Layout.Grid as Grid
 import Yoga.Block.Layout.Imposter as Imposter
 import Yoga.Block.Layout.Sidebar as Sidebar
 import Yoga.Block.Layout.Stack as Stack
@@ -35,6 +36,9 @@ cluster = Cluster.component
 
 container ∷ ∀ p q. Union p q Container.Props => ReactComponent { | p }
 container = Container.component
+
+grid ∷ ∀ p q. Union p q Grid.Props => ReactComponent { children ∷ Array JSX | p }
+grid = Grid.component
 
 icon ∷ ∀ p q. Union p q Icon.Props => ReactComponent { | Icon.MandatoryProps p }
 icon = Icon.component
