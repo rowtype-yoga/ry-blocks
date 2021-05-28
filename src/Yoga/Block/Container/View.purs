@@ -100,7 +100,7 @@ rawComponent =
                     , top: E.str "0"
                     , left: E.str "0"
                     , pointerEvents: E.none
-                    , zIndex: E.str "7"
+                    , zIndex: E.str "9999"
                     }
                 }
             ]

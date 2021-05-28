@@ -1,4 +1,4 @@
-module Yoga.Block.Atom.Button.Story where
+module Yoga.Block.Atom.Button.Story (default, button) where
 
 import Prelude hiding (div)
 import Effect (Effect)
@@ -11,9 +11,11 @@ import Yoga ((/>), (</), (</>))
 import Yoga.Block as Block
 import Yoga.Block.Atom.Button.Types as ButtonType
 import Yoga.Block.Atom.Button.View as Button
-import Yoga.Block.Container.Style (colour)
+import Yoga.Block.Container.Style (colour, size)
 import Yoga.Block.Container.Style as Styles
 import Yoga.Block.Icon.SVG as Icon
+import Yoga.Block.Internal.CSS (nest)
+import Yoga.Block.Palette as Palette
 
 default ∷
   { decorators ∷ Array (Effect JSX -> JSX)
@@ -22,12 +24,12 @@ default ∷
 default =
   { title: "Atom/Button"
   , decorators:
-    [ \storyFn ->
-        R.div_
-          [ element E.global { styles: Styles.global }
-          , unsafePerformEffect storyFn
-          ]
-    ]
+      [ \storyFn ->
+          R.div_
+            [ element E.global { styles: Styles.global }
+            , unsafePerformEffect storyFn
+            ]
+      ]
   }
 
 button ∷ Effect JSX
@@ -41,11 +43,14 @@ button = do
                 /> [ Button.component </ { buttonType: ButtonType.Generic } /> [ R.text "Generic" ]
                   , Button.component </ { buttonType: ButtonType.Primary } /> [ R.text "Primary" ]
                   , Button.component </ { buttonType: ButtonType.Dangerous } /> [ R.text "Dangerous" ]
+                  , Button.component </ { css: customStyle } /> [ R.text "Custom" ]
+                  , Button.component </ { css: customStyle2 } /> [ R.text "Custom 2" ]
                   ]
             , R.h2_ [ R.text "Button shapes" ]
             , Block.cluster </ { space: "var(--s-1)" }
                 /> [ Button.component </ { buttonType: ButtonType.Generic, buttonShape: ButtonType.Pill } /> [ R.text "Generic" ]
                   , Button.component </ { buttonType: ButtonType.Primary, buttonShape: ButtonType.Pill } /> [ R.text "Primary" ]
+                  , Button.component </ { css: customStyle, buttonShape: ButtonType.Pill } /> [ R.text "+ Custom" ]
                   ]
             , R.h2_ [ R.text "Icon button" ]
             , Block.cluster </ { space: "var(--s-1)" }
@@ -60,3 +65,47 @@ button = do
                   ]
             ]
         ]
+
+customStyle :: E.Style
+customStyle =
+  E.css
+    { background: E.str colour.backgroundLayer5
+    , border: E.str $ "1px solid " <> colour.backgroundLayer2
+    , boxShadow: E.none
+    , paddingTop: E.str $ size.s
+    , paddingBottom: E.str $ size.s
+    , paddingLeft: E.str $ size.xl
+    , paddingRight: E.str $ size.xl
+    , fontWeight: E.str "500"
+    , transition: str "all 0.7s ease"
+    , "&:active":
+        nest
+          { boxShadow: E.none
+          , border: E.str $ "1px solid " <> colour.highlightText
+          , transform: E.none
+          , background: E.str colour.highlight
+          , color: E.str colour.highlightText
+          }
+    , "&:hover":
+        nest
+          { boxShadow: E.none
+          , border: E.str $ "1px solid " <> colour.backgroundLayer1
+          , transform: E.none
+          , background: E.str colour.backgroundLayer4
+          , color: E.str colour.text
+          }
+    }
+
+customStyle2 :: E.Style
+customStyle2 =
+  E.css
+    { background: E.color Palette.seaGreen.dark
+    , color: E.str "white"
+    , border: E.str "1px solid transparent"
+    , fontWeight: E.str "400"
+    , minWidth: E.str size."3xl"
+    , "&:focus":
+        nest
+          { border: E.str $ "1px solid " <> colour.background
+          }
+    }

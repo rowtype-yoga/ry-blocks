@@ -165,6 +165,7 @@ defaultRenderForest =
         </ { css:
             E.css
               { border: E.str $ "1px solid " <> colour.inputBorder
+              , background: E.str colour.backgroundLayer1
               , borderRadius: E.var "--s-1"
               , marginTop: E.str "var(--s0)"
               , "--label-bg": E.str colour.background
@@ -815,7 +816,6 @@ sortableArray { label, addLabel, defaultValue, editor } =
                       { right: E.str "calc(var(--s-1) + var(--s-1) + var(--s2) + var(--s-3))"
                       }
               , onClick: handler preventDefault (const props.delete)
-              , ref: unsafeCoerce $ mkEffectFn1 setReferenceElement
               }
             deleteIcon = Block.icon </> { icon: Icons.bin, size: E.str "var(--s1)", colour: E.str colour.invalid }
             deleteButton = if props.readOnly then empty else R.div' </* deleteButtonAttrs /> [ deleteIcon ]
@@ -834,7 +834,11 @@ sortableArray { label, addLabel, defaultValue, editor } =
             menuButton = if props.readOnly then empty else R.div' </* menuButtonAttrs /> [ menuIcon ]
             menuPopover =
               if showMenu then
-                Block.popover </ { referenceElement, placement: Placement.Placement Placement.Bottom (Just Placement.End), renderArrow: true }
+                Block.popover
+                  </ { referenceElement
+                    -- , placement: Placement.Placement Placement.Bottom (Just Placement.End)
+                    , renderArrow: true
+                    }
                   /> [ Block.box </ {}
                         /> [ R.text "Sure?"
                           , deleteButton
@@ -845,6 +849,6 @@ sortableArray { label, addLabel, defaultValue, editor } =
           pure $ R.li' </* attrs
             /> [ dragHandle
               , menuButton
-              , props.kid
               , menuPopover
+              , props.kid
               ]

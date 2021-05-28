@@ -1,6 +1,7 @@
 module Yoga.Block.Layout.Switcher.View (component, Props, PropsF) where
 
 import Yoga.Prelude.View
+import React.Basic.DOM as R
 import Yoga.Block.Layout.Switcher.Style as Style
 
 type PropsF f =
@@ -25,4 +26,5 @@ rawComponent =
         $ emotionDiv ref props
             { className: "ry-switcher " <>? props.className
             , css: Style.switcher props
+            , children: [ R.div_ props.children ]
             }

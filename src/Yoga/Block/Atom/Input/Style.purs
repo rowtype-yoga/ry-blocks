@@ -5,14 +5,14 @@ import Data.Interpolate (i)
 import Yoga.Block.Container.Style (colour)
 
 type Props :: forall k. (Type -> k) -> Row k -> Row k
-type Props f r =
-  ( css ∷ f Style
-  , background ∷ f String
-  , textColour ∷ f String
-  , placeholderColour ∷ f String
-  , borderColour ∷ f String
-  | r
-  )
+type Props f r
+  = ( css ∷ f Style
+    , background ∷ f String
+    , textColour ∷ f String
+    , placeholderColour ∷ f String
+    , borderColour ∷ f String
+    | r
+    )
 
 leftIconSize ∷ StyleProperty
 leftIconSize = var "--left-icon-size"
@@ -66,31 +66,31 @@ labelSmall background textColour =
     , marginLeft: var "--s-2"
     , userSelect: none
     , """&[data-required="true"] > span:after""":
-      nest
-        { content: str "'＊'"
-        }
+        nest
+          { content: str "'＊'"
+          }
     , "& > span":
-      nest
-        { fontWeight: str "500"
-        , whiteSpace: str "nowrap"
-        , background: str $ i "linear-gradient(" background "51%, transparent 51%, transparent)"
-        , color: str textColour
-        , borderRadius: var "--s-4"
-        , paddingLeft: var "--s-4"
-        , paddingRight: var "--s-4"
-        -- , paddingTop: str "calc(var(--s-5)*0.67)"
-        , paddingBottom: var "--s-5"
-        }
+        nest
+          { fontWeight: str "500"
+          , whiteSpace: str "nowrap"
+          , background: str $ i "linear-gradient(" background "51%, transparent 51%, transparent)"
+          , color: str textColour
+          , borderRadius: var "--s-4"
+          , paddingLeft: var "--s-4"
+          , paddingRight: var "--s-4"
+          -- , paddingTop: str "calc(var(--s-5)*0.67)"
+          , paddingBottom: var "--s-5"
+          }
     , """&[data-invalid="true"] > span""":
-      nest
-        { background: str colour.invalid
-        , color: str colour.invalidText
-        }
+        nest
+          { background: str colour.invalid
+          , color: str colour.invalidText
+          }
     , """&[data-has-focus="true"] > span""":
-      nest
-        { background: labelSmallFocusBackground
-        , color: str colour.highlightText
-        }
+        nest
+          { background: labelSmallFocusBackground
+          , color: str colour.highlightText
+          }
     }
 
 labelSmallFocusBackground ∷ StyleProperty
@@ -112,25 +112,23 @@ labelLarge { left, width } =
     { fontSize: str "calc(var(--s0) * 0.85)"
     , padding: _0
     , whiteSpace: nowrap -- force on one line
-    , overflow: str "hidden"
     , height: str "calc(var(--s0))"
     , maxWidth: str $ i "calc(" width "px - 2ch)"
     , textOverflow: str "ellipsis"
     , marginTop: str "calc(var(--s-1) + var(--s-5))"
     , marginLeft: str $ i left "px"
     , marginRight: var "--input-side-padding"
-
     , color: str colour.placeholderText
     , fontWeight: str "400"
     -- , fontWeight: str "600"
     , """&[data-required="true"]:after""":
-      nest
-        { content: str "'*'"
-        , color: str colour.required
-        , fontFamily: str "Helvetica, Arial, Inter, sans-serif"
-        , fontSize: str "calc(var(--s0))"
-        , lineHeight: str "calc(var(--s0) * 0.85)"
-        }
+        nest
+          { content: str "'*'"
+          , color: str colour.required
+          , fontFamily: str "Helvetica, Arial, Inter, sans-serif"
+          , fontSize: str "calc(var(--s0))"
+          , lineHeight: str "calc(var(--s0) * 0.85)"
+          }
     }
 
 rightIconContainer ∷ Style
@@ -141,15 +139,15 @@ rightIconContainer =
         , alignItems: center
         , justifyContent: center
         , "& > *":
-          nest
-            { display: inlineFlex
-            , alignItems: center
-            , justifyContent: center
-            }
+            nest
+              { display: inlineFlex
+              , alignItems: center
+              , justifyContent: center
+              }
         , ".ry-icon":
-          nest
-            { "--stroke-colour": str colour.text
-            }
+            nest
+              { "--stroke-colour": str colour.text
+              }
         }
 
 leftIconContainer ∷ Style
@@ -158,9 +156,9 @@ leftIconContainer =
     <> css
         { borderRadius: str "var(--input-border-radius) 0 0 var(--input-border-radius)"
         , ".ry-icon":
-          nest
-            { "--stroke-colour": str colour.text
-            }
+            nest
+              { "--stroke-colour": str colour.text
+              }
         }
 
 inputContainer ∷ ∀ r. { | Props OptionalProp r } -> Style
@@ -181,22 +179,22 @@ inputContainer props = theCss <>? props.css
       , display: flex
       , width: str "calc(var(--s4) * 2)"
       , """&[data-invalid="false"]""":
-        nest
-          { borderColor: str colour.success
-          , "--border-width": str "2px"
-          }
+          nest
+            { borderColor: str colour.success
+            , "--border-width": str "2px"
+            }
       , """&[data-invalid="true"]""":
-        nest
-          { borderColor: str colour.invalid
-          , "--border-width": str "2px"
-          }
+          nest
+            { borderColor: str colour.invalid
+            , "--border-width": str "2px"
+            }
       , "&:focus-within":
-        nest
-          { "--border-width": str "2px"
-          , borderColor: str colour.highlight
-          , transition: str "border-color 0s linear 0.1s"
-          -- , animation: plopAnimation <> str " 260ms ease-in"
-          }
+          nest
+            { "--border-width": str "2px"
+            , borderColor: str colour.highlight
+            , transition: str "border-color 0s linear 0.1s"
+            -- , animation: plopAnimation <> str " 260ms ease-in"
+            }
       , alignItems: center
       , justifyContent: center
       , border: str $ "var(--border-width) solid " <> colour.inputBorder
@@ -223,43 +221,44 @@ input ∷ ∀ r. { | Props OptionalProp r } -> Style
 input props =
   css
     { "&[type=text],&[type=search],&[type=password],&[type=number],&:not([type])":
-      nest
-        { background: str "transparent"
-        , touchAction: manipulation
-        , color: str (props.textColour ?|| colour.text)
-        , width: _100percent
-        , minWidth: _0
-        , margin: _0
-        , paddingTop: var "--padding-top"
-        , paddingBottom: var "--padding-bottom"
-        , paddingLeft: _0    
-        , paddingRight: _0
-        -- , fontSize: str "calc(var(--s0) * 0.85)"
-        , fontSize: str "calc(var(--s0))"
-        , "--padding-top": var "--s-1"
-        , "--padding-bottom": var "--s-1"
-        , "&::placeholder":
-          nest
-            { color: str (props.placeholderColour ?|| colour.placeholderText)
-            }
-        , "&[aria-labelledby]":
-          nest
-            { paddingTop: str "calc(var(--padding-top) + (var(--s-5)/2))"
-            , paddingBottom: str "calc(var(--padding-bottom) - (var(--s-5)/2))"
-            }
-        , border: none
-        }
+        nest
+          { background: str "transparent"
+          , touchAction: manipulation
+          , color: str (props.textColour ?|| colour.text)
+          , width: _100percent
+          , minWidth: _0
+          , margin: _0
+          , overflowY: visible
+          , paddingTop: var "--padding-top"
+          , paddingBottom: var "--padding-bottom"
+          , paddingLeft: _0
+          , paddingRight: _0
+          -- , fontSize: str "calc(var(--s0) * 0.85)"
+          , fontSize: str "calc(var(--s0))"
+          , "--padding-top": var "--s-1"
+          , "--padding-bottom": var "--s-1"
+          , "&::placeholder":
+              nest
+                { color: str (props.placeholderColour ?|| colour.placeholderText)
+                }
+          , "&[aria-labelledby]":
+              nest
+                { paddingTop: str "calc(var(--padding-top) + (var(--s-5)/2))"
+                , paddingBottom: str "calc(var(--padding-bottom) - (var(--s-5)/2))"
+                }
+          , border: none
+          }
     , "&[type=search]":
-      nest
-        { "&::-webkit-search-decoration, &::-webkit-search-cancel-button, &::-webkit-search-results-button, &::-webkit-search-results-decoration":
-          nest
-            { "WebkitAppearance": none
-            }
-        }
+        nest
+          { "&::-webkit-search-decoration, &::-webkit-search-cancel-button, &::-webkit-search-results-button, &::-webkit-search-results-decoration":
+              nest
+                { "WebkitAppearance": none
+                }
+          }
     , "&:focus":
-      nest
-        { outline: none
-        }
+        nest
+          { outline: none
+          }
     }
 
 plopAnimation ∷ StyleProperty

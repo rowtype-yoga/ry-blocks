@@ -7,15 +7,15 @@ data SidebarSide
   | SidebarRight
 
 type Props :: forall k. (Type -> k) -> Row k -> Row k
-type Props f r =
-  ( css ∷ f Style
-  , space ∷ f String
-  , side ∷ f SidebarSide
-  , sideWidth ∷ f String
-  , contentMin ∷ f String
-  , noStretch ∷ f Boolean
-  | r
-  )
+type Props f r
+  = ( css ∷ f Style
+    , space ∷ f String
+    , side ∷ f SidebarSide
+    , sideWidth ∷ f String
+    , contentMin ∷ f String
+    , noStretch ∷ f Boolean
+    | r
+    )
 
 sidebar ∷ ∀ p. { | Props OptionalProp p } -> Style
 sidebar props = styles <>? props.css
@@ -39,19 +39,19 @@ sidebar props = styles <>? props.css
     css
       { overflow: hidden
       , "& > *":
-        nest
-          { display: flex
-          , flexWrap: wrap
-          , margin: "calc(" <> space <> "/2 * -1)" # str
-          , alignItems: props.noStretch # ifTrue "flex-start" "" # str
-          }
+          nest
+            { display: flex
+            , flexWrap: wrap
+            , margin: "calc(" <> space <> " / 2 * -1)" # str
+            , alignItems: props.noStretch # foldMap if _ then str "flex-start" else mempty
+            }
       , "& > * > *":
-        nest
-          { margin: "calc(" <> space <> "/2)" # str
-          , flexGrow: "1" # str
-          , flexBasis: props.sideWidth # foldMap str
-          }
-          <> foldMap (nest <<< { flexBasis: _ } <<< str) props.sideWidth
+          nest
+            { margin: "calc(" <> space <> " / 2)" # str
+            , flexGrow: "1" # str
+            , flexBasis: props.sideWidth # foldMap str
+            }
+            <> foldMap (nest <<< { flexBasis: _ } <<< str) props.sideWidth
       }
       <> case side of
           SidebarLeft -> css { "& > * > :last-child": nonSidebarStyle }

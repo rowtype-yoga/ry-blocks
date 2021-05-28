@@ -87,8 +87,8 @@ foreign import mkForwardRefComponentEffect ∷
 
 foreign import createRef ∷ ∀ a. Effect (Ref a)
 
-type NodeRef =
-  Ref (Nullable Node)
+type NodeRef
+  = Ref (Nullable Node)
 
 focusNodeRef ∷ NodeRef -> Effect Unit
 focusNodeRef ref = do
@@ -98,7 +98,8 @@ focusNodeRef ref = do
 findElementByIdInDocument ∷ String -> Effect (Maybe Element)
 findElementByIdInDocument id = do
   doc <- window >>= document
-  let node = HTMLDocument.toNonElementParentNode doc
+  let
+    node = HTMLDocument.toNonElementParentNode doc
   getElementById id node
 
 getBoundingBoxFromRef ∷ NodeRef -> Effect (Maybe DOMRect)
@@ -275,461 +276,461 @@ dangerous = unsafePerformEffect <<< unsafeCreateDOMComponent
 
 -- type DivProps =
 --   Props_div
-type DivProps =
-  DivPropsF Id ()
+type DivProps
+  = DivPropsF Id ()
 
-type DivPropsF f more =
-  ( _aria ∷ f (Object String)
-  , _data ∷ f (Object String)
-  , about ∷ f String
-  , acceptCharset ∷ f String
-  , accessKey ∷ f String
-  , allowFullScreen ∷ f Boolean
-  , autoFocus ∷ f Boolean
-  , autoPlay ∷ f Boolean
-  , capture ∷ f Boolean
-  , cellPadding ∷ f String
-  , cellSpacing ∷ f String
-  , charSet ∷ f String
-  , children ∷ f (Array JSX)
-  , classID ∷ f String
-  , colSpan ∷ f Int
-  , contentEditable ∷ f Boolean
-  , contextMenu ∷ f String
-  , crossOrigin ∷ f String
-  , dangerouslySetInnerHTML ∷ f { __html ∷ f String }
-  , datatype ∷ f String
-  , dateTime ∷ f String
-  , dir ∷ f String
-  , draggable ∷ f Boolean
-  , encType ∷ f String
-  , formAction ∷ f String
-  , formEncType ∷ f String
-  , formMethod ∷ f String
-  , formNoValidate ∷ f Boolean
-  , formTarget ∷ f String
-  , frameBorder ∷ f String
-  , hidden ∷ f Boolean
-  , hrefLang ∷ f String
-  , htmlFor ∷ f String
-  , httpEquiv ∷ f String
-  , icon ∷ f String
-  , id ∷ f String
-  , inlist ∷ f String
-  , inputMode ∷ f String
-  , is ∷ f String
-  , itemID ∷ f String
-  , itemProp ∷ f String
-  , itemRef ∷ f String
-  , itemScope ∷ f Boolean
-  , itemType ∷ f String
-  , keyParams ∷ f String
-  , keyType ∷ f String
-  , lang ∷ f String
-  , marginHeight ∷ f String
-  , marginWidth ∷ f String
-  , maxLength ∷ f Int
-  , mediaGroup ∷ f String
-  , minLength ∷ f Int
-  , noValidate ∷ f Boolean
-  , onAnimationEnd ∷ f EventHandler
-  , onAnimationIteration ∷ f EventHandler
-  , onAnimationStart ∷ f EventHandler
-  , onBlur ∷ f EventHandler
-  , onClick ∷ f EventHandler
-  , onCompositionEnd ∷ f EventHandler
-  , onCompositionStart ∷ f EventHandler
-  , onCompositionUpdate ∷ f EventHandler
-  , onContextMenu ∷ f EventHandler
-  , onCopy ∷ f EventHandler
-  , onCut ∷ f EventHandler
-  , onDoubleClick ∷ f EventHandler
-  , onDrag ∷ f EventHandler
-  , onDragEnd ∷ f EventHandler
-  , onDragEnter ∷ f EventHandler
-  , onDragExit ∷ f EventHandler
-  , onDragLeave ∷ f EventHandler
-  , onDragOver ∷ f EventHandler
-  , onDragStart ∷ f EventHandler
-  , onDrop ∷ f EventHandler
-  , onFocus ∷ f EventHandler
-  , onGotPointerCapture ∷ f EventHandler
-  , onInvalid ∷ f EventHandler
-  , onKeyDown ∷ f EventHandler
-  , onKeyPress ∷ f EventHandler
-  , onKeyUp ∷ f EventHandler
-  , onLostPointerCapture ∷ f EventHandler
-  , onMouseDown ∷ f EventHandler
-  , onMouseEnter ∷ f EventHandler
-  , onMouseLeave ∷ f EventHandler
-  , onMouseMove ∷ f EventHandler
-  , onMouseOut ∷ f EventHandler
-  , onMouseOver ∷ f EventHandler
-  , onMouseUp ∷ f EventHandler
-  , onPaste ∷ f EventHandler
-  , onPointerCancel ∷ f EventHandler
-  , onPointerDown ∷ f EventHandler
-  , onPointerEnter ∷ f EventHandler
-  , onPointerLeave ∷ f EventHandler
-  , onPointerMove ∷ f EventHandler
-  , onPointerOut ∷ f EventHandler
-  , onPointerOver ∷ f EventHandler
-  , onPointerUp ∷ f EventHandler
-  , onSelect ∷ f EventHandler
-  , onSubmit ∷ f EventHandler
-  , onTouchCancel ∷ f EventHandler
-  , onTouchEnd ∷ f EventHandler
-  , onTouchMove ∷ f EventHandler
-  , onTouchStart ∷ f EventHandler
-  , onTransitionEnd ∷ f EventHandler
-  , onWheel ∷ f EventHandler
-  , prefix ∷ f String
-  , property ∷ f String
-  , radioGroup ∷ f String
-  , readOnly ∷ f Boolean
-  , ref ∷ f (Ref (Nullable Node))
-  , resource ∷ f String
-  , role ∷ f String
-  , rowSpan ∷ f Int
-  , scoped ∷ f Boolean
-  , seamless ∷ f Boolean
-  , security ∷ f String
-  , spellCheck ∷ f Boolean
-  , srcDoc ∷ f JSX
-  , srcLang ∷ f String
-  , srcSet ∷ f String
-  , style ∷ f CSS
-  , suppressContentEditableWarning ∷ f Boolean
-  , tabIndex ∷ f Int
-  , title ∷ f String
-  , typeof ∷ f String
-  , unselectable ∷ f Boolean
-  , useMap ∷ f String
-  , vocab ∷ f String
-  , wmode ∷ f String
-  | more
-  )
-
-type InputReadableProps =
-  InputReadablePropsF OptionalProp ()
-
-type InputWritableProps =
-  InputWritablePropsF Id ()
-
-type InputWritablePropsF f more =
-  InputReadablePropsF f
-    ( ref ∷ f (Ref (Nullable Node))
+type DivPropsF f more
+  = ( _aria ∷ f (Object String)
+    , _data ∷ f (Object String)
+    , about ∷ f String
+    , acceptCharset ∷ f String
+    , accessKey ∷ f String
+    , allowFullScreen ∷ f Boolean
+    , autoFocus ∷ f Boolean
+    , autoPlay ∷ f Boolean
+    , capture ∷ f Boolean
+    , cellPadding ∷ f String
+    , cellSpacing ∷ f String
+    , charSet ∷ f String
+    , children ∷ f (Array JSX)
+    , classID ∷ f String
+    , colSpan ∷ f Int
+    , contentEditable ∷ f Boolean
+    , contextMenu ∷ f String
+    , crossOrigin ∷ f String
+    , dangerouslySetInnerHTML ∷ f { __html ∷ f String }
+    , datatype ∷ f String
+    , dateTime ∷ f String
+    , dir ∷ f String
+    , draggable ∷ f Boolean
+    , encType ∷ f String
+    , formAction ∷ f String
+    , formEncType ∷ f String
+    , formMethod ∷ f String
+    , formNoValidate ∷ f Boolean
+    , formTarget ∷ f String
+    , frameBorder ∷ f String
+    , hidden ∷ f Boolean
+    , hrefLang ∷ f String
+    , htmlFor ∷ f String
+    , httpEquiv ∷ f String
+    , icon ∷ f String
+    , id ∷ f String
+    , inlist ∷ f String
+    , inputMode ∷ f String
+    , is ∷ f String
+    , itemID ∷ f String
+    , itemProp ∷ f String
+    , itemRef ∷ f String
+    , itemScope ∷ f Boolean
+    , itemType ∷ f String
+    , keyParams ∷ f String
+    , keyType ∷ f String
+    , lang ∷ f String
+    , marginHeight ∷ f String
+    , marginWidth ∷ f String
+    , maxLength ∷ f Int
+    , mediaGroup ∷ f String
+    , minLength ∷ f Int
+    , noValidate ∷ f Boolean
+    , onAnimationEnd ∷ f EventHandler
+    , onAnimationIteration ∷ f EventHandler
+    , onAnimationStart ∷ f EventHandler
+    , onBlur ∷ f EventHandler
+    , onClick ∷ f EventHandler
+    , onCompositionEnd ∷ f EventHandler
+    , onCompositionStart ∷ f EventHandler
+    , onCompositionUpdate ∷ f EventHandler
+    , onContextMenu ∷ f EventHandler
+    , onCopy ∷ f EventHandler
+    , onCut ∷ f EventHandler
+    , onDoubleClick ∷ f EventHandler
+    , onDrag ∷ f EventHandler
+    , onDragEnd ∷ f EventHandler
+    , onDragEnter ∷ f EventHandler
+    , onDragExit ∷ f EventHandler
+    , onDragLeave ∷ f EventHandler
+    , onDragOver ∷ f EventHandler
+    , onDragStart ∷ f EventHandler
+    , onDrop ∷ f EventHandler
+    , onFocus ∷ f EventHandler
+    , onGotPointerCapture ∷ f EventHandler
+    , onInvalid ∷ f EventHandler
+    , onKeyDown ∷ f EventHandler
+    , onKeyPress ∷ f EventHandler
+    , onKeyUp ∷ f EventHandler
+    , onLostPointerCapture ∷ f EventHandler
+    , onMouseDown ∷ f EventHandler
+    , onMouseEnter ∷ f EventHandler
+    , onMouseLeave ∷ f EventHandler
+    , onMouseMove ∷ f EventHandler
+    , onMouseOut ∷ f EventHandler
+    , onMouseOver ∷ f EventHandler
+    , onMouseUp ∷ f EventHandler
+    , onPaste ∷ f EventHandler
+    , onPointerCancel ∷ f EventHandler
+    , onPointerDown ∷ f EventHandler
+    , onPointerEnter ∷ f EventHandler
+    , onPointerLeave ∷ f EventHandler
+    , onPointerMove ∷ f EventHandler
+    , onPointerOut ∷ f EventHandler
+    , onPointerOver ∷ f EventHandler
+    , onPointerUp ∷ f EventHandler
+    , onSelect ∷ f EventHandler
+    , onSubmit ∷ f EventHandler
+    , onTouchCancel ∷ f EventHandler
+    , onTouchEnd ∷ f EventHandler
+    , onTouchMove ∷ f EventHandler
+    , onTouchStart ∷ f EventHandler
+    , onTransitionEnd ∷ f EventHandler
+    , onWheel ∷ f EventHandler
+    , prefix ∷ f String
+    , property ∷ f String
+    , radioGroup ∷ f String
+    , readOnly ∷ f Boolean
+    , ref ∷ f (Ref (Nullable Node))
+    , resource ∷ f String
+    , role ∷ f String
+    , rowSpan ∷ f Int
+    , scoped ∷ f Boolean
+    , seamless ∷ f Boolean
+    , security ∷ f String
+    , spellCheck ∷ f Boolean
+    , srcDoc ∷ f JSX
+    , srcLang ∷ f String
+    , srcSet ∷ f String
+    , style ∷ f CSS
+    , suppressContentEditableWarning ∷ f Boolean
+    , tabIndex ∷ f Int
+    , title ∷ f String
+    , typeof ∷ f String
+    , unselectable ∷ f Boolean
+    , useMap ∷ f String
+    , vocab ∷ f String
+    , wmode ∷ f String
     | more
     )
 
-type InputReadablePropsF f more =
-  ( _aria ∷ f (Object String)
-  , _data ∷ f (Object String)
-  , about ∷ f String
-  , accept ∷ f String
-  , acceptCharset ∷ f String
-  , accessKey ∷ f String
-  , allowFullScreen ∷ f Boolean
-  , alt ∷ f String
-  , autoCapitalize ∷ f String
-  , autoComplete ∷ f String
-  , autoCorrect ∷ f String
-  , autoFocus ∷ f Boolean
-  , autoPlay ∷ f Boolean
-  , autoSave ∷ f String
-  , capture ∷ f Boolean
-  , cellPadding ∷ f String
-  , cellSpacing ∷ f String
-  , charSet ∷ f String
-  , checked ∷ f Boolean
-  , classID ∷ f String
-  , colSpan ∷ f Int
-  , contentEditable ∷ f Boolean
-  , contextMenu ∷ f String
-  , crossOrigin ∷ f String
-  , dangerouslySetInnerHTML ∷ f { __html ∷ f String }
-  , datatype ∷ f String
-  , dateTime ∷ f String
-  , defaultChecked ∷ f String
-  , defaultValue ∷ f String
-  , dir ∷ f String
-  , disabled ∷ f Boolean
-  , draggable ∷ f Boolean
-  , encType ∷ f String
-  , form ∷ f String
-  , formAction ∷ f String
-  , formEncType ∷ f String
-  , formMethod ∷ f String
-  , formNoValidate ∷ f Boolean
-  , formTarget ∷ f String
-  , frameBorder ∷ f String
-  , height ∷ f String
-  , hidden ∷ f Boolean
-  , hrefLang ∷ f String
-  , htmlFor ∷ f String
-  , httpEquiv ∷ f String
-  , icon ∷ f String
-  , id ∷ f String
-  , inlist ∷ f String
-  , inputMode ∷ f String
-  , is ∷ f String
-  , itemID ∷ f String
-  , itemProp ∷ f String
-  , itemRef ∷ f String
-  , itemScope ∷ f Boolean
-  , itemType ∷ f String
-  , keyParams ∷ f String
-  , keyType ∷ f String
-  , lang ∷ f String
-  , list ∷ f String
-  , marginHeight ∷ f String
-  , marginWidth ∷ f String
-  , maxLength ∷ f Int
-  , mediaGroup ∷ f String
-  , minLength ∷ f Int
-  , multiple ∷ f Boolean
-  , name ∷ f String
-  , noValidate ∷ f Boolean
-  , onAnimationEnd ∷ f EventHandler
-  , onAnimationIteration ∷ f EventHandler
-  , onAnimationStart ∷ f EventHandler
-  , onBlur ∷ f EventHandler
-  , onChange ∷ f EventHandler
-  , onClick ∷ f EventHandler
-  , onCompositionEnd ∷ f EventHandler
-  , onCompositionStart ∷ f EventHandler
-  , onCompositionUpdate ∷ f EventHandler
-  , onContextMenu ∷ f EventHandler
-  , onCopy ∷ f EventHandler
-  , onCut ∷ f EventHandler
-  , onDoubleClick ∷ f EventHandler
-  , onDrag ∷ f EventHandler
-  , onDragEnd ∷ f EventHandler
-  , onDragEnter ∷ f EventHandler
-  , onDragExit ∷ f EventHandler
-  , onDragLeave ∷ f EventHandler
-  , onDragOver ∷ f EventHandler
-  , onDragStart ∷ f EventHandler
-  , onDrop ∷ f EventHandler
-  , onFocus ∷ f EventHandler
-  , onGotPointerCapture ∷ f EventHandler
-  , onInvalid ∷ f EventHandler
-  , onKeyDown ∷ f EventHandler
-  , onKeyPress ∷ f EventHandler
-  , onKeyUp ∷ f EventHandler
-  , onLostPointerCapture ∷ f EventHandler
-  , onMouseDown ∷ f EventHandler
-  , onMouseEnter ∷ f EventHandler
-  , onMouseLeave ∷ f EventHandler
-  , onMouseMove ∷ f EventHandler
-  , onMouseOut ∷ f EventHandler
-  , onMouseOver ∷ f EventHandler
-  , onMouseUp ∷ f EventHandler
-  , onPaste ∷ f EventHandler
-  , onPointerCancel ∷ f EventHandler
-  , onPointerDown ∷ f EventHandler
-  , onPointerEnter ∷ f EventHandler
-  , onPointerLeave ∷ f EventHandler
-  , onPointerMove ∷ f EventHandler
-  , onPointerOut ∷ f EventHandler
-  , onPointerOver ∷ f EventHandler
-  , onPointerUp ∷ f EventHandler
-  , onSelect ∷ f EventHandler
-  , onSubmit ∷ f EventHandler
-  , onTouchCancel ∷ f EventHandler
-  , onTouchEnd ∷ f EventHandler
-  , onTouchMove ∷ f EventHandler
-  , onTouchStart ∷ f EventHandler
-  , onTransitionEnd ∷ f EventHandler
-  , onWheel ∷ f EventHandler
-  , pattern ∷ f String
-  , placeholder ∷ f String
-  , prefix ∷ f String
-  , property ∷ f String
-  , radioGroup ∷ f String
-  -- , ref ∷ f (Ref (Nullable Node))
-  , readOnly ∷ f Boolean
-  , required ∷ f Boolean
-  , resource ∷ f String
-  , results ∷ f String
-  , role ∷ f String
-  , rowSpan ∷ f Int
-  , scoped ∷ f Boolean
-  , seamless ∷ f Boolean
-  , security ∷ f String
-  , size ∷ f Int
-  , spellCheck ∷ f Boolean
-  , src ∷ f String
-  , srcDoc ∷ f JSX
-  , srcLang ∷ f String
-  , srcSet ∷ f String
-  , step ∷ f String
-  , style ∷ f CSS
-  , suppressContentEditableWarning ∷ f Boolean
-  , tabIndex ∷ f Int
-  , title ∷ f String
-  , type ∷ f String
-  , typeof ∷ f String
-  , unselectable ∷ f Boolean
-  , useMap ∷ f String
-  , value ∷ f String
-  , vocab ∷ f String
-  , width ∷ f String
-  , wmode ∷ f String
-  , min ∷ f (String)
-  , max ∷ f (String)
-  | more
-  )
+type InputReadableProps
+  = InputReadablePropsF OptionalProp ()
 
-type ButtonReadableProps =
-  ButtonReadablePropsF OptionalProp ()
+type InputWritableProps
+  = InputWritablePropsF Id ()
 
-type ButtonWritableProps =
-  ButtonWritablePropsF Id ()
+type InputWritablePropsF f more
+  = InputReadablePropsF f
+      ( ref ∷ f (Ref (Nullable Node))
+      | more
+      )
+
+type InputReadablePropsF f more
+  = ( _aria ∷ f (Object String)
+    , _data ∷ f (Object String)
+    , about ∷ f String
+    , accept ∷ f String
+    , acceptCharset ∷ f String
+    , accessKey ∷ f String
+    , allowFullScreen ∷ f Boolean
+    , alt ∷ f String
+    , autoCapitalize ∷ f String
+    , autoComplete ∷ f String
+    , autoCorrect ∷ f String
+    , autoFocus ∷ f Boolean
+    , autoPlay ∷ f Boolean
+    , autoSave ∷ f String
+    , capture ∷ f Boolean
+    , cellPadding ∷ f String
+    , cellSpacing ∷ f String
+    , charSet ∷ f String
+    , checked ∷ f Boolean
+    , classID ∷ f String
+    , colSpan ∷ f Int
+    , contentEditable ∷ f Boolean
+    , contextMenu ∷ f String
+    , crossOrigin ∷ f String
+    , dangerouslySetInnerHTML ∷ f { __html ∷ f String }
+    , datatype ∷ f String
+    , dateTime ∷ f String
+    , defaultChecked ∷ f String
+    , defaultValue ∷ f String
+    , dir ∷ f String
+    , disabled ∷ f Boolean
+    , draggable ∷ f Boolean
+    , encType ∷ f String
+    , form ∷ f String
+    , formAction ∷ f String
+    , formEncType ∷ f String
+    , formMethod ∷ f String
+    , formNoValidate ∷ f Boolean
+    , formTarget ∷ f String
+    , frameBorder ∷ f String
+    , height ∷ f String
+    , hidden ∷ f Boolean
+    , hrefLang ∷ f String
+    , htmlFor ∷ f String
+    , httpEquiv ∷ f String
+    , icon ∷ f String
+    , id ∷ f String
+    , inlist ∷ f String
+    , inputMode ∷ f String
+    , is ∷ f String
+    , itemID ∷ f String
+    , itemProp ∷ f String
+    , itemRef ∷ f String
+    , itemScope ∷ f Boolean
+    , itemType ∷ f String
+    , keyParams ∷ f String
+    , keyType ∷ f String
+    , lang ∷ f String
+    , list ∷ f String
+    , marginHeight ∷ f String
+    , marginWidth ∷ f String
+    , maxLength ∷ f Int
+    , mediaGroup ∷ f String
+    , minLength ∷ f Int
+    , multiple ∷ f Boolean
+    , name ∷ f String
+    , noValidate ∷ f Boolean
+    , onAnimationEnd ∷ f EventHandler
+    , onAnimationIteration ∷ f EventHandler
+    , onAnimationStart ∷ f EventHandler
+    , onBlur ∷ f EventHandler
+    , onChange ∷ f EventHandler
+    , onClick ∷ f EventHandler
+    , onCompositionEnd ∷ f EventHandler
+    , onCompositionStart ∷ f EventHandler
+    , onCompositionUpdate ∷ f EventHandler
+    , onContextMenu ∷ f EventHandler
+    , onCopy ∷ f EventHandler
+    , onCut ∷ f EventHandler
+    , onDoubleClick ∷ f EventHandler
+    , onDrag ∷ f EventHandler
+    , onDragEnd ∷ f EventHandler
+    , onDragEnter ∷ f EventHandler
+    , onDragExit ∷ f EventHandler
+    , onDragLeave ∷ f EventHandler
+    , onDragOver ∷ f EventHandler
+    , onDragStart ∷ f EventHandler
+    , onDrop ∷ f EventHandler
+    , onFocus ∷ f EventHandler
+    , onGotPointerCapture ∷ f EventHandler
+    , onInvalid ∷ f EventHandler
+    , onKeyDown ∷ f EventHandler
+    , onKeyPress ∷ f EventHandler
+    , onKeyUp ∷ f EventHandler
+    , onLostPointerCapture ∷ f EventHandler
+    , onMouseDown ∷ f EventHandler
+    , onMouseEnter ∷ f EventHandler
+    , onMouseLeave ∷ f EventHandler
+    , onMouseMove ∷ f EventHandler
+    , onMouseOut ∷ f EventHandler
+    , onMouseOver ∷ f EventHandler
+    , onMouseUp ∷ f EventHandler
+    , onPaste ∷ f EventHandler
+    , onPointerCancel ∷ f EventHandler
+    , onPointerDown ∷ f EventHandler
+    , onPointerEnter ∷ f EventHandler
+    , onPointerLeave ∷ f EventHandler
+    , onPointerMove ∷ f EventHandler
+    , onPointerOut ∷ f EventHandler
+    , onPointerOver ∷ f EventHandler
+    , onPointerUp ∷ f EventHandler
+    , onSelect ∷ f EventHandler
+    , onSubmit ∷ f EventHandler
+    , onTouchCancel ∷ f EventHandler
+    , onTouchEnd ∷ f EventHandler
+    , onTouchMove ∷ f EventHandler
+    , onTouchStart ∷ f EventHandler
+    , onTransitionEnd ∷ f EventHandler
+    , onWheel ∷ f EventHandler
+    , pattern ∷ f String
+    , placeholder ∷ f String
+    , prefix ∷ f String
+    , property ∷ f String
+    , radioGroup ∷ f String
+    -- , ref ∷ f (Ref (Nullable Node))
+    , readOnly ∷ f Boolean
+    , required ∷ f Boolean
+    , resource ∷ f String
+    , results ∷ f String
+    , role ∷ f String
+    , rowSpan ∷ f Int
+    , scoped ∷ f Boolean
+    , seamless ∷ f Boolean
+    , security ∷ f String
+    , size ∷ f Int
+    , spellCheck ∷ f Boolean
+    , src ∷ f String
+    , srcDoc ∷ f JSX
+    , srcLang ∷ f String
+    , srcSet ∷ f String
+    , step ∷ f String
+    , style ∷ f CSS
+    , suppressContentEditableWarning ∷ f Boolean
+    , tabIndex ∷ f Int
+    , title ∷ f String
+    , type ∷ f String
+    , typeof ∷ f String
+    , unselectable ∷ f Boolean
+    , useMap ∷ f String
+    , value ∷ f String
+    , vocab ∷ f String
+    , width ∷ f String
+    , wmode ∷ f String
+    , min ∷ f (String)
+    , max ∷ f (String)
+    | more
+    )
+
+type ButtonReadableProps
+  = ButtonReadablePropsF OptionalProp ()
+
+type ButtonWritableProps
+  = ButtonWritablePropsF Id ()
 
 type ButtonWritablePropsF :: forall k. (Type -> k) -> Row k -> Row k
-type ButtonWritablePropsF f more =
-  ButtonReadablePropsF f
-    ( ref ∷ f (Ref (Nullable Node))
-    | more
-    )
+type ButtonWritablePropsF f more
+  = ButtonReadablePropsF f
+      ( ref ∷ f (Ref (Nullable Node))
+      | more
+      )
 
 type ButtonReadablePropsF :: forall k. (Type -> k) -> Row k -> Row k
-type ButtonReadablePropsF f more =
-  ( _aria ∷ f (Object String)
-  , _data ∷ f (Object String)
-  , about ∷ f String
-  , acceptCharset ∷ f String
-  , accessKey ∷ f String
-  , allowFullScreen ∷ f Boolean
-  , allowTransparency ∷ f Boolean
-  , autoFocus ∷ f Boolean
-  , autoPlay ∷ f Boolean
-  , capture ∷ f Boolean
-  , cellPadding ∷ f String
-  , cellSpacing ∷ f String
-  , charSet ∷ f String
-  , children ∷ f (Array JSX)
-  , classID ∷ f String
-  , className ∷ f String
-  , colSpan ∷ f Int
-  , contentEditable ∷ f Boolean
-  , contextMenu ∷ f String
-  , crossOrigin ∷ f String
-  , dangerouslySetInnerHTML ∷ f { __html ∷ String }
-  , datatype ∷ f String
-  , dateTime ∷ f String
-  , dir ∷ f String
-  , disabled ∷ f Boolean
-  , draggable ∷ f Boolean
-  , encType ∷ f String
-  , form ∷ f String
-  , formAction ∷ f String
-  , formEncType ∷ f String
-  , formMethod ∷ f String
-  , formNoValidate ∷ f Boolean
-  , formTarget ∷ f String
-  , frameBorder ∷ f String
-  , hidden ∷ f Boolean
-  , hrefLang ∷ f String
-  , htmlFor ∷ f String
-  , httpEquiv ∷ f String
-  , icon ∷ f String
-  , id ∷ f String
-  , inlist ∷ f String
-  , inputMode ∷ f String
-  , is ∷ f String
-  , itemID ∷ f String
-  , itemProp ∷ f String
-  , itemRef ∷ f String
-  , itemScope ∷ f Boolean
-  , itemType ∷ f String
-  , key ∷ f String
-  , keyParams ∷ f String
-  , keyType ∷ f String
-  , lang ∷ f String
-  , marginHeight ∷ f String
-  , marginWidth ∷ f String
-  , maxLength ∷ f Int
-  , mediaGroup ∷ f String
-  , minLength ∷ f Int
-  , name ∷ f String
-  , noValidate ∷ f Boolean
-  , onAnimationEnd ∷ f EventHandler
-  , onAnimationIteration ∷ f EventHandler
-  , onAnimationStart ∷ f EventHandler
-  , onBlur ∷ f EventHandler
-  , onClick ∷ f EventHandler
-  , onCompositionEnd ∷ f EventHandler
-  , onCompositionStart ∷ f EventHandler
-  , onCompositionUpdate ∷ f EventHandler
-  , onContextMenu ∷ f EventHandler
-  , onCopy ∷ f EventHandler
-  , onCut ∷ f EventHandler
-  , onDoubleClick ∷ f EventHandler
-  , onDrag ∷ f EventHandler
-  , onDragEnd ∷ f EventHandler
-  , onDragEnter ∷ f EventHandler
-  , onDragExit ∷ f EventHandler
-  , onDragLeave ∷ f EventHandler
-  , onDragOver ∷ f EventHandler
-  , onDragStart ∷ f EventHandler
-  , onDrop ∷ f EventHandler
-  , onFocus ∷ f EventHandler
-  , onGotPointerCapture ∷ f EventHandler
-  , onInvalid ∷ f EventHandler
-  , onKeyDown ∷ f EventHandler
-  , onKeyPress ∷ f EventHandler
-  , onKeyUp ∷ f EventHandler
-  , onLostPointerCapture ∷ f EventHandler
-  , onMouseDown ∷ f EventHandler
-  , onMouseEnter ∷ f EventHandler
-  , onMouseLeave ∷ f EventHandler
-  , onMouseMove ∷ f EventHandler
-  , onMouseOut ∷ f EventHandler
-  , onMouseOver ∷ f EventHandler
-  , onMouseUp ∷ f EventHandler
-  , onPaste ∷ f EventHandler
-  , onPointerCancel ∷ f EventHandler
-  , onPointerDown ∷ f EventHandler
-  , onPointerEnter ∷ f EventHandler
-  , onPointerLeave ∷ f EventHandler
-  , onPointerMove ∷ f EventHandler
-  , onPointerOut ∷ f EventHandler
-  , onPointerOver ∷ f EventHandler
-  , onPointerUp ∷ f EventHandler
-  , onSelect ∷ f EventHandler
-  , onSubmit ∷ f EventHandler
-  , onTouchCancel ∷ f EventHandler
-  , onTouchEnd ∷ f EventHandler
-  , onTouchMove ∷ f EventHandler
-  , onTouchStart ∷ f EventHandler
-  , onTransitionEnd ∷ f EventHandler
-  , onWheel ∷ f EventHandler
-  , prefix ∷ f String
-  , property ∷ f String
-  , radioGroup ∷ f String
-  , readOnly ∷ f Boolean
-  , resource ∷ f String
-  , role ∷ f String
-  , rowSpan ∷ f Int
-  , scoped ∷ f Boolean
-  , seamless ∷ f Boolean
-  , security ∷ f String
-  , spellCheck ∷ f Boolean
-  , srcDoc ∷ f JSX
-  , srcLang ∷ f String
-  , srcSet ∷ f String
-  , style ∷ f CSS
-  , suppressContentEditableWarning ∷ f Boolean
-  , tabIndex ∷ f Int
-  , title ∷ f String
-  , type ∷ f String
-  , typeof ∷ f String
-  , unselectable ∷ f Boolean
-  , useMap ∷ f String
-  , value ∷ f String
-  , vocab ∷ f String
-  , wmode ∷ f String
-  | more
-  )
+type ButtonReadablePropsF f more
+  = ( _aria ∷ f (Object String)
+    , _data ∷ f (Object String)
+    , about ∷ f String
+    , acceptCharset ∷ f String
+    , accessKey ∷ f String
+    , allowFullScreen ∷ f Boolean
+    , allowTransparency ∷ f Boolean
+    , autoFocus ∷ f Boolean
+    , autoPlay ∷ f Boolean
+    , capture ∷ f Boolean
+    , cellPadding ∷ f String
+    , cellSpacing ∷ f String
+    , charSet ∷ f String
+    , children ∷ f (Array JSX)
+    , classID ∷ f String
+    , className ∷ f String
+    , colSpan ∷ f Int
+    , contentEditable ∷ f Boolean
+    , contextMenu ∷ f String
+    , crossOrigin ∷ f String
+    , dangerouslySetInnerHTML ∷ f { __html ∷ String }
+    , datatype ∷ f String
+    , dateTime ∷ f String
+    , dir ∷ f String
+    , disabled ∷ f Boolean
+    , draggable ∷ f Boolean
+    , encType ∷ f String
+    , form ∷ f String
+    , formAction ∷ f String
+    , formEncType ∷ f String
+    , formMethod ∷ f String
+    , formNoValidate ∷ f Boolean
+    , formTarget ∷ f String
+    , frameBorder ∷ f String
+    , hidden ∷ f Boolean
+    , hrefLang ∷ f String
+    , htmlFor ∷ f String
+    , httpEquiv ∷ f String
+    , icon ∷ f String
+    , id ∷ f String
+    , inlist ∷ f String
+    , inputMode ∷ f String
+    , is ∷ f String
+    , itemID ∷ f String
+    , itemProp ∷ f String
+    , itemRef ∷ f String
+    , itemScope ∷ f Boolean
+    , itemType ∷ f String
+    , key ∷ f String
+    , keyParams ∷ f String
+    , keyType ∷ f String
+    , lang ∷ f String
+    , marginHeight ∷ f String
+    , marginWidth ∷ f String
+    , maxLength ∷ f Int
+    , mediaGroup ∷ f String
+    , minLength ∷ f Int
+    , name ∷ f String
+    , noValidate ∷ f Boolean
+    , onAnimationEnd ∷ f EventHandler
+    , onAnimationIteration ∷ f EventHandler
+    , onAnimationStart ∷ f EventHandler
+    , onBlur ∷ f EventHandler
+    , onClick ∷ f EventHandler
+    , onCompositionEnd ∷ f EventHandler
+    , onCompositionStart ∷ f EventHandler
+    , onCompositionUpdate ∷ f EventHandler
+    , onContextMenu ∷ f EventHandler
+    , onCopy ∷ f EventHandler
+    , onCut ∷ f EventHandler
+    , onDoubleClick ∷ f EventHandler
+    , onDrag ∷ f EventHandler
+    , onDragEnd ∷ f EventHandler
+    , onDragEnter ∷ f EventHandler
+    , onDragExit ∷ f EventHandler
+    , onDragLeave ∷ f EventHandler
+    , onDragOver ∷ f EventHandler
+    , onDragStart ∷ f EventHandler
+    , onDrop ∷ f EventHandler
+    , onFocus ∷ f EventHandler
+    , onGotPointerCapture ∷ f EventHandler
+    , onInvalid ∷ f EventHandler
+    , onKeyDown ∷ f EventHandler
+    , onKeyPress ∷ f EventHandler
+    , onKeyUp ∷ f EventHandler
+    , onLostPointerCapture ∷ f EventHandler
+    , onMouseDown ∷ f EventHandler
+    , onMouseEnter ∷ f EventHandler
+    , onMouseLeave ∷ f EventHandler
+    , onMouseMove ∷ f EventHandler
+    , onMouseOut ∷ f EventHandler
+    , onMouseOver ∷ f EventHandler
+    , onMouseUp ∷ f EventHandler
+    , onPaste ∷ f EventHandler
+    , onPointerCancel ∷ f EventHandler
+    , onPointerDown ∷ f EventHandler
+    , onPointerEnter ∷ f EventHandler
+    , onPointerLeave ∷ f EventHandler
+    , onPointerMove ∷ f EventHandler
+    , onPointerOut ∷ f EventHandler
+    , onPointerOver ∷ f EventHandler
+    , onPointerUp ∷ f EventHandler
+    , onSelect ∷ f EventHandler
+    , onSubmit ∷ f EventHandler
+    , onTouchCancel ∷ f EventHandler
+    , onTouchEnd ∷ f EventHandler
+    , onTouchMove ∷ f EventHandler
+    , onTouchStart ∷ f EventHandler
+    , onTransitionEnd ∷ f EventHandler
+    , onWheel ∷ f EventHandler
+    , prefix ∷ f String
+    , property ∷ f String
+    , radioGroup ∷ f String
+    , readOnly ∷ f Boolean
+    , resource ∷ f String
+    , role ∷ f String
+    , rowSpan ∷ f Int
+    , scoped ∷ f Boolean
+    , seamless ∷ f Boolean
+    , security ∷ f String
+    , spellCheck ∷ f Boolean
+    , srcDoc ∷ f JSX
+    , srcLang ∷ f String
+    , srcSet ∷ f String
+    , style ∷ f CSS
+    , suppressContentEditableWarning ∷ f Boolean
+    , tabIndex ∷ f Int
+    , title ∷ f String
+    , type ∷ f String
+    , typeof ∷ f String
+    , unselectable ∷ f Boolean
+    , useMap ∷ f String
+    , value ∷ f String
+    , vocab ∷ f String
+    , wmode ∷ f String
+    | more
+    )

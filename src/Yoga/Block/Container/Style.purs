@@ -108,7 +108,6 @@ mkGlobal maybeMode =
         $ css
             { minHeight: 100.0 # vh
             , minWidth: 100.0 # vw
-            , lineHeight: str "1.15"
             , "WebkitTextSizeAdjust": _100percent
             }
     , ":root":
@@ -142,44 +141,43 @@ mkGlobal maybeMode =
         }
     , "h1,h2,h3,h4":
       nest
-        { lineHeight: var "--line-height-small"
-        , fontWeight: str "700"
-        , margin: _0
+        { fontWeight: str "700"
+        -- , margin: _0
         }
-    , h1:
-      nested
-        $ css
-            { "--h1size": str "calc( min( var(--s2) + 2vw , var(--s4) ) )"
-            , fontSize: var "--h1size"
-            , letterSpacing: str "calc(var(--h1size) * -0.04)"
-            , marginBottom: var "--s0"
-            , marginTop: var "--s-1"
-            }
-    , h2:
-      nested
-        $ css
-            { "--h2size": str "calc( min( (var(--s1)*1.1) + 2vw , var(--s3) ) )"
-            , fontSize: var "--h2size"
-            , letterSpacing: str "calc(var(--h2size) * -0.035)"
-            , marginBottom: var "--s-1"
-            , marginTop: var "--s-2"
-            }
-    , h3:
-      nested
-        $ css
-            { "--h3size": str "calc( min( var(--s0) + 2vw , var(--s2) ) )"
-            , fontSize: var "--h3size"
-            , letterSpacing: str "calc(var(--h3size) * -0.03)"
-            , marginBottom: var "--s-2"
-            , marginTop: var "--s-3"
-            }
-    , p:
-      nested
-        $ css
-            { "--psize": str "calc( min( (var(--s-1) * 1.7) + 0.7vw , var(--s0)*1.1 ) )"
-            , fontSize: var "--psize"
-            , letterSpacing: str "calc(var(--psize) * -0.03)"
-            }
+    -- , h1:
+    --     nested
+    --       $ css
+    --           { "--h1size": str "calc( min( var(--s2) + 2vw , var(--s4) ) )"
+    --           , fontSize: var "--h1size"
+    --           , letterSpacing: str "calc(var(--h1size) * -0.04)"
+    --           -- , marginBottom: var "--s0"
+    --           -- , marginTop: var "--s-1"
+    --           }
+    -- , h2:
+    --     nested
+    --       $ css
+    --           { "--h2size": str "calc( min( (var(--s1)*1.1) + 2vw , var(--s3) ) )"
+    --           , fontSize: var "--h2size"
+    --           , letterSpacing: str "calc(var(--h2size) * -0.035)"
+    --           -- , marginBottom: var "--s-1"
+    --           -- , marginTop: var "--s-2"
+    --           }
+    -- , h3:
+    --     nested
+    --       $ css
+    --           { "--h3size": str "calc( min( var(--s0) + 2vw , var(--s2) ) )"
+    --           , fontSize: var "--h3size"
+    --           , letterSpacing: str "calc(var(--h3size) * -0.03)"
+    --           -- , marginBottom: var "--s-2"
+    --           -- , marginTop: var "--s-3"
+    --           }
+    -- , p:
+    --     nested
+    --       $ css
+    --           { "--psize": str "calc( min( (var(--s-1) * 1.7) + 0.7vw , var(--s0)*1.1 ) )"
+    --           , fontSize: var "--psize"
+    --           , letterSpacing: str "calc(var(--psize) * -0.03)"
+    --           }
     , a:
       nest
         { fontWeight: str "600"
@@ -241,9 +239,9 @@ defaultColours =
     , highlightAlpha25: highlightBase 0.25
     , highlightAlpha50: highlightBase 0.50
     , highlightAlpha67: highlightBase 0.67
-    , highlightDarker: withAlpha 0.15 (Color.darken 0.5 highlight)
+    , highlightDarker: withAlpha 0.15 (Color.darken 0.2 highlight)
     , highlightDisabled: (desaturate 0.60 >>> lighten 0.5) highlight
-    , highlightLighter: withAlpha 0.2 (Color.lighten 0.5 highlight)
+    , highlightLighter: withAlpha 0.2 (Color.lighten 0.2 highlight)
     , highlightRotatedBackwards: highlight # rotateHue (-13.0) # darken 0.05
     , highlightRotatedForwards: highlight # rotateHue 3.0 # lighten 0.05 # saturate 0.1
     , highlightText
@@ -318,11 +316,12 @@ defaultColours =
     }
   }
   where
-  darkBg = Color.hsl 240.0 0.07 0.02
+  darkBg = Color.hsl 210.0 0.27 0.02
 
   -- highlightBase = Color.hsla 275.0 0.82 0.4
   -- brightPurpleBase = Color.hsla 275.0 0.82 0.4
-  highlightBase = Color.hsla 220.0 0.60 0.5
+  -- highlightMurmurasBase = Color.hsla 220.0 0.60 0.5
+  highlightBase = Color.hsla 185.0 1.0 0.2
 
   -- highlightBase = Color.hsla 212.0 0.47 0.45
   highlight = highlightBase 1.0
@@ -519,6 +518,15 @@ type Sizes =
   , text ∷
     { interactive ∷ String
     , label ∷ String
+    , copy ∷ String
+    , small ∷ String
+    , tiny ∷ String
+    , heading ∷
+      { h1 ∷ String
+      , h2 ∷ String
+      , h3 ∷ String
+      , h4 ∷ String
+      }
     }
   , xl ∷ String
   , xs ∷ String
@@ -544,6 +552,15 @@ size =
   , text:
     { label: "var(--s-1)"
     , interactive: "calc(var(--s0) * 0.85)"
+    , copy: "var(--s0)"
+    , small: "calc(var(--s0) * 0.85)"
+    , tiny: "calc(var(--s0) * 0.75)"
+    , heading:
+      { h1: "calc(var(--s0) * 2.0)"
+      , h2: "calc(var(--s0) * 1.8)"
+      , h3: "calc(var(--s0) * 1.4)"
+      , h4: "calc(var(--s0) * 1.1)"
+      }
     }
   }
 

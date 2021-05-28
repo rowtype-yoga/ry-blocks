@@ -55,3 +55,5 @@ styledLeaf ∷
 styledLeaf = Emotion.element
 
 infixl 5 styledLeaf as </*>
+
+infixl 12 Record.disjointUnion as ∪

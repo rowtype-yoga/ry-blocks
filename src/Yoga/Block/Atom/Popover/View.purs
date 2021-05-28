@@ -45,7 +45,6 @@ rawComponent =
   mkForwardRefComponent "Popover" do
     \(props ∷ { | PropsOptional }) ref -> React.do
       -- Hooks
-      -- referenceElement /\ setReferenceElement <- React.useState' nullRef
       arrowElement /\ setArrowElement <- React.useState' nullRef
       popperElement /\ setPopperElement <- React.useState' nullRef
       popoverContainer /\ setPopoverContainer <- React.useState' Nothing
@@ -72,7 +71,7 @@ rawComponent =
             [ modifierOffset { x: xOffset, y: yOffset }
             , modifierMatchReferenceSize
             ]
-              <> (guard renderArrow [ modifierArrow { element: arrowElement, padding: 8 } ])
+              <> guard renderArrow [ modifierArrow { element: arrowElement, padding: 8 } ]
           , placement: props.placement <#> Placement.render # unsafeUnOptional
           }
       -- Handlers

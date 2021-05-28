@@ -37,14 +37,12 @@ switcher =
                 { style: css { backgroundColor: "hotpink" }
                 , limit: 5
                 }
-                [ R.div_
-                    $ [ R.div
-                          { children: [ R.text "A child" ]
-                          , style: css { backgroundColor: "darkslateblue", color: "white" }
-                          }
-                          `power`
-                            5
-                      ]
+                [ R.div
+                    { children: [ R.text "A child" ]
+                    , style: css { backgroundColor: "darkslateblue", color: "white" }
+                    }
+                    `power`
+                      5
                 ]
             , R.h2_ [ R.text "Limit of 4 and 5 children" ]
             , el Switcher.component
@@ -52,14 +50,12 @@ switcher =
                 , limit: 4
                 , space: "0"
                 }
-                [ R.div_
-                    $ [ R.div
-                          { children: [ R.text "A child" ]
-                          , style: css { backgroundColor: "teal" }
-                          }
-                          `power`
-                            5
-                      ]
+                [ R.div
+                    { children: [ R.text "A child" ]
+                    , style: css { backgroundColor: "teal" }
+                    }
+                    `power`
+                      5
                 ]
             ]
         ]

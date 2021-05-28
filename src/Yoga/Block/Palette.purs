@@ -4,9 +4,10 @@ import Prelude
 import Color (Color, brightness, cssStringRGBA, darken, desaturate, hsl, hsla, lighten, rgba, rotateHue, saturate)
 import Color as Color
 import Data.Array (intercalate)
+import Yoga.Block.Container.Style (withAlpha)
 
-type ColourVariants =
-  { regular ∷ Color, darker ∷ Color, dark ∷ Color }
+type ColourVariants
+  = { regular ∷ Color, darker ∷ Color, dark ∷ Color }
 
 pink ∷ ColourVariants
 pink =
@@ -49,11 +50,11 @@ capri = { regular, darker: darken 0.1 regular, dark: darken 0.2 regular }
 seaGreen ∷ ColourVariants
 seaGreen =
   { regular
-  , darker: darken 0.1 regular
-  , dark: darken 0.16 regular # saturate 0.2
+  , darker: hsl 175.0 0.92 0.3
+  , dark: hsl 185.0 1.0 0.2
   }
   where
-  regular = hsl 181.0 1.0 0.46
+  regular = hsl 170.0 0.84 0.45
 
 malachite ∷ ColourVariants
 malachite = { regular, darker: darken 0.1 regular, dark: darken 0.18 regular }
@@ -87,8 +88,11 @@ coral =
   where
   regular = hsl 10.0 1.0 0.72
 
-transparent ∷ Color
-transparent = rgba 0 0 0 0.0
+transparentBlack ∷ Color
+transparentBlack = rgba 0 0 0 0.0
+
+transparentWhite ∷ Color
+transparentWhite = rgba 255 255 255 0.0
 
 shady ∷ Color
 shady = rgba 0 0 0 0.2
@@ -97,11 +101,14 @@ highlighty ∷ Color
 highlighty = rgba 255 255 255 0.3
 
 gradientBox ∷ Color -> String
-gradientBox c =
+gradientBox = transparentGradientBox 1.0
+
+transparentGradientBox ∷ Number -> Color -> String
+transparentGradientBox alpha c =
   intercalate ","
-    [ gr 180 [ transparent, shady ]
-    , gr (140) [ highlighty, transparent, transparent, transparent, transparent, transparent ]
-    , gr (-15) [ darker, lighter ]
+    [ gr 180 [ transparentBlack, shady # withAlpha (min 0.2 alpha) ]
+    , gr (140) [ highlighty # withAlpha (min 0.3 alpha), transparentWhite, transparentWhite, transparentWhite, transparentWhite, transparentWhite ]
+    , gr (-15) ([ darker, lighter ] <#> withAlpha alpha)
     ]
   where
   rotatedForwards = rotateHue 8.0 c
