@@ -1,13 +1,12 @@
 module Yoga.Block.Palette where
 
 import Prelude
-import Color (Color, brightness, cssStringRGBA, darken, desaturate, hsl, hsla, lighten, rgba, rotateHue, saturate)
-import Color as Color
+import Color (Color, brightness, cssStringRGBA, darken, desaturate, hsl, rgba, rotateHue, saturate)
 import Data.Array (intercalate)
 import Yoga.Block.Container.Style (withAlpha)
 
-type ColourVariants
-  = { regular ∷ Color, darker ∷ Color, dark ∷ Color }
+type ColourVariants =
+  { regular ∷ Color, darker ∷ Color, dark ∷ Color }
 
 pink ∷ ColourVariants
 pink =

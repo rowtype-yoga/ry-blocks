@@ -1,20 +1,15 @@
 module Yoga.Block.Atom.Popover.Story (default, popover) where
 
 import Yoga.Prelude.View
-import Data.Interpolate (i)
 import Effect.Uncurried (mkEffectFn1)
 import Effect.Unsafe (unsafePerformEffect)
-import Framer.Motion as Motion
 import React.Basic.DOM (h2_, text)
 import React.Basic.DOM as R
 import React.Basic.Emotion as E
 import React.Basic.Hooks as React
-import React.Basic.Popper (modifierArrow, modifierOffset)
-import React.Basic.Popper.Hook (usePopper)
 import Unsafe.Coerce (unsafeCoerce)
 import Yoga.Block as Block
 import Yoga.Block.Container.Style as Styles
-import Yoga.Block.Internal.CSS (nest)
 
 default ∷
   { decorators ∷ Array (Effect JSX -> JSX)

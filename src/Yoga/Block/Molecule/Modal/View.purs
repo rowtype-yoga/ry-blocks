@@ -10,7 +10,6 @@ import React.Basic.DOM as R
 import React.Basic.Emotion as Emotion
 import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
-import React.FocusTrap (focusTrap)
 import Web.DOM (Element)
 import Yoga.Block.Hook.Key as KeyCode
 import Yoga.Block.Hook.UseKeyDown (useKeyDown)
@@ -36,14 +35,10 @@ component =
         let
           toRender ∷ JSX
           toRender =
-            React.element focusTrap
-              { active: isOpen
-              , children:
-                R.div' </ {}
-                  /> [ Motion.animatePresence </ {} /> [ guard isOpen $ element clickaway { theRef: clickAwayRef, onDismiss } ]
-                    , Motion.animatePresence </ {} /> [ guard isOpen $ element window { clickAwayRef, onDismiss, content } ]
-                    ]
-              }
+            R.div' </ {}
+              /> [ Motion.animatePresence </ {} /> [ guard isOpen $ element clickaway { theRef: clickAwayRef, onDismiss } ]
+                , Motion.animatePresence </ {} /> [ guard isOpen $ element window { clickAwayRef, onDismiss, content } ]
+                ]
         pure (createPortal toRender target)
 
 clickaway ∷ ReactComponent { theRef ∷ Ref (Nullable Node), onDismiss ∷ Effect Unit }

@@ -153,7 +153,7 @@ animatedPopper = do
                   [ animatePresence
                       $ guard on
                           [ content
-                              [ Block.box </ {} /> [ text "Ich bin Stinky Bill" ]
+                              [ Block.box {} [ text "Ich bin Stinky Bill" ]
                               , arrow
                               ]
                           ]

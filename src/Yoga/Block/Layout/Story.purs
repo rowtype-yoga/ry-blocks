@@ -1,16 +1,15 @@
 module Yoga.Block.Layout.Story (default, layout) where
 
 import Prelude
-import Color (cssStringRGBA)
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
 import React.Basic (JSX, element, fragment)
 import React.Basic.DOM as R
 import React.Basic.Emotion (nested)
 import React.Basic.Emotion as E
-import Yoga ((/>), (</), (</*), (</*>), (</>))
+import Yoga ((/>), (</*), (</*>))
 import Yoga.Block as Block
-import Yoga.Block.Container.Style (colour, size, withAlpha)
+import Yoga.Block.Container.Style (colour, size)
 import Yoga.Block.Container.Style as Styles
 import Yoga.Block.Palette as Palette
 import Yoga.Block.Typography as Typo
@@ -42,27 +41,34 @@ layout =
         ]
   where
   postPreview =
-    Block.box </* { padding: E.str $ size.l <> " " <> size.l <> " " <> size.xl, className: "post-preview", css: boxCss }
-      /> [ Block.stack </ { space: E.str size.l }
-            /> [ Block.stack </ { space: E.str size.xs }
-                  /> [ Block.cluster </ {} /> [ avatar, postTitle ]
-                    , Block.stack </ { space: E.str size.xs }
-                        /> [ R.hr'
-                              </*> { className: "hr"
-                                , css:
-                                  E.css
-                                    { backgroundColor: E.str $ colour.backgroundLayer3
-                                    , height: E.px 1
-                                    , border: E.none
-                                    }
-                                }
-                          , Block.cluster </ { justify: "space-between", space: "0" } /> [ postAuthor, postDate ]
-                          ]
-                    ]
-              , preview
+    Block.box
+      { padding: E.str $ size.l <> " " <> size.l <> " " <> size.xl
+      , className: "post-preview"
+      , css: boxCss
+      }
+      [ Block.stack { space: E.str size.s }
+          [ Block.stack { space: E.str size.m }
+              [ Block.sidebar { sidebar: avatar, noStretch: true, contentMin: "25ch" }
+                  [ postTitle ]
+              , Block.cluster { justify: "space-between", space: size.s }
+                  [ postAuthor, postDate ]
               ]
-        ]
+          , hr
+          , preview
+          ]
+      ]
     where
+    hr =
+      R.hr'
+        </*> { className: "hr"
+          , css:
+            E.css
+              { backgroundColor: E.str $ colour.textInvertedPaler4
+              , height: E.px 1
+              , border: E.none
+              }
+          }
+
     preview =
       R.p'
         </* { className: "post-preview-text"
@@ -70,70 +76,70 @@ layout =
             Typo.fontSizeSmall
               <> E.css
                   { margin: E.str "0"
-                  , marginBottom: E.str size.xs
                   , lineHeight: E.str "1.6"
+                  , color: E.str colour.textPaler2
                   }
           }
-        /> [ R.text "When I was a young girl fighting with 'undefined' not being a function my mother used to come up to me and say: 'Use PureScript'. Now, a mere twenty years later..."
+        /> [ R.text "When I was a young girl wrestling with 'undefined' not being a function my mother used to come up to me and say: 'Use PureScript'. Now, a mere twenty years later..."
           ]
 
     boxCss =
       Typo.fontSizeSmall
         <> E.css
-            { background: E.str $ colour.backgroundLayer2
+            { background: E.str $ colour.backgroundLayer4
             , borderRadius: E.str size.l
             , maxWidth: E.ch 60.0
+            , paddingBottom: E.str size.xl
             }
 
     avatar =
-      R.div'
-        </* { className: "profile-picture-container"
-          , css:
-            E.css
-              { width: E.str size.xxl
-              , height: E.str size.xxl
-              , overflow: E.str "hidden"
-              , display: E.inlineBlock
-              , borderRadius: E.percent 50.0
-              , border: E.str $ size.xxs <> " solid " <> colour.highlight
-              , background: E.str $ Palette.gradientBox Palette.malachite.dark
-              , userSelect: E.none
-              , marginLeft: E.auto
-              , marginRight: E.auto
+      Block.centre { css: E.css { width: E.str $ size.xxl } }
+        [ R.div'
+            </* { className: "profile-picture-container"
+              , css:
+                E.css
+                  { width: E.str $ size.xxl
+                  , padding: E.str "0"
+                  , margin: E.str "0"
+                  , height: E.str size.xxl
+                  , overflow: E.str "hidden"
+                  , borderRadius: E.percent 50.0
+                  , border: E.str $ size.xxs <> " solid " <> colour.highlight
+                  , userSelect: E.none
+                  }
               }
-          }
-        /> [ R.img'
-              </*> { alt: "Profile Picture"
-                , src: "https://source.unsplash.com/z_8Jqe0Cc-s/360x200"
-                , className: "profile-picture"
-                , css:
-                  E.css
-                    { objectFit: E.str "cover"
-                    , width: E.str "100%"
-                    , height: E.str "100%"
-                    , objectPosition: E.str "center right"
-                    , transform: E.str "scaleX(-1)"
+            /> [ R.img'
+                  </*> { alt: "Profile Picture"
+                    , src: "https://source.unsplash.com/z_8Jqe0Cc-s/360x200"
+                    , className: "profile-picture"
+                    , css:
+                      E.css
+                        { objectFit: E.str "cover"
+                        , width: E.str $ size.xxl
+                        , height: E.str $ size.xxl
+                        , boxSizing: E.borderBox
+                        , objectPosition: E.str "center right"
+                        , transform: E.str "scaleX(-1)"
+                        }
                     }
-                }
-          ]
+              ]
+        ]
 
     postTitle =
-      R.h2'
-        </* { className: "title"
-          , css:
-            Typo.fontSizeH3
-              <> E.css
-                  { fontWeight: E.str "bold"
-                  , padding: E.str "0"
-                  , lineHeight: E.str "1.2"
-                  , display: E.inlineBlock
-                  , maxWidth: E.str "100%"
-                  , flexBasis: "0" # E.str
-                  , flexGrow: "999" # E.str
-                  , minWidth: "20ch" # E.str
-                  }
+      R.div'
+        </* { className: "title-wrapper"
+          , css: E.css { minHeight: E.str size.xxl }
           }
-        /> [ R.text "How to properly write effective React code in 2021" ]
+        /> [ R.h2'
+              </* { className: "title"
+                , css:
+                  Typo.fontSizeH3
+                    <> E.css
+                        { color: E.str colour.textPaler2
+                        }
+                }
+              /> [ R.text "How to properly write effective React code in 2021" ]
+          ]
 
     postAuthor =
       R.h4'
@@ -146,9 +152,13 @@ layout =
               <> Typo.regular
               <> E.css
                   { "&::before":
-                    nested $ E.css { content: E.str "'by '" }
+                    nested
+                      $ E.css
+                          { content: E.str "'by '"
+                          }
                       <> Typo.thin
                       <> Typo.resetTextTransform
+                  , color: E.str colour.textPaler3
                   }
           }
         /> [ R.text "Someöne W. Knows" ]
@@ -162,6 +172,6 @@ layout =
               <> Typo.allCaps
               <> Typo.fontSizeSmall
               <> Typo.thin
-              <> E.css { color: E.str $ colour.textPaler }
+              <> E.css { color: E.str $ colour.textPaler3 }
           }
         /> [ R.text "16th May 2021" ]

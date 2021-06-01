@@ -17,7 +17,7 @@ centre props = styles <>? props.css
   where
   styles =
     css
-      { padding: props.padding ?|| (1.0 # em)
+      { padding: props.padding ?|| (0 # px)
       , boxSizing: contentBox
       , marginLeft: auto
       , marginRight: auto

@@ -14,7 +14,6 @@ import React.Basic.DOM as R
 import React.Basic.Emotion as Emotion
 import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
-import React.FocusTrap (focusTrap)
 import Web.DOM (Element)
 import Web.HTML as HTML
 import Web.HTML.Window (innerHeight)
@@ -41,14 +40,10 @@ component =
         let
           toRender ∷ JSX
           toRender =
-            React.element focusTrap
-              { active: isOpen
-              , children:
-                R.div' </ {}
-                  /> [ Motion.animatePresence </ {} /> [ guard isOpen $ element clickaway { theRef: clickAwayRef, onDismiss } ]
-                    , element window { onDismiss, content, isOpen }
-                    ]
-              }
+            R.div' </ {}
+              /> [ Motion.animatePresence </ {} /> [ guard isOpen $ element clickaway { theRef: clickAwayRef, onDismiss } ]
+                , element window { onDismiss, content, isOpen }
+                ]
         pure (createPortal toRender target)
 
 clickaway ∷ ReactComponent { theRef ∷ Ref (Nullable Node), onDismiss ∷ Effect Unit }

@@ -356,14 +356,14 @@ validated runValidator editor =
       value = fromValidated v
       innerColumn_ =
         Block.stack
-          </* { className: "ry-form-inner-column"
-            , space: E.str "0"
-            , css:
-              E.css
-                { maxWidth: E.str "100%"
-                , margin: E.str "0"
-                }
-            }
+          { className: "ry-form-inner-column"
+          , space: E.str "0"
+          , css:
+            E.css
+              { maxWidth: E.str "100%"
+              , margin: E.str "0"
+              }
+          }
       -- validationMessage ∷ Maybe validated
       -- validationMessage = case v of
       --   Fresh _ -> Nothing

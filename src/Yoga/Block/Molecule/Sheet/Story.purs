@@ -68,31 +68,31 @@ sheet = do
                             R.div' </ {}
                               /> [ R.h2_ [ R.text "Would you like us to track you?" ]
                                 , R.p_ [ R.text text ]
-                                , Block.cluster </ { justify: "flex-end", space: "var(--s-1)" }
+                                , Block.cluster { justify: "flex-end", space: "var(--s-1)" }
                                     /> [ Block.button
-                                          </ { buttonType: ButtonType.Primary
-                                            , onClick:
-                                              handler_ do
-                                                launchAff_ do
-                                                  delay (fromDuration $ (2.0 # Seconds))
-                                                  liftEffect do
-                                                    setText "Thanks, that's very nice of you"
-                                                    setIsOpen true
-                                                setIsOpen false
-                                            }
-                                          /> [ R.text "Yes" ]
+                                          { buttonType: ButtonType.Primary
+                                          , onClick:
+                                            handler_ do
+                                              launchAff_ do
+                                                delay (fromDuration $ (2.0 # Seconds))
+                                                liftEffect do
+                                                  setText "Thanks, that's very nice of you"
+                                                  setIsOpen true
+                                              setIsOpen false
+                                          }
+                                          [ R.text "Yes" ]
                                       , Block.button
-                                          </ { buttonType: ButtonType.Dangerous
-                                            , onClick:
-                                              handler_ do
-                                                launchAff_ do
-                                                  delay (fromDuration $ (2.0 # Seconds))
-                                                  liftEffect do
-                                                    setText (power "Oh, but please! " 200)
-                                                    setIsOpen true
-                                                setIsOpen false
-                                            }
-                                          /> [ R.text "No" ]
+                                          { buttonType: ButtonType.Dangerous
+                                          , onClick:
+                                            handler_ do
+                                              launchAff_ do
+                                                delay (fromDuration $ (2.0 # Seconds))
+                                                liftEffect do
+                                                  setText (power "Oh, but please! " 200)
+                                                  setIsOpen true
+                                              setIsOpen false
+                                          }
+                                          [ R.text "No" ]
                                       ]
                                 ]
                           , isOpen

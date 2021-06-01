@@ -1,12 +1,21 @@
-module Yoga.Block.Layout.Centre.View (component, Props, PropsF) where
+module Yoga.Block.Layout.Centre.View (component, Props, PropsF, PropsNoChildrenF, PropsNoChildren) where
 
 import Yoga.Prelude.View
+import Yoga.Block.Internal (DivPropsNoChildren)
 import Yoga.Block.Layout.Centre.Style as Style
 
-type PropsF f =
+type PropsNoChildrenF f =
   ( className ∷ f String
-  | Style.Props f + DivProps
+  | Style.Props f + DivPropsNoChildren
   )
+
+type PropsF f =
+  ( children ∷ Array JSX
+  | PropsNoChildrenF f
+  )
+
+type PropsNoChildren =
+  PropsNoChildrenF Id
 
 type Props =
   PropsF Id

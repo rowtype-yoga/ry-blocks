@@ -46,7 +46,6 @@ import React.Basic.Emotion as E
 import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as Hooks
 import React.Basic.Popper (nullRef)
-import React.Basic.Popper.Placement.Types as Placement
 import React.DndKit as Dnd
 import Record (disjointUnion)
 import Record.Builder as RB
@@ -162,47 +161,47 @@ defaultRenderForest =
     Node { label, key, required: _required, validationError, children } ->
       maybe identity keyed key
         $ Block.box
-        </ { css:
-            E.css
-              { border: E.str $ "1px solid " <> colour.inputBorder
-              , background: E.str colour.backgroundLayer1
-              , borderRadius: E.var "--s-1"
-              , marginTop: E.str "var(--s0)"
-              , "--label-bg": E.str colour.background
-              , "--label-fg": E.str colour.text
-              , "&:focus-within":
-                nest
-                  { "--label-bg": labelSmallFocusBackground
-                  , "--label-fg": E.str colour.highlightText
-                  }
-              }
-          , padding: E.str "0"
-          } --space: E.var "--s-2", css: E.css { marginTop: E.var "--s-1" } }
-        /> ( [ R.div'
-                </* { className: "ry-form-label"
-                  , css:
-                    labelSmall colour.background colour.text
-                      <> E.css
-                          { position: E.absolute
-                          , display: E.inlineBlock
-                          , "& > span":
-                            nest
-                              { background: E.var "--label-bg"
-                              , color: E.var "--label-fg"
-                              }
-                          }
-                  }
-                /> [ R.span_ [ label ] ]
-            ]
-              <> [ Block.box
-                    </ { padding: E.var "--s-2"
+            { css:
+              E.css
+                { border: E.str $ "1px solid " <> colour.inputBorder
+                , background: E.str colour.backgroundLayer1
+                , borderRadius: E.var "--s-1"
+                , marginTop: E.str "var(--s0)"
+                , "--label-bg": E.str colour.background
+                , "--label-fg": E.str colour.text
+                , "&:focus-within":
+                  nest
+                    { "--label-bg": labelSmallFocusBackground
+                    , "--label-fg": E.str colour.highlightText
+                    }
+                }
+            , padding: E.str "0"
+            } --space: E.var "--s-2", css: E.css { marginTop: E.var "--s-1" } }
+            ( [ R.div'
+                  </* { className: "ry-form-label"
+                    , css:
+                      labelSmall colour.background colour.text
+                        <> E.css
+                            { position: E.absolute
+                            , display: E.inlineBlock
+                            , "& > span":
+                              nest
+                                { background: E.var "--label-bg"
+                                , color: E.var "--label-fg"
+                                }
+                            }
+                    }
+                  /> [ R.span_ [ label ] ]
+              ]
+                <> [ Block.box
+                      { padding: E.var "--s-2"
                       , css: E.css { marginTop: E.var "--s0" }
                       }
-                    /> [ intercalate fieldDivider (defaultRenderForest children) ]
-                ]
-              <> [ foldMap R.text validationError
-                ]
-          )
+                      [ intercalate fieldDivider (defaultRenderForest children) ]
+                  ]
+                <> [ foldMap R.text validationError
+                  ]
+            )
   where
   fieldDivider =
     R.div'
@@ -570,9 +569,7 @@ array { label, addLabel, defaultValue, editor } =
         [ Wrapper
             { key: Nothing
             , wrap:
-              \kids ->
-                Block.box </ { style: R.css { paddingTop: 0 } }
-                  /> kids
+              Block.box { style: R.css { paddingTop: 0 } }
             , children
             }
         ]
@@ -610,11 +607,11 @@ array { label, addLabel, defaultValue, editor } =
                   ( Child
                       { key: Nothing
                       , child:
-                        Block.cluster </ { justify: "flex-end" }
+                        Block.cluster { justify: "flex-end" }
                           /> [ Block.button
-                                </ { onClick: handler preventDefault (const (onChange $ flip append [ defaultValue ]))
-                                  }
-                                /> [ R.text $ "+ " <> addLabel ]
+                                { onClick: handler preventDefault (const (onChange $ flip append [ defaultValue ]))
+                                }
+                                [ R.text $ "+ " <> addLabel ]
                             ]
                       }
                   )
@@ -639,13 +636,13 @@ sortableArray { label, addLabel, defaultValue, editor } =
       \(onChange ∷ (Array u -> Array u) -> Effect Unit) -> do
         let
           addButton =
-            Block.cluster </ { justify: "flex-end" }
-              /> [ Block.button
-                    </ { onClick: handler preventDefault (const (onChange $ flip append [ defaultValue ]))
-                      , disabled: readOnly
-                      }
-                    /> [ R.text $ "+ " <> addLabel ]
-                ]
+            Block.cluster { justify: "flex-end" }
+              [ Block.button
+                  { onClick: handler preventDefault (const (onChange $ flip append [ defaultValue ]))
+                  , disabled: readOnly
+                  }
+                  [ R.text $ "+ " <> addLabel ]
+              ]
           appendAddButton items =
             if readOnly then
               items
@@ -672,8 +669,8 @@ sortableArray { label, addLabel, defaultValue, editor } =
         { key: Nothing
         , wrap:
           \kids ->
-            Block.box </ { style: R.css { paddingTop: 0 } }
-              /> [ formArray </> { kids, onChange, readOnly } ]
+            Block.box { style: R.css { paddingTop: 0 } }
+              [ formArray </> { kids, onChange, readOnly } ]
         , children
         }
     ]
@@ -839,10 +836,10 @@ sortableArray { label, addLabel, defaultValue, editor } =
                     -- , placement: Placement.Placement Placement.Bottom (Just Placement.End)
                     , renderArrow: true
                     }
-                  /> [ Block.box </ {}
-                        /> [ R.text "Sure?"
-                          , deleteButton
-                          ]
+                  /> [ Block.box {}
+                        [ R.text "Sure?"
+                        , deleteButton
+                        ]
                     ]
               else
                 mempty

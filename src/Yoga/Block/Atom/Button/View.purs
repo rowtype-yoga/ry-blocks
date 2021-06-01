@@ -1,27 +1,28 @@
 module Yoga.Block.Atom.Button.View where
 
 import Yoga.Prelude.View
-import Data.Symbol (SProxy(..))
+
 import Foreign.Object as Object
 import Yoga.Block.Atom.Button.Style as Style
 import Yoga.Block.Atom.Button.Types (ButtonShape, ButtonType, renderButtonShape, renderButtonType)
 import Yoga.Block.Atom.Button.Types as Button
+import Yoga.Block.Internal (ButtonWritablePropsNoChildrenF)
 
 type PropsF :: forall k. (Type -> k) -> Row k -> Row k
-type PropsF f r
-  = ( buttonType ∷ f ButtonType
-    , buttonShape ∷ f ButtonShape
-    | Style.Props f r
-    )
+type PropsF f r =
+  ( buttonType ∷ f ButtonType
+  , buttonShape ∷ f ButtonShape
+  | Style.Props f r
+  )
 
-type Props
-  = PropsF Id (ButtonWritablePropsF Id ())
+type PropsNoChildren =
+  PropsF Id (ButtonWritablePropsNoChildrenF Id ())
 
-type PropsOptional
-  = PropsF OptionalProp (ButtonReadableProps)
+type Props =
+  PropsF Id (ButtonWritablePropsF Id ())
 
-key ∷ ∀ t1. SProxy t1
-key = SProxy
+type PropsOptional =
+  PropsF OptionalProp (ButtonReadableProps)
 
 component ∷ ∀ p p_. Union p p_ Props => ReactComponent { | p }
 component = rawComponent

@@ -102,7 +102,7 @@ rawComponent =
       -- components
       let
         container children =
-          Motion.elementStyled
+          Emotion.element
             Motion.button
             { className: "ry-toggle" <>? props.className
             , css: Style.button <>? props.css

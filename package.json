@@ -1,7 +1,7 @@
 {
   "name": "ry-blocks",
   "version": "1.0.0",
-  "description": "A design system for the Web, built in PureScript and React.",
+  "description": "A design system for the Web, built in PureScript and React",
   "main": "index.js",
   "repository": "git@github.com:rowtype-yoga/ry-components.git",
   "author": "Mark Eibes <mark.eibes@gmail.com>",
@@ -52,14 +52,12 @@
     "@dnd-kit/modifiers": "^1.0.5",
     "@dnd-kit/sortable": "^2.0.1",
     "@dnd-kit/utilities": "^1.0.3",
-    "@emotion/core": "^10.0.28",
+    "@emotion/react": "^11.4.0",
     "@popperjs/core": "^2.6.0",
     "downshift": "^6.1.2",
-    "focus-trap-react": "^8.4.2",
     "framer-motion": "^4.0.3",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
-    "react-laag": "^2.0.2",
     "react-popper": "^2.2.4",
     "react-syntax-highlighter": "^15.3.1"
   }

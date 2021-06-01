@@ -1,17 +1,26 @@
-module Yoga.Block.Layout.Cluster.View (component, Props, PropsF) where
+module Yoga.Block.Layout.Cluster.View (component, Props, PropsF, PropsNoChildren, PropsNoChildrenF) where
 
 import Yoga.Prelude.View
 import React.Basic.DOM as R
+import Yoga.Block.Internal (DivPropsNoChildren)
 import Yoga.Block.Layout.Cluster.Style as Style
 
-type PropsF f =
+type PropsNoChildrenF f =
   ( className ∷ f String
   , wrapper ∷ f (Array JSX -> JSX)
-  | Style.Props f DivProps
+  | Style.Props f + DivPropsNoChildren
+  )
+
+type PropsF f =
+  ( children ∷ Array JSX
+  | PropsNoChildrenF f
   )
 
 type Props =
   PropsF Id
+
+type PropsNoChildren =
+  PropsNoChildrenF Id
 
 type PropsOptional =
   PropsF OptionalProp

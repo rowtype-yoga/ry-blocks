@@ -66,7 +66,7 @@ modal = do
                     # foldMap \(modalElement ∷ Element) ->
                         element Modal.component
                           { content:
-                            Y.el Block.box
+                            Block.box
                               { borderRadius: E.str "var(--s3)"
                               , background: colour.backgroundLayer1
                               , padding: E.str "var(--s3) var(--s2)"

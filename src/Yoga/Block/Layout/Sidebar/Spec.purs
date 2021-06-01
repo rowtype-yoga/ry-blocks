@@ -10,12 +10,13 @@ spec =
     describe "The sidebar" do
       it "renders without errors" do
         void
-          $ renderComponent Sidebar.component { children: [] }
+          $ renderComponent Sidebar.component { sidebar: mempty, children: [] }
       it "accepts div props" do
         { findByText } <-
           renderComponent Sidebar.component
             { role: "Heinz"
             , children: [ R.text "Find me!" ]
+            , sidebar: mempty
             }
         elem <- findByText "Find me!"
         parent <- elem # getParentOrFailWith "Sidebar has no parent"

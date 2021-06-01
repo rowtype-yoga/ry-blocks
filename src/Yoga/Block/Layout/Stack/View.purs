@@ -1,16 +1,25 @@
-module Yoga.Block.Layout.Stack.View (component, Props, PropsF) where
+module Yoga.Block.Layout.Stack.View (component, Props, PropsNoChildren, PropsNoChildrenF, PropsF) where
 
 import Yoga.Prelude.View
 import Unsafe.Coerce (unsafeCoerce)
+import Yoga.Block.Internal (DivPropsNoChildren)
 import Yoga.Block.Layout.Stack.Style as Style
 
-type PropsF f =
+type PropsNoChildrenF f =
   ( className ∷ f String
-  | Style.Props f DivProps
+  | Style.Props f + DivPropsNoChildren
+  )
+
+type PropsF f =
+  ( children ∷ Array JSX
+  | PropsNoChildrenF f
   )
 
 type Props =
   PropsF Id
+
+type PropsNoChildren =
+  PropsNoChildrenF Id
 
 type PropsOptional =
   PropsF OptionalProp

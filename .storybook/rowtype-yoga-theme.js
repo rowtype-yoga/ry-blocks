@@ -1,26 +1,23 @@
 import logo from './logo.svg';
 import { create } from '@storybook/theming/create';
 
-const pink = '#c55397'
-const green = '#0f552b'
-
 export default create({
-  base: 'dark',
+  base: 'light',
 
-  colorSecondary: pink,
-  colorPrimary: green,
+  colorSecondary: "#271C5A",
+  colorPrimary: "#5B43D0",
 
   // UI
-  appBg: '#10354a',
-  appContentBg: '#203f50',
-  appBorderColor: '#002334',
+  // appBg: '#10354a',
+  // appContentBg: '#203f50',
+  // appBorderColor: '#002334',
 
   // Typography
-  fontBase: '-apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Ubuntu, Arial, sans-serif',
+  fontBase: '"Inter V", Inter, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Ubuntu, Arial, sans-serif',
   fontCode: '"VictorMono", monospace',
 
   // Text colors
-  textColor: 'white',
+  textColor: 'black',
 
   textInverseColor: 'rgba(255,255,255,0.9)',
 

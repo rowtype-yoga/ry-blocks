@@ -262,8 +262,15 @@ defaultColours =
     , success
     , successText
     , text: text
-    , textPaler
+    , textPaler1: text # lighten 0.1
+    , textPaler2: text # lighten 0.2
+    , textPaler3: text # lighten 0.3
+    , textPaler4: text # lighten 0.4
     , textInverted: lightBg
+    , textInvertedPaler1: lightBg # darken 0.1
+    , textInvertedPaler2: lightBg # darken 0.2
+    , textInvertedPaler3: lightBg # darken 0.3
+    , textInvertedPaler4: lightBg # darken 0.4
     , boxShadow
     }
   , dark:
@@ -274,10 +281,10 @@ defaultColours =
     , backgroundAlpha75: withAlpha 0.75 darkBg
     , backgroundInverted: lightBg
     , backgroundLayer1: lighten 0.1 >>> saturate 0.18 $ darkBg
-    , backgroundLayer2: lighten 0.15 >>> saturate 0.10 $ darkBg
-    , backgroundLayer3: lighten 0.22 >>> saturate 0.11 $ darkBg
-    , backgroundLayer4: lighten 0.32 >>> saturate 0.11 $ darkBg
-    , backgroundLayer5: lighten 0.37 >>> saturate 0.11 $ darkBg
+    , backgroundLayer2: lighten 0.13 >>> saturate 0.10 $ darkBg
+    , backgroundLayer3: lighten 0.16 >>> saturate 0.11 $ darkBg
+    , backgroundLayer4: lighten 0.19 >>> saturate 0.11 $ darkBg
+    , backgroundLayer5: lighten 0.22 >>> saturate 0.08 $ darkBg
     , backgroundCard: lighten 0.05 >>> saturate 0.1 $ darkBg
     , popperBackground: (withAlpha 0.8 >>> lighten 0.09 >>> saturate 0.05) darkBg
     , popperBackgroundNoAlpha: (lighten 0.09 >>> saturate 0.05) darkBg
@@ -310,8 +317,15 @@ defaultColours =
     , success: successDark
     , successText
     , text: textDark
-    , textPaler: textDarkPaler
+    , textPaler1: textDark # darken 0.1 # desaturate 0.25
+    , textPaler2: textDark # darken 0.2 # desaturate 0.25
+    , textPaler3: textDark # darken 0.3 # desaturate 0.25
+    , textPaler4: textDark # darken 0.4 # desaturate 0.25
     , textInverted: darkBg
+    , textInvertedPaler1: darkBg # lighten 0.1
+    , textInvertedPaler2: darkBg # lighten 0.2
+    , textInvertedPaler3: darkBg # lighten 0.3
+    , textInvertedPaler4: darkBg # lighten 0.4
     , boxShadow: boxShadowDark
     }
   }
@@ -368,11 +382,7 @@ defaultColours =
 
   text = Color.rgb 16 16 32
 
-  textPaler = Color.rgb 100 100 110
-
-  textDark = Color.rgb 230 230 250
-
-  textDarkPaler = Color.rgb 190 190 210
+  textDark = Color.rgb 240 245 250
 
   boxShadow = Color.rgba 0 0 0 0.2
 
@@ -421,8 +431,15 @@ type FlatTheme a =
   , invalidText ∷ a
   , required ∷ a
   , text ∷ a
-  , textPaler ∷ a
+  , textPaler1 ∷ a
+  , textPaler2 ∷ a
+  , textPaler3 ∷ a
+  , textPaler4 ∷ a
   , textInverted ∷ a
+  , textInvertedPaler1 ∷ a
+  , textInvertedPaler2 ∷ a
+  , textInvertedPaler3 ∷ a
+  , textInvertedPaler4 ∷ a
   , placeholderText ∷ a
   , boxShadow ∷ a
   }

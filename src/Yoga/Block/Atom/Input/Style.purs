@@ -73,7 +73,7 @@ labelSmall background textColour =
         nest
           { fontWeight: str "500"
           , whiteSpace: str "nowrap"
-          , background: str $ i "linear-gradient(" background "51%, transparent 51%, transparent)"
+          , background: str $ i "linear-gradient(" background " 51%, transparent 51%, transparent)"
           , color: str textColour
           , borderRadius: var "--s-4"
           , paddingLeft: var "--s-4"

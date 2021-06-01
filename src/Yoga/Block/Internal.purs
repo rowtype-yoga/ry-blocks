@@ -7,6 +7,8 @@ module Yoga.Block.Internal
   , dangerous
   , DivProps
   , DivPropsF
+  , DivPropsNoChildren
+  , DivPropsNoChildrenF
   , InputReadableProps
   , InputWritableProps
   , InputReadablePropsF
@@ -14,7 +16,9 @@ module Yoga.Block.Internal
   , ButtonWritableProps
   , ButtonReadableProps
   , ButtonReadablePropsF
+  , ButtonReadablePropsNoChildrenF
   , ButtonWritablePropsF
+  , ButtonWritablePropsNoChildrenF
   , NodeRef
   , emotionDiv
   , emotionInput
@@ -279,7 +283,13 @@ dangerous = unsafePerformEffect <<< unsafeCreateDOMComponent
 type DivProps
   = DivPropsF Id ()
 
+type DivPropsNoChildren
+  = DivPropsNoChildrenF Id ()
+
 type DivPropsF f more
+  = DivPropsNoChildrenF f ( children ∷ f (Array JSX) | more)
+
+type DivPropsNoChildrenF f more
   = ( _aria ∷ f (Object String)
     , _data ∷ f (Object String)
     , about ∷ f String
@@ -292,7 +302,6 @@ type DivPropsF f more
     , cellPadding ∷ f String
     , cellSpacing ∷ f String
     , charSet ∷ f String
-    , children ∷ f (Array JSX)
     , classID ∷ f String
     , colSpan ∷ f Int
     , contentEditable ∷ f Boolean
@@ -410,7 +419,6 @@ type DivPropsF f more
     , wmode ∷ f String
     | more
     )
-
 type InputReadableProps
   = InputReadablePropsF OptionalProp ()
 
@@ -595,8 +603,19 @@ type ButtonWritablePropsF f more
       | more
       )
 
+type ButtonWritablePropsNoChildrenF :: forall k. (Type -> k) -> Row k -> Row k
+type ButtonWritablePropsNoChildrenF f more
+  = ButtonReadablePropsNoChildrenF f
+      ( ref ∷ f (Ref (Nullable Node))
+      | more
+      )
+
 type ButtonReadablePropsF :: forall k. (Type -> k) -> Row k -> Row k
 type ButtonReadablePropsF f more
+  = ButtonReadablePropsNoChildrenF f ( children ∷ f (Array JSX) | more)
+    
+type ButtonReadablePropsNoChildrenF :: forall k. (Type -> k) -> Row k -> Row k
+type ButtonReadablePropsNoChildrenF f more
   = ( _aria ∷ f (Object String)
     , _data ∷ f (Object String)
     , about ∷ f String
@@ -610,7 +629,6 @@ type ButtonReadablePropsF f more
     , cellPadding ∷ f String
     , cellSpacing ∷ f String
     , charSet ∷ f String
-    , children ∷ f (Array JSX)
     , classID ∷ f String
     , className ∷ f String
     , colSpan ∷ f Int

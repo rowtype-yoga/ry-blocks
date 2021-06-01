@@ -7,10 +7,9 @@ import React.Basic (JSX, element, fragment)
 import React.Basic.DOM as R
 import React.Basic.Emotion (str)
 import React.Basic.Emotion as E
-import Yoga ((/>), (</), (</>))
+import Yoga ((</>))
 import Yoga.Block as Block
 import Yoga.Block.Atom.Button.Types as ButtonType
-import Yoga.Block.Atom.Button.View as Button
 import Yoga.Block.Container.Style (colour, size)
 import Yoga.Block.Container.Style as Styles
 import Yoga.Block.Icon.SVG as Icon
@@ -24,12 +23,12 @@ default ∷
 default =
   { title: "Atom/Button"
   , decorators:
-      [ \storyFn ->
-          R.div_
-            [ element E.global { styles: Styles.global }
-            , unsafePerformEffect storyFn
-            ]
-      ]
+    [ \storyFn ->
+        R.div_
+          [ element E.global { styles: Styles.global }
+          , unsafePerformEffect storyFn
+          ]
+    ]
   }
 
 button ∷ Effect JSX
@@ -39,34 +38,34 @@ button = do
         [ R.div_
             [ R.h1_ [ R.text "Button Examples" ]
             , R.h2_ [ R.text "Button types" ]
-            , Block.cluster </ { space: "var(--s-1)" }
-                /> [ Button.component </ { buttonType: ButtonType.Generic } /> [ R.text "Generic" ]
-                  , Button.component </ { buttonType: ButtonType.Primary } /> [ R.text "Primary" ]
-                  , Button.component </ { buttonType: ButtonType.Dangerous } /> [ R.text "Dangerous" ]
-                  , Button.component </ { css: customStyle } /> [ R.text "Custom" ]
-                  , Button.component </ { css: customStyle2 } /> [ R.text "Custom 2" ]
-                  ]
+            , Block.cluster { space: "var(--s-1)" }
+                [ Block.button { buttonType: ButtonType.Generic } [ R.text "Generic" ]
+                , Block.button { buttonType: ButtonType.Primary } [ R.text "Primary" ]
+                , Block.button { buttonType: ButtonType.Dangerous } [ R.text "Dangerous" ]
+                , Block.button { css: customStyle } [ R.text "Custom" ]
+                , Block.button { css: customStyle2 } [ R.text "Custom 2" ]
+                ]
             , R.h2_ [ R.text "Button shapes" ]
-            , Block.cluster </ { space: "var(--s-1)" }
-                /> [ Button.component </ { buttonType: ButtonType.Generic, buttonShape: ButtonType.Pill } /> [ R.text "Generic" ]
-                  , Button.component </ { buttonType: ButtonType.Primary, buttonShape: ButtonType.Pill } /> [ R.text "Primary" ]
-                  , Button.component </ { css: customStyle, buttonShape: ButtonType.Pill } /> [ R.text "+ Custom" ]
-                  ]
+            , Block.cluster { space: "var(--s-1)" }
+                [ Block.button { buttonType: ButtonType.Generic, buttonShape: ButtonType.Pill } [ R.text "Generic" ]
+                , Block.button { buttonType: ButtonType.Primary, buttonShape: ButtonType.Pill } [ R.text "Primary" ]
+                , Block.button { css: customStyle, buttonShape: ButtonType.Pill } [ R.text "+ Custom" ]
+                ]
             , R.h2_ [ R.text "Icon button" ]
-            , Block.cluster </ { space: "var(--s-1)" }
-                /> [ Button.component </ {} /> [ Block.icon </> { icon: Icon.questionMark, size: str "var(--s2)", colour: str colour.highlight } ]
-                  ]
+            , Block.cluster { space: "var(--s-1)" }
+                [ Block.button {} [ Block.icon </> { icon: Icon.questionMark, size: str "var(--s2)", colour: str colour.highlight } ]
+                ]
             , R.h2_ [ R.text "Disabled" ]
-            , Block.cluster </ { space: "var(--s-1)" }
-                /> [ Button.component </ { buttonType: ButtonType.Generic, disabled: true } /> [ R.text "Generic" ]
-                  , Button.component </ { buttonType: ButtonType.Primary, disabled: true } /> [ R.text "Primary" ]
-                  , Button.component </ { buttonType: ButtonType.Generic, buttonShape: ButtonType.Pill, disabled: true } /> [ R.text "Generic" ]
-                  , Button.component </ { buttonType: ButtonType.Primary, buttonShape: ButtonType.Pill, disabled: true } /> [ R.text "Primary" ]
-                  ]
+            , Block.cluster { space: "var(--s-1)" }
+                [ Block.button { buttonType: ButtonType.Generic, disabled: true } [ R.text "Generic" ]
+                , Block.button { buttonType: ButtonType.Primary, disabled: true } [ R.text "Primary" ]
+                , Block.button { buttonType: ButtonType.Generic, buttonShape: ButtonType.Pill, disabled: true } [ R.text "Generic" ]
+                , Block.button { buttonType: ButtonType.Primary, buttonShape: ButtonType.Pill, disabled: true } [ R.text "Primary" ]
+                ]
             ]
         ]
 
-customStyle :: E.Style
+customStyle ∷ E.Style
 customStyle =
   E.css
     { background: E.str colour.backgroundLayer5
@@ -79,24 +78,24 @@ customStyle =
     , fontWeight: E.str "500"
     , transition: str "all 0.7s ease"
     , "&:active":
-        nest
-          { boxShadow: E.none
-          , border: E.str $ "1px solid " <> colour.highlightText
-          , transform: E.none
-          , background: E.str colour.highlight
-          , color: E.str colour.highlightText
-          }
+      nest
+        { boxShadow: E.none
+        , border: E.str $ "1px solid " <> colour.highlightText
+        , transform: E.none
+        , background: E.str colour.highlight
+        , color: E.str colour.highlightText
+        }
     , "&:hover":
-        nest
-          { boxShadow: E.none
-          , border: E.str $ "1px solid " <> colour.backgroundLayer1
-          , transform: E.none
-          , background: E.str colour.backgroundLayer4
-          , color: E.str colour.text
-          }
+      nest
+        { boxShadow: E.none
+        , border: E.str $ "1px solid " <> colour.backgroundLayer1
+        , transform: E.none
+        , background: E.str colour.backgroundLayer4
+        , color: E.str colour.text
+        }
     }
 
-customStyle2 :: E.Style
+customStyle2 ∷ E.Style
 customStyle2 =
   E.css
     { background: E.color Palette.seaGreen.dark
@@ -105,7 +104,7 @@ customStyle2 =
     , fontWeight: E.str "400"
     , minWidth: E.str size."3xl"
     , "&:focus":
-        nest
-          { border: E.str $ "1px solid " <> colour.background
-          }
+      nest
+        { border: E.str $ "1px solid " <> colour.background
+        }
     }

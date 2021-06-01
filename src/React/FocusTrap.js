@@ -1,1 +1,0 @@
-exports.focusTrap_ = require('focus-trap-react');
