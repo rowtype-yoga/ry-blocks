@@ -15,6 +15,7 @@ import Yoga.Block.Container as Container
 import Yoga.Block.Layout.Box as Box
 import Yoga.Block.Layout.Centre as Centre
 import Yoga.Block.Layout.Cluster as Cluster
+import Yoga.Block.Layout.Cover as Cover
 import Yoga.Block.Layout.Grid as Grid
 import Yoga.Block.Layout.Imposter as Imposter
 import Yoga.Block.Layout.Sidebar as Sidebar
@@ -61,6 +62,15 @@ cluster_ = cluster {}
 
 container ∷ ∀ p q. Union p q Container.Props => ReactComponent { | p }
 container = Container.component
+
+cover' ∷ ∀ p q. Union p q Cover.Props => ReactComponent { | p }
+cover' = Cover.component
+
+cover ∷ ∀ p q. Lacks "children" p => Union p q Cover.PropsNoChildren => { | p } -> Array JSX -> JSX
+cover = el cover'
+
+cover_ ∷ Array JSX -> JSX
+cover_ = cover {}
 
 grid ∷ ∀ p q. Union p q Grid.Props => ReactComponent { children ∷ Array JSX | p }
 grid = Grid.component

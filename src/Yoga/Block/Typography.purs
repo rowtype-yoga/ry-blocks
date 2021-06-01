@@ -45,6 +45,9 @@ noMargins = css { margin: _0 }
 noPadding ∷ Style
 noPadding = css { padding: _0 }
 
+rightAlign ∷ Style
+rightAlign = css { textAlign: str "end" }
+
 -- Ellipsis
 -- [FIXME]: Buggy (still shows a third line, does not seem to hide overflow)
 maxLines ∷ Int -> Style

@@ -99,23 +99,6 @@ in  upstream
 -------------------------------
 -}
 let upstream =
-      https://github.com/purescript/package-sets/releases/download/psc-0.14.1-20210516/packages.dhall sha256:f5e978371d4cdc4b916add9011021509c8d869f4c3f6d0d2694c0e03a85046c8
+      https://raw.githubusercontent.com/purescript/package-sets/3aa641500c6903bfd2ab7da381ad6d7b40cf2f97/src/packages.dhall sha256:7ad187a59678a4c614468cdaac78773b8ae5565fd555d03b05163ba9a39dc30a
+
 in  upstream
-  with two-or-more =
-    {
-     dependencies =[
-       "arrays",
-       "console",
-       "effect",
-       "foldable-traversable",
-       "maybe",
-       "partial",
-       "prelude",
-       "psci-support",
-       "tuples"
-     ],
-     repo ="https://github.com/i-am-the-slime/purescript-two-or-more.git",
-     version ="v0.3.0"
-   }
-  with framer-motion = 
-    ../purescript-framer-motion/spago.dhall as Location

@@ -2,7 +2,7 @@ module Yoga.Block.Layout.Stack.Style where
 
 import Yoga.Prelude.Style
 
-type Props :: forall k. (Type -> k) -> Row k -> Row k
+type Props ∷ forall k. (Type -> k) -> Row k -> Row k
 type Props f r
   = ( css ∷ f Style
     , space ∷ f StyleProperty

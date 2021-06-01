@@ -11,7 +11,6 @@ import Yoga ((/>), (</*), (</*>))
 import Yoga.Block as Block
 import Yoga.Block.Container.Style (colour, size)
 import Yoga.Block.Container.Style as Styles
-import Yoga.Block.Palette as Palette
 import Yoga.Block.Typography as Typo
 
 default ∷
@@ -48,9 +47,9 @@ layout =
       }
       [ Block.stack { space: E.str size.s }
           [ Block.stack { space: E.str size.m }
-              [ Block.sidebar { sidebar: avatar, noStretch: true, contentMin: "25ch" }
+              [ Block.sidebar { sidebar: avatar, contentMin: "25ch", space: size.l }
                   [ postTitle ]
-              , Block.cluster { justify: "space-between", space: size.s }
+              , Block.cluster { justify: "space-between", space: size.m }
                   [ postAuthor, postDate ]
               ]
           , hr
@@ -63,7 +62,7 @@ layout =
         </*> { className: "hr"
           , css:
             E.css
-              { backgroundColor: E.str $ colour.textInvertedPaler4
+              { backgroundColor: E.str $ colour.textInvertedPaler3
               , height: E.px 1
               , border: E.none
               }
@@ -80,13 +79,12 @@ layout =
                   , color: E.str colour.textPaler2
                   }
           }
-        /> [ R.text "When I was a young girl wrestling with 'undefined' not being a function my mother used to come up to me and say: 'Use PureScript'. Now, a mere twenty years later..."
-          ]
+        /> [ R.text "When I was a young girl wrestling with 'undefined' not being a function my mother used to come up to me and say: 'Use PureScript'. Now, a mere twenty years later..." ]
 
     boxCss =
       Typo.fontSizeSmall
         <> E.css
-            { background: E.str $ colour.backgroundLayer4
+            { background: E.str $ colour.backgroundLayer3
             , borderRadius: E.str size.l
             , maxWidth: E.ch 60.0
             , paddingBottom: E.str size.xl
@@ -126,20 +124,14 @@ layout =
         ]
 
     postTitle =
-      R.div'
-        </* { className: "title-wrapper"
-          , css: E.css { minHeight: E.str size.xxl }
-          }
-        /> [ R.h2'
+      Block.cover_ [ 
+        R.h2'
               </* { className: "title"
                 , css:
                   Typo.fontSizeH3
-                    <> E.css
-                        { color: E.str colour.textPaler2
-                        }
+                    <> E.css { color: E.str colour.textPaler2 }
                 }
-              /> [ R.text "How to properly write effective React code in 2021" ]
-          ]
+              /> [ R.text "How not to properly React" ]]
 
     postAuthor =
       R.h4'
@@ -152,10 +144,7 @@ layout =
               <> Typo.regular
               <> E.css
                   { "&::before":
-                    nested
-                      $ E.css
-                          { content: E.str "'by '"
-                          }
+                    nested $ E.css { content: E.str "'by '" }
                       <> Typo.thin
                       <> Typo.resetTextTransform
                   , color: E.str colour.textPaler3
@@ -172,6 +161,7 @@ layout =
               <> Typo.allCaps
               <> Typo.fontSizeSmall
               <> Typo.thin
+              <> Typo.rightAlign
               <> E.css { color: E.str $ colour.textPaler3 }
           }
         /> [ R.text "16th May 2021" ]

@@ -14,21 +14,20 @@ type Props f r =
 cluster ∷ ∀ p. { | Props OptionalProp p } -> Style
 cluster props = styles <>? props.css
   where
-  space = props.space ?|| "var(--s1)"
+  space = (props.space <#> \x -> if x == "0" then "0px" else x) ?|| "var(--s1)"
 
   styles =
     css
-      { "--space": str space
-      , "& > *":
+      { "& > *":
         nest
           { display: flex
           , flexWrap: wrap
           , alignItems: (str <$> props.align) ?|| center
           , justifyContent: (str <$> props.justify) ?|| flexStart
-          , margin: "calc(var(--space) / 2 * -1)" # str
+          , margin: "calc(" <> space <> " / 2 * -1)" # str
           }
       , "& > * > *":
         nest
-          { margin: "calc(var(--space) / 2)" # str
+          { margin: "calc(" <> space <> " / 2)" # str
           }
       }
