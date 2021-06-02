@@ -2,9 +2,12 @@ module Yoga.Block.Layout.Sidebar.Style where
 
 import Yoga.Prelude.Style
 
+import Data.Interpolate (i)
+
 data SidebarSide
   = SidebarLeft
   | SidebarRight
+derive instance eqSidebarSide :: Eq SidebarSide
 
 type Props :: forall k. (Type -> k) -> Row k -> Row k
 type Props f r
@@ -14,6 +17,7 @@ type Props f r
     , sideWidth ∷ f String
     , contentMin ∷ f String
     , noStretch ∷ f Boolean
+    , reverseOnWrap ∷ f Boolean
     | r
     )
 
@@ -32,7 +36,7 @@ sidebar props = styles <>? props.css
     nest
       { flexBasis: _0
       , flexGrow: "999" # str
-      , minWidth: "calc(" <> contentMin <> " - " <> space <> ")" # str
+      , minWidth: i "calc(" contentMin " - " space " - " space ")" # str
       }
 
   styles =
@@ -41,7 +45,7 @@ sidebar props = styles <>? props.css
       , "& > *":
           nest
             { display: flex
-            , flexWrap: wrap
+            , flexWrap: if props.reverseOnWrap # isTruthy then str "wrap-reverse" else wrap
             , margin: "calc(" <> space <> " / 2 * -1)" # str
             , alignItems: props.noStretch # foldMap if _ then str "flex-start" else mempty
             }
@@ -56,3 +60,4 @@ sidebar props = styles <>? props.css
       <> case side of
           SidebarLeft -> css { "& > * > :last-child": nonSidebarStyle }
           SidebarRight -> css { "& > * > :first-child": nonSidebarStyle }
+

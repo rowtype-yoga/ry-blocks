@@ -1,7 +1,10 @@
 module Yoga.Block.Layout.Sidebar.View (component, Props, PropsF) where
 
 import Yoga.Prelude.View
+
+import Data.Array as Array
 import React.Basic.DOM (div_)
+import Yoga.Block.Layout.Sidebar.Style (SidebarSide(..))
 import Yoga.Block.Layout.Sidebar.Style as Style
 
 type PropsF f =
@@ -23,13 +26,17 @@ rawComponent ∷ ∀ p. ReactComponent { | p }
 rawComponent =
   mkForwardRefComponent "Sidebar" do
     \(props ∷ { | PropsOptional }) ref -> React.do
+      let 
+        flipChildren = 
+          if (props.side ?|| SidebarLeft) == SidebarRight then 
+            Array.reverse else identity
       pure
         $ emotionDiv ref
             props
             { className: "ry-sidebar " <>? props.className
             , css: Style.sidebar props
             , children:
-              [ div_
+              [ div_ $ flipChildren
                   [ div_ [ props.sidebar ]
                   , div_ props.children
                   ]

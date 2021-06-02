@@ -38,8 +38,8 @@ box ∷ Effect JSX
 box =
   pure
     $ fragment
-        [ Block.grid </ { min: "100px" }
-            /> colourBoxes "Pink" Palette.pink
+        [ Block.grid { min: "100px" }
+            $  colourBoxes "Pink" Palette.pink
             <> colourBoxes "Mauve" Palette.mauve
             <> colourBoxes "Violet" Palette.violet
             <> colourBoxes "Blue" Palette.blue

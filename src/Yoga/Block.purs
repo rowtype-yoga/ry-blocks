@@ -72,8 +72,14 @@ cover = el cover'
 cover_ ∷ Array JSX -> JSX
 cover_ = cover {}
 
-grid ∷ ∀ p q. Union p q Grid.Props => ReactComponent { children ∷ Array JSX | p }
-grid = Grid.component
+grid' ∷ ∀ p q. Union p q Grid.Props => ReactComponent { children ∷ Array JSX | p }
+grid' = Grid.component
+
+grid ∷ ∀ p q. Lacks "children" p => Union p q Grid.Props => { | p } -> Array JSX  -> JSX
+grid = el grid'
+
+grid_ ∷ Array JSX -> JSX
+grid_ = grid {}
 
 icon ∷ ∀ p q. Union p q Icon.Props => ReactComponent { | Icon.MandatoryProps p }
 icon = Icon.component
