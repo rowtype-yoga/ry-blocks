@@ -44,6 +44,7 @@ You can edit this file as you like.
   , "react-basic-hooks"
   , "react-testing-library"
   , "record"
+  , "record-extra"
   , "routing"
   , "routing-duplex"
   , "spec"
