@@ -20,7 +20,7 @@
     "html-webpack-plugin": "^4.5.0",
     "jsdom": "^16.3.0",
     "jsdom-global": "^3.0.2",
-    "purescript": "0.14.1",
+    "purescript": "0.14.2",
     "react-refresh": "^0.8.3",
     "rimraf": "^3.0.2",
     "source-map": "GerHobbelt/source-map#patch-8",
