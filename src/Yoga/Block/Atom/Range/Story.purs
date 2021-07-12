@@ -35,7 +35,7 @@ range =
                 {}
             , R.h2_ [ R.text "Min and max" ]
             , element Range.component
-                { min: 0
+                { min: 2
                 , max: 10
                 }
             , R.h2_ [ R.text "Controlled" ]

@@ -31,9 +31,10 @@ rawComponent =
     \(props ∷ { | PropsOptional }) ref -> React.do
       let min = props.min ?|| 0
       let max = props.max ?|| 100
-      let v = props.value ?|| ((max - min) / 2)
+      let v = props.value ?|| min
       let disabled = props.disabled ?|| false
-      value /\ setValue <- useState' v
+      fallbackValue /\ setFallbackValue <- useState' v
+      let value = props.value ?|| fallbackValue
       hasFocus /\ setHasFocus <- useState' false
       pure
         $ div
@@ -41,7 +42,7 @@ rawComponent =
           , css: Style.container <> guard disabled Style.inputDisabled
           , onFocus: handler_ $ setHasFocus true
           , onBlur: handler_ $ setHasFocus false
-          , style: fold props.style <> css { "--val": value, "--max": max - min }
+          , style: fold props.style <> css { "--val": value - min, "--max": max - min }
           , _data: Object.singleton "testid" "range-testid"
           }
         /> [ div </*> { className: "ry-range-filled", css: Style.filled <> guard disabled Style.disabled }
@@ -61,7 +62,7 @@ rawComponent =
               , type: "range"
               , onChange: 
                composeHandler
-                (handler Event.targetValue ((_ >>= Int.fromString) >>> (foldMap setValue)))
+                (handler Event.targetValue ((_ >>= Int.fromString) >>> (foldMap setFallbackValue)))
                 props.onChange
               }
           ]
