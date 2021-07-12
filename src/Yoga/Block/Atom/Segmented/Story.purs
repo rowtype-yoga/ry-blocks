@@ -39,7 +39,7 @@ segmented = do
         pure
           $ element Segmented.component
               { activeIndex
-              , updateActiveIndex: setElementIndex
+              , updateActiveItem: const setElementIndex
               , buttonContents:
                 twoOrMore
                   { id: "gag", value: "2" }

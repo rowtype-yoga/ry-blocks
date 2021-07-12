@@ -1,6 +1,7 @@
 module Yoga.Block.Atom.Segmented.View.ActiveIndicator (Props, component) where
 
 import Yoga.Prelude.View
+
 import Control.MonadZero as MZ
 import Data.Traversable (traverse)
 import Data.TwoOrMore (TwoOrMore)
@@ -20,13 +21,15 @@ import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
 import Unsafe.Coerce (unsafeCoerce)
 import Yoga.Block.Atom.Segmented.Style as Style
+import Yoga.Block.Atom.Segmented.View.Types (Item)
 import Yoga.Block.Hook.Scroll (useScrollPosition)
 import Yoga.Block.Hook.UseResize as UseResize
 
 type Props =
   { activeItemRefs ∷ TwoOrMore (Ref (Nullable Node))
+  , buttonContents ∷ TwoOrMore Item
   , activeItemIndex ∷ Int
-  , updateActiveIndex ∷ Int -> Effect Unit
+  , updateActiveItem ∷ Item -> Int -> Effect Unit
   , windowSize ∷ UseResize.Sizes
   }
 
@@ -117,12 +120,15 @@ component =
                                   props.activeItemIndex
                                   animationVariants
                                   x
+                              newItem = fromMaybe'
+                                (\_ -> TwoOrMore.head props.buttonContents) 
+                                (props.buttonContents TwoOrMore.!! newIdx) 
                               v =
                                 animationVariants TwoOrMore.!! newIdx
                                   # fromMaybe' \_ -> unsafeCrashWith "omg"
                             activeLeft # MotionValue.set v.left
                             activeWidth # MotionValue.set v.width
-                            props.updateActiveIndex newIdx
+                            props.updateActiveItem newItem newIdx
                             setDragX Nothing
                         , dragElastic: Motion.dragElastic false
                         , dragConstraints: Motion.dragConstraintsBoundingBox { left: 0, right: 0, top: 0, bottom: 0 }

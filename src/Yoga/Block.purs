@@ -2,7 +2,7 @@ module Yoga.Block where
 
 import Prim.Row (class Lacks, class Union)
 import React.Basic (JSX, ReactComponent)
-import Yoga (el)
+import Yoga (el, leaf)
 import Yoga.Block.Atom.Button as Button
 import Yoga.Block.Atom.Icon as Icon
 import Yoga.Block.Atom.Input as Input
@@ -99,8 +99,11 @@ modal = Modal.component
 range ∷ ∀ p q. Union p q Range.Props => ReactComponent { | p }
 range = Range.component
 
-segmented ∷ ReactComponent Segmented.Props
-segmented = Segmented.component
+segmented' ∷ ReactComponent Segmented.Props
+segmented' = Segmented.component
+
+segmented ∷ Segmented.Props -> JSX
+segmented = leaf Segmented.component
 
 sidebar' ∷ ∀ p q. Union p q Sidebar.Props => ReactComponent { sidebar ∷ JSX, children ∷ Array JSX | p }
 sidebar' = Sidebar.component

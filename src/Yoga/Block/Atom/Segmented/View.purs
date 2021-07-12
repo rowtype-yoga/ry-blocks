@@ -1,6 +1,7 @@
-module Yoga.Block.Atom.Segmented.View (component, Item, Props) where
+module Yoga.Block.Atom.Segmented.View (component, Props) where
 
 import Yoga.Prelude.View
+
 import Data.Array as A
 import Data.Newtype (wrap)
 import Data.Time.Duration (Milliseconds(..))
@@ -20,23 +21,21 @@ import React.Basic.Hooks.Aff (useAff)
 import Web.HTML.HTMLElement as HTMLElement
 import Yoga.Block.Atom.Segmented.Style as Style
 import Yoga.Block.Atom.Segmented.View.ActiveIndicator as ActiveIndicator
+import Yoga.Block.Atom.Segmented.View.Types (Item)
 import Yoga.Block.Hook.Key as Key
 import Yoga.Block.Hook.UseKeyDown (useKeyDown)
 import Yoga.Block.Hook.UseResize (useResize)
 
-type Item =
-  { id ∷ String, value ∷ String }
-
 type Props =
   { buttonContents ∷ TwoOrMore Item
   , activeIndex ∷ Int
-  , updateActiveIndex ∷ Int -> Effect Unit
+  , updateActiveItem ∷ Item -> Int -> Effect Unit
   }
 
 component ∷ ReactComponent Props
 component =
   unsafePerformEffect
-    $ reactComponent "Segmented" \({ buttonContents, activeIndex, updateActiveIndex } ∷ Props) -> React.do
+    $ reactComponent "Segmented" \({ buttonContents, activeIndex, updateActiveItem } ∷ Props) -> React.do
         -------------------------------------------
         -- Store button refs for animation purposes
         itemRefs /\ setItemRefs ∷ Maybe (TwoOrMore _) /\ _ <- useState' Nothing
@@ -50,7 +49,12 @@ component =
         let
           maxIndex = TwoOrMore.length buttonContents - 1
           updateIndex idx = do
-            updateActiveIndex idx
+            let 
+              newItem = fromMaybe'
+                (\_ -> TwoOrMore.head buttonContents) 
+                (buttonContents TwoOrMore.!! idx) 
+            updateActiveItem newItem idx
+           
           updateTo toIndex = do
             for_ itemRefs do blurAtIndex activeIndex
             updateIndex toIndex
@@ -127,7 +131,8 @@ component =
                           React.element ActiveIndicator.component
                             { activeItemRefs
                             , activeItemIndex: activeIndex
-                            , updateActiveIndex
+                            , buttonContents
+                            , updateActiveItem
                             , windowSize
                             }
                             A.: children
