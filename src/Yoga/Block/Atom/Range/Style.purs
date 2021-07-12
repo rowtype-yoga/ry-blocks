@@ -18,6 +18,7 @@ range props = styles <>? props.css
         { position: str "relative"
         , height: str "var(--s0)"
         , display: inlineBlock
+        , boxSizing: borderBox
         }
 
 container ∷ Style
@@ -39,6 +40,7 @@ container =
         }
     , "input[type=range]::-webkit-slider-thumb": nested thumbStyle
     , "input[type=range]::-moz-range-thumb": nested thumbStyle
+    , boxSizing: borderBox
     }
 
 thumbStyle ∷ Style
@@ -51,8 +53,7 @@ thumbStyle =
     , borderRadius: 50.0 # percent
     , background: str "white"
     , boxShadow: str "0 calc(var(--s-4)/2) var(--s-3) rgba(70,70,70,0.6)"
-    , bosSizing: borderBox
-    , transform: str "translate(0, -1px)"
+    , boxSizing: borderBox
     }
 
 inputDisabled ∷ Style
@@ -90,6 +91,7 @@ track =
     , height: str "var(--s-3)"
     , borderRadius: str "calc(var(--s-3)/2)"
     , position: absolute
+    , boxSizing: borderBox
     }
 
 disabled ∷ Style
