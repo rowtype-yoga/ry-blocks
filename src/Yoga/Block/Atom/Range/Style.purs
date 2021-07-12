@@ -51,6 +51,7 @@ thumbStyle =
     , borderRadius: 50.0 # percent
     , background: str "white"
     , boxShadow: str "0 calc(var(--s-4)/2) var(--s-3) rgba(70,70,70,0.6)"
+    , bosSizing: borderBox
     }
 
 inputDisabled ∷ Style
