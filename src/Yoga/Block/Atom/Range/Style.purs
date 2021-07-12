@@ -52,6 +52,7 @@ thumbStyle =
     , background: str "white"
     , boxShadow: str "0 calc(var(--s-4)/2) var(--s-3) rgba(70,70,70,0.6)"
     , bosSizing: borderBox
+    , transform: str "translate(0, -1px)"
     }
 
 inputDisabled ∷ Style
