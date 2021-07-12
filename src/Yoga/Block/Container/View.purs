@@ -21,6 +21,7 @@ type PropsF f =
   ( children ∷ Array JSX
   , themeVariant ∷ f (Maybe DarkOrLightMode)
   , onPreferredSystemThemeChange ∷ f (DarkOrLightMode -> Effect Unit)
+  , globalStyles :: f E.Style
   )
 
 type Props =
@@ -78,14 +79,14 @@ rawComponent =
             [ R.div' </ { ref }
                 /> Array.cons
                     ( element E.global
-                        { styles:
+                        { styles: (_ <>? props.globalStyles)
                           case propsThemeVariant, systemThemeVariant of
                             Nothing, Nothing -> Styles.global
                             Just Styles.DarkMode, _ -> Styles.darkMode
                             Just Styles.LightMode, _ -> Styles.lightMode
                             Nothing, Just DarkMode -> Styles.darkMode
                             Nothing, Just LightMode -> Styles.lightMode
-                        }
+                        } 
                     )
                     children
             , R.div { id: modalContainerId }
