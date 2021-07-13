@@ -32,6 +32,7 @@ container =
         , margin: _0
         , padding: _0
         , width: _100percent
+        , height: str "var(--s0)"
         }
     , "input[type=range]:focus":
       nest
