@@ -225,10 +225,10 @@ defaultColours =
     , backgroundAlpha50: withAlpha 0.5 lightBg
     , backgroundAlpha75: withAlpha 0.75 lightBg
     , backgroundInverted: darken 0.85 lightBg
-    , backgroundLayer1: darken 0.09 >>> desaturate 0.2 $ lightBg
-    , backgroundLayer2: darken 0.07 >>> desaturate 0.2 $ lightBg
-    , backgroundLayer3: darken 0.05 >>> desaturate 0.1 $ lightBg
-    , backgroundLayer4: darken 0.025 >>> desaturate 0.05 $ lightBg
+    , backgroundLayer1: darken 0.098 >>> desaturate 0.28 $ lightBg
+    , backgroundLayer2: darken 0.074 >>> desaturate 0.23 $ lightBg
+    , backgroundLayer3: darken 0.043 >>> desaturate 0.15 $ lightBg
+    , backgroundLayer4: darken 0.02 >>> desaturate 0.15 $ lightBg
     , backgroundLayer5: lightBg
     , backgroundLayer5Border: lightBg
     , backgroundCard: lightBg
@@ -368,7 +368,7 @@ defaultColours =
 
   invalidTextDark = successText
 
-  lightBg = Color.hsl 200.0 0.2 0.985
+  lightBg = Color.hsl 40.0 0.423 0.982
 
   link = Color.hsl 320.0 1.0 0.33
 
