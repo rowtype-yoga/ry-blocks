@@ -39,7 +39,7 @@ rawComponent =
       pure
         $ div
         </* { className: "ry-range"
-          , css: Style.container <> guard disabled Style.inputDisabled
+          , css: Style.container <> guard disabled Style.inputDisabled <>? props.css
           , onFocus: handler_ $ setHasFocus true
           , onBlur: handler_ $ setHasFocus false
           , style: fold props.style <> css { "--val": value - min, "--max": max - min }
@@ -58,7 +58,7 @@ rawComponent =
                   }
               )
               { className: "ry-range-thumb " <>? props.className
-              , css: Style.range props <> guard disabled Style.inputDisabled <>? props.css
+              , css: Style.range props <> guard disabled Style.inputDisabled
               , type: "range"
               , onChange: 
                composeHandler
