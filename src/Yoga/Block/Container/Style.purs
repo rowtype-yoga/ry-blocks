@@ -225,10 +225,10 @@ defaultColours =
     , backgroundAlpha50: withAlpha 0.5 lightBg
     , backgroundAlpha75: withAlpha 0.75 lightBg
     , backgroundInverted: darken 0.85 lightBg
-    , backgroundLayer1: darken 0.098 >>> desaturate 0.28 $ lightBg
-    , backgroundLayer2: darken 0.074 >>> desaturate 0.23 $ lightBg
-    , backgroundLayer3: darken 0.043 >>> desaturate 0.15 $ lightBg
-    , backgroundLayer4: darken 0.02 >>> desaturate 0.15 $ lightBg
+    , backgroundLayer1: darken 0.096 >>> desaturate 0.17 $ lightBg
+    , backgroundLayer2: darken 0.074 >>> desaturate 0.13 $ lightBg
+    , backgroundLayer3: darken 0.043 >>> desaturate 0.05 $ lightBg
+    , backgroundLayer4: darken 0.02 >>> desaturate 0.01 $ lightBg
     , backgroundLayer5: lightBg
     , backgroundLayer5Border: lightBg
     , backgroundCard: lightBg
@@ -337,14 +337,13 @@ defaultColours =
   -- highlightBase = Color.hsla 275.0 0.82 0.4
   -- brightPurpleBase = Color.hsla 275.0 0.82 0.4
   -- highlightMurmurasBase = Color.hsla 220.0 0.60 0.5
-  highlightBase = Color.hsla 185.0 1.0 0.2
+  highlightBase = Color.hsla 259.0 1.00 0.6
 
-  -- highlightBase = Color.hsla 212.0 0.47 0.45
   highlight = highlightBase 1.0
 
   highlightDarkBase = Color.hsla 265.0 1.00 0.6
 
-  highlightDark = Color.hsla 265.0 1.00 0.6 1.0
+  highlightDark = Color.hsla 265.0 1.00 0.57 1.0
 
   highlightText = Color.rgb 0xFF 0xFF 0xFF
 
@@ -368,7 +367,8 @@ defaultColours =
 
   invalidTextDark = successText
 
-  lightBg = Color.hsl 40.0 0.423 0.982
+  -- lightBg = Color.hsl 240.0 0.5 0.982
+  lightBg = Color.hsl 230.0 0.5 0.982
 
   link = Color.hsl 320.0 1.0 0.33
 

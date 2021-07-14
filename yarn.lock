@@ -7949,10 +7949,10 @@
     "which" "^1.3.1"
     "zen-observable" "^0.8.14"
 
-"purescript@0.14.2":
-  "integrity" "sha512-kEXY5yUaG8a1FNN/IdtfNl4gcql7p76CPqnanMZ37GdtBZTcFK/SB24bp2rOAT1/N9qU8/corlra6uNf4+5pgQ=="
-  "resolved" "https://registry.npmjs.org/purescript/-/purescript-0.14.2.tgz"
-  "version" "0.14.2"
+"purescript@^0.14.3":
+  "integrity" "sha512-lAzHU/tcmxF4n3YUwUTwG/sIwHzjUq1zsIOBNmaVpbm7hxM+RhOTKMJdwdbTeCjxlilyVPWOLUQ6Exll4DYuMA=="
+  "resolved" "https://registry.npmjs.org/purescript/-/purescript-0.14.3.tgz"
+  "version" "0.14.3"
   dependencies:
     "purescript-installer" "^0.2.0"
 
