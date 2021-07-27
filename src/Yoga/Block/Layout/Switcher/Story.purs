@@ -13,18 +13,18 @@ import React.Basic.Emotion as E
 import Yoga (el)
 
 default ∷
-  { decorators ∷ Array (Effect JSX -> JSX)
+  { decorators ∷ Array (Effect JSX → JSX)
   , title ∷ String
   }
 default =
   { title: "Layout/Switcher"
   , decorators:
-    [ \storyFn ->
-        R.div_
-          [ element E.global { styles: Styles.global }
-          , unsafePerformEffect storyFn
-          ]
-    ]
+      [ \storyFn →
+          R.div_
+            [ element E.global { styles: Styles.global }
+            , unsafePerformEffect storyFn
+            ]
+      ]
   }
 
 switcher ∷ Effect JSX
@@ -53,6 +53,22 @@ switcher =
                 [ R.div
                     { children: [ R.text "A child" ]
                     , style: css { backgroundColor: "teal" }
+                    }
+                    `power`
+                      5
+                ]
+            , R.h2_ [ R.text "With some space" ]
+            , el Switcher.component
+                { style: css { backgroundColor: "darkslateblue" }
+                , threshold: "1000px"
+                , space: "30px"
+                }
+                [ R.div
+                    { children: [ R.text "A child" ]
+                    , style:
+                        css
+                          { backgroundColor: "teal"
+                          }
                     }
                     `power`
                       5

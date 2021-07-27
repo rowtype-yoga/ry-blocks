@@ -5,22 +5,20 @@ import Data.Interpolate (i)
 import Foreign.Object as Object
 import Unsafe.Coerce (unsafeCoerce)
 
-type Props :: forall k. (Type -> k) -> Row k -> Row k
-type Props f r =
-  ( css ∷ f Style
-  , space ∷ f String
-  , threshold ∷ f String
-  , limit ∷ f Int
-  | r
-  )
+type Props ∷ ∀ k. (Type → k) → Row k → Row k
+type Props f r
+  = ( css ∷ f Style
+    , space ∷ f String
+    , threshold ∷ f String
+    , limit ∷ f Int
+    | r
+    )
 
-switcher ∷ ∀ p. { | Props OptionalProp p } -> Style
+switcher ∷ ∀ p. { | Props OptionalProp p } → Style
 switcher props = styles <>? props.css
   where
   limit = props.limit ?|| 4
-
-  space = (props.space <#> \s -> if s == "0" then "0px" else s) ?|| "var(--s1)"
-
+  space = (props.space <#> \s → if s == "0" then "0px" else s) ?|| "var(--s1)"
   threshold = props.threshold ?|| "60ch"
 
   lastKey ∷ String
@@ -39,16 +37,16 @@ switcher props = styles <>? props.css
     nthLastChild
       <> css
           { "& > *":
-            nest
-              { display: flex
-              , flexWrap: wrap
-              , margin: i "calc((" space " / 2) * -1)" # str
-              }
+              nest
+                { display: flex
+                , flexWrap: wrap
+                , margin: i "calc((" space " / 2) * -1)" # str
+                }
           , "& > * > *":
-            nest
-              { flexGrow: str "1"
-              , flexBasis:
-                i "calc((" threshold " - (100% - var(--s1))) * 999)" # str
-              , margin: "calc((" <> space <> "/ 2)" # str
-              }
+              nest
+                { flexGrow: str "1"
+                , flexBasis:
+                    i "calc((" threshold " - (100% - " space ")) * 999)" # str
+                , margin: "calc(" <> space <> " / 2)" # str
+                }
           }
