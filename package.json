@@ -58,6 +58,7 @@
     "framer-motion": "^4.0.3",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
+    "react-intersection-observer": "^8.32.0",
     "react-popper": "^2.2.4",
     "react-syntax-highlighter": "^15.3.1"
   }

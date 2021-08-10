@@ -1,12 +1,12 @@
 {
-    "editor.formatOnSave": true,
-    "workbench.colorTheme": "Irul Theme",
-    "search.useGlobalIgnoreFiles": true,
-    "files.watcherExclude": {
-        "**/.spago/**": true,
-        "**/output/**": true,
-        "**/node_modules/**": true,
-        "**/.storybook/**": true,
-        "**/.github/**": true,
-    }
+  "editor.formatOnSave": true,
+  "workbench.colorTheme": "Kai Light Accent",
+  "search.useGlobalIgnoreFiles": true,
+  "files.watcherExclude": {
+    "**/.spago/**": true,
+    "**/output/**": true,
+    "**/node_modules/**": true,
+    "**/.storybook/**": true,
+    "**/.github/**": true
+  }
 }
