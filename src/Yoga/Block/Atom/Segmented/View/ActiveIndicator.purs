@@ -6,6 +6,7 @@ import Control.MonadZero as MZ
 import Data.Traversable (traverse)
 import Data.TwoOrMore (TwoOrMore)
 import Data.TwoOrMore as TwoOrMore
+import Effect.Class.Console as Console
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object as Object
 import Framer.Motion (VariantLabel)
@@ -40,7 +41,7 @@ component =
         \(props ∷ Props) -> React.do
           maybeAnimationVariants /\ setVariants <- useState' Nothing
           variantIndex /\ modVariantIndex <- useState props.activeItemIndex
-          maybeDragX /\ setDragX <- useState' Nothing
+          maybeDragXRef <- useRef Nothing
           { scrollX, scrollY } <- useScrollPosition
           activeLeft <- useMotionValue 0.0
           activeWidth <- useMotionValue 0.0
@@ -50,14 +51,16 @@ component =
               unless (maybeAnimationVariants == Just styles) do
                 setVariants (Just styles)
             mempty
-          useLayoutEffect maybeDragX do
-            case maybeDragX, maybeAnimationVariants of
-              Just x, Just animationVariants -> do
-                let { left, width } = handleDrag { activeItemIndex: props.activeItemIndex, animationVariants, x }
-                activeLeft # MotionValue.set left
-                activeWidth # MotionValue.set width
-              _, _ -> mempty
-            mempty
+          let
+            setDragXRef new = do
+              writeRef maybeDragXRef new
+              maybeDragX <- readRef maybeDragXRef
+              case maybeDragX, maybeAnimationVariants of
+                Just x, Just animationVariants -> do
+                  let { left, width } = handleDrag { activeItemIndex: props.activeItemIndex, animationVariants, x }
+                  activeLeft # MotionValue.set left
+                  activeWidth # MotionValue.set width
+                _, _ -> mempty
           useEffect props.activeItemIndex do
             modVariantIndex (const props.activeItemIndex)
             mempty
@@ -84,63 +87,66 @@ component =
                   { className: "ry-active-segmented-element-wrapper"
                   , css: Style.activeElementWrapper
                   , children:
-                    [ Emotion.element Motion.div
-                        { css: Style.activeElement
-                        , layout: Motion.layout true
-                        , custom: Motion.customProp (({ childRefs: props.activeItemRefs, scrollX, scrollY }) ∷ Custom)
-                        , variants
-                        , className: "ry-active-segmented-element"
-                        , initial: Motion.initial $ indexToVariant props.activeItemIndex
-                        , drag: Motion.drag "x"
-                        , dragMomentum: Motion.dragMomentum false
-                        , animate: Motion.animate $ indexToVariant variantIndex
-                        , style:
-                          css
-                            { left: activeLeft
-                            , width: activeWidth
-                            }
-                        , whileTap: Motion.whileTap $ css { scaleY: 0.8, scaleX: 0.95, y: -1.0 }
-                        , onDragStart:
-                          Motion.onDragStart \_ pi -> do
-                            maybeBbox <- getBoundingBoxFromRef (TwoOrMore.head props.activeItemRefs)
-                            for_ maybeBbox \bbox ->
-                              setDragX (Just (pi.point.x - bbox.left))
-                        , onDrag:
-                          Motion.onDrag \_ pi -> do
-                            when (isJust maybeDragX) do
-                              maybeBbox <- getBoundingBoxFromRef (TwoOrMore.head props.activeItemRefs)
-                              for_ maybeBbox \bbox ->
-                                setDragX (Just (pi.point.x - bbox.left))
-                        , onDragEnd:
-                          Motion.onDragEnd \_ _ -> do
-                            let
-                              x = maybeDragX # fromMaybe' \_ -> unsafeCrashWith "no x"
-                              newIdx =
-                                findOverlapping
-                                  props.activeItemIndex
-                                  animationVariants
-                                  x
-                              newItem = fromMaybe'
-                                (\_ -> TwoOrMore.head props.buttonContents) 
-                                (props.buttonContents TwoOrMore.!! newIdx) 
-                              v =
-                                animationVariants TwoOrMore.!! newIdx
-                                  # fromMaybe' \_ -> unsafeCrashWith "omg"
-                            activeLeft # MotionValue.set v.left
-                            activeWidth # MotionValue.set v.width
-                            props.updateActiveItem newItem newIdx
-                            setDragX Nothing
-                        , dragElastic: Motion.dragElastic false
-                        , dragConstraints: Motion.dragConstraintsBoundingBox { left: 0, right: 0, top: 0, bottom: 0 }
-                        , transition:
-                          Motion.transition
-                            { type: "tween"
-                            , duration: if isJust maybeDragX then 0.0 else 0.167
-                            , ease: "easeOut"
-                            }
-                        , _aria: Object.fromHomogeneous { hidden: "true" }
-                        }
-                    ]
+                      [ Emotion.element Motion.div
+                          { css: Style.activeElement
+                          , layout: Motion.layout true
+                          , custom: Motion.customProp (({ childRefs: props.activeItemRefs, scrollX, scrollY }) ∷ Custom)
+                          , variants
+                          , className: "ry-active-segmented-element"
+                          , initial: Motion.initial $ indexToVariant props.activeItemIndex
+                          , drag: Motion.drag "x"
+                          , dragMomentum: Motion.dragMomentum false
+                          , animate: Motion.animate $ indexToVariant variantIndex
+                          , style:
+                              css
+                                { left: activeLeft
+                                , width: activeWidth
+                                }
+                          , whileTap: Motion.whileTap $ css { scaleY: 0.8, scaleX: 0.95, y: -1.0 }
+                          , onDragStart:
+                              Motion.onDragStart \_ pi -> do
+                                maybeBbox <- getBoundingBoxFromRef (TwoOrMore.head props.activeItemRefs)
+                                for_ maybeBbox \bbox ->
+                                  setDragXRef (Just (pi.point.x - bbox.left))
+                          , onDrag:
+                              Motion.onDrag \_ pi -> do
+                                Console.log "Marlene on the wall"
+                                maybeDragX <- readRef maybeDragXRef
+                                when (isJust maybeDragX) do
+                                  maybeBbox <- getBoundingBoxFromRef (TwoOrMore.head props.activeItemRefs)
+                                  for_ maybeBbox \bbox ->
+                                    setDragXRef (Just (pi.point.x - bbox.left))
+                          , onDragEnd:
+                              Motion.onDragEnd \_ _ -> do
+                                maybeDragX <- readRef maybeDragXRef
+                                let
+                                  x = maybeDragX # fromMaybe' \_ -> unsafeCrashWith "no x"
+                                  newIdx =
+                                    findOverlapping
+                                      props.activeItemIndex
+                                      animationVariants
+                                      x
+                                  newItem = fromMaybe'
+                                    (\_ -> TwoOrMore.head props.buttonContents)
+                                    (props.buttonContents TwoOrMore.!! newIdx)
+                                  v =
+                                    animationVariants TwoOrMore.!! newIdx
+                                      # fromMaybe' \_ -> unsafeCrashWith "omg"
+                                activeLeft # MotionValue.set v.left
+                                activeWidth # MotionValue.set v.width
+                                props.updateActiveItem newItem newIdx
+                                writeRef maybeDragXRef Nothing
+                          , dragElastic: Motion.dragElastic false
+                          , dragConstraints: Motion.dragConstraintsBoundingBox { left: 0, right: 0, top: 0, bottom: 0 }
+                          , transition:
+                              Motion.transition
+                                { type: "tween"
+                                , duration: if isJust (unsafePerformEffect (readRef maybeDragXRef)) then 0.0 else 0.167
+                                , ease: "easeOut"
+                                }
+                          , _aria: Object.fromHomogeneous { hidden: "true" }
+                          }
+                      ]
                   }
 
 getStyles ∷ TwoOrMore (Ref (Nullable Node)) -> Effect (TwoOrMore BBox)
@@ -177,12 +183,12 @@ findOverlapping activeIndex styles x =
     let tooFarRight = MZ.guard (x >= lst.left) $> TwoOrMore.length styles - 1
     TwoOrMore.findIndex inside styles <|> tooFarLeft <|> tooFarRight
 
-handleDrag ∷
-  { activeItemIndex ∷ Int
-  , animationVariants ∷ TwoOrMore BBox
-  , x ∷ Number
-  } ->
-  { left ∷ Number, width ∷ Number }
+handleDrag
+  ∷ { activeItemIndex ∷ Int
+    , animationVariants ∷ TwoOrMore BBox
+    , x ∷ Number
+    }
+  -> { left ∷ Number, width ∷ Number }
 handleDrag { x, activeItemIndex, animationVariants } = do
   let idx = findOverlapping activeItemIndex animationVariants x
   let av = animationVariants
@@ -223,8 +229,7 @@ handleDrag { x, activeItemIndex, animationVariants } = do
   let width = right - left
   if x < firstVariant.left then
     { left: firstVariant.left, width: firstVariant.width }
-  else
-    if x >= lastVariant.left + lastVariant.width then do
-      { left: lastVariant.left, width: lastVariant.width }
-    else do
-      { left, width }
+  else if x >= lastVariant.left + lastVariant.width then do
+    { left: lastVariant.left, width: lastVariant.width }
+  else do
+    { left, width }

@@ -1,4 +1,7 @@
 module.exports = {
-  stories: ['../output/**/*.Story/index.js'],
-  addons: []
-};
+  core: {
+    builder: "webpack5",
+  },
+  stories: ["../output/**/*.Story/index.js"],
+  addons: [],
+}

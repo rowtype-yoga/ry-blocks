@@ -1,6 +1,6 @@
-"use strict";
+"use strict"
 
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin")
 
 module.exports = {
   plugins: [
@@ -8,4 +8,4 @@ module.exports = {
     // `./dist` in our case
     new CleanWebpackPlugin(),
   ],
-};
+}
