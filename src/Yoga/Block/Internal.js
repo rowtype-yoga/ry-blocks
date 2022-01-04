@@ -1,4 +1,4 @@
-import { forwardRef, createRef } from "react"
+import { forwardRef, createRef as _createRef } from "react"
 
 export function mkForwardRefComponent(displayName) {
   return (renderFn) => {
@@ -30,7 +30,7 @@ export function pickDefinedFn(ref, ks, obj) {
   return copy
 }
 
-export const createRef = createRef
+export const createRef = _createRef
 
 export function unsafeMergeSecond(r1) {
   return (r2) => {
