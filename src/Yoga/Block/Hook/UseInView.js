@@ -1,3 +1,3 @@
-const reactIntersectionObserver = require("react-intersection-observer")
+import { useInView } from "react-intersection-observer"
 
-exports.useInViewImpl = reactIntersectionObserver.useInView
+export const useInViewImpl = useInView

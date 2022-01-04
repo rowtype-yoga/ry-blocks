@@ -1,23 +1,45 @@
-const dndKitCore = require('@dnd-kit/core')
-const dndKitSortable = require('@dnd-kit/sortable')
-const dndKitModifiers = require('@dnd-kit/modifiers')
-const dndKitUtilities = require('@dnd-kit/utilities')
-exports.dndContextImpl = dndKitCore.DndContext
-exports.closestCenter = dndKitCore.closestCenter
-exports.closestCorners = dndKitCore.closestCorners
-exports.sortableContextImpl = dndKitSortable.SortableContext
-exports.useSortableImpl = dndKitSortable.useSortable
-exports.arrayMoveImpl = dndKitSortable.arrayMove
-exports.restrictToHorizontalAxis = dndKitModifiers.restrictToHorizontalAxis
-exports.restrictToVerticalAxis = dndKitModifiers.restrictToVerticalAxis
-exports.restrictToParentElement = dndKitModifiers.restrictToParentElement
-exports.restrictToFirstScrollableAncestor =
-  dndKitModifiers.restrictToFirstScrollableAncestor
-exports.restrictToWindowEdges = dndKitModifiers.restrictToWindowEdges
-exports.cssToString = dndKitUtilities.CSS.Transform.toString
-exports.keyboardSensor = dndKitCore.KeyboardSensor
-exports.pointerSensor = dndKitCore.PointerSensor
-exports.useSensorImpl = dndKitCore.useSensor
-exports.useSensorsImpl = (args) => dndKitCore.useSensors.apply(args)
-exports.sortableKeyboardCoordinates = dndKitSortable.sortableKeyboardCoordinates
-exports.verticalListSortingStrategy = dndKitSortable.verticalListSortingStrategy
+import {
+  DndContext,
+  closestCenter,
+  closestCorners,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors
+} from "@dnd-kit/core"
+import {
+  SortableContext,
+  useSortable,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy
+} from "@dnd-kit/sortable"
+import {
+  restrictToHorizontalAxis,
+  restrictToVerticalAxis,
+  restrictToParentElement,
+  restrictToFirstScrollableAncestor,
+  restrictToWindowEdges
+} from "@dnd-kit/modifiers"
+import { CSS } from "@dnd-kit/utilities"
+export const dndContextImpl = DndContext
+export const closestCenter = closestCenter
+export const closestCorners = closestCorners
+export const sortableContextImpl = SortableContext
+export const useSortableImpl = useSortable
+export const arrayMoveImpl = arrayMove
+export const restrictToHorizontalAxis = restrictToHorizontalAxis
+export const restrictToVerticalAxis = restrictToVerticalAxis
+export const restrictToParentElement = restrictToParentElement
+export const restrictToFirstScrollableAncestor =
+  restrictToFirstScrollableAncestor
+export const restrictToWindowEdges = restrictToWindowEdges
+export const cssToString = CSS.Transform.toString
+export const keyboardSensor = KeyboardSensor
+export const pointerSensor = PointerSensor
+export const useSensorImpl = useSensor
+export function useSensorsImpl(args) {
+  return useSensors.apply(args)
+}
+export const sortableKeyboardCoordinates = sortableKeyboardCoordinates
+export const verticalListSortingStrategy = verticalListSortingStrategy

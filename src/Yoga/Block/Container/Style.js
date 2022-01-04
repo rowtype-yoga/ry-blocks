@@ -3,25 +3,35 @@
 // So we just pretend nothing every matches
 // And never invoke the listeners
 const stubMatchMedia = () => {
-    if (window.matchMedia) return
-    window.matchMedia = (name) =>
-    ({
-        matches: false,
-        addEventListener: () => { },
-        removeEventListener: () => { }
-    })
+  if (window.matchMedia) return
+  window.matchMedia = (name) => ({
+    matches: false,
+    addEventListener: () => {},
+    removeEventListener: () => {}
+  })
 }
 
-
-exports.getComputedStyleImpl = (el, window) => window.getComputedStyle(el)
-exports.getPropertyValueImpl = (propName, computedStyle) => computedStyle.getPropertyValue(propName)
-exports.getElementStyle = el => () => el.style
-exports.setStyleProperty = prop => value => style => () => style.setProperty(prop, value)
-exports.matchMedia = string => window => () => {
+export function getComputedStyleImpl(el, window) {
+  return window.getComputedStyle(el)
+}
+export function getPropertyValueImpl(propName, computedStyle) {
+  return computedStyle.getPropertyValue(propName)
+}
+export function getElementStyle(el) {
+  return () => el.style
+}
+export function setStyleProperty(prop) {
+  return (value) => (style) => () => style.setProperty(prop, value)
+}
+export function matchMedia(string) {
+  return (window) => () => {
     stubMatchMedia()
     return window.matchMedia(string)
+  }
 }
-exports.matches = matchMedia => () => {
+export function matches(matchMedia) {
+  return () => {
     stubMatchMedia()
     return matchMedia.matches
+  }
 }

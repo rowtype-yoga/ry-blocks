@@ -1,3 +1,3 @@
-const reactPopper = require('react-popper')
+import { usePopper } from "react-popper"
 
-exports.usePopperImpl = reactPopper.usePopper
+export const usePopperImpl = usePopper

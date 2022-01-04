@@ -1,2 +1,2 @@
-const downshift = require("downshift")
-exports.useSelectImpl = downshift.useSelect
+import { useSelect } from "downshift"
+export const useSelectImpl = useSelect
