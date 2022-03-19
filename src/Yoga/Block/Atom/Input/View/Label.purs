@@ -12,6 +12,7 @@ import React.Basic.DOM as R
 import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
 import Record.Extra (sequenceRecord)
+import Unsafe (unsafeCoerce)
 import Yoga.Block.Atom.Input.Style as Style
 
 type Props =
@@ -79,19 +80,18 @@ component =
                   Nothing ->
                     M.div
                       </*
-                        { className: "ry-input-label-small"
-                        , layout: M.layout true
-                        , layoutId: M.layoutId ("ry-input-label-" <> props.labelId)
-                        , css: Style.labelSmall props.background props.textColour
-                        , transition: M.transition { duration: 0.18, ease: "easeOut" }
-                        , _data:
-                            Object.fromHomogeneous
-                              { "has-focus": show props.isFocussed
-                              , "invalid": show props.isInvalid
-                              , "required": show props.isRequired
-                              }
-                        , initial: M.initial false
-                        }
+                        ( unsafeCoerce
+                            { className: "ry-input-label-small"
+                            , layout: M.layout true
+                            , layoutId: M.layoutId ("ry-input-label-" <> props.labelId)
+                            , css: Style.labelSmall props.background props.textColour
+                            , transition: M.transition { duration: 0.18, ease: "easeOut" }
+                            , "data-has-focus": props.isFocussed
+                            , "data-invalid": show props.isInvalid
+                            , "data-required": show props.isRequired
+                            , initial: M.initial false
+                            }
+                        )
                   Just { largeLeft, largeWidth } ->
                     M.div
                       </*
