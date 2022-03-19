@@ -19,7 +19,7 @@ import Web.HTML.HTMLInputElement as HTMLInputElement
 import Yoga.Prelude.View (null) as Nullable
 
 newtype UseTypingPlaceholders hooks = UseTypingPlaceholders
-  ( UseEffect Unit
+  ( UseEffect Unit -- (UnsafeRefEq NodeRef)
       ( UseRef (Maybe (Fiber Unit))
           (UseRef Boolean (UseRef Int (UseRef (Nullable Node) hooks)))
       )
@@ -42,7 +42,7 @@ useTypingPlaceholders defaultPlaceholder otherPlaceholders = coerceHook React.do
       inputElement ← HTMLInputElement.fromNode node # pure # MaybeT
       HTMLInputElement.value inputElement <#> pure # MaybeT
 
-  useEffectAlways do
+  useEffectOnce do
     let
       start = do
         fiber ← launchAff go
@@ -149,9 +149,13 @@ useTypingPlaceholders defaultPlaceholder otherPlaceholders = coerceHook React.do
     onFocusListener ← mkOnFocusListener
     onBlurListener ← mkOnBlurListener
     onInputListener ← mkOnInputListener
-    register (EventType "focus") onFocusListener
-    register (EventType "blur") onBlurListener
-    register (EventType "input") onInputListener
+    launchAff_ do
+      -- Avoid messing with React
+      delay (0.0 # Milliseconds)
+      liftEffect do
+        register (EventType "focus") onFocusListener
+        register (EventType "blur") onBlurListener
+        register (EventType "input") onInputListener
     setPlaceholder defaultPlaceholder
     pure do
       cancel "Killed fiber because component was unmounted"

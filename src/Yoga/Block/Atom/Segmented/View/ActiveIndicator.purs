@@ -110,7 +110,6 @@ component =
                                   setDragXRef (Just (pi.point.x - bbox.left))
                           , onDrag:
                               Motion.onDrag \_ pi -> do
-                                Console.log "Marlene on the wall"
                                 maybeDragX <- readRef maybeDragXRef
                                 when (isJust maybeDragX) do
                                   maybeBbox <- getBoundingBoxFromRef (TwoOrMore.head props.activeItemRefs)

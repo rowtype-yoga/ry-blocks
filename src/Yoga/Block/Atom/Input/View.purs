@@ -1,8 +1,10 @@
 module Yoga.Block.Atom.Input.View where
 
 import Yoga.Prelude.View
+
 import Data.String.NonEmpty (NonEmptyString)
 import Effect.Unsafe (unsafePerformEffect)
+import Foreign.NullOrUndefined (undefined)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Framer.Motion as M
@@ -11,6 +13,8 @@ import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
 import Record.Builder as RB
 import Type.Prelude (Proxy(..))
+import Unsafe.Coerce (unsafeCoerce)
+import Untagged.Union (uorToMaybe)
 import Web.HTML.HTMLInputElement as InputElement
 import Yoga.Block.Atom.Icon as Icon
 import Yoga.Block.Atom.Input.Style as Style
@@ -135,18 +139,18 @@ rawComponent =
       let
         inputProps ∷ { | PropsOptional }
         inputProps =
-          ( props
-              { onFocus = cast (composeHandler onFocus props.onFocus)
-              , onBlur = cast (composeHandler onBlur props.onBlur)
-              , onChange = cast (composeHandler onChange props.onChange)
-              , placeholder = maybePlaceholder # maybeToOp
-              , _aria =
-                  if props.label # opToMaybe # isJust then
-                    cast (aria # Object.insert "labelledby" labelId)
-                  else
-                    cast (aria)
-              } # deleteUndefineds
-          )
+          props
+            { onFocus = cast (composeHandler onFocus props.onFocus)
+            , onBlur = cast (composeHandler onBlur props.onBlur)
+            , onChange = cast (composeHandler onChange props.onChange)
+            , placeholder = maybePlaceholder # maybeToOp
+            , _aria =
+                if props.label # opToMaybe # isJust then
+                  cast (aria # Object.insert "labelledby" labelId)
+                else
+                  cast (aria)
+            }
+
         theInput =
           HTMLInput.componentOptional
             </>
