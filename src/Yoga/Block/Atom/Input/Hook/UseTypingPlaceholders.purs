@@ -9,9 +9,11 @@ import Data.String as String
 import Data.Traversable (for)
 import Effect.Aff (Fiber, Milliseconds(..), delay, killFiber, launchAff, launchAff_)
 import Effect.Aff as Aff
+import Effect.Class.Console as Console
 import Effect.Random (randomRange)
 import Partial.Unsafe (unsafeCrashWith)
 import React.Basic.Hooks as React
+import Unsafe.Reference (UnsafeRefEq(..))
 import Web.DOM.Node as Node
 import Web.Event.Event (EventType(..))
 import Web.Event.EventTarget (addEventListener, eventListener, removeEventListener)
@@ -42,9 +44,11 @@ useTypingPlaceholders defaultPlaceholder otherPlaceholders = coerceHook React.do
       inputElement ← HTMLInputElement.fromNode node # pure # MaybeT
       HTMLInputElement.value inputElement <#> pure # MaybeT
 
-  useEffectOnce do
+  useEffectAlways do
+    Console.log "Let's go"
     let
       start = do
+        Console.log "I'm starting!"
         fiber ← launchAff go
         writeRef fiberRef $ Just fiber
 
@@ -72,8 +76,8 @@ useTypingPlaceholders defaultPlaceholder otherPlaceholders = coerceHook React.do
           setPlaceholder defaultPlaceholder
           writeRef placeholderIndexRef 0
           writeRef isDeletingRef false
-          maybeInputValue ← getInputValue
-          when (maybeInputValue == Just "") start
+          inputValueʔ ← getInputValue
+          when (inputValueʔ == Just "") start
 
       mkOnBlurListener =
         eventListener \_ → do
@@ -158,4 +162,4 @@ useTypingPlaceholders defaultPlaceholder otherPlaceholders = coerceHook React.do
       unregister (EventType "focus") onFocusListener
       unregister (EventType "blur") onBlurListener
       unregister (EventType "input") onInputListener
-  pure $ inputRef
+  pure inputRef

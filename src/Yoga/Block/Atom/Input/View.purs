@@ -121,17 +121,16 @@ rawComponent =
         maybePlaceholder = do
           given <- props.placeholder # opToMaybe
           if isJust maybeLabelText && hasFocus then Just given else Nothing
-        onBlur =
-          handler preventDefault
-            ( const do
-                when hasFocus $ setHasFocus false
-                el <- getHTMLElementFromRef ref
-                let inputEl = InputElement.fromHTMLElement =<< el
-                for_ inputEl \ie -> do
-                  v <- InputElement.value ie
-                  setValue v
-            )
-        onFocus = handler preventDefault (const $ unless hasFocus $ setHasFocus true)
+
+        onBlur = handler_ do
+          when hasFocus $ setHasFocus false
+          el <- getHTMLElementFromRef ref
+          let inputEl = InputElement.fromHTMLElement =<< el
+          for_ inputEl \ie -> do
+            v <- InputElement.value ie
+            setValue v
+
+        onFocus = handler_ (unless hasFocus $ setHasFocus true)
         onChange = handler targetValue (setValue <<< fromMaybe "")
       let
         inputProps ∷ { | PropsOptional }

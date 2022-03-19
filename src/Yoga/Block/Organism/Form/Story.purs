@@ -1,6 +1,7 @@
 module Yoga.Block.Organism.Form.Story where
 
 import Prelude
+
 import Data.Lens.Record (prop)
 import Data.Maybe (Maybe(..))
 import Data.String.NonEmpty (NonEmptyString, nes)
@@ -17,26 +18,29 @@ import React.Basic.Hooks as React
 import Type.Prelude (Proxy(..))
 import Yoga ((/>), (</), (</>))
 import Yoga.Block as Block
+import Yoga.Block.Atom.Input.Hook.UseTypingPlaceholders (useTypingPlaceholders)
 import Yoga.Block.Atom.Input.Types as InputType
 import Yoga.Block.Container.Style as Styles
+import Yoga.Block.Internal (NodeRef)
 import Yoga.Block.Organism.Form (FormBuilder, Validated(..), formDefaults)
 import Yoga.Block.Organism.Form as Form
 import Yoga.Block.Organism.Form.Types (RequiredField(..))
 
-default ∷
-  { decorators ∷ Array (Effect JSX -> JSX)
-  , title ∷ String
-  }
+default
+  ∷ { decorators ∷ Array (Effect JSX -> JSX)
+    , title ∷ String
+    }
 default =
   { title: "Organism/Form"
   , decorators:
-    [ \storyFn ->
-        Block.container
-          </ {}
-          /> [ element E.global { styles: Styles.global }
-            , unsafePerformEffect storyFn
-            ]
-    ]
+      [ \storyFn ->
+          Block.container
+            </ {}
+            />
+              [ element E.global { styles: Styles.global }
+              , unsafePerformEffect storyFn
+              ]
+      ]
   }
 
 type User =
@@ -72,13 +76,15 @@ aForm = do
   where
   mkExample =
     reactComponent "FormExample" \_ -> React.do
+      inputRef ← useTypingPlaceholders "First name"
+        [ "Type in your given name", "WAAAAARUMÄ" ]
       _userDialog /\ setUserDialog <- useState' Nothing
       { setModified, reset: _reset, validated, form } <-
-        Form.useForm userForm
+        Form.useForm (userForm inputRef)
           { initialState: formDefaults
           , formProps:
-            { readOnly: false
-            }
+              { readOnly: false
+              }
           }
       pure
         $ fragment
@@ -87,10 +93,10 @@ aForm = do
                 -- on the form's submit button and `preventDefault` to keep the browser
                 -- from reloading the page on submission.
                 { onSubmit:
-                  handler preventDefault \_ -> case validated of
-                    Nothing -> do
-                      setModified
-                    Just { firstName, lastName } -> setUserDialog $ Just { firstName, lastName }
+                    handler preventDefault \_ -> case validated of
+                      Nothing -> do
+                        setModified
+                      Just { firstName, lastName } -> setUserDialog $ Just { firstName, lastName }
                 , style: R.css { alignSelf: "stretch" }
                 , children: [ form ]
                 }
@@ -123,13 +129,13 @@ aForm = do
               }
       in { nickname, age }
 
-    userForm ∷ ∀ props. FormBuilder { readOnly ∷ Boolean | props } User ValidUser
-    userForm = ado
+    userForm ∷ ∀ props. NodeRef -> FormBuilder { readOnly ∷ Boolean | props } User ValidUser
+    userForm inputRef = ado
       firstName <-
         Form.focus (prop (Proxy ∷ _ "firstName"))
           $ Form.validated (Form.nonEmpty' "You must have a first name")
           $ Form.inputBox (nes (Proxy ∷ _ "First Name")) Required
-              { placeholder: "First name" }
+              { id: "firstName", inputRef }
       lastName <-
         Form.focus (prop (Proxy ∷ _ "lastName"))
           $ Form.validated

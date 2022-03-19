@@ -31,7 +31,7 @@ type Props =
 component ∷ ReactComponent Props
 component =
   unsafePerformEffect
-    $ reactComponent "Input Label" \props@{ inputRef, parentRef } -> React.do
+    $ reactComponent "InputLabel" \props@{ inputRef, parentRef } -> React.do
         maybeOffsets /\ setOffsets <- useState' Nothing
         -- this is so complicated because we need to take scale into account
         useLayoutEffectAlways do
