@@ -12,7 +12,6 @@ import React.Basic.DOM as R
 import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
 import Record.Extra (sequenceRecord)
-import Record.Unsafe.Union (unsafeUnion)
 import Yoga.Block.Atom.Input.Style as Style
 
 type Props =
@@ -125,6 +124,3 @@ component =
                 , id: props.labelId
                 }
         pure result
-
-unsafeAddProps ∷ ∀ r s. { | r } → { | s } → { | r }
-unsafeAddProps = unsafeUnion

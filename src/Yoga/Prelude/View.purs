@@ -64,6 +64,7 @@ import Yoga.Block.Internal
   , unsafeDiv
   , unsafeEmotion
   , unsafeMergeSecond
+  , unsafeAddProps
   , unsafeUnMaybe
   , unsafeUnOptional
   , unsafeUnionDroppingUndefined
