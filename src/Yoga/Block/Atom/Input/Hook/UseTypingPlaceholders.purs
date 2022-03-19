@@ -9,11 +9,9 @@ import Data.String as String
 import Data.Traversable (for)
 import Effect.Aff (Fiber, Milliseconds(..), delay, killFiber, launchAff, launchAff_)
 import Effect.Aff as Aff
-import Effect.Class.Console as Console
 import Effect.Random (randomRange)
 import Partial.Unsafe (unsafeCrashWith)
 import React.Basic.Hooks as React
-import Unsafe.Reference (UnsafeRefEq(..))
 import Web.DOM.Node as Node
 import Web.Event.Event (EventType(..))
 import Web.Event.EventTarget (addEventListener, eventListener, removeEventListener)
@@ -45,10 +43,8 @@ useTypingPlaceholders defaultPlaceholder otherPlaceholders = coerceHook React.do
       HTMLInputElement.value inputElement <#> pure # MaybeT
 
   useEffectAlways do
-    Console.log "Let's go"
     let
       start = do
-        Console.log "I'm starting!"
         fiber ← launchAff go
         writeRef fiberRef $ Just fiber
 
