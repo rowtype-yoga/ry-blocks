@@ -20,14 +20,14 @@ type Id a = a
 
 newtype OptionalProp a = OptionalProp (UndefinedOr a)
 
-setOrDelete ∷
-  ∀ r a rNoA key.
-  IsSymbol key =>
-  Cons key a rNoA r =>
-  SProxy key ->
-  OptionalProp a ->
-  { | r } ->
-  { | r }
+setOrDelete
+  ∷ ∀ r a rNoA key
+   . IsSymbol key
+  => Cons key a rNoA r
+  => SProxy key
+  -> OptionalProp a
+  -> { | r }
+  -> { | r }
 setOrDelete key v = case opToMaybe v of
   Nothing -> unsafeDelete (reflectSymbol key)
   Just v' -> set key v'
@@ -41,8 +41,8 @@ asMaybe = asOptional >>> opToMaybe
 composeHandler ∷ EventHandler -> OptionalProp EventHandler -> EventHandler
 composeHandler handler propsHandler =
   mkEffectFn1 \a -> do
-    for_ (propsHandler # opToMaybe) $ flip runEffectFn1 a
     for_ (handler # asMaybe) $ flip runEffectFn1 a
+    for_ (propsHandler # opToMaybe) $ flip runEffectFn1 a
 
 unsafeUnOptional ∷ ∀ a. OptionalProp a -> a
 unsafeUnOptional = unsafeCoerce
