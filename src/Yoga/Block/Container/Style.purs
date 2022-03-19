@@ -96,7 +96,27 @@ setDarkOrLightMode desiredMode =
           LightMode → "light"
           DarkMode → "dark"
       # lift
-
+import Data.Lens.Record (prop)
+import Data.Maybe (Maybe(..))
+import Data.String.NonEmpty (NonEmptyString, nes)
+import Data.Tuple.Nested ((/\))
+import Effect (Effect)
+import Effect.Unsafe (unsafePerformEffect)
+import React.Basic (JSX, element, fragment)
+import React.Basic.DOM as R
+import React.Basic.DOM.Events (preventDefault)
+import React.Basic.Emotion as E
+import React.Basic.Events (handler)
+import React.Basic.Hooks (reactComponent, useState')
+import React.Basic.Hooks as React
+import Type.Prelude (Proxy(..))
+import Yoga ((/>), (</), (</>))
+import Yoga.Block as Block
+import Yoga.Block.Atom.Input.Types as InputType
+import Yoga.Block.Container.Style as Styles
+import Yoga.Block.Organism.Form (FormBuilder, Validated(..), formDefaults)
+import Yoga.Block.Organism.Form as Form
+import Yoga.Block.Organism.Form.Types (RequiredField(..))
 -- [TODO] Move out end
 --
 mkGlobal ∷ Maybe DarkOrLightMode → Style
