@@ -12,7 +12,7 @@ import React.Basic.DOM as R
 import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
 import Record.Extra (sequenceRecord)
-import Unsafe (unsafeCoerce)
+import Unsafe.Coerce (unsafeCoerce)
 import Yoga.Block.Atom.Input.Style as Style
 
 type Props =
