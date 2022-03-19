@@ -115,7 +115,7 @@ labelLarge { left, width } =
     , height: str "var(--s0)"
     , maxWidth: str $ i "calc(" width "px - 2ch)"
     , textOverflow: str "ellipsis"
-    , marginTop: str "calc(var(--s0) * 0.5)"
+    , marginTop: str "calc(var(--s0) * 0.5 - var(--s-4))"
     , marginLeft: str $ i left "px"
     , marginRight: var "--input-side-padding"
     , color: str colour.placeholderText
