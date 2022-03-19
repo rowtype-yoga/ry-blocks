@@ -1,14 +1,16 @@
 module Yoga.Block.Atom.Input.View.Container where
 
 import Yoga.Prelude.View
+
 import Data.Array as Array
 import Data.Interpolate (i)
-import Foreign.Object as Object
+import Foreign.NullOrUndefined (undefined)
 import Framer.Motion as M
 import Partial.Unsafe (unsafeCrashWith)
 import React.Basic.DOM (CSS, css)
 import React.Basic.Emotion (Style)
 import React.Basic.Hooks as React
+import Unsafe.Coerce (unsafeCoerce)
 import Yoga.Block.Atom.Input.Style as Style
 import Yoga.Block.Hook.UseResize (useResize)
 
@@ -48,25 +50,26 @@ rawContainer =
         containerVariantLabels = mkContainerVariantLabels containerVariants
         result =
           M.div
-            </* { variants: M.variants containerVariants
-              , initial: M.initial false
-              , animate:
-                M.animate
-                  if props.hasFocus then
-                    containerVariantLabels.focussed
-                  else
-                    containerVariantLabels.blurred
-              , className: "ry-input-container"
-              , key: show sizes.innerWidth -- redraw
-              , css: Style.inputContainer props
-              , _data:
-                props.isInvalid
-                  # foldMap \isInvalid ->
-                      Object.fromHomogeneous
-                        { "invalid": show isInvalid
-                        }
-              , ref
-              }
+            </*
+              ( { variants: M.variants containerVariants
+                , initial: M.initial false
+                , animate:
+                    M.animate
+                      if props.hasFocus then
+                        containerVariantLabels.focussed
+                      else
+                        containerVariantLabels.blurred
+                , className: "ry-input-container"
+                , key: show sizes.innerWidth -- redraw
+                , css: Style.inputContainer props
+                , ref
+                } `unsafeAddProps`
+                  { "data-invalid":
+                      props.isInvalid
+                        # opToMaybe
+                        # maybe (unsafeCoerce undefined) show
+                  }
+              )
             /> props.children
       pure result
 
@@ -133,31 +136,31 @@ mkPath { width, height } = do
   p ∷ Number -> Number -> Point
   p x y = { x, y }
 
-mkContainerVariantLabels ∷
-  { blurred ∷ CSS
-  , focussed ∷ CSS
-  } ->
-  { blurred ∷ M.VariantLabel
-  , focussed ∷ M.VariantLabel
-  }
+mkContainerVariantLabels
+  ∷ { blurred ∷ CSS
+    , focussed ∷ CSS
+    }
+  -> { blurred ∷ M.VariantLabel
+     , focussed ∷ M.VariantLabel
+     }
 mkContainerVariantLabels = M.makeVariantLabels
 
-mkContainerVariants ∷
-  { width ∷ Number, height ∷ Number } ->
-  { blurred ∷ CSS
-  , focussed ∷ CSS
-  }
+mkContainerVariants
+  ∷ { width ∷ Number, height ∷ Number }
+  -> { blurred ∷ CSS
+     , focussed ∷ CSS
+     }
 mkContainerVariants dimensions =
   { focussed:
-    css
-      { clipPath: clipPathFocussed
-      , transition: { duration: 0.6 }
-      }
+      css
+        { clipPath: clipPathFocussed
+        , transition: { duration: 0.6 }
+        }
   , blurred:
-    css
-      { clipPath:
-        drawPathUntil (Array.length path + 1) path
-      }
+      css
+        { clipPath:
+            drawPathUntil (Array.length path + 1) path
+        }
   }
   where
   path = mkPath dimensions

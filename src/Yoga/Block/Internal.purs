@@ -5,6 +5,7 @@ module Yoga.Block.Internal
   , unsafeEmotion
   , unsafeDiv
   , dangerous
+  , deleteUndefineds
   , DivProps
   , DivPropsF
   , DivPropsNoChildren
@@ -172,6 +173,8 @@ forwardedRefAsMaybe r = safelyWrapped # uorToMaybe >>= Nullable.toMaybe
   safelyWrapped = unsafeCoerce r
 
 foreign import unsafeUnionDroppingUndefined ∷ ∀ r1 r2 r3. Record r1 -> Record r2 -> Record r3
+
+foreign import deleteUndefineds ∷ ∀ r. Record r -> Record r
 
 foreign import unsafeMergeSecond ∷ ∀ r1 r2 r3. Record r1 -> Record r2 -> Record r3
 

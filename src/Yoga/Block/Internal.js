@@ -59,3 +59,10 @@ export function unsafeUnionDroppingUndefined(r1) {
     return copy
   }
 }
+
+export function deleteUndefineds(obj) {
+  Object.keys(obj).forEach((key) =>
+    obj[key] === undefined ? delete obj[key] : {}
+  )
+  return obj
+}

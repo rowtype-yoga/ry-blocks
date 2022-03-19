@@ -38,6 +38,7 @@ You can edit this file as you like.
   , "prelude"
   , "profunctor-lenses"
   , "psci-support"
+  , "random"
   , "react-basic"
   , "react-basic-dom"
   , "react-basic-emotion"
