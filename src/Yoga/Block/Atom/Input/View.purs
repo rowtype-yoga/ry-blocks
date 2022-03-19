@@ -59,7 +59,7 @@ mkLeftIcon icon =
 
 rawComponent ∷ ∀ p. ReactComponent (Record p)
 rawComponent =
-  mkForwardRefComponent "InputContainer" do
+  mkForwardRefComponent "YogaInput" do
     \(props ∷ { | PropsOptional }) propsRef -> React.do
       hasFocus /\ setHasFocus <- useState' false
       inputBackupRef ∷ NodeRef <- useRef null
@@ -136,17 +136,18 @@ rawComponent =
       let
         inputProps ∷ { | PropsOptional }
         inputProps =
-          props
-            { onFocus = cast (composeHandler onFocus props.onFocus)
-            , onBlur = cast (composeHandler onBlur props.onBlur)
-            , onChange = cast (composeHandler onChange props.onChange)
-            , placeholder = maybePlaceholder # maybeToOp
-            , _aria =
-                if props.label # opToMaybe # isJust then
-                  cast (aria # Object.insert "labelledby" labelId)
-                else
-                  cast (aria)
-            }
+          ( props
+              { onFocus = cast (composeHandler onFocus props.onFocus)
+              , onBlur = cast (composeHandler onBlur props.onBlur)
+              , onChange = cast (composeHandler onChange props.onChange)
+              , placeholder = maybePlaceholder # maybeToOp
+              , _aria =
+                  if props.label # opToMaybe # isJust then
+                    cast (aria # Object.insert "labelledby" labelId)
+                  else
+                    cast (aria)
+              } # deleteUndefineds
+          )
         theInput =
           HTMLInput.componentOptional
             </>
