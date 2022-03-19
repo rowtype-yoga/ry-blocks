@@ -78,46 +78,49 @@ component =
               # foldMap case _ of
                   Nothing ->
                     M.div
-                      </* { className: "ry-input-label-small"
+                      </*
+                        { className: "ry-input-label-small"
                         , layout: M.layout true
-                        , layoutId: M.layoutId "ry-input-label"
+                        , layoutId: M.layoutId ("ry-input-label-" <> props.labelId)
                         , css: Style.labelSmall props.background props.textColour
                         , transition: M.transition { duration: 0.18, ease: "easeOut" }
                         , _data:
-                          Object.fromHomogeneous
-                            { "has-focus": show props.isFocussed
-                            , "invalid": show props.isInvalid
-                            , "required": show props.isRequired
-                            }
+                            Object.fromHomogeneous
+                              { "has-focus": show props.isFocussed
+                              , "invalid": show props.isInvalid
+                              , "required": show props.isRequired
+                              }
                         , initial: M.initial false
                         }
                   Just { largeLeft, largeWidth } ->
                     M.div
-                      </* { className:
-                          if props.renderLargeLabel then
-                            "ry-input-label-large"
-                          else
-                            "ry-input-label-small"
+                      </*
+                        { className:
+                            if props.renderLargeLabel then
+                              "ry-input-label-large"
+                            else
+                              "ry-input-label-small"
                         , layout: M.layout true
-                        , layoutId: M.layoutId "ry-input-label"
+                        , layoutId: M.layoutId ("ry-input-label-" <> props.labelId)
                         , css:
-                          if props.renderLargeLabel then
-                            Style.labelLarge { left: largeLeft, width: largeWidth }
-                          else
-                            Style.labelSmall props.background props.textColour
+                            if props.renderLargeLabel then
+                              Style.labelLarge { left: largeLeft, width: largeWidth }
+                            else
+                              Style.labelSmall props.background props.textColour
                         , transition: M.transition { duration: 0.18, ease: "easeOut" }
                         , _data:
-                          Object.fromHomogeneous
-                            { "has-focus": show props.isFocussed
-                            , "invalid": show props.isInvalid
-                            , "required": show props.isRequired
-                            }
+                            Object.fromHomogeneous
+                              { "has-focus": show props.isFocussed
+                              , "invalid": show props.isInvalid
+                              , "required": show props.isRequired
+                              }
                         , initial: M.initial false
                         }
           labelSpan =
             M.span
-              </ { layout: M.layout true
-                , layoutId: M.layoutId "ry-input-label-text"
+              </
+                { layout: M.layout true
+                , layoutId: M.layoutId ("ry-input-label-text-" <> props.labelId)
                 , htmlFor: props.inputId
                 , style: css { pointerEvents: "none" }
                 , id: props.labelId
