@@ -392,7 +392,7 @@ indent label required editor =
               $ Node
                   { label: R.text label
                   , key: Nothing
-                  , required: required
+                  , required
                   , validationError: Nothing
                   , children: edit k
                   }

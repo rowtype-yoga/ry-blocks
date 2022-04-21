@@ -64,16 +64,16 @@ import React.Basic.Emotion as E
 import React.Basic.Events (EventHandler)
 import React.Basic.Hooks (JSX, ReactComponent, Ref, Render, readRefMaybe)
 import Record.Extra (class Keys, keys)
-import Type.Data.Row (RProxy(..))
+import Type.Proxy (Proxy(..))
 import Unsafe.Coerce (unsafeCoerce)
 import Untagged.Union (UndefinedOr, uorToMaybe)
 import Web.DOM (Element, Node)
-import Web.DOM.Element (scrollHeight, scrollWidth)
+import Web.DOM.Element (scrollHeight, scrollWidth, DOMRect, getBoundingClientRect)
 import Web.DOM.Element as Element
 import Web.DOM.NonElementParentNode (getElementById)
 import Web.HTML (window)
 import Web.HTML.HTMLDocument as HTMLDocument
-import Web.HTML.HTMLElement (DOMRect, HTMLElement, focus, getBoundingClientRect, offsetHeight, offsetWidth)
+import Web.HTML.HTMLElement (HTMLElement, focus, offsetHeight, offsetWidth)
 import Web.HTML.HTMLElement as HTMLElement
 import Web.HTML.Window (document)
 import Yoga.Block.Internal.CSS (_0)
@@ -113,8 +113,8 @@ findElementByIdInDocument id = do
 
 getBoundingBoxFromRef ∷ NodeRef -> Effect (Maybe DOMRect)
 getBoundingBoxFromRef itemRef = do
-  htmlElem <- getHTMLElementFromRef itemRef
-  for htmlElem getBoundingClientRect
+  elem <- getElementFromRef itemRef
+  for elem getBoundingClientRect
 
 getOffsetWidthFromRef ∷ NodeRef -> Effect (Maybe Number)
 getOffsetWidthFromRef itemRef = do
@@ -221,7 +221,7 @@ pickDefined
   -> { ref ∷ Ref (Nullable Node) | b }
 pickDefined ref = runFn3 pickDefinedFn ref ks
   where
-  ks = Array.fromFoldable $ keys (RProxy ∷ RProxy b)
+  ks = Array.fromFoldable $ keys (Proxy ∷ Proxy b)
 
 emotionInput_
   ∷ ∀ props props_

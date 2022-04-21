@@ -28,7 +28,6 @@ You can edit this file as you like.
   , "interpolate"
   , "lists"
   , "literals"
-  , "math"
   , "maybe"
   , "newtype"
   , "nullable"
