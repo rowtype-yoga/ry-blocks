@@ -773,7 +773,7 @@ sortableArray { label, addLabel, defaultValue, editor } =
                 }
             attrs =
               RB.build
-                -- RB.disjointUnion listeners >>> 
+                -- RB.disjointUnion listeners >>>
                 ( RB.disjointUnion attributes
                 )
                 { ref: setNodeRef
@@ -848,26 +848,9 @@ sortableArray { label, addLabel, defaultValue, editor } =
               }
             menuIcon = Block.icon </> { icon: Icons.ellipsis, size: E.str "var(--s1)", colour: E.str colour.text }
             menuButton = if props.readOnly then empty else R.div' </* menuButtonAttrs /> [ menuIcon ]
-            menuPopover =
-              if showMenu then
-                Block.popover
-                  </
-                    { referenceElement
-                    -- , placement: Placement.Placement Placement.Bottom (Just Placement.End)
-                    , renderArrow: true
-                    }
-                  />
-                    [ Block.box {}
-                        [ R.text "Sure?"
-                        , deleteButton
-                        ]
-                    ]
-              else
-                mempty
           pure $ R.li' </* attrs
             />
               [ dragHandle
               , menuButton
-              , menuPopover
               , props.kid
               ]
