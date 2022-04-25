@@ -5,7 +5,6 @@ You can edit this file as you like.
 { name = "ry-blocks"
 , dependencies =
   [ "aff"
-  , "aff-promise"
   , "arrays"
   , "colors"
   , "console"
@@ -26,7 +25,6 @@ You can edit this file as you like.
   , "heterogeneous"
   , "integers"
   , "interpolate"
-  , "lists"
   , "literals"
   , "maybe"
   , "newtype"
@@ -36,7 +34,6 @@ You can edit this file as you like.
   , "partial"
   , "prelude"
   , "profunctor-lenses"
-  , "psci-support"
   , "random"
   , "react-basic"
   , "react-basic-dom"
@@ -45,8 +42,6 @@ You can edit this file as you like.
   , "react-testing-library"
   , "record"
   , "record-extra"
-  , "routing"
-  , "routing-duplex"
   , "spec"
   , "spec-discovery"
   , "strings"
@@ -61,7 +56,6 @@ You can edit this file as you like.
   , "web-dom"
   , "web-events"
   , "web-html"
-  , "web-uievents"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]

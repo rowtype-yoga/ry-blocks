@@ -35,7 +35,6 @@ import Data.Newtype (un)
 import Data.String as String
 import Data.String.NonEmpty (NonEmptyString)
 import Data.Traversable (traverse)
-import Effect.Uncurried (mkEffectFn1)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object (Object)
 import Foreign.Object as Object
@@ -761,7 +760,6 @@ sortableArray { label, addLabel, defaultValue, editor } =
           } <-
             Dnd.useSortable { id: props.id }
           showMenu /\ setShowMenu <- Hooks.useState' false
-          referenceElement /\ setReferenceElement <- Hooks.useState' nullRef
           let
             style =
               R.css
@@ -843,7 +841,6 @@ sortableArray { label, addLabel, defaultValue, editor } =
                       { right: E.str "calc(var(--s-1) + var(--s-1) + var(--s2) + var(--s-3))"
                       }
               , onClick: handler_ (setShowMenu (not showMenu))
-              , ref: unsafeCoerce $ mkEffectFn1 setReferenceElement
               }
             menuIcon = Block.icon </> { icon: Icons.ellipsis, size: E.str "var(--s1)", colour: E.str colour.text }
             menuButton = if props.readOnly then empty else R.div' </* menuButtonAttrs /> [ menuIcon ]

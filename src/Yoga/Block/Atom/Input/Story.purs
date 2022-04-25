@@ -128,12 +128,7 @@ input = do
               $ Input.component
                   </>
                     { type: if hidePassword then HTMLInput.Password else HTMLInput.Text
-                    , trailing:
-                        Block.tooltip
-                          </>
-                            { target: passwordIcon </> { hidePassword, modifyHidePassword }
-                            , theTip: R.text if hidePassword then "Show Password" else "Hide Password"
-                            }
+                    , trailing: passwordIcon </> { hidePassword, modifyHidePassword }
                     , value: password
                     , onChange: handler targetValue (traverse_ setPassword)
                     , label: nes (Proxy ∷ _ "Password")
