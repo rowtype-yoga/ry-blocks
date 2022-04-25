@@ -421,8 +421,8 @@ in  upstream
     }
   with uuid =
     { dependencies = [ "effect", "maybe", "foreign-generic", "console", "spec" ]
-    , repo = "https://github.com/spicydonuts/purescript-uuid.git"
-    , version = "v8.0.0"
+    , repo = "https://github.com/i-am-the-slime/purescript-uuid.git"
+    , version = "patch-2"
     }
   with react-basic-hooks =
     { dependencies =
