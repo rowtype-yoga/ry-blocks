@@ -10,7 +10,6 @@ import Yoga.Block.Atom.Popover as Popover
 import Yoga.Block.Atom.Range as Range
 import Yoga.Block.Atom.Segmented as Segmented
 import Yoga.Block.Atom.Toggle as Toggle
-import Yoga.Block.Atom.Tooltip as Tooltip
 import Yoga.Block.Container as Container
 import Yoga.Block.Layout.Box as Box
 import Yoga.Block.Layout.Centre as Centre
@@ -128,9 +127,6 @@ switcher = Switcher.component
 
 toggle ∷ ∀ p q. Union p q Toggle.Props ⇒ ReactComponent { | p }
 toggle = Toggle.component
-
-tooltip ∷ ∀ p q. Union p q Tooltip.Props ⇒ ReactComponent { | Tooltip.MandatoryProps p }
-tooltip = Tooltip.component
 
 readMore ∷ ∀ p q. Union p q ReadMore.Props ⇒ ReactComponent (Record p)
 readMore = ReadMore.component
