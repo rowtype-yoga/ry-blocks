@@ -99,10 +99,11 @@ in  upstream
 -------------------------------
 -}
 let upstream =
-       https://github.com/purescript/package-sets/releases/download/psc-0.15.0-20220516/packages.dhall
-        sha256:b0bf932de16a10b7d69c6bbbb31ec9ca575237c43a999fa32e59e35eb8c024a1
+      https://github.com/purescript/package-sets/releases/download/psc-0.15.2-20220531/packages.dhall
+        sha256:278d3608439187e51136251ebf12fabda62d41ceb4bec9769312a08b56f853e3
 
 in  upstream
+  with either.version = "v6.0.0"
   with framer-motion =
     { version = "es-modules"
     , repo = "https://github.com/i-am-the-slime/purescript-framer-motion.git"
@@ -518,7 +519,7 @@ in  upstream
     , dependencies = [ "react-basic", "react-basic-hooks", "react-basic-dom" ]
     , repo =
         "https://github.com/i-am-the-slime/purescript-react-testing-library.git"
-    , version = "main"
+    , version = "v4.0.1"
     }
   with record-extra =
     { repo =

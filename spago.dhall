@@ -10,7 +10,6 @@ You can edit this file as you like.
   , "console"
   , "control"
   , "datetime"
-  , "debug"
   , "effect"
   , "either"
   , "enums"

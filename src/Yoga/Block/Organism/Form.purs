@@ -820,18 +820,6 @@ sortableArray { label, addLabel, defaultValue, editor } =
                 }
             dragIcon = Block.icon </> { icon: Icons.draggableIndicator, size: E.str "var(--s1)", colour: E.str colour.text }
             dragHandle = R.div' </* dragHandleAttrs /> [ dragIcon ]
-            -- Delete
-            deleteButtonAttrs =
-              { className: "ry-draggable-array-delete-button"
-              , css:
-                  circleStyle
-                    <> E.css
-                      { right: E.str "calc(var(--s-1) + var(--s-1) + var(--s2) + var(--s-3))"
-                      }
-              , onClick: handler preventDefault (const props.delete)
-              }
-            deleteIcon = Block.icon </> { icon: Icons.bin, size: E.str "var(--s1)", colour: E.str colour.invalid }
-            deleteButton = if props.readOnly then empty else R.div' </* deleteButtonAttrs /> [ deleteIcon ]
             -- Menu
             menuButtonAttrs =
               { className: "ry-draggable-array-delete-button"

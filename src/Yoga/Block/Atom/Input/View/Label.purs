@@ -5,7 +5,6 @@ import Data.String.NonEmpty (NonEmptyString)
 import Data.String.NonEmpty as NonEmptyString
 import Effect.Class.Console (warn)
 import Effect.Unsafe (unsafePerformEffect)
-import Foreign.Object as Object
 import Framer.Motion as M
 import React.Basic.DOM (css)
 import React.Basic.DOM as R

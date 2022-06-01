@@ -271,7 +271,7 @@ defaultColours =
       , textInvertedPaler2: lightBg # darken 0.2
       , textInvertedPaler3: lightBg # darken 0.3
       , textInvertedPaler4: lightBg # darken 0.4
-      , boxShadow
+      , boxShadow: boxShadowLight
       }
   , dark:
       { background: darkBg
@@ -386,7 +386,7 @@ defaultColours =
 
   textDark = Color.rgb 240 245 250
 
-  boxShadow = Color.rgba 0 0 0 0.2
+  boxShadowLight = Color.rgba 0 0 0 0.2
 
   boxShadowDark = Color.rgba 0 0 0 0.6
 

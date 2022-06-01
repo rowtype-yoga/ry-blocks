@@ -28,7 +28,7 @@ drawTree t = tailRec go { level: 0, drawn: (head t) <> "\n", current: (tail t) }
   where
   go ∷ { current ∷ Forest String, drawn ∷ String, level ∷ Int } -> Step { current ∷ Forest String, drawn ∷ String, level ∷ Int } String
   go x = case x { current = uncons x.current } of
-    { level: l, drawn: s, current: Nothing } -> Done s
+    { drawn: s, current: Nothing } -> Done s
     { level: l, drawn: s, current: Just { head: c, tail: cs } } ->
       let
         drawn = (power "       " l) <> "|----> " <> (head c) <> "\n"
@@ -51,7 +51,7 @@ scanTree f b n =
   where
   go ∷ { final ∷ Forest b, current ∷ Forest a, b ∷ b } -> Step { final ∷ Forest b, current ∷ Forest a, b ∷ b } (Forest b)
   go x = case x { current = uncons x.current } of
-    { b: b', current: Nothing, final } -> Done final
+    { current: Nothing, final } -> Done final
     { b: b', current: Just { head: c, tail: cs }, final } ->
       let
         fb' = f (head c) b'
@@ -69,7 +69,7 @@ scanTreeAccum f b n =
   where
   go ∷ { final ∷ Forest c, current ∷ Forest a, b ∷ b } -> Step { final ∷ Forest c, current ∷ Forest a, b ∷ b } (Forest c)
   go x = case (x { current = uncons x.current }) of
-    { b: b', current: Nothing, final } -> Done final
+    { current: Nothing, final } -> Done final
     { b: b', current: Just { head: c, tail: cs }, final } ->
       let
         fb' = f (head c) b'

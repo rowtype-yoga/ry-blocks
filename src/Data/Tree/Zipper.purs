@@ -63,7 +63,8 @@ first l@(Loc r) = case uncons r.before of
   Nothing -> l
   Just { head: c, tail: cs } ->
     Loc
-      $ { node: c
+      $
+        { node: c
         , before: []
         , after: (reverse cs) <> r.after
         , parents: r.parents
@@ -75,7 +76,8 @@ last l@(Loc r) = case uncons (reverse r.after) of
   Nothing -> l
   Just { head: c, tail: cs } ->
     Loc
-      $ { node: c
+      $
+        { node: c
         , before: cs <> r.before
         , after: []
         , parents: r.parents
@@ -119,13 +121,13 @@ down = firstChild
 
 -- | Move the cursor to the last child of the current `Node`.
 lastChild ∷ ∀ a. Loc a -> Maybe (Loc a)
-lastChild p@(Loc r) = last <$> down p
+lastChild p = last <$> down p
 
 -- | Move the cursor to a specific sibling by it's index.
 siblingAt ∷ ∀ a. Int -> Loc a -> Maybe (Loc a)
 siblingAt i l@(Loc r) = case up l of
   Nothing -> Nothing
-  Just p@(Loc r') -> case (children p) !! i of
+  Just p -> case (children p) !! i of
     Nothing -> Nothing
     Just c ->
       let
@@ -240,7 +242,7 @@ delete l@(Loc r) = case uncons r.after of
         }
     Nothing -> case uncons r.parents of
       Nothing -> l
-      Just { head: c, tail: cs } ->
+      Just { head: c } ->
         Loc
           { node: mkTree (value c) []
           , before: before c
