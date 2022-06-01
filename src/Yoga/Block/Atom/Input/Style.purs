@@ -109,13 +109,13 @@ labelSmallFocusBackground =
 labelLarge ∷ { left ∷ Number, width ∷ Number } -> Style
 labelLarge { left, width } =
   css
-    { fontSize: str "calc(var(--s0) * 0.85)"
+    { fontSize: str "var(--s0)"
     , padding: _0
     , whiteSpace: nowrap -- force on one line
-    , height: str "calc(var(--s0))"
+    , height: str "var(--s0)"
     , maxWidth: str $ i "calc(" width "px - 2ch)"
     , textOverflow: str "ellipsis"
-    , marginTop: str "calc(var(--s-1) + var(--s-5))"
+    , marginTop: str "calc(var(--s0) * 0.5 - var(--s-4))"
     , marginLeft: str $ i left "px"
     , marginRight: var "--input-side-padding"
     , color: str colour.placeholderText

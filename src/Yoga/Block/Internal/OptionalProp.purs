@@ -1,16 +1,18 @@
 module Yoga.Block.Internal.OptionalProp where
 
 import Prelude
+
 import Control.Alt (class Alt, (<|>))
 import Data.Foldable (class Foldable, foldMap, foldl, foldr, for_)
 import Data.Maybe (Maybe(..), maybe)
 import Data.Newtype (class Newtype)
-import Data.Symbol (class IsSymbol, SProxy, reflectSymbol)
+import Data.Symbol (class IsSymbol, reflectSymbol)
 import Effect.Uncurried (mkEffectFn1, runEffectFn1)
 import Prim.Row (class Cons)
 import React.Basic.Events (EventHandler)
 import Record (set)
 import Record.Unsafe (unsafeDelete)
+import Type.Proxy (Proxy(..))
 import Unsafe.Coerce (unsafeCoerce)
 import Untagged.Castable (class Castable, cast)
 import Untagged.Union (UndefinedOr, defined, fromUndefinedOr, maybeToUor, uorToMaybe)
@@ -20,14 +22,14 @@ type Id a = a
 
 newtype OptionalProp a = OptionalProp (UndefinedOr a)
 
-setOrDelete ∷
-  ∀ r a rNoA key.
-  IsSymbol key =>
-  Cons key a rNoA r =>
-  SProxy key ->
-  OptionalProp a ->
-  { | r } ->
-  { | r }
+setOrDelete
+  ∷ ∀ r a rNoA key
+   . IsSymbol key
+  => Cons key a rNoA r
+  => Proxy key
+  -> OptionalProp a
+  -> { | r }
+  -> { | r }
 setOrDelete key v = case opToMaybe v of
   Nothing -> unsafeDelete (reflectSymbol key)
   Just v' -> set key v'
@@ -41,8 +43,8 @@ asMaybe = asOptional >>> opToMaybe
 composeHandler ∷ EventHandler -> OptionalProp EventHandler -> EventHandler
 composeHandler handler propsHandler =
   mkEffectFn1 \a -> do
-    for_ (propsHandler # opToMaybe) $ flip runEffectFn1 a
     for_ (handler # asMaybe) $ flip runEffectFn1 a
+    for_ (propsHandler # opToMaybe) $ flip runEffectFn1 a
 
 unsafeUnOptional ∷ ∀ a. OptionalProp a -> a
 unsafeUnOptional = unsafeCoerce

@@ -1,25 +1,29 @@
 const stateChangeTypes = require("downshift").useSelect.stateChangeTypes
 
-exports.menuKeyDownArrowDown = stateChangeTypes.MenuKeyDownArrowDown
-exports.menuKeyDownArrowUp = stateChangeTypes.MenuKeyDownArrowUp
-exports.menuKeyDownEscape = stateChangeTypes.MenuKeyDownEscape
-exports.menuKeyDownHome = stateChangeTypes.MenuKeyDownHome
-exports.menuKeyDownEnd = stateChangeTypes.MenuKeyDownEnd
-exports.menuKeyDownEnter = stateChangeTypes.MenuKeyDownEnter
-exports.menuKeyDownSpaceButton = stateChangeTypes.MenuKeyDownSpaceButton
-exports.menuKeyDownCharacter = stateChangeTypes.MenuKeyDownCharacter
-exports.menuBlur = stateChangeTypes.MenuBlur
-exports.menuMouseLeave = stateChangeTypes.MenuMouseLeave
-exports.itemMouseMove = stateChangeTypes.ItemMouseMove
-exports.itemClick = stateChangeTypes.ItemClick
-exports.toggleButtonClick = stateChangeTypes.ToggleButtonClick
-exports.toggleButtonKeyDownCharacter = stateChangeTypes.ToggleButtonKeyDownCharacter
-exports.toggleButtonKeyDownArrowDown = stateChangeTypes.ToggleButtonKeyDownArrowDown
-exports.toggleButtonKeyDownArrowUp = stateChangeTypes.ToggleButtonKeyDownArrowUp
-exports.functionToggleMenu = stateChangeTypes.FunctionToggleMenu
-exports.functionOpenMenu = stateChangeTypes.FunctionOpenMenu
-exports.functionCloseMenu = stateChangeTypes.FunctionCloseMenu
-exports.functionSetHighlightedIndex = stateChangeTypes.FunctionSetHighlightedIndex
-exports.functionSelectItem = stateChangeTypes.FunctionSelectItem
-exports.functionSetInputValue = stateChangeTypes.FunctionSetInputValue
-exports.functionReset = stateChangeTypes.FunctionReset
+export const menuKeyDownArrowDown = stateChangeTypes.MenuKeyDownArrowDown
+export const menuKeyDownArrowUp = stateChangeTypes.MenuKeyDownArrowUp
+export const menuKeyDownEscape = stateChangeTypes.MenuKeyDownEscape
+export const menuKeyDownHome = stateChangeTypes.MenuKeyDownHome
+export const menuKeyDownEnd = stateChangeTypes.MenuKeyDownEnd
+export const menuKeyDownEnter = stateChangeTypes.MenuKeyDownEnter
+export const menuKeyDownSpaceButton = stateChangeTypes.MenuKeyDownSpaceButton
+export const menuKeyDownCharacter = stateChangeTypes.MenuKeyDownCharacter
+export const menuBlur = stateChangeTypes.MenuBlur
+export const menuMouseLeave = stateChangeTypes.MenuMouseLeave
+export const itemMouseMove = stateChangeTypes.ItemMouseMove
+export const itemClick = stateChangeTypes.ItemClick
+export const toggleButtonClick = stateChangeTypes.ToggleButtonClick
+export const toggleButtonKeyDownCharacter =
+  stateChangeTypes.ToggleButtonKeyDownCharacter
+export const toggleButtonKeyDownArrowDown =
+  stateChangeTypes.ToggleButtonKeyDownArrowDown
+export const toggleButtonKeyDownArrowUp =
+  stateChangeTypes.ToggleButtonKeyDownArrowUp
+export const functionToggleMenu = stateChangeTypes.FunctionToggleMenu
+export const functionOpenMenu = stateChangeTypes.FunctionOpenMenu
+export const functionCloseMenu = stateChangeTypes.FunctionCloseMenu
+export const functionSetHighlightedIndex =
+  stateChangeTypes.FunctionSetHighlightedIndex
+export const functionSelectItem = stateChangeTypes.FunctionSelectItem
+export const functionSetInputValue = stateChangeTypes.FunctionSetInputValue
+export const functionReset = stateChangeTypes.FunctionReset

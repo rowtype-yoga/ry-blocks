@@ -31,7 +31,7 @@ type Props =
 component ∷ ReactComponent Props
 component =
   unsafePerformEffect
-    $ reactComponent "Input Label" \props@{ inputRef, parentRef } -> React.do
+    $ reactComponent "InputLabel" \props@{ inputRef, parentRef } -> React.do
         maybeOffsets /\ setOffsets <- useState' Nothing
         -- this is so complicated because we need to take scale into account
         useLayoutEffectAlways do
@@ -78,46 +78,47 @@ component =
               # foldMap case _ of
                   Nothing ->
                     M.div
-                      </* { className: "ry-input-label-small"
-                        , layout: M.layout true
-                        , layoutId: M.layoutId "ry-input-label"
-                        , css: Style.labelSmall props.background props.textColour
-                        , transition: M.transition { duration: 0.18, ease: "easeOut" }
-                        , _data:
-                          Object.fromHomogeneous
-                            { "has-focus": show props.isFocussed
-                            , "invalid": show props.isInvalid
-                            , "required": show props.isRequired
+                      </*
+                        ( { className: "ry-input-label-small"
+                          , layout: M.layout true
+                          , layoutId: M.layoutId ("ry-input-label-" <> props.labelId)
+                          , css: Style.labelSmall props.background props.textColour
+                          , transition: M.transition { duration: 0.18, ease: "easeOut" }
+                          , initial: M.initial false
+                          } `unsafeAddProps`
+                            { "data-has-focus": props.isFocussed
+                            , "data-invalid": show props.isInvalid
+                            , "data-required": show props.isRequired
                             }
-                        , initial: M.initial false
-                        }
+                        )
                   Just { largeLeft, largeWidth } ->
                     M.div
-                      </* { className:
-                          if props.renderLargeLabel then
-                            "ry-input-label-large"
-                          else
-                            "ry-input-label-small"
-                        , layout: M.layout true
-                        , layoutId: M.layoutId "ry-input-label"
-                        , css:
-                          if props.renderLargeLabel then
-                            Style.labelLarge { left: largeLeft, width: largeWidth }
-                          else
-                            Style.labelSmall props.background props.textColour
-                        , transition: M.transition { duration: 0.18, ease: "easeOut" }
-                        , _data:
-                          Object.fromHomogeneous
-                            { "has-focus": show props.isFocussed
-                            , "invalid": show props.isInvalid
-                            , "required": show props.isRequired
+                      </*
+                        ( { className:
+                              if props.renderLargeLabel then
+                                "ry-input-label-large"
+                              else
+                                "ry-input-label-small"
+                          , layout: M.layout true
+                          , layoutId: M.layoutId ("ry-input-label-" <> props.labelId)
+                          , css:
+                              if props.renderLargeLabel then
+                                Style.labelLarge { left: largeLeft, width: largeWidth }
+                              else
+                                Style.labelSmall props.background props.textColour
+                          , transition: M.transition { duration: 0.18, ease: "easeOut" }
+                          , initial: M.initial false
+                          } `unsafeAddProps`
+                            { "data-has-focus": props.isFocussed
+                            , "data-invalid": show props.isInvalid
+                            , "data-required": show props.isRequired
                             }
-                        , initial: M.initial false
-                        }
+                        )
           labelSpan =
             M.span
-              </ { layout: M.layout true
-                , layoutId: M.layoutId "ry-input-label-text"
+              </
+                { layout: M.layout true
+                , layoutId: M.layoutId ("ry-input-label-text-" <> props.labelId)
                 , htmlFor: props.inputId
                 , style: css { pointerEvents: "none" }
                 , id: props.labelId

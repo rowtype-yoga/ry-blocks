@@ -1,16 +1,17 @@
 module Yoga.Block.Hook.UseResize where
 
 import Prelude
+
 import Data.Foldable (for_)
 import Data.Int (toNumber)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
+import Data.Ord (abs)
 import Data.Time.Duration (class Duration)
 import Data.Time.Duration as Milliseconds
 import Effect (Effect)
 import Effect.Aff (Aff, Fiber, delay, error, killFiber, launchAff, launchAff_)
 import Effect.Class (liftEffect)
-import Math as Math
 import React.Basic.Hooks (Hook, UseLayoutEffect, UseState, coerceHook, useLayoutEffect, useLayoutEffectOnce, (/\))
 import React.Basic.Hooks as React
 import Web.Event.Event (EventType(..))
@@ -65,12 +66,12 @@ newtype UseOnResize hooks = UseOnResize
 
 derive instance ntUseOnResize ∷ Newtype (UseOnResize hooks) _
 
-useOnResize ∷
-  ∀ d.
-  Duration d =>
-  d ->
-  ({ innerWidth ∷ Number, innerHeight ∷ Number, deltaWidth ∷ Number, deltaHeight ∷ Number } -> Effect Unit) ->
-  Hook UseOnResize Unit
+useOnResize
+  ∷ ∀ d
+   . Duration d
+  => d
+  -> ({ innerWidth ∷ Number, innerHeight ∷ Number, deltaWidth ∷ Number, deltaHeight ∷ Number } -> Effect Unit)
+  -> Hook UseOnResize Unit
 useOnResize debounceBy callback =
   coerceHook React.do
     mbFiber /\ setFiber <- React.useState' Nothing
@@ -87,8 +88,8 @@ useOnResize debounceBy callback =
                 for_ mbFiber (killFiber (error "Fiber cancelled"))
                 delay (Milliseconds.fromDuration debounceBy)
                 let { innerWidth, innerHeight } = dimensions
-                let deltaWidth = Math.abs (size.innerWidth - innerWidth)
-                let deltaHeight = Math.abs (size.innerHeight - innerWidth)
+                let deltaWidth = abs (size.innerWidth - innerWidth)
+                let deltaHeight = abs (size.innerHeight - innerWidth)
                 setSize dimensions # liftEffect
                 callback { innerWidth, innerHeight, deltaWidth, deltaHeight } # liftEffect
             fiber ∷ Fiber _ <- launchAff aff

@@ -2,11 +2,10 @@ module Yoga.Block.Atom.Segmented.View.ActiveIndicator (Props, component) where
 
 import Yoga.Prelude.View
 
-import Control.MonadZero as MZ
+import Control.Alternative as Alternative
 import Data.Traversable (traverse)
 import Data.TwoOrMore (TwoOrMore)
 import Data.TwoOrMore as TwoOrMore
-import Effect.Class.Console as Console
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object as Object
 import Framer.Motion (VariantLabel)
@@ -110,7 +109,6 @@ component =
                                   setDragXRef (Just (pi.point.x - bbox.left))
                           , onDrag:
                               Motion.onDrag \_ pi -> do
-                                Console.log "Marlene on the wall"
                                 maybeDragX <- readRef maybeDragXRef
                                 when (isJust maybeDragX) do
                                   maybeBbox <- getBoundingBoxFromRef (TwoOrMore.head props.activeItemRefs)
@@ -179,8 +177,8 @@ findOverlapping activeIndex styles x =
     let fst = TwoOrMore.head styles
     let lst = TwoOrMore.last styles
     let inside e = (e.left < x) && (e.left + e.width) >= x
-    let tooFarLeft = MZ.guard (x <= fst.left + fst.width) $> 0
-    let tooFarRight = MZ.guard (x >= lst.left) $> TwoOrMore.length styles - 1
+    let tooFarLeft = Alternative.guard (x <= fst.left + fst.width) $> 0
+    let tooFarRight = Alternative.guard (x >= lst.left) $> TwoOrMore.length styles - 1
     TwoOrMore.findIndex inside styles <|> tooFarLeft <|> tooFarRight
 
 handleDrag

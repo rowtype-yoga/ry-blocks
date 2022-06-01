@@ -15,7 +15,7 @@ module Web.DOM.ResizeObserver
 import Prelude
 import Effect (Effect)
 import Web.DOM (Element)
-import Web.HTML.HTMLElement (DOMRect)
+import Web.DOM.Element (DOMRect)
 
 foreign import data ResizeObserver ∷ Type
 
@@ -44,17 +44,17 @@ optionsToFFI ContentBox = "content-box"
 
 optionsToFFI DevicePixelContentBox = "device-pixel-content-box"
 
-foreign import resizeObserver ∷
-  (Array ResizeObserverEntry -> ResizeObserver -> Effect Unit) ->
-  Effect ResizeObserver
+foreign import resizeObserver
+  ∷ (Array ResizeObserverEntry -> ResizeObserver -> Effect Unit)
+  -> Effect ResizeObserver
 
 foreign import _observe ∷ ∀ r. Element -> Record r -> ResizeObserver -> Effect Unit
 
-observe ∷
-  Element ->
-  ResizeObserverBoxOptions ->
-  ResizeObserver ->
-  Effect Unit
+observe
+  ∷ Element
+  -> ResizeObserverBoxOptions
+  -> ResizeObserver
+  -> Effect Unit
 observe element options = _observe element { box: optionsToFFI options }
 
 foreign import unobserve ∷ Element -> ResizeObserver -> Effect Unit

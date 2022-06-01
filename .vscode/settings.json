@@ -1,6 +1,6 @@
 {
   "editor.formatOnSave": true,
-  "workbench.colorTheme": "Abyss",
+  "workbench.colorTheme": "Horizon Bright",
   "search.useGlobalIgnoreFiles": true,
   "files.watcherExclude": {
     "**/.spago/**": true,

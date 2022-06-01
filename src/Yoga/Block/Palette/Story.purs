@@ -19,10 +19,10 @@ import Yoga.Block.Layout.Box as Box
 import Yoga.Block.Palette (ColourVariants)
 import Yoga.Block.Palette as Palette
 
-default ∷
-  { decorators ∷ Array (Effect JSX -> JSX)
-  , title ∷ String
-  }
+default
+  ∷ { decorators ∷ Array (Effect JSX -> JSX)
+    , title ∷ String
+    }
 default =
   { title: "Palette"
   , decorators:
@@ -39,16 +39,16 @@ box =
   pure
     $ fragment
         [ Block.grid { min: "100px" }
-            $  colourBoxes "Pink" Palette.pink
-            <> colourBoxes "Mauve" Palette.mauve
-            <> colourBoxes "Violet" Palette.violet
-            <> colourBoxes "Blue" Palette.blue
-            <> colourBoxes "Azure" Palette.azure
-            <> colourBoxes "Capri" Palette.capri
-            <> colourBoxes "Sea Green" Palette.seaGreen
-            <> colourBoxes "Malachite" Palette.malachite
-            <> colourBoxes "Yellow" Palette.yellow
-            <> colourBoxes "Mango" Palette.mango
+            $ colourBoxes "Pink" Palette.pink
+                <> colourBoxes "Mauve" Palette.mauve
+                <> colourBoxes "Violet" Palette.violet
+                <> colourBoxes "Blue" Palette.blue
+                <> colourBoxes "Azure" Palette.azure
+                <> colourBoxes "Capri" Palette.capri
+                <> colourBoxes "Sea Green" Palette.seaGreen
+                <> colourBoxes "Malachite" Palette.malachite
+                <> colourBoxes "Yellow" Palette.yellow
+                <> colourBoxes "Mango" Palette.mango
         ]
 
 colourBoxes ∷ String -> ColourVariants -> Array JSX
@@ -58,14 +58,18 @@ colourBoxes name colours =
   , colourBox name (Proxy ∷ _ "dark") colours
   ]
 
-colourBox ∷
-  ∀ t13 t14 t15 colourVariant.
-  IsSymbol colourVariant =>
-  Cons colourVariant Color t15 t14 =>
-  String -> t13 colourVariant -> Record t14 -> JSX
+colourBox
+  ∷ ∀ t14 t15 colourVariant
+   . IsSymbol colourVariant
+  => Cons colourVariant Color t15 t14
+  => String
+  -> Proxy colourVariant
+  -> Record t14
+  -> JSX
 colourBox name proxy colours =
   Box.component
-    </ { background: cssStringRGBA colour
+    </
+      { background: cssStringRGBA colour
       , css: E.css { color: E.str if isLight colour then "black" else "white" }
       , borderRadius: E.var "--s0"
       , boxShadow: E.str $ "0 1px 6px " <> Style.colour.boxShadow

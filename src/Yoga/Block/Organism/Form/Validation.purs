@@ -130,30 +130,36 @@ validNumber name = validNumber' (name <> " must be a number")
 validNumber' ∷ String -> Validator String Number
 validNumber' msg = note msg <<< Number.fromString
 
--- | A `Validator`, which ensures a number is inclusively between two positive 
+-- | A `Validator`, which ensures a number is inclusively between two positive
 -- | integers
-validNatBetween ∷
-  ∀ minStr maxStr min max subtracted.
-  Peano.ParseNat minStr min =>
-  Peano.ParseNat maxStr max =>
-  Peano.IsNat min =>
-  Peano.IsNat max =>
-  Peano.IsNat subtracted =>
-  Peano.SumInt (Peano.Pos max) (Peano.Neg min) (Peano.Pos subtracted) =>
-  Proxy minStr -> Proxy maxStr -> String -> Validator String Int
+validNatBetween
+  ∷ ∀ minStr maxStr min max subtracted
+   . Peano.ParseNat minStr min
+  => Peano.ParseNat maxStr max
+  => Peano.IsNat min
+  => Peano.IsNat max
+  => Peano.IsNat subtracted
+  => Peano.SumInt (Peano.Pos max) (Peano.Neg min) (Peano.Pos subtracted)
+  => Proxy minStr
+  -> Proxy maxStr
+  -> String
+  -> Validator String Int
 validNatBetween minProxy maxProxy name = do
   validNatBetween' minProxy maxProxy \min max ->
     name <> " must be between " <> show min <> " and " <> show max
 
-validNatBetween' ∷
-  ∀ minSymbol maxSymbol min max subtracted.
-  Peano.ParseNat minSymbol min =>
-  Peano.ParseNat maxSymbol max =>
-  Peano.IsNat min =>
-  Peano.IsNat max =>
-  Peano.IsNat subtracted =>
-  Peano.SumInt (Peano.Pos max) (Peano.Neg min) (Peano.Pos subtracted) =>
-  Proxy minSymbol -> Proxy maxSymbol -> (Int -> Int -> String) -> Validator String Int
+validNatBetween'
+  ∷ ∀ minSymbol maxSymbol min max subtracted
+   . Peano.ParseNat minSymbol min
+  => Peano.ParseNat maxSymbol max
+  => Peano.IsNat min
+  => Peano.IsNat max
+  => Peano.IsNat subtracted
+  => Peano.SumInt (Peano.Pos max) (Peano.Neg min) (Peano.Pos subtracted)
+  => Proxy minSymbol
+  -> Proxy maxSymbol
+  -> (Int -> Int -> String)
+  -> Validator String Int
 validNatBetween' minSymbolProxy maxSymbolProxy msg rawString = case Int.fromString rawString of
   Just parseableInt
     | between minInt maxInt parseableInt -> Right parseableInt
@@ -259,20 +265,20 @@ _Modified =
 
 -- | Sets all `Validated` fields in a record to `Fresh`, hiding all validation
 -- | messages.
-setFresh ∷
-  ∀ value.
-  Mapping ModifyValidated value value =>
-  value ->
-  value
+setFresh
+  ∷ ∀ value
+   . Mapping ModifyValidated value value
+  => value
+  -> value
 setFresh = mapping (ModifyValidated (Fresh <<< view _Validated))
 
 -- | Sets all `Validated` fields in a record to `Modified`, showing all
 -- | validation messages.
-setModified ∷
-  ∀ value.
-  Mapping ModifyValidated value value =>
-  value ->
-  value
+setModified
+  ∷ ∀ value
+   . Mapping ModifyValidated value value
+  => value
+  -> value
 setModified = mapping (ModifyValidated (Modified <<< view _Validated))
 
 -- | Internal utility type for modifying the validated state of fields in
@@ -308,7 +314,9 @@ class CustomModifyValidated a where
 instance modifyValidated ∷ Mapping ModifyValidated a a => Mapping ModifyValidated (Validated a) (Validated a) where
   mapping m@(ModifyValidated f) = over _Validated (mapping m) <<< f
 else instance modifyValidatedRecord ∷
-  (RL.RowToList r xs, MapRecordWithIndex xs (ConstMapping ModifyValidated) r r) =>
+  ( RL.RowToList r xs
+  , MapRecordWithIndex xs (ConstMapping ModifyValidated) r r
+  ) =>
   Mapping ModifyValidated { | r } { | r } where
   mapping d = hmap d
 else instance modifyValidatedArray ∷ Mapping ModifyValidated a a => Mapping ModifyValidated (Array a) (Array a) where
@@ -343,12 +351,12 @@ else instance canValidateAny ∷ CanValidate a a where
 -- | This `Validated` data type describes a form field as either `Fresh` or
 -- | `Modified`, so that validation messages are only displayed if the field
 -- | is `Modified`.
-validated ∷
-  ∀ props unvalidated validated result result_.
-  CanValidate unvalidated validated =>
-  Validator result_ result ->
-  FormBuilder { readOnly ∷ Boolean, validationError ∷ Maybe (Maybe String) | props } unvalidated result_ ->
-  FormBuilder { readOnly ∷ Boolean | props } (Validated validated) result
+validated
+  ∷ ∀ props unvalidated validated result result_
+   . CanValidate unvalidated validated
+  => Validator result_ result
+  -> FormBuilder { readOnly ∷ Boolean, validationError ∷ Maybe (Maybe String) | props } unvalidated result_
+  -> FormBuilder { readOnly ∷ Boolean | props } (Validated validated) result
 validated runValidator editor =
   FormBuilder \props@{ readOnly } (v ∷ Validated validated) -> do
     let
@@ -359,16 +367,17 @@ validated runValidator editor =
           { className: "ry-form-inner-column"
           , space: E.str "0"
           , css:
-            E.css
-              { maxWidth: E.str "100%"
-              , margin: E.str "0"
-              }
+              E.css
+                { maxWidth: E.str "100%"
+                , margin: E.str "0"
+                }
           }
       -- validationMessage ∷ Maybe validated
       -- validationMessage = case v of
       --   Fresh _ -> Nothing
       --   Modified m -> Just m
       { validate } = un FormBuilder editor (props # upsert (Proxy ∷ _ "validationError") (Nothing)) value
+
       modify ∷ Maybe String -> Forest -> Forest
       modify message forest = case Array.unsnoc forest of
         Nothing -> [ Child { key: Nothing, child: errChild } ]
@@ -379,6 +388,7 @@ validated runValidator editor =
         errLine = guard (not readOnly) message # foldMap R.text
 
         errChild = errorChild </> { errorLine: errLine, message }
+
       -- The validation can produce either a valid result, an error message, or
       -- none in the case where the form is Fresh.
       res ∷ Maybe (Either String result)
@@ -390,13 +400,13 @@ validated runValidator editor =
       err = either pure (const Nothing) =<< res
       finalResult = un FormBuilder editor (props # upsert (Proxy ∷ _ "validationError") (res <#> either Just (const Nothing))) value
     { edit:
-      \onChange ->
-        (modify err <<< finalResult.edit)
-          ( onChange
-              <<< \f -> case _ of
+        \onChange ->
+          (modify err <<< finalResult.edit)
+            ( onChange
+                <<< \f -> case _ of
                   v'@(Fresh _) -> review modified (f (fromValidated v'))
                   v'@(Modified _) -> review modified (f (fromValidated v'))
-          )
+            )
     , validate: hush =<< res
     }
 
@@ -408,75 +418,81 @@ errorChild =
         let
           variants =
             { hidden:
-              const
-                { y: "-100%"
-                , height: "auto"
+                const
+                  { y: "-100%"
+                  , height: "auto"
+                  , transition: { type: "tween", delay: 0.75 }
+                  }
+            , visible:
+                { y: "0%"
                 , transition: { type: "tween", delay: 0.75 }
                 }
-            , visible:
-              { y: "0%"
-              , transition: { type: "tween", delay: 0.75 }
-              }
             }
         let variant = makeVariantLabels variants
         pure
           $ R.div'
-          </* { className: "ry-validation-error"
+          </*
+            { className: "ry-validation-error"
             , css:
-              E.css
-                { fontSize: E.str "calc(var(--s0) * 0.8)"
-                , fontWeight: E.str "400"
-                , height: E.str "calc(var(--s0) + var(--s-3))"
-                , margin: E.str "0 var(--s-1) 0 var(--s-1)"
-                , overflow: E.str $ if expanded then "visible" else "hidden"
-                }
+                E.css
+                  { fontSize: E.str "calc(var(--s0) * 0.8)"
+                  , fontWeight: E.str "400"
+                  , height: E.str "calc(var(--s0) + var(--s-3))"
+                  , margin: E.str "0 var(--s-1) 0 var(--s-1)"
+                  , overflow: E.str $ if expanded then "visible" else "hidden"
+                  }
             }
-          /> [ Motion.animatePresence </ {}
+          />
+            [ Motion.animatePresence </ {}
                 /> case message of
-                    Just _ ->
-                      [ Motion.div
-                          </* { variants: Motion.variants variants
-                            , initial: Motion.initial variant.hidden
-                            , animate: Motion.animate variant.visible
-                            , exit: Motion.exit $ variant.hidden
-                            , className: "ry-validation-error"
-                            , css:
+                  Just _ ->
+                    [ Motion.div
+                        </*
+                          { variants: Motion.variants variants
+                          , initial: Motion.initial variant.hidden
+                          , animate: Motion.animate variant.visible
+                          , exit: Motion.exit $ variant.hidden
+                          , className: "ry-validation-error"
+                          , css:
                               E.css
                                 { color: E.str colour.invalidText
                                 , background: E.color Palette.pink.dark
                                 , padding: E.str "var(--s-5) var(--s-3) var(--s-4) var(--s-3)"
                                 , borderRadius: E.str "0 0 var(--s-3) var(--s-3)"
                                 }
-                            }
-                          /> [ motionReadMore
-                                </ Motion.withMotion
-                                    { background: Palette.pink.dark
-                                    , onMoreClicked: setExpanded true
-                                    , onLessClicked: setExpanded false
-                                    }
-                                    { layout: Motion.layout false
-                                    }
-                                /> [ R.span'
-                                      </* { className: "ry-validation-error"
-                                        , css: E.css {}
-                                        }
-                                      /> [ errorLine ]
-                                  ]
-                            ]
-                      ]
-                    _ -> mempty
+                          }
+                        />
+                          [ motionReadMore
+                              </ Motion.withMotion
+                                { background: Palette.pink.dark
+                                , onMoreClicked: setExpanded true
+                                , onLessClicked: setExpanded false
+                                }
+                                { layout: Motion.layout false
+                                }
+                              />
+                                [ R.span'
+                                    </*
+                                      { className: "ry-validation-error"
+                                      , css: E.css {}
+                                      }
+                                    /> [ errorLine ]
+                                ]
+                          ]
+                    ]
+                  _ -> mempty
             ]
   where
   motionReadMore = unsafePerformEffect $ Motion.custom Block.readMore
 
-upsert ∷
-  ∀ proxy r1 r2 r l a.
-  IsSymbol l =>
-  Cons l a r r2 =>
-  proxy l ->
-  a ->
-  Record r1 ->
-  Record r2
+upsert
+  ∷ ∀ r1 r2 r l a
+   . IsSymbol l
+  => Cons l a r r2
+  => Proxy l
+  -> a
+  -> Record r1
+  -> Record r2
 upsert l a r = unsafeSet (reflectSymbol l) a r
 
 -- -- | Attach a validation function to a `FormBuilder p u a`, producing a new

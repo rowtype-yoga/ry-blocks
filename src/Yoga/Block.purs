@@ -6,11 +6,9 @@ import Yoga (el, leaf)
 import Yoga.Block.Atom.Button as Button
 import Yoga.Block.Atom.Icon as Icon
 import Yoga.Block.Atom.Input as Input
-import Yoga.Block.Atom.Popover as Popover
 import Yoga.Block.Atom.Range as Range
 import Yoga.Block.Atom.Segmented as Segmented
 import Yoga.Block.Atom.Toggle as Toggle
-import Yoga.Block.Atom.Tooltip as Tooltip
 import Yoga.Block.Container as Container
 import Yoga.Block.Layout.Box as Box
 import Yoga.Block.Layout.Centre as Centre
@@ -90,9 +88,6 @@ input = Input.component
 imposter ∷ ∀ p q. Union p q Imposter.Props ⇒ ReactComponent { | p }
 imposter = Imposter.component
 
-popover ∷ ∀ p p_. Union p p_ Popover.Props ⇒ ReactComponent { | Popover.MandatoryProps p }
-popover = Popover.component
-
 modal ∷ ReactComponent Modal.Props
 modal = Modal.component
 
@@ -128,9 +123,6 @@ switcher = Switcher.component
 
 toggle ∷ ∀ p q. Union p q Toggle.Props ⇒ ReactComponent { | p }
 toggle = Toggle.component
-
-tooltip ∷ ∀ p q. Union p q Tooltip.Props ⇒ ReactComponent { | Tooltip.MandatoryProps p }
-tooltip = Tooltip.component
 
 readMore ∷ ∀ p q. Union p q ReadMore.Props ⇒ ReactComponent (Record p)
 readMore = ReadMore.component

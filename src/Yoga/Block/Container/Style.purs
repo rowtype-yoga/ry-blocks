@@ -131,9 +131,9 @@ mkGlobal maybeMode =
               , margin: str "0"
               }
           <> case maybeMode of
-              Nothing → autoSwitchColourTheme
-              Just DarkMode → darkModeStyle
-              Just LightMode → lightModeStyle
+            Nothing → autoSwitchColourTheme
+            Just DarkMode → darkModeStyle
+            Just LightMode → lightModeStyle
     , "pre,code":
         nest
           { fontFamily: str "var(--mono-font)"
@@ -390,73 +390,73 @@ defaultColours =
 
   boxShadowDark = Color.rgba 0 0 0 0.6
 
-type FlatTheme a
-  = { background ∷ a
-    , popperBackground ∷ a
-    , popperBackgroundNoAlpha ∷ a
-    , popperInnerBorder ∷ a
-    , popperOuterBorder ∷ a
-    , backgroundAlpha0 ∷ a
-    , backgroundAlpha25 ∷ a
-    , backgroundAlpha50 ∷ a
-    , backgroundAlpha75 ∷ a
-    , backgroundLayer1 ∷ a
-    , backgroundLayer2 ∷ a
-    , backgroundLayer3 ∷ a
-    , backgroundLayer4 ∷ a
-    , backgroundLayer5 ∷ a
-    , backgroundLayer5Border ∷ a
-    , backgroundInverted ∷ a
-    , backgroundCard ∷ a
-    , interfaceBackground ∷ a
-    , interfaceBackgroundDangerous ∷ a
-    , interfaceDangerousText ∷ a
-    , interfaceBackgroundDisabled ∷ a
-    , interfaceTextDisabled ∷ a
-    , interfaceBackgroundHighlight ∷ a
-    , interfaceBackgroundShadow ∷ a
-    , inputBackground ∷ a
-    , inputBorder ∷ a
-    , link ∷ a
-    , highlight ∷ a
-    , highlightAlpha25 ∷ a
-    , highlightAlpha50 ∷ a
-    , highlightAlpha67 ∷ a
-    , highlightRotatedBackwards ∷ a
-    , highlightRotatedForwards ∷ a
-    , highlightDarker ∷ a
-    , highlightLighter ∷ a
-    , highlightDisabled ∷ a
-    , highlightText ∷ a
-    , success ∷ a
-    , successText ∷ a
-    , invalid ∷ a
-    , invalidText ∷ a
-    , required ∷ a
-    , text ∷ a
-    , textPaler1 ∷ a
-    , textPaler2 ∷ a
-    , textPaler3 ∷ a
-    , textPaler4 ∷ a
-    , textInverted ∷ a
-    , textInvertedPaler1 ∷ a
-    , textInvertedPaler2 ∷ a
-    , textInvertedPaler3 ∷ a
-    , textInvertedPaler4 ∷ a
-    , placeholderText ∷ a
-    , boxShadow ∷ a
-    }
+type FlatTheme a =
+  { background ∷ a
+  , popperBackground ∷ a
+  , popperBackgroundNoAlpha ∷ a
+  , popperInnerBorder ∷ a
+  , popperOuterBorder ∷ a
+  , backgroundAlpha0 ∷ a
+  , backgroundAlpha25 ∷ a
+  , backgroundAlpha50 ∷ a
+  , backgroundAlpha75 ∷ a
+  , backgroundLayer1 ∷ a
+  , backgroundLayer2 ∷ a
+  , backgroundLayer3 ∷ a
+  , backgroundLayer4 ∷ a
+  , backgroundLayer5 ∷ a
+  , backgroundLayer5Border ∷ a
+  , backgroundInverted ∷ a
+  , backgroundCard ∷ a
+  , interfaceBackground ∷ a
+  , interfaceBackgroundDangerous ∷ a
+  , interfaceDangerousText ∷ a
+  , interfaceBackgroundDisabled ∷ a
+  , interfaceTextDisabled ∷ a
+  , interfaceBackgroundHighlight ∷ a
+  , interfaceBackgroundShadow ∷ a
+  , inputBackground ∷ a
+  , inputBorder ∷ a
+  , link ∷ a
+  , highlight ∷ a
+  , highlightAlpha25 ∷ a
+  , highlightAlpha50 ∷ a
+  , highlightAlpha67 ∷ a
+  , highlightRotatedBackwards ∷ a
+  , highlightRotatedForwards ∷ a
+  , highlightDarker ∷ a
+  , highlightLighter ∷ a
+  , highlightDisabled ∷ a
+  , highlightText ∷ a
+  , success ∷ a
+  , successText ∷ a
+  , invalid ∷ a
+  , invalidText ∷ a
+  , required ∷ a
+  , text ∷ a
+  , textPaler1 ∷ a
+  , textPaler2 ∷ a
+  , textPaler3 ∷ a
+  , textPaler4 ∷ a
+  , textInverted ∷ a
+  , textInvertedPaler1 ∷ a
+  , textInvertedPaler2 ∷ a
+  , textInvertedPaler3 ∷ a
+  , textInvertedPaler4 ∷ a
+  , placeholderText ∷ a
+  , boxShadow ∷ a
+  }
 
-type Colours
-  = { dark ∷ FlatTheme Color
-    , light ∷ FlatTheme Color
-    }
+type Colours =
+  { dark ∷ FlatTheme Color
+  , light ∷ FlatTheme Color
+  }
 
-data MakeCSSVarLabels
-  = MakeCSSVarLabels
+data MakeCSSVarLabels = MakeCSSVarLabels
 
 instance makeCSSVarLabels' ∷
-  (IsSymbol sym) ⇒
+  ( IsSymbol sym
+  ) ⇒
   MappingWithIndex MakeCSSVarLabels (Proxy sym) a String where
   mappingWithIndex MakeCSSVarLabels prop _ = "--" <> (reflectSymbol prop)
 
@@ -525,34 +525,34 @@ variables =
     , "--theme-variant": str "light"
     }
 
-type Sizes
-  = { "3xl" ∷ String
-    , "3xs" ∷ String
-    , "4xl" ∷ String
-    , "4xs" ∷ String
-    , "5xl" ∷ String
-    , "5xs" ∷ String
-    , l ∷ String
-    , m ∷ String
-    , s ∷ String
-    , text ∷
-        { interactive ∷ String
-        , label ∷ String
-        , copy ∷ String
-        , small ∷ String
-        , tiny ∷ String
-        , heading ∷
-            { h1 ∷ String
-            , h2 ∷ String
-            , h3 ∷ String
-            , h4 ∷ String
-            }
-        }
-    , xl ∷ String
-    , xs ∷ String
-    , xxl ∷ String
-    , xxs ∷ String
-    }
+type Sizes =
+  { "3xl" ∷ String
+  , "3xs" ∷ String
+  , "4xl" ∷ String
+  , "4xs" ∷ String
+  , "5xl" ∷ String
+  , "5xs" ∷ String
+  , l ∷ String
+  , m ∷ String
+  , s ∷ String
+  , text ∷
+      { interactive ∷ String
+      , label ∷ String
+      , copy ∷ String
+      , small ∷ String
+      , tiny ∷ String
+      , heading ∷
+          { h1 ∷ String
+          , h2 ∷ String
+          , h3 ∷ String
+          , h4 ∷ String
+          }
+      }
+  , xl ∷ String
+  , xs ∷ String
+  , xxl ∷ String
+  , xxs ∷ String
+  }
 
 size ∷ Sizes
 size =
@@ -584,14 +584,14 @@ size =
       }
   }
 
-type BoxShadows
-  = { s ∷ String
-    , m ∷ String
-    , l ∷ String
-    , xl ∷ String
-    , xxl ∷ String
-    , default ∷ String
-    }
+type BoxShadows =
+  { s ∷ String
+  , m ∷ String
+  , l ∷ String
+  , xl ∷ String
+  , xxl ∷ String
+  , default ∷ String
+  }
 
 boxShadow ∷ BoxShadows
 boxShadow =

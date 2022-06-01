@@ -12,9 +12,11 @@ module Yoga.Prelude.View
   , module Web.HTML.HTMLElement
   , module Data.Nullable
   , module Untagged.Castable
+  , module Web.DOM.Element
   ) where
 
 import Yoga.Prelude.Default hiding (div)
+
 import Data.Nullable (Nullable, notNull, null)
 import Prim.Row (class Union)
 import React.Basic.DOM (Props_div)
@@ -24,55 +26,7 @@ import React.Basic.Hooks (type (/\), Component, Hook, JSX, Pure, ReactChildren, 
 import Type.Row (type (+))
 import Untagged.Castable (cast)
 import Web.DOM (Node)
-import Web.HTML.HTMLElement (HTMLElement, DOMRect, blur, focus, getBoundingClientRect)
+import Web.DOM.Element (DOMRect, getBoundingClientRect)
+import Web.HTML.HTMLElement (HTMLElement, blur, focus)
 import Yoga ((/>), (</), (</*), (</*>), (</>), div, span, button)
-import Yoga.Block.Internal
-  ( ButtonReadableProps
-  , ButtonReadablePropsF
-  , ButtonWritableProps
-  , ButtonWritablePropsF
-  , DivProps
-  , DivPropsF
-  , Id
-  , InputReadableProps
-  , InputReadablePropsF
-  , InputWritableProps
-  , InputWritablePropsF
-  , NodeRef
-  , OptionalProp(..)
-  , _0
-  , appendIfDefined
-  , asOptional
-  , composeHandler
-  , createRef
-  , dangerous
-  , emotionButton
-  , emotionDiv
-  , emotionInput
-  , forwardedRefAsMaybe
-  , getBoundingBoxFromRef
-  , getHTMLElementFromRef
-  , getOr
-  , getOrFlipped
-  , ifTrue
-  , isTruthy
-  , maybeToOp
-  , mkForwardRefComponent
-  , mkForwardRefComponentEffect
-  , opToMaybe
-  , setOrDelete
-  , unsafeDiv
-  , unsafeEmotion
-  , unsafeMergeSecond
-  , unsafeUnMaybe
-  , unsafeUnOptional
-  , unsafeUnionDroppingUndefined
-  , (<>?)
-  , (?||)
-  , getOffsetHeightFromRef
-  , getOffsetWidthFromRef
-  , getOffsetDimensionsFromRef
-  , getScrollHeightFromRef
-  , getScrollWidthFromRef
-  , getScrollDimensionsFromRef
-  )
+import Yoga.Block.Internal (ButtonReadableProps, ButtonReadablePropsF, ButtonWritableProps, ButtonWritablePropsF, DivProps, DivPropsF, Id, InputReadableProps, InputReadablePropsF, InputWritableProps, InputWritablePropsF, NodeRef, OptionalProp(..), _0, appendIfDefined, asOptional, composeHandler, createRef, dangerous, deleteUndefineds, emotionButton, emotionDiv, emotionInput, forwardedRefAsMaybe, getBoundingBoxFromRef, getHTMLElementFromRef, getOffsetDimensionsFromRef, getOffsetHeightFromRef, getOffsetWidthFromRef, getOr, getOrFlipped, getScrollDimensionsFromRef, getScrollHeightFromRef, getScrollWidthFromRef, ifTrue, isTruthy, maybeToOp, mkForwardRefComponent, mkForwardRefComponentEffect, opToMaybe, setOrDelete, unsafeAddProps, unsafeDiv, unsafeEmotion, unsafeMergeSecond, unsafeUnMaybe, unsafeUnOptional, unsafeUnionDroppingUndefined, (<>?), (?||))
