@@ -246,7 +246,7 @@ defaultColours =
       , highlightRotatedForwards: highlight # rotateHue 3.0 # lighten 0.05 # saturate 0.1
       , highlightText
       , inputBackground: lightBg
-      , inputBorder: darken 0.06 >>> desaturate 0.2 $ lightBg
+      , inputBorder: darken 0.07 >>> desaturate 0.2 $ lightBg
       , interfaceBackground
       , interfaceBackgroundDangerous
       , interfaceBackgroundDisabled: darken 0.03 lightBg
@@ -280,11 +280,11 @@ defaultColours =
       , backgroundAlpha50: withAlpha 0.5 darkBg
       , backgroundAlpha75: withAlpha 0.75 darkBg
       , backgroundInverted: lightBg
-      , backgroundLayer1: lighten 0.1 >>> saturate 0.18 $ darkBg
-      , backgroundLayer2: lighten 0.13 >>> saturate 0.10 $ darkBg
-      , backgroundLayer3: lighten 0.16 >>> saturate 0.11 $ darkBg
-      , backgroundLayer4: lighten 0.19 >>> saturate 0.11 $ darkBg
-      , backgroundLayer5: lighten 0.21 >>> saturate 0.08 $ darkBg
+      , backgroundLayer1: lighten 0.13 >>> saturate 0.18 $ darkBg
+      , backgroundLayer2: lighten 0.18 >>> saturate 0.13 $ darkBg
+      , backgroundLayer3: lighten 0.22 >>> saturate 0.10 $ darkBg
+      , backgroundLayer4: lighten 0.34 >>> saturate 0.08 $ darkBg
+      , backgroundLayer5: lighten 0.45 >>> saturate 0.04 $ darkBg
       , backgroundLayer5Border: lighten 0.37 $ darkBg
       , backgroundCard: lighten 0.05 >>> saturate 0.1 $ darkBg
       , popperBackground: (withAlpha 0.8 >>> lighten 0.09 >>> saturate 0.05) darkBg
@@ -301,8 +301,8 @@ defaultColours =
       , highlightRotatedBackwards: highlightDark # rotateHue (-30.0)
       , highlightRotatedForwards: highlightDark # rotateHue 30.0
       , highlightText
-      , inputBackground: darkBg
-      , inputBorder: lighten 0.17 darkBg
+      , inputBackground: darkBg # saturate 0.1 # lighten 0.2
+      , inputBorder: darkBg # saturate 0.1 # lighten 0.25
       , interfaceBackground: interfaceBackgroundDark
       , interfaceBackgroundDangerous: interfaceBackgroundDangerousDark
       , interfaceBackgroundDisabled: lighten 0.14 >>> saturate 0.02 $ darkBg
@@ -331,7 +331,7 @@ defaultColours =
       }
   }
   where
-  darkBg = Color.hsl 210.0 0.27 0.02
+  darkBg = Color.hsl 210.0 0.21 0.02
 
   -- highlightBase = Color.hsla 275.0 0.82 0.4
   -- brightPurpleBase = Color.hsla 275.0 0.82 0.4

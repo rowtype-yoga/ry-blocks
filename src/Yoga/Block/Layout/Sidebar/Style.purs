@@ -7,19 +7,20 @@ import Data.Interpolate (i)
 data SidebarSide
   = SidebarLeft
   | SidebarRight
+
 derive instance eqSidebarSide :: Eq SidebarSide
 
 type Props :: forall k. (Type -> k) -> Row k -> Row k
-type Props f r
-  = ( css ∷ f Style
-    , space ∷ f String
-    , side ∷ f SidebarSide
-    , sideWidth ∷ f String
-    , contentMin ∷ f String
-    , noStretch ∷ f Boolean
-    , reverseOnWrap ∷ f Boolean
-    | r
-    )
+type Props f r =
+  ( css ∷ f Style
+  , space ∷ f String
+  , side ∷ f SidebarSide
+  , sideWidth ∷ f String
+  , contentMin ∷ f String
+  , noStretch ∷ f Boolean
+  , reverseOnWrap ∷ f Boolean
+  | r
+  )
 
 sidebar ∷ ∀ p. { | Props OptionalProp p } -> Style
 sidebar props = styles <>? props.css
@@ -58,6 +59,5 @@ sidebar props = styles <>? props.css
             <> foldMap (nest <<< { flexBasis: _ } <<< str) props.sideWidth
       }
       <> case side of
-          SidebarLeft -> css { "& > * > :last-child": nonSidebarStyle }
-          SidebarRight -> css { "& > * > :first-child": nonSidebarStyle }
-
+        SidebarLeft -> css { "& > * > :last-child": nonSidebarStyle }
+        SidebarRight -> css { "& > * > :first-child": nonSidebarStyle }

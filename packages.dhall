@@ -466,10 +466,7 @@ in  upstream
        =
       "https://github.com/working-group-purescript-es/purescript-react-basic-dom.git"
   with react-basic-dom.version = "es-modules"
-  with react-basic-hooks.repo
-       =
-      "https://github.com/working-group-purescript-es/purescript-react-basic-hooks.git"
-  with react-basic-hooks.version = "es-modules"
+  with react-basic-hooks.version = "e7494bd4656b4a43c2efc69bf5f512e154f05cc1"
   with react-basic-emotion.repo
        =
       "https://github.com/working-group-purescript-es/purescript-react-basic-emotion.git"

@@ -8,7 +8,7 @@ import Foreign.Object (Object)
 import Foreign.Object as Object
 import Framer.Motion as M
 import React.Basic.DOM (css)
-import React.Basic.Hooks (reactComponent)
+import React.Basic.Hooks (reactComponent, useId)
 import React.Basic.Hooks as React
 import Record.Builder as RB
 import Type.Prelude (Proxy(..))
@@ -62,6 +62,7 @@ rawComponent ∷ ∀ p. ReactComponent (Record p)
 rawComponent =
   mkForwardRefComponent "YogaInput" do
     \(props ∷ { | PropsOptional }) propsRef -> React.do
+      backupId <- useId
       hasFocus /\ setHasFocus <- useState' false
       inputBackupRef ∷ NodeRef <- useRef null
       let inputRef = props.inputRef ?|| inputBackupRef
@@ -80,7 +81,7 @@ rawComponent =
         aria = props._aria # opToMaybe # fold
 
         labelId ∷ String
-        labelId = props.id # opToMaybe # fold # (_ <> "-label")
+        labelId = props.id ?|| backupId # (_ <> "-label")
         renderSmallLabel = isTruthy props.forceSmallLabel || hasFocus || hasValue
 
         renderLargeLabel ∷ Boolean
@@ -98,7 +99,7 @@ rawComponent =
               , isInvalid: aria # Object.lookup "invalid" # (_ == Just "true")
               , renderLargeLabel
               , labelId
-              , inputId: props.id ?|| "no-id" -- [TODO] Enforce ID?
+              , inputId: props.id ?|| backupId
               , inputRef
               , parentRef: ref
               , labelText

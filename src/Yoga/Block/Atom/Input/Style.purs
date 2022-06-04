@@ -113,9 +113,10 @@ labelLarge { left, width } =
     , padding: _0
     , whiteSpace: nowrap -- force on one line
     , height: str "var(--s0)"
+    , letterSpacing: em (-0.011)
     , maxWidth: str $ i "calc(" width "px - 2ch)"
     , textOverflow: str "ellipsis"
-    , marginTop: str "calc(var(--s0) * 0.5 - var(--s-4))"
+    , marginTop: str "calc(var(--s-1))"
     , marginLeft: str $ i left "px"
     , marginRight: var "--input-side-padding"
     , color: str colour.placeholderText
@@ -173,9 +174,14 @@ inputContainer props = theCss <>? props.css
       , "--input-top-padding": var "--s-5"
       , "--input-bottom-padding": var "--s-5"
       , "--border-width": str "1px"
+      , letterSpacing: em (-0.011)
       , position: relative
       , boxSizing: borderBox
-      , background: str (props.background ?|| colour.interfaceBackground)
+      , boxShadow: str """
+                0 1px 1px rgba(200,200,255,0.2),
+                0 2px 2px rgba(200,200,255,0.1),
+                0 4px 8px rgba(200,200,255,0.03)"""
+      , background: str (props.background ?|| colour.inputBackground)
       , display: flex
       , width: str "calc(var(--s4) * 2)"
       , """&[data-invalid="false"]""":
@@ -193,6 +199,10 @@ inputContainer props = theCss <>? props.css
             { "--border-width": str "2px"
             , borderColor: str colour.highlight
             , transition: str "border-color 0s linear 0.1s"
+            , boxShadow: str """
+                0 1px 2px var(--highlight-col),
+                0 2px 4px rgba(230,200,255,0.4),
+                0 4px 12px rgba(230,200,255,0.3)"""
             -- , animation: plopAnimation <> str " 260ms ease-in"
             }
       , alignItems: center
@@ -202,7 +212,7 @@ inputContainer props = theCss <>? props.css
       , paddingRight: str "calc(var(--input-side-padding) - var(--border-width))"
       , paddingTop: str "calc(var(--input-top-padding) - var(--border-width))"
       , paddingBottom: str "calc(var(--input-bottom-padding) - var(--border-width))"
-      , height: str "calc(var(--s2) * 0.9)"
+      , height: str "calc(var(--s2))"
       , gap: str "calc(var(--input-side-padding) / 2)"
       , borderRadius: var "--input-border-radius"
       }
