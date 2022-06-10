@@ -35,8 +35,8 @@ backgroundAnimation =
 button ∷ Style
 button =
   css
-    { background: str colour.backgroundLayer4
-    , boxShadow: str "0 1px 4px rgba(0,0,0,0.20)"
+    { background: str colour.backgroundLayer5
+    , boxShadow: str "0 1px 4px rgba(100,100,120,0.3), 0 1px 2px rgba(100,100,100,0.2)"
     , border: str $ i "1px solid transparent"
     , borderTop: str $ i "1px solid " colour.backgroundLayer5
     , borderBottom: str $ i "1px solid " colour.backgroundLayer3

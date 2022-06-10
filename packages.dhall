@@ -456,7 +456,7 @@ in  upstream
       , "web-html"
       ]
     , repo = "https://github.com/spicydonuts/purescript-react-basic-hooks.git"
-    , version = "v7.0.1"
+    , version = "e7494bd4656b4a43c2efc69bf5f512e154f05cc1"
     }
   with react-basic.repo
        =
@@ -466,7 +466,6 @@ in  upstream
        =
       "https://github.com/working-group-purescript-es/purescript-react-basic-dom.git"
   with react-basic-dom.version = "es-modules"
-  with react-basic-hooks.version = "e7494bd4656b4a43c2efc69bf5f512e154f05cc1"
   with react-basic-emotion.repo
        =
       "https://github.com/working-group-purescript-es/purescript-react-basic-emotion.git"
@@ -534,4 +533,21 @@ in  upstream
       , "tuples"
       , "typelevel-prelude"
       ]
+    }
+  with fahrtwind =
+    { repo = "https://github.com/rowtype-yoga/purescript-fahrtwind.git"
+    , dependencies =
+      [ "arrays"
+      , "colors"
+      , "foreign-object"
+      , "integers"
+      , "prelude"
+      , "react-basic"
+      , "react-basic-dom"
+      , "react-basic-emotion"
+      , "tuples"
+      , "typelevel-prelude"
+      , "unsafe-coerce"
+      ]
+    , version = "main"
     }

@@ -50,13 +50,7 @@ mkLeftIcon icon =
       { className: "ry-input-left-icon-container"
       , css: Style.leftIconContainer
       }
-    />
-      [ Icon.component
-          </>
-            { size: Style.leftIconSize
-            , icon
-            }
-      ]
+    /> [ Icon.component </> { size: Style.leftIconSize, icon } ]
 
 rawComponent ∷ ∀ p. ReactComponent (Record p)
 rawComponent =
@@ -105,6 +99,7 @@ rawComponent =
               , labelText
               , background: props.background ?|| colour.interfaceBackground
               , textColour: props.textColour ?|| colour.text
+
               }
 
         leading ∷ Maybe JSX

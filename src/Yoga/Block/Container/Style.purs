@@ -102,11 +102,11 @@ setDarkOrLightMode desiredMode =
 mkGlobal ∷ Maybe DarkOrLightMode → Style
 mkGlobal maybeMode =
   css
-    { "body, html":
+    { "html, body":
         nested
           $ css
-              { minHeight: 100.0 # vh
-              , minWidth: 100.0 # vw
+              { minHeight: 100.0 # percent
+              , minWidth: 100.0 # percent
               , "WebkitTextSizeAdjust": _100percent
               }
     , ":root":
@@ -116,7 +116,10 @@ mkGlobal maybeMode =
                   nest { "--theme-variant": str "dark" }
               }
           <> variables
-          <> fontVariables { main: "Inter", mono: "Victor Mono, Menlo, Consolas, Monaco, Liberation Mono, Lucida Console" }
+          <> fontVariables
+            { main: """"Inter V", "Inter var", Inter"""
+            , mono: "Victor Mono, Menlo, Consolas, Monaco, Liberation Mono, Lucida Console"
+            }
     , html:
         nested
           $ css
@@ -257,7 +260,7 @@ defaultColours =
       , invalid
       , invalidText
       , link
-      , placeholderText: lighten 0.4 darkBg
+      , placeholderText: lighten 0.35 darkBg # desaturate 0.1
       , required
       , success
       , successText

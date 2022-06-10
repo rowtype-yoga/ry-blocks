@@ -1,6 +1,7 @@
 module Yoga.Block.Atom.Input.Story where
 
 import Prelude
+
 import Data.Foldable (traverse_)
 import Data.String.NonEmpty.Internal (NonEmptyString(..), nes)
 import Effect (Effect)
@@ -67,7 +68,7 @@ input = do
                         { label: nes (Proxy ∷ _ "Another background")
                         , background: colour.backgroundLayer3
                         , textColour: "blue"
-                        , placeholderColour: colour.backgroundLayer4
+                        , placeholderColour: colour.backgroundLayer3
                         , leading: R.text "🌭"
                         }
                     ]

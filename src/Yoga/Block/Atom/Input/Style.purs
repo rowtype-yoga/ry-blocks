@@ -112,15 +112,21 @@ labelLarge { left, width } =
     { fontSize: str "var(--s0)"
     , padding: _0
     , whiteSpace: nowrap -- force on one line
-    , height: str "var(--s0)"
+    , height: str "calc(var(--s0) * 1.2)"
     , letterSpacing: em (-0.011)
     , maxWidth: str $ i "calc(" width "px - 2ch)"
-    , textOverflow: str "ellipsis"
     , marginTop: str "calc(var(--s-1))"
     , marginLeft: str $ i left "px"
     , marginRight: var "--input-side-padding"
-    , color: str colour.placeholderText
-    , fontWeight: str "400"
+    , color: str colour.textPaler2
+    , fontWeight: str "450"
+    , overflowX: str "hidden"
+    , textOverflow: str "ellipsis"
+    , overflowY: str "visible"
+    , "MsOverflowStyle": none
+    , scrollbarWidth: none
+    , "&::-webkit-scrollbar": nested $ css
+      { display: none }
     -- , fontWeight: str "600"
     , """&[data-required="true"]:after""":
         nest
@@ -170,12 +176,13 @@ inputContainer props = theCss <>? props.css
       { "--left-icon-size": var "--s0"
       , "--right-icon-size": str "calc(var(--s0) * 1.2)"
       , "--input-border-radius": var "--s-1"
-      , "--input-side-padding": var "--s-1"
+      , "--input-side-padding": str "calc(var(--s-1) * 1.2)"
       , "--input-top-padding": var "--s-5"
       , "--input-bottom-padding": var "--s-5"
       , "--border-width": str "1px"
       , letterSpacing: em (-0.011)
       , position: relative
+      , cursor: str "text"
       , boxSizing: borderBox
       , boxShadow: str """
                 0 1px 1px rgba(200,200,255,0.2),

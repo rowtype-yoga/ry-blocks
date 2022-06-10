@@ -28,6 +28,7 @@ module Yoga.Block.Organism.Form
   ) where
 
 import Yoga.Prelude.View
+
 import Data.Array as Array
 import Data.Foldable (surround)
 import Data.Lens (Lens', Prism, Prism', matching, review, view)
@@ -48,9 +49,10 @@ import React.DndKit as Dnd
 import Record (disjointUnion)
 import Record.Builder as RB
 import Unsafe.Coerce (unsafeCoerce)
+import Unsafe.Reference (UnsafeRefEq(..))
 import Yoga.Block as Block
 import Yoga.Block.Atom.Input as Input
-import Yoga.Block.Atom.Input.Style (labelSmall, labelSmallFocusBackground)
+import Yoga.Block.Atom.Input.Style (labelSmall)
 import Yoga.Block.Atom.Toggle as Toggle
 import Yoga.Block.Atom.Toggle.Types (TogglePosition(..))
 import Yoga.Block.Container.Style (colour)
@@ -60,6 +62,7 @@ import Yoga.Block.Organism.Form.Defaults (formDefaults) as Defaults
 import Yoga.Block.Organism.Form.Internal (Forest, FormBuilder'(..), Tree(..), FormBuilder, formBuilder, formBuilder_, pruneTree)
 import Yoga.Block.Organism.Form.Types (RequiredField(..))
 import Yoga.Block.Organism.Form.Validation (ModifyValidated(..), Validated(..), Validator, _Validated, fromValidated, mustBe, mustEqual, nonEmpty, nonEmptyArray, nonNull, nonEmpty', nonEmptyArray', nonNull', optional, setFresh, setModified, validDate, validInt, validNumber, validDate', validInt', validNumber', validated, validNatBetween', validNatBetween) as Validation
+import Yoga.Prelude.View as React
 
 -- | Create a React component for a form from a `FormBuilder`.
 -- |
@@ -95,9 +98,10 @@ build'
        }
 build' render editor =
   unsafePerformEffect
-    $ reactComponent "Form" \props@{ value, onChange, formProps } -> React.do
+    $ reactComponent "Form" \props@{ value, onChange, formProps } -> Hooks.do
         let { edit } = un FormBuilder editor formProps value
-        pure $ render (contractRenderProps props) formProps (edit onChange)
+        let view = render (contractRenderProps props) formProps (edit onChange)
+        pure view
   where
   contractRenderProps
     ∷ { value ∷ unvalidated
@@ -123,10 +127,7 @@ defaultRenderForm _ { readOnly } forest =
     </
       { className:
           String.joinWith " "
-            $ fold
-                [ [ "ry-form" ]
-                , guard readOnly [ "readOnly" ]
-                ]
+            $ fold [ [ "ry-form" ], guard readOnly [ "readOnly" ] ]
       }
     />
       [ surround fieldDivider
@@ -165,15 +166,15 @@ defaultRenderForest =
             { css:
                 E.css
                   { border: E.str $ "1px solid " <> colour.inputBorder
-                  , background: E.str colour.backgroundLayer1
+                  , background: E.str colour.backgroundLayer5
                   , borderRadius: E.var "--s-1"
                   , marginTop: E.str "var(--s0)"
-                  , "--label-bg": E.str colour.background
+                  , "--label-bg": E.str colour.backgroundLayer5
                   , "--label-fg": E.str colour.text
                   , "&:focus-within":
                       nest
-                        { "--label-bg": labelSmallFocusBackground
-                        , "--label-fg": E.str colour.highlightText
+                        { "--label-bg": E.str colour.backgroundInverted
+                        , "--label-fg": E.str colour.textInverted
                         }
                   }
             , padding: E.str "0"
@@ -605,7 +606,7 @@ array { label, addLabel, defaultValue, editor } =
                               [ if readOnly then empty else deleteButton i
                               , R.text $ " " <> label <> " #" <> show (i + 1)
                               ]
-                        , key: Nothing
+                        , key: Just ("node-" <> label <> "-" <> show i)
                         , required: Neither
                         , validationError: Nothing
                         , children: (un FormBuilder editor props x).edit (onChange <<< editAt i)
@@ -663,7 +664,7 @@ sortableArray { label, addLabel, defaultValue, editor } =
             mkNode i x =
               Node
                 { label: R.text $ " " <> label <> " #" <> show (i + 1)
-                , key: Nothing
+                , key: Just ("node-" <> label <> "-" <> show i)
                 , required: Neither
                 , validationError: Nothing
                 , children: (un FormBuilder editor props x).edit (onChange <<< editAt i)
@@ -687,154 +688,162 @@ sortableArray { label, addLabel, defaultValue, editor } =
         }
     ]
 
-  formArray =
-    unsafePerformEffect
-      $ reactComponent "Form Array"
-          \( props
-               ∷ { kids ∷ Array JSX
-                 , onChange ∷ (Array u -> Array u) -> Effect Unit
-                 , readOnly ∷ Boolean
-                 }
-           ) -> Hooks.do
-            let children = if props.readOnly then props.kids else Array.dropEnd 1 props.kids
-            let addButton = guard (not props.readOnly) (Array.last props.kids # Array.fromFoldable)
-            items /\ setItems <- Hooks.useState' []
-            currentKeyRef <- Hooks.useRef 0
-            let numberOfChildren = Array.length children
-            let numberOfItems = Array.length items
-            useEffect numberOfChildren do
-              when (numberOfChildren > numberOfItems) do
-                currentKey <- Hooks.readRef currentKeyRef
-                let newKey = currentKey + 1
-                Hooks.writeRef currentKeyRef newKey
-                setItems (Array.snoc items (show newKey))
-              mempty
-            let
-              onDragEnd =
-                handler (merge { active: Dnd.active, over: Dnd.over }) case _ of
-                  { active: Just active, over: Just over } ->
-                    when (active.id /= over.id) do
-                      case Array.findIndex (_ == active.id) items, Array.findIndex (_ == over.id) items of
-                        Just oldIndex, Just newIndex -> do
-                          setItems $ Dnd.arrayMove oldIndex newIndex items
-                          props.onChange (\xs' -> Dnd.arrayMove oldIndex newIndex xs')
-                        _, _ -> mempty
-                  _ -> mempty
-            pure $ Dnd.dndContext
-              </
-                { collisionDetection: Dnd.closestCenter
-                , onDragEnd
-                }
-              />
-                [ Dnd.sortableContext
-                    </
-                      { items
-                      , strategy: Dnd.verticalListSortingStrategy
-                      }
-                    />
-                      ( Array.zip children items
-                          # Array.mapWithIndex case _, _ of
-                              i, kid /\ id -> do
-                                Hooks.elementKeyed itemComponent
-                                  { id
-                                  , kid
-                                  , key: id
-                                  , readOnly: props.readOnly
-                                  , delete:
-                                      do
-                                        props.onChange \xs' -> fromMaybe xs' (Array.deleteAt i xs')
-                                        setItems $ fromMaybe items (Array.deleteAt i items)
-                                  }
-                      )
-                ]
-              <> addButton
-
-  itemComponent =
-    unsafePerformEffect
-      $ reactComponent "Form Item" \(props ∷ { id ∷ String, delete ∷ Effect Unit, readOnly ∷ Boolean, kid ∷ JSX }) -> Hooks.do
-          { attributes
-          , listeners
-          , setNodeRef
-          , transform
-          , transition
-          } <-
-            Dnd.useSortable { id: props.id }
-          showMenu /\ setShowMenu <- Hooks.useState' false
+formArray
+  :: forall a
+   . ReactComponent
+       { kids :: Array JSX
+       , onChange :: (Array a -> Array a) -> Effect Unit
+       , readOnly :: Boolean
+       }
+formArray =
+  unsafePerformEffect
+    $ reactComponent "Form Array"
+        \( props
+             ∷ { kids ∷ Array JSX
+               , onChange ∷ (Array _ -> Array _) -> Effect Unit
+               , readOnly ∷ Boolean
+               }
+         ) -> Hooks.do
+          let children = if props.readOnly then props.kids else Array.dropEnd 1 props.kids
+          let addButton = guard (not props.readOnly) (Array.last props.kids # Array.fromFoldable)
+          items /\ setItems <- Hooks.useState' []
+          currentKeyRef <- Hooks.useRef 0
+          let numberOfChildren = Array.length children
+          let numberOfItems = Array.length items
+          useEffect numberOfChildren do
+            when (numberOfChildren > numberOfItems) do
+              currentKey <- Hooks.readRef currentKeyRef
+              let newKey = currentKey + 1
+              Hooks.writeRef currentKeyRef newKey
+              setItems (Array.snoc items (show newKey))
+            mempty
           let
-            style =
-              R.css
-                { transform: Dnd.cssToString transform
-                , transition
-                , listStyleType: "none"
-                , borderRadius: "var(--s-1)"
-                }
-            attrs =
-              RB.build
-                -- RB.disjointUnion listeners >>>
-                ( RB.disjointUnion attributes
-                )
-                { ref: setNodeRef
-                , style
-                , css:
-                    E.css
-                      { "&:focus":
-                          E.nested
-                            $ E.css
-                                { outlineColor: E.str colour.highlight
+            onDragEnd =
+              handler (merge { active: Dnd.active, over: Dnd.over }) case _ of
+                { active: Just active, over: Just over } ->
+                  when (active.id /= over.id) do
+                    case Array.findIndex (_ == active.id) items, Array.findIndex (_ == over.id) items of
+                      Just oldIndex, Just newIndex -> do
+                        setItems $ Dnd.arrayMove oldIndex newIndex items
+                        props.onChange (\xs' -> Dnd.arrayMove oldIndex newIndex xs')
+                      _, _ -> mempty
+                _ -> mempty
+          pure $ Dnd.dndContext
+            </
+              { collisionDetection: Dnd.closestCenter
+              , onDragEnd
+              }
+            />
+              [ Dnd.sortableContext
+                  </
+                    { items
+                    , strategy: Dnd.verticalListSortingStrategy
+                    }
+                  />
+                    ( Array.zip children items
+                        # Array.mapWithIndex case _, _ of
+                            i, kid /\ id -> do
+                              Hooks.elementKeyed itemComponent
+                                { id
+                                , kid
+                                , key: id
+                                , readOnly: props.readOnly
+                                , delete:
+                                    do
+                                      props.onChange \xs' -> fromMaybe xs' (Array.deleteAt i xs')
+                                      setItems $ fromMaybe items (Array.deleteAt i items)
                                 }
-                      , transition: E.str "box-shadow 0.8s ease"
-                      , position: E.relative
-                      , boxSizing: E.contentBox
-                      , overflow: E.visible
-                      }
-                , className: "ry-draggable-array-element"
-                }
-            circleStyle =
-              E.css
-                { position: E.absolute
-                , background: E.str colour.inputBackground
-                , border: E.str $ "1px solid " <> colour.inputBorder
-                , boxShadow: E.str "0 0 var(--s-2) rgba(50,50,50,0.1)"
-                , boxSizing: E.borderBox
-                , touchAction: E.none
-                , borderRadius: E.str "888"
-                , zIndex: E.str "8"
-                , display: E.flex
-                , alignItems: E.center
-                , justifyContent: E.center
-                , width: E.str "calc(var(--s2))"
-                , height: E.str "calc(var(--s2))"
-                , top: E.str "calc(var(--s1) * -0.75)"
-                }
-            dragHandleAttrs =
-              RB.build
-                ( RB.disjointUnion listeners
-                )
-                { className: "ry-draggable-array-drag-handle"
-                , css:
-                    circleStyle
-                      <> E.css
-                        { right: E.str "var(--s-1)"
-                        , cursor: E.str "grab"
-                        }
-                }
-            dragIcon = Block.icon </> { icon: Icons.draggableIndicator, size: E.str "var(--s1)", colour: E.str colour.text }
-            dragHandle = R.div' </* dragHandleAttrs /> [ dragIcon ]
-            -- Menu
-            menuButtonAttrs =
-              { className: "ry-draggable-array-delete-button"
+                    )
+              ]
+            <> addButton
+
+itemComponent ∷ ReactComponent { delete ∷ Effect Unit, id ∷ String, kid ∷ JSX, readOnly ∷ Boolean }
+itemComponent =
+  unsafePerformEffect
+    $ reactComponent "Form Item" \(props ∷ { id ∷ String, delete ∷ Effect Unit, readOnly ∷ Boolean, kid ∷ JSX }) -> Hooks.do
+        { attributes
+        , listeners
+        , setNodeRef
+        , transform
+        , transition
+        } <-
+          Dnd.useSortable { id: props.id }
+        showMenu /\ setShowMenu <- Hooks.useState' false
+        let
+          style =
+            R.css
+              { transform: Dnd.cssToString transform
+              , transition
+              , listStyleType: "none"
+              , borderRadius: "var(--s-1)"
+              }
+          attrs =
+            RB.build
+              -- RB.disjointUnion listeners >>>
+              ( RB.disjointUnion attributes
+              )
+              { ref: setNodeRef
+              , style
+              , css:
+                  E.css
+                    { "&:focus":
+                        E.nested
+                          $ E.css
+                              { outlineColor: E.str colour.highlight
+                              }
+                    , transition: E.str "box-shadow 0.8s ease"
+                    , position: E.relative
+                    , boxSizing: E.contentBox
+                    , overflow: E.visible
+                    }
+              , className: "ry-draggable-array-element"
+              }
+          circleStyle =
+            E.css
+              { position: E.absolute
+              , background: E.str colour.inputBackground
+              , border: E.str $ "1px solid " <> colour.inputBorder
+              , boxShadow: E.str "0 0 var(--s-2) rgba(50,50,50,0.1)"
+              , boxSizing: E.borderBox
+              , touchAction: E.none
+              , borderRadius: E.str "888"
+              , zIndex: E.str "8"
+              , display: E.flex
+              , alignItems: E.center
+              , justifyContent: E.center
+              , width: E.str "calc(var(--s2))"
+              , height: E.str "calc(var(--s2))"
+              , top: E.str "calc(var(--s1) * -0.75)"
+              }
+          dragHandleAttrs =
+            RB.build
+              ( RB.disjointUnion listeners
+              )
+              { className: "ry-draggable-array-drag-handle"
               , css:
                   circleStyle
                     <> E.css
-                      { right: E.str "calc(var(--s-1) + var(--s-1) + var(--s2) + var(--s-3))"
+                      { right: E.str "var(--s-1)"
+                      , cursor: E.str "grab"
                       }
-              , onClick: handler_ (setShowMenu (not showMenu))
               }
-            menuIcon = Block.icon </> { icon: Icons.ellipsis, size: E.str "var(--s1)", colour: E.str colour.text }
-            menuButton = if props.readOnly then empty else R.div' </* menuButtonAttrs /> [ menuIcon ]
-          pure $ R.li' </* attrs
-            />
-              [ dragHandle
-              , menuButton
-              , props.kid
-              ]
+          dragIcon = Block.icon </> { icon: Icons.draggableIndicator, size: E.str "var(--s1)", colour: E.str colour.text }
+          dragHandle = R.div' </* dragHandleAttrs /> [ dragIcon ]
+          -- Menu
+          menuButtonAttrs =
+            { className: "ry-draggable-array-delete-button"
+            , css:
+                circleStyle
+                  <> E.css
+                    { right: E.str "calc(var(--s-1) + var(--s-1) + var(--s2) + var(--s-3))"
+                    }
+            , onClick: handler_ (setShowMenu (not showMenu))
+            }
+          menuIcon = Block.icon </> { icon: Icons.ellipsis, size: E.str "var(--s1)", colour: E.str colour.text }
+          menuButton = if props.readOnly then empty else R.div' </* menuButtonAttrs /> [ menuIcon ]
+        pure $ R.li' </* attrs
+          />
+            [ dragHandle
+            , menuButton
+            , props.kid
+            ]
