@@ -102,7 +102,7 @@ button =
         nest
           { boxShadow: str $ "inset 0 1px var(--s-1) rgba(0,0,0,0.20)"
           , border: str $ i "1px solid " colour.interfaceBackgroundShadow
-          , transform: str "scale3d(0.92,0.92,0.92)"
+          , transform: str "scale3d(0.96,0.96,0.96)"
           , transition: str "transform 50ms ease"
           }
     , "&:disabled":
