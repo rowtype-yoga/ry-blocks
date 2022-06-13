@@ -234,12 +234,12 @@ defaultColours =
       , backgroundLayer3: darken 0.06 >>> saturate 0.03 $ lightBg
       , backgroundLayer4: darken 0.03 >>> saturate 0.04 $ lightBg
       , backgroundLayer5: darken 0.01 >>> saturate 0.05 $ lightBg
-      , backgroundBright1: darken 0.01 >>> saturate 0.05 $ lightBg
-      , backgroundBright2: darken 0.03 >>> saturate 0.04 $ lightBg
-      , backgroundBright3: darken 0.06 >>> saturate 0.03 $ lightBg
-      , backgroundBright4: darken 0.09 >>> saturate 0.04 $ lightBg
-      , backgroundBright5: darken 0.12 >>> saturate 0.05 $ lightBg
-      , backgroundBright6: lightBg
+      , backgroundBright1: lightBg
+      , backgroundBright2: darken 0.01 >>> saturate 0.05 $ lightBg
+      , backgroundBright3: darken 0.03 >>> saturate 0.04 $ lightBg
+      , backgroundBright4: darken 0.06 >>> saturate 0.03 $ lightBg
+      , backgroundBright5: darken 0.09 >>> saturate 0.04 $ lightBg
+      , backgroundBright6: darken 0.12 >>> saturate 0.05 $ lightBg
       , backgroundLayer5Border: lightBg
       , backgroundCard: lightBg
       , popperBackground: (withAlpha 0.9 >>> darken 0.07 >>> desaturate 0.3) lightBg
