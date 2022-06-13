@@ -13,32 +13,32 @@ type Props f r =
 range ∷ ∀ p. { | Props OptionalProp p } -> Style
 range props = styles <>? props.css
   where
-    styles =
-      css
-        { position: str "relative"
-        , height: str "var(--s0)"
-        , display: inlineBlock
-        , boxSizing: borderBox
-        }
+  styles =
+    css
+      { position: str "relative"
+      , height: str "var(--s0)"
+      , display: inlineBlock
+      , boxSizing: borderBox
+      }
 
 container ∷ Style
 container =
   css
     { position: relative
     , "input[type=range]":
-      nest
-        { appearance: none
-        , background: str "transparent"
-        , margin: _0
-        , padding: _0
-        , width: _100percent
-        , height: str "var(--s0)"
-        }
+        nest
+          { appearance: none
+          , background: str "transparent"
+          , margin: _0
+          , padding: _0
+          , width: _100percent
+          , height: str "var(--s0)"
+          }
     , "input[type=range]:focus":
-      nest
-        { outline: none
-        , border: none
-        }
+        nest
+          { outline: none
+          , border: none
+          }
     , "input[type=range]::-webkit-slider-thumb": nested thumbStyle
     , "input[type=range]::-moz-range-thumb": nested thumbStyle
     , boxSizing: borderBox
@@ -64,11 +64,11 @@ inputDisabled =
     , "input[type=range]::-moz-range-thumb": nested thumbStyleDisabled
     }
   where
-    thumbStyleDisabled =
-      css
-        { background: str "#fcfcfc"
-        , boxShadow: str "0 calc(var(--s-4)/2) var(--s-3) rgba(88,88,88,0.2)"
-        }
+  thumbStyleDisabled =
+    css
+      { background: str "#fcfcfc"
+      , boxShadow: str "0 calc(var(--s-4)/2) var(--s-3) rgba(88,88,88,0.2)"
+      }
 
 focusCircle ∷ Style
 focusCircle =
@@ -102,15 +102,15 @@ filled ∷ Style
 filled =
   track
     <> css
-        { width: str "calc(var(--val)/var(--max) * 100%)"
-        , backgroundColor: str colour.highlight
-        }
+      { width: str "calc(var(--val)/var(--max) * 100%)"
+      , backgroundColor: str colour.highlight
+      }
 
 notFilled ∷ Style
 notFilled =
   track
     <> css
-        { width: str "calc((1 - (var(--val)/var(--max))) * 100%)"
-        , right: _0
-        , backgroundColor: str colour.backgroundLayer4
-        }
+      { width: str "calc((1 - (var(--val)/var(--max))) * 100%)"
+      , right: _0
+      , backgroundColor: str colour.backgroundLayer4
+      }

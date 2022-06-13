@@ -1,12 +1,14 @@
 module Yoga.Block.Container.Style where
 
 import Yoga.Prelude.Style
+
 import Color as Color
 import Data.Symbol (class IsSymbol, reflectSymbol)
 import Effect.Uncurried (EffectFn2, runEffectFn2)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Heterogeneous.Mapping (class HMapWithIndex, class MappingWithIndex, hmap, hmapWithIndex)
+import Record.Extra (mapRecord)
 import Type.Proxy (Proxy)
 import Unsafe.Coerce (unsafeCoerce)
 import Web.DOM (Element)
@@ -129,8 +131,8 @@ mkGlobal maybeMode =
         nested
           $ css
               { fontFamily: str "var(--main-font)"
-              , backgroundColor: str colour.background
-              , color: str colour.text
+              , backgroundColor: col.background
+              , color: col.text
               , margin: str "0"
               }
           <> case maybeMode of
@@ -192,8 +194,8 @@ mkGlobal maybeMode =
           }
     , "::selection":
         nest
-          { color: str colour.highlightText
-          , background: str colour.highlight
+          { color: col.highlightText
+          , background: col.highlight
           }
     , "*, *:before, *:after":
         nested
@@ -232,6 +234,12 @@ defaultColours =
       , backgroundLayer3: darken 0.06 >>> saturate 0.03 $ lightBg
       , backgroundLayer4: darken 0.03 >>> saturate 0.04 $ lightBg
       , backgroundLayer5: darken 0.01 >>> saturate 0.05 $ lightBg
+      , backgroundBright1: darken 0.01 >>> saturate 0.05 $ lightBg
+      , backgroundBright2: darken 0.03 >>> saturate 0.04 $ lightBg
+      , backgroundBright3: darken 0.06 >>> saturate 0.03 $ lightBg
+      , backgroundBright4: darken 0.09 >>> saturate 0.04 $ lightBg
+      , backgroundBright5: darken 0.12 >>> saturate 0.05 $ lightBg
+      , backgroundBright6: lightBg
       , backgroundLayer5Border: lightBg
       , backgroundCard: lightBg
       , popperBackground: (withAlpha 0.9 >>> darken 0.07 >>> desaturate 0.3) lightBg
@@ -288,6 +296,12 @@ defaultColours =
       , backgroundLayer3: lighten 0.22 >>> saturate 0.10 $ darkBg
       , backgroundLayer4: lighten 0.34 >>> saturate 0.08 $ darkBg
       , backgroundLayer5: lighten 0.45 >>> saturate 0.04 $ darkBg
+      , backgroundBright1: darkBg
+      , backgroundBright2: lighten 0.13 >>> saturate 0.18 $ darkBg
+      , backgroundBright3: lighten 0.18 >>> saturate 0.13 $ darkBg
+      , backgroundBright4: lighten 0.22 >>> saturate 0.10 $ darkBg
+      , backgroundBright5: lighten 0.34 >>> saturate 0.08 $ darkBg
+      , backgroundBright6: lighten 0.45 >>> saturate 0.04 $ darkBg
       , backgroundLayer5Border: lighten 0.37 $ darkBg
       , backgroundCard: lighten 0.05 >>> saturate 0.1 $ darkBg
       , popperBackground: (withAlpha 0.8 >>> lighten 0.09 >>> saturate 0.05) darkBg
@@ -408,6 +422,12 @@ type FlatTheme a =
   , backgroundLayer3 ∷ a
   , backgroundLayer4 ∷ a
   , backgroundLayer5 ∷ a
+  , backgroundBright1 ∷ a
+  , backgroundBright2 ∷ a
+  , backgroundBright3 ∷ a
+  , backgroundBright4 ∷ a
+  , backgroundBright5 ∷ a
+  , backgroundBright6 ∷ a
   , backgroundLayer5Border ∷ a
   , backgroundInverted ∷ a
   , backgroundCard ∷ a
@@ -470,6 +490,9 @@ colour ∷ FlatTheme String
 colour =
   hmap (\x → "var(" <> x <> ")")
     $ makeCSSVarLabels defaultColours.light
+
+col ∷ FlatTheme StyleProperty
+col = colour # mapRecord str
 
 autoSwitchColourTheme ∷ Style
 autoSwitchColourTheme = lightT
