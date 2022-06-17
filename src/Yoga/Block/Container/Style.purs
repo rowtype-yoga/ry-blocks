@@ -291,17 +291,17 @@ defaultColours =
       , backgroundAlpha50: withAlpha 0.5 darkBg
       , backgroundAlpha75: withAlpha 0.75 darkBg
       , backgroundInverted: lightBg
-      , backgroundLayer1: lighten 0.13 >>> saturate 0.13 $ darkBg
-      , backgroundLayer2: lighten 0.18 >>> saturate 0.08 $ darkBg
-      , backgroundLayer3: lighten 0.22 >>> saturate 0.05 $ darkBg
-      , backgroundLayer4: lighten 0.34 >>> saturate 0.05 $ darkBg
-      , backgroundLayer5: lighten 0.45 >>> saturate 0.01 $ darkBg
+      , backgroundLayer1: lighten 0.04 >>> saturate 0.1 $ darkBg
+      , backgroundLayer2: lighten 0.09 >>> saturate 0.04 $ darkBg
+      , backgroundLayer3: lighten 0.14 >>> saturate 0.02 $ darkBg
+      , backgroundLayer4: lighten 0.18 >>> saturate 0.00 $ darkBg
+      , backgroundLayer5: lighten 0.21 >>> saturate 0.00 $ darkBg
       , backgroundBright1: darkBg
-      , backgroundBright2: lighten 0.13 >>> saturate 0.13 $ darkBg
-      , backgroundBright3: lighten 0.18 >>> saturate 0.08 $ darkBg
-      , backgroundBright4: lighten 0.22 >>> saturate 0.05 $ darkBg
-      , backgroundBright5: lighten 0.34 >>> saturate 0.05 $ darkBg
-      , backgroundBright6: lighten 0.45 >>> saturate 0.01 $ darkBg
+      , backgroundBright2: lighten 0.04 >>> saturate 0.1 $ darkBg
+      , backgroundBright3: lighten 0.09 >>> saturate 0.04 $ darkBg
+      , backgroundBright4: lighten 0.14 >>> saturate 0.02 $ darkBg
+      , backgroundBright5: lighten 0.18 >>> saturate 0.00 $ darkBg
+      , backgroundBright6: lighten 0.21 >>> saturate 0.00 $ darkBg
       , backgroundLayer5Border: lighten 0.37 $ darkBg
       , backgroundCard: lighten 0.05 >>> saturate 0.1 $ darkBg
       , popperBackground: (withAlpha 0.8 >>> lighten 0.09 >>> saturate 0.05) darkBg
