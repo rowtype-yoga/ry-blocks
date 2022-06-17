@@ -49,7 +49,6 @@ import React.DndKit as Dnd
 import Record (disjointUnion)
 import Record.Builder as RB
 import Unsafe.Coerce (unsafeCoerce)
-import Unsafe.Reference (UnsafeRefEq(..))
 import Yoga.Block as Block
 import Yoga.Block.Atom.Input as Input
 import Yoga.Block.Atom.Input.Style (labelSmall)
@@ -62,7 +61,6 @@ import Yoga.Block.Organism.Form.Defaults (formDefaults) as Defaults
 import Yoga.Block.Organism.Form.Internal (Forest, FormBuilder'(..), Tree(..), FormBuilder, formBuilder, formBuilder_, pruneTree)
 import Yoga.Block.Organism.Form.Types (RequiredField(..))
 import Yoga.Block.Organism.Form.Validation (ModifyValidated(..), Validated(..), Validator, _Validated, fromValidated, mustBe, mustEqual, nonEmpty, nonEmptyArray, nonNull, nonEmpty', nonEmptyArray', nonNull', optional, setFresh, setModified, validDate, validInt, validNumber, validDate', validInt', validNumber', validated, validNatBetween', validNatBetween) as Validation
-import Yoga.Prelude.View as React
 
 -- | Create a React component for a form from a `FormBuilder`.
 -- |
