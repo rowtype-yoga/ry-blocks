@@ -1,9 +1,10 @@
 module Yoga.Block.Molecule.Sheet.View (component, Props) where
 
 import Yoga.Prelude.View
+
 import Data.Int as Int
-import Data.Number (pow)
 import Data.Nullable as Nullable
+import Data.Number (pow)
 import Effect.Class.Console (log)
 import Effect.Unsafe (unsafePerformEffect)
 import Framer.Motion as Motion
@@ -11,6 +12,7 @@ import MotionValue (useMotionValue)
 import MotionValue as MotionValue
 import React.Basic.DOM (createPortal, css)
 import React.Basic.DOM as R
+import React.Basic.Emotion as E
 import React.Basic.Emotion as Emotion
 import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
@@ -19,10 +21,13 @@ import Web.HTML as HTML
 import Web.HTML.Window (innerHeight)
 import Yoga.Block.Hook.Key as KeyCode
 import Yoga.Block.Hook.UseKeyDown (useKeyDown)
+import Yoga.Block.Layout.Stack as Stack
 import Yoga.Block.Molecule.Sheet.Style as Style
 
 type Props =
   { content ∷ JSX
+  , header :: JSX
+  , footer :: JSX
   , isOpen ∷ Boolean
   , onDismiss ∷ Effect Unit
   , target ∷ Element
@@ -32,7 +37,7 @@ type Props =
 component ∷ ReactComponent Props
 component =
   unsafePerformEffect
-    $ reactComponent "Sheet Wrapper" \{ content, isOpen, onDismiss, target } -> React.do
+    $ reactComponent "Sheet Wrapper" \{ header, content, footer, isOpen, onDismiss, target } -> React.do
         useKeyDown case _ of
           KeyCode.Escape -> onDismiss
           _ -> mempty
@@ -43,7 +48,7 @@ component =
             R.div' </ {}
               />
                 [ Motion.animatePresence </ {} /> [ guard isOpen $ element clickaway { theRef: clickAwayRef, onDismiss } ]
-                , element window { onDismiss, content, isOpen }
+                , element window { onDismiss, header, content, footer, isOpen }
                 ]
         pure (createPortal toRender target)
 
@@ -64,12 +69,12 @@ clickaway =
             }
 
 type WindowProps =
-  { content ∷ JSX, isOpen ∷ Boolean, onDismiss ∷ Effect Unit }
+  { header :: JSX, footer :: JSX, content ∷ JSX, isOpen ∷ Boolean, onDismiss ∷ Effect Unit }
 
 window ∷ ReactComponent WindowProps
 window =
   unsafePerformEffect
-    $ reactComponent "Sheet Window" \({ content, onDismiss, isOpen } ∷ WindowProps) -> React.do
+    $ reactComponent "Sheet Window" \({ header, content, footer, onDismiss, isOpen } ∷ WindowProps) -> React.do
         ref ∷ NodeRef <- useRef null
         contentRef <- useRef null
         velocityRef <- useRef 0.0
@@ -171,6 +176,12 @@ window =
                         , css: Style.sheetContent
                         , className: "ry-sheet-content"
                         }
-                      /> [ R.div_ [ content ] ]
+                      />
+                        [ Stack.component </ { space: E.str "0" } />
+                            [ header
+                            , R.div' </* { css: Style.sheetBody } /> [ content ]
+                            , footer
+                            ]
+                        ]
                   ]
             ]

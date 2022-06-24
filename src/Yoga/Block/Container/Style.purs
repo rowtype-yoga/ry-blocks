@@ -93,11 +93,15 @@ setDarkOrLightMode desiredMode =
   runMaybeT_ do
     docElem ← getDocumentElement
     style ← getElementStyle docElem # lift
-    style
-      # setStyleProperty "--theme-variant" case desiredMode of
-          LightMode → "light"
-          DarkMode → "dark"
-      # lift
+    lift case desiredMode of
+      LightMode → do
+        setStyleProperty "--theme-variant" "light" style
+        setStyleProperty "--light-mode" "1" style
+        setStyleProperty "--dark-mode" "0" style
+      DarkMode → do
+        setStyleProperty "--theme-variant" "dark" style
+        setStyleProperty "--light-mode" "0" style
+        setStyleProperty "--dark-mode" "1" style
 
 -- [TODO] Move out end
 --
@@ -115,7 +119,11 @@ mkGlobal maybeMode =
         nested
           $ css
               { "@media (prefers-color-scheme: dark)":
-                  nest { "--theme-variant": str "dark" }
+                  nest
+                    { "--theme-variant": str "dark"
+                    , "--light-mode": str "0"
+                    , "--dark-mode": str "1"
+                    }
               }
           <> variables
           <> fontVariables
@@ -549,6 +557,8 @@ variables =
     , "--s5": str "calc(var(--s4) * var(--ratio))"
     , "--s6": str "calc(var(--s5) * var(--ratio))"
     , "--theme-variant": str "light"
+    , "--light-mode": str "1"
+    , "--dark-mode": str "0"
     }
 
 type Sizes =

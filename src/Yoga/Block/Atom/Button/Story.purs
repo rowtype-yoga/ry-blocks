@@ -1,8 +1,10 @@
 module Yoga.Block.Atom.Button.Story (default, button) where
 
 import Prelude hiding (div)
+
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
+import Fahrtwind as F
 import React.Basic (JSX, element, fragment)
 import React.Basic.DOM as R
 import React.Basic.Emotion (str)
@@ -14,21 +16,20 @@ import Yoga.Block.Container.Style (colour, size)
 import Yoga.Block.Container.Style as Styles
 import Yoga.Block.Icon.SVG as Icon
 import Yoga.Block.Internal.CSS (nest)
-import Yoga.Block.Palette as Palette
 
-default ∷
-  { decorators ∷ Array (Effect JSX -> JSX)
-  , title ∷ String
-  }
+default
+  ∷ { decorators ∷ Array (Effect JSX -> JSX)
+    , title ∷ String
+    }
 default =
   { title: "Atom/Button"
   , decorators:
-    [ \storyFn ->
-        R.div_
-          [ element E.global { styles: Styles.global }
-          , unsafePerformEffect storyFn
-          ]
-    ]
+      [ \storyFn ->
+          R.div_
+            [ element E.global { styles: Styles.global }
+            , unsafePerformEffect storyFn
+            ]
+      ]
   }
 
 button ∷ Effect JSX
@@ -78,33 +79,33 @@ customStyle =
     , fontWeight: E.str "500"
     , transition: str "all 0.7s ease"
     , "&:active":
-      nest
-        { boxShadow: E.none
-        , border: E.str $ "1px solid " <> colour.highlightText
-        , transform: E.none
-        , background: E.str colour.highlight
-        , color: E.str colour.highlightText
-        }
+        nest
+          { boxShadow: E.none
+          , border: E.str $ "1px solid " <> colour.highlightText
+          , transform: E.none
+          , background: E.str colour.highlight
+          , color: E.str colour.highlightText
+          }
     , "&:hover":
-      nest
-        { boxShadow: E.none
-        , border: E.str $ "1px solid " <> colour.backgroundLayer1
-        , transform: E.none
-        , background: E.str colour.backgroundLayer4
-        , color: E.str colour.text
-        }
+        nest
+          { boxShadow: E.none
+          , border: E.str $ "1px solid " <> colour.backgroundLayer1
+          , transform: E.none
+          , background: E.str colour.backgroundLayer4
+          , color: E.str colour.text
+          }
     }
 
 customStyle2 ∷ E.Style
 customStyle2 =
   E.css
-    { background: E.color Palette.seaGreen.dark
+    { background: E.color F.green._500
     , color: E.str "white"
     , border: E.str "1px solid transparent"
     , fontWeight: E.str "400"
     , minWidth: E.str size."3xl"
     , "&:focus":
-      nest
-        { border: E.str $ "1px solid " <> colour.background
-        }
+        nest
+          { border: E.str $ "1px solid " <> colour.background
+          }
     }

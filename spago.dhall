@@ -40,6 +40,7 @@ You can edit this file as you like.
   , "react-basic-emotion"
   , "react-basic-hooks"
   , "react-testing-library"
+  , "react-virtuoso"
   , "record"
   , "record-extra"
   , "refs"

@@ -27,19 +27,19 @@ import Yoga.Block.Atom.Button.Types as ButtonType
 import Yoga.Block.Container.Style as Styles
 import Yoga.Block.Molecule.Sheet as Sheet
 
-default ∷
-  { decorators ∷ Array (Effect JSX -> JSX)
-  , title ∷ String
-  }
+default
+  ∷ { decorators ∷ Array (Effect JSX -> JSX)
+    , title ∷ String
+    }
 default =
   { title: "Molecule/Sheet"
   , decorators:
-    [ \storyFn ->
-        R.div_
-          [ element E.global { styles: Styles.global }
-          , unsafePerformEffect storyFn
-          ]
-    ]
+      [ \storyFn ->
+          R.div_
+            [ element E.global { styles: Styles.global }
+            , unsafePerformEffect storyFn
+            ]
+      ]
   }
 
 sheet ∷ Effect JSX
@@ -64,46 +64,45 @@ sheet = do
                 , maybeModalElement
                     # foldMap \(modalElement ∷ Element) ->
                         element Sheet.component
-                          { content:
-                            R.div' </ {}
-                              /> [ R.h2_ [ R.text "Would you like us to track you?" ]
-                                , R.p_ [ R.text text ]
-                                , Block.cluster { justify: "flex-end", space: "var(--s-1)" }
-                                    /> [ Block.button
-                                          { buttonType: ButtonType.Primary
-                                          , onClick:
-                                            handler_ do
-                                              launchAff_ do
-                                                delay (fromDuration $ (2.0 # Seconds))
-                                                liftEffect do
-                                                  setText "Thanks, that's very nice of you"
-                                                  setIsOpen true
-                                              setIsOpen false
-                                          }
-                                          [ R.text "Yes" ]
-                                      , Block.button
-                                          { buttonType: ButtonType.Dangerous
-                                          , onClick:
-                                            handler_ do
-                                              launchAff_ do
-                                                delay (fromDuration $ (2.0 # Seconds))
-                                                liftEffect do
-                                                  setText (power "Oh, but please! " 200)
-                                                  setIsOpen true
-                                              setIsOpen false
-                                          }
-                                          [ R.text "No" ]
-                                      ]
+                          { header: R.h2_ [ R.text "Would you like us to track you?" ]
+                          , footer: Block.cluster { justify: "flex-end", space: "var(--s-1)" }
+                              />
+                                [ Block.button
+                                    { buttonType: ButtonType.Primary
+                                    , onClick:
+                                        handler_ do
+                                          launchAff_ do
+                                            delay (fromDuration $ (2.0 # Seconds))
+                                            liftEffect do
+                                              setText "Thanks, that's very nice of you"
+                                              setIsOpen true
+                                          setIsOpen false
+                                    }
+                                    [ R.text "Yes" ]
+                                , Block.button
+                                    { buttonType: ButtonType.Dangerous
+                                    , onClick:
+                                        handler_ do
+                                          launchAff_ do
+                                            delay (fromDuration $ (2.0 # Seconds))
+                                            liftEffect do
+                                              setText (power "Oh, but please! " 200)
+                                              setIsOpen true
+                                          setIsOpen false
+                                    }
+                                    [ R.text "No" ]
                                 ]
+
+                          , content: R.p_ [ R.text text ]
                           , isOpen
                           , onDismiss:
-                            do
-                              launchAff_ do
-                                delay (fromDuration $ (0.8 # Seconds))
-                                liftEffect do
-                                  setText "Please answer the question"
-                                  setIsOpen true
-                              setIsOpen false
+                              do
+                                launchAff_ do
+                                  delay (fromDuration $ (0.8 # Seconds))
+                                  liftEffect do
+                                    setText "Please answer the question"
+                                    setIsOpen true
+                                setIsOpen false
                           , target: modalElement
                           }
                 ]

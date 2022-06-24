@@ -37,6 +37,7 @@ module Yoga.Block.Organism.Form.Validation
   ) where
 
 import Yoga.Prelude.View
+
 import Data.Array as Array
 import Data.Array.NonEmpty (NonEmptyArray)
 import Data.Array.NonEmpty (fromArray) as NEA
@@ -59,6 +60,7 @@ import Data.String.Pattern (Pattern(..))
 import Data.Symbol (class IsSymbol, reflectSymbol)
 import Data.Traversable (traverse)
 import Effect.Unsafe (unsafePerformEffect)
+import Fahrtwind as F
 import Foreign.Generic (class Decode, class Encode, decode, encode)
 import Framer.Motion (makeVariantLabels)
 import Framer.Motion as Motion
@@ -75,7 +77,6 @@ import Type.Prelude (Proxy(..))
 import Yoga.Block as Block
 import Yoga.Block.Container.Style (colour)
 import Yoga.Block.Organism.Form.Internal (Forest, FormBuilder, FormBuilder'(..), Tree(..))
-import Yoga.Block.Palette as Palette
 
 -- | A `Validator` takes a possibly invalid form `result` and produces
 -- | a `valid` result, or an error message.
@@ -456,7 +457,7 @@ errorChild =
                           , css:
                               E.css
                                 { color: E.str colour.invalidText
-                                , background: E.color Palette.pink.dark
+                                , background: E.color F.pink._700
                                 , padding: E.str "var(--s-5) var(--s-3) var(--s-4) var(--s-3)"
                                 , borderRadius: E.str "0 0 var(--s-3) var(--s-3)"
                                 }
@@ -464,7 +465,7 @@ errorChild =
                         />
                           [ motionReadMore
                               </ Motion.withMotion
-                                { background: Palette.pink.dark
+                                { background: F.pink._700
                                 , onMoreClicked: setExpanded true
                                 , onLessClicked: setExpanded false
                                 }

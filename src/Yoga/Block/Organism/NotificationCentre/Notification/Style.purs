@@ -2,9 +2,9 @@ module Yoga.Block.Organism.NotificationCentre.Notification.Style where
 
 import Yoga.Prelude.Style hiding (top, bottom, left)
 
-import Fahrtwind (acceptClicks, background, backgroundImage, backgroundPosition, backgroundSize, border, borderCol, borderCol', flexCol, fontMedium, gap, gray, height, heightFull, left, overflowHidden, pB, pX, pXY, pY, positionAbsolute, positionFixed, positionRelative, right, rounded2xl, roundedLg, shadow, shadowDefault, textCol, textCol', textSm, textXs, top, width, widthAndHeight, widthFull)
+import Fahrtwind (acceptClicks, background, background', backgroundImage, backgroundPosition, backgroundSize, border, borderBottom, borderCol', flexCol, fontMedium, gap, gray, height, heightFull, left, overflowHidden, pB, pX, pXY, pY, positionAbsolute, positionFixed, positionRelative, right, rounded2xl, roundedLg, shadow, shadowDefault, textCol, textCol', textSm, textXs, top, width, widthAndHeight, widthFull)
 import React.Basic.Emotion as E
-import Yoga.Block.Container.Style (col)
+import Yoga.Block.Container.Style (col, colour)
 
 defaultNotificationStyle ∷ Style
 defaultNotificationStyle = rounded2xl
@@ -13,12 +13,12 @@ defaultNotificationStyle = rounded2xl
   <> height 120
   <> overflowHidden
   <> border 1
-  <> borderCol gray._200
+  <> borderCol' col.backgroundBright1
 
 defaultNotificationContentContainerStyle ∷ Style
 defaultNotificationContentContainerStyle = widthFull
   <> heightFull
-  <> background white
+  <> background' col.background
   <> flexCol
   <> positionRelative
 
@@ -27,10 +27,10 @@ defaultNotificationContentStyle = pX 12 <> pY 12 <> positionRelative
 
 defaultNotificationTitleStyle ∷ Style
 defaultNotificationTitleStyle =
-  textCol gray._700 <> textSm <> fontMedium <> pB 6
+  textCol' col.textPaler2 <> textSm <> fontMedium <> pB 6
 
 defaultNotificationBodyStyle ∷ Style
-defaultNotificationBodyStyle = textCol gray._500 <> textXs
+defaultNotificationBodyStyle = textCol' col.text <> textXs
 
 defaultNotificationContainerStyle ∷ Style
 defaultNotificationContainerStyle =
@@ -39,11 +39,11 @@ defaultNotificationContainerStyle =
 defaultDismissButtonStyle ∷ Style
 defaultDismissButtonStyle = positionAbsolute <> right 8 <> top 8
   <> textCol' col.textPaler2
-  <> border 1
-  <> borderCol' col.backgroundBright5
+  <> border 0
   <> shadowDefault
+  <> borderCol' col.backgroundLayer3
   <> roundedLg
-  <> background white
+  <> background' col.backgroundLayer5
   <> widthAndHeight 26
   <> pXY 3
 
@@ -51,11 +51,13 @@ defaultAutoHideNotificationBackgroundStyle ∷ Style
 defaultAutoHideNotificationBackgroundStyle =
   backgroundImage
     ( "linear-gradient(to right, "
-        <> cssStringRGBA (gray._50 # lighten 0.005)
+        <> colour.backgroundLayer4
         <> " 50%, "
-        <> cssStringRGBA white
+        <> colour.backgroundLayer5
         <> " 0)"
     )
+    <> border 8
+    <> borderCol' col.highlight
     <> backgroundSize "200% 100%"
     <> backgroundPosition "right"
     <> positionAbsolute

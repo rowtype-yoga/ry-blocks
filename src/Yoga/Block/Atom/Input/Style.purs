@@ -119,7 +119,7 @@ labelLarge { left, width } =
     , marginLeft: str $ i left "px"
     , marginRight: var "--input-side-padding"
     , color: str colour.textPaler2
-    , fontWeight: str "450"
+    , fontWeight: str "400"
     , overflowX: str "hidden"
     , textOverflow: str "ellipsis"
     , overflowY: str "visible"
