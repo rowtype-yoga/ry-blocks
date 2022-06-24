@@ -2,7 +2,7 @@ module Yoga.Block.Organism.NotificationCentre.Notification.Style where
 
 import Yoga.Prelude.Style hiding (top, bottom, left)
 
-import Fahrtwind (acceptClicks, background, background', backgroundImage, backgroundPosition, backgroundSize, border, borderBottom, borderCol', flexCol, fontMedium, gap, gray, height, heightFull, left, overflowHidden, pB, pX, pXY, pY, positionAbsolute, positionFixed, positionRelative, right, rounded2xl, roundedLg, shadow, shadowDefault, textCol, textCol', textSm, textXs, top, width, widthAndHeight, widthFull)
+import Fahrtwind (acceptClicks, background', backgroundImage, backgroundPosition, backgroundSize, border, borderCol', flexCol, fontMedium, gap, height, heightFull, left, overflowHidden, pB, pX, pXY, pY, positionAbsolute, positionFixed, positionRelative, right, rounded2xl, roundedLg, shadow, shadowDefault, textCol', textSm, textXs, top, width, widthAndHeight, widthFull)
 import React.Basic.Emotion as E
 import Yoga.Block.Container.Style (col, colour)
 
@@ -13,7 +13,7 @@ defaultNotificationStyle = rounded2xl
   <> height 120
   <> overflowHidden
   <> border 1
-  <> borderCol' col.backgroundBright1
+  <> borderCol' col.backgroundLayer2
 
 defaultNotificationContentContainerStyle ∷ Style
 defaultNotificationContentContainerStyle = widthFull
@@ -56,8 +56,6 @@ defaultAutoHideNotificationBackgroundStyle =
         <> colour.backgroundLayer5
         <> " 0)"
     )
-    <> border 8
-    <> borderCol' col.highlight
     <> backgroundSize "200% 100%"
     <> backgroundPosition "right"
     <> positionAbsolute
