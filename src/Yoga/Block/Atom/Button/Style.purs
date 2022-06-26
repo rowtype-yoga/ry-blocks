@@ -3,7 +3,7 @@ module Yoga.Block.Atom.Button.Style where
 import Yoga.Prelude.Style
 
 import Data.Interpolate (i)
-import Fahrtwind (zIndex)
+import Fahrtwind (background', hover, zIndex)
 import Yoga.Block.Container.Style (col, colour, size)
 
 type Props :: forall k. (Type -> k) -> Row k -> Row k
@@ -60,14 +60,10 @@ button =
     , "& > .ry-drip": nested (zIndex 0)
     , "& > :not(.ry-drip)": nested (zIndex 1)
     , """&[data-button-shape="flat"]""":
-        nest
+        nested $ hover (background' col.highlightAlpha10) <> css
           { background: str "transparent"
           , boxShadow: none
           , color: str colour.highlight
-          , "&:hover":
-              nest
-                { background: str colour.highlightAlpha10
-                }
           , "&:active":
               nest
                 { boxShadow: none
