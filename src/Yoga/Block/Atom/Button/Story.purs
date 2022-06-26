@@ -2,6 +2,7 @@ module Yoga.Block.Atom.Button.Story (default, button) where
 
 import Prelude hiding (div)
 
+import Color (cssStringRGBA)
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
 import Fahrtwind as F
@@ -43,13 +44,15 @@ button = do
                 [ Block.button { buttonType: ButtonType.Generic } [ R.text "Generic" ]
                 , Block.button { buttonType: ButtonType.Primary } [ R.text "Primary" ]
                 , Block.button { buttonType: ButtonType.Dangerous } [ R.text "Dangerous" ]
-                , Block.button { css: customStyle } [ R.text "Custom" ]
+                , Block.button { css: customStyle, ripple: F.emerald._500 # cssStringRGBA } [ R.text "Custom" ]
                 , Block.button { css: customStyle2 } [ R.text "Custom 2" ]
                 ]
             , R.h2_ [ R.text "Button shapes" ]
             , Block.cluster { space: "var(--s-1)" }
-                [ Block.button { buttonType: ButtonType.Generic, buttonShape: ButtonType.Pill } [ R.text "Generic" ]
-                , Block.button { buttonType: ButtonType.Primary, buttonShape: ButtonType.Pill } [ R.text "Primary" ]
+                [ Block.button { buttonType: ButtonType.Generic, buttonShape: ButtonType.Pill } [ R.text "Generic Pill" ]
+                , Block.button { buttonType: ButtonType.Primary, buttonShape: ButtonType.Pill } [ R.text "Generic Primary" ]
+                , Block.button { buttonType: ButtonType.Generic, buttonShape: ButtonType.Flat } [ R.text "Flat Pill" ]
+                , Block.button { buttonType: ButtonType.Primary, buttonShape: ButtonType.Flat } [ R.text "Flat Primary" ]
                 , Block.button { css: customStyle, buttonShape: ButtonType.Pill } [ R.text "+ Custom" ]
                 ]
             , R.h2_ [ R.text "Icon button" ]
@@ -101,7 +104,7 @@ customStyle2 =
   E.css
     { background: E.color F.green._500
     , color: E.str "white"
-    , border: E.str "1px solid transparent"
+    , border: E.none
     , fontWeight: E.str "400"
     , minWidth: E.str size."3xl"
     , "&:focus":

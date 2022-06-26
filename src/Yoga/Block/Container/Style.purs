@@ -278,6 +278,7 @@ defaultColours =
       , link
       , placeholderText: lighten 0.35 darkBg # desaturate 0.1
       , required
+      , ripple: lightBg # darken 0.1
       , success
       , successText
       , text: text
@@ -340,6 +341,7 @@ defaultColours =
       , link: linkDark
       , placeholderText: darken 0.4 white
       , required
+      , ripple: lighten 0.31 >>> saturate 0.00 $ darkBg
       , success: successDark
       , successText
       , text: textDark
@@ -367,7 +369,7 @@ defaultColours =
 
   highlightDarkBase = Color.hsla 265.0 1.00 0.6
 
-  highlightDark = Color.hsla 265.0 1.00 0.57 1.0
+  highlightDark = Color.hsla 262.0 1.00 0.63 1.0
 
   highlightText = Color.rgb 0xFF 0xFF 0xFF
 
@@ -463,6 +465,7 @@ type FlatTheme a =
   , successText ∷ a
   , invalid ∷ a
   , invalidText ∷ a
+  , ripple ∷ a
   , required ∷ a
   , text ∷ a
   , textPaler1 ∷ a

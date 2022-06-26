@@ -18,6 +18,7 @@ renderButtonType = case _ of
 data ButtonShape
   = Rounded
   | Pill
+  | Flat
 
 derive instance eqButtonShape ∷ Eq ButtonShape
 
@@ -25,3 +26,4 @@ renderButtonShape ∷ ButtonShape -> String
 renderButtonShape = case _ of
   Rounded -> "rounded"
   Pill -> "pill"
+  Flat -> "flat"
