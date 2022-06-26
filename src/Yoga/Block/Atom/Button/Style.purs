@@ -64,6 +64,10 @@ button =
           { background: str "transparent"
           , boxShadow: none
           , color: str colour.highlight
+          , "&:hover":
+              nest
+                { background: str colour.highlightAlpha10
+                }
           , "&:active":
               nest
                 { boxShadow: none

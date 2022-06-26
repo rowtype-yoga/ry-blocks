@@ -255,6 +255,7 @@ defaultColours =
       , popperInnerBorder: (withAlpha 0.9 >>> darken 0.25 >>> desaturate 0.3) lightBg
       , popperOuterBorder: transparent
       , highlight
+      , highlightAlpha10: highlightBase 0.10
       , highlightAlpha25: highlightBase 0.25
       , highlightAlpha50: highlightBase 0.50
       , highlightAlpha67: highlightBase 0.67
@@ -318,6 +319,7 @@ defaultColours =
       , popperInnerBorder: (withAlpha 0.9 >>> darken 0.7 >>> desaturate 0.3) lightBg
       , popperOuterBorder: darkBg
       , highlight: highlightDark
+      , highlightAlpha10: highlightDarkBase 0.1
       , highlightAlpha25: highlightDarkBase 0.25
       , highlightAlpha50: highlightDarkBase 0.50
       , highlightAlpha67: highlightDarkBase 0.67
@@ -452,6 +454,7 @@ type FlatTheme a =
   , inputBorder ∷ a
   , link ∷ a
   , highlight ∷ a
+  , highlightAlpha10 ∷ a
   , highlightAlpha25 ∷ a
   , highlightAlpha50 ∷ a
   , highlightAlpha67 ∷ a
