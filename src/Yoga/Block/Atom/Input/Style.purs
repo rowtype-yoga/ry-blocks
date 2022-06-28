@@ -218,8 +218,7 @@ inputContainer props = theCss <>? props.css
       }
 
 containerContainer ∷ ∀ r. { | Props OptionalProp r } -> Style
-containerContainer props = css { display: grid
-      , "--border-width": str "1px"
+containerContainer props = css { "--border-width": str "1px"
   , "--input-border-radius": var "--s-1"
   , background: str (props.background ?|| colour.inputBackground)
   , boxSizing: contentBox
@@ -228,7 +227,7 @@ containerContainer props = css { display: grid
             0 1px 1px rgba(200,200,255,0.2),
             0 2px 2px rgba(200,200,255,0.1),
             0 4px 8px rgba(200,200,255,0.03)"""
-      , border: str $ "var(--border-width) solid " <> colour.inputBorder
+  , border: str $ "var(--border-width) solid " <> colour.inputBorder
   }
 
 inputWrapper ∷ Style
