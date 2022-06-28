@@ -183,7 +183,7 @@ inputContainer props = theCss <>? props.css
       , cursor: str "text"
       , boxSizing: borderBox
       , display: flex
-      , width: str "calc(var(--s4) * 2)"
+      , width: str "100%"
       , """&[data-invalid="false"]""":
           nest
             { borderColor: str colour.success
@@ -220,6 +220,7 @@ inputContainer props = theCss <>? props.css
 containerContainer ∷ ∀ r. { | Props OptionalProp r } -> Style
 containerContainer props = css { "--border-width": str "1px"
   , "--input-border-radius": var "--s-1"
+  , width: str "calc(var(--s4) * 2)"
   , background: str (props.background ?|| colour.inputBackground)
   , boxSizing: contentBox
   , borderRadius: var "--input-border-radius"
