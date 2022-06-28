@@ -183,27 +183,29 @@ inputContainer props = theCss <>? props.css
       , cursor: str "text"
       , boxSizing: borderBox
       , display: flex
-      , width: str "100%"
       , """&[data-invalid="false"]""":
           nest
             { borderColor: str colour.success
+            , marginTop: str "-1px"
             , "--border-width": str "2px"
             }
       , """&[data-invalid="true"]""":
           nest
             { borderColor: str colour.invalid
+            , marginTop: str "-1px"
             , "--border-width": str "2px"
             }
       , "&:focus-within":
           nest
             { "--border-width": str "2px"
             , borderColor: str colour.highlight
+            , marginTop: str "-1px"
             , transition: str "border-color 0s linear 0.1s"
-            , boxShadow: str """
-                0 1px 2px var(--highlight-col),
-                0 2px 4px rgba(230,200,255,0.4),
-                0 4px 12px rgba(230,200,255,0.3)"""
-            -- , animation: plopAnimation <> str " 260ms ease-in"
+            -- , boxShadow: str $ """
+            --     0 1px 2px """ <> colour.highlightAlpha25 <> """,
+            --     0 2px 4px """ <> colour.highlightAlpha25 <> """,
+            --     0 4px 12px """ <> colour.highlightAlpha25
+            , animation: plopAnimation <> str " 260ms ease-in"
             }
       , alignItems: center
       , justifyContent: center
@@ -212,23 +214,34 @@ inputContainer props = theCss <>? props.css
       , paddingRight: str "calc(var(--input-side-padding) - var(--border-width))"
       , paddingTop: str "calc(var(--input-top-padding) - var(--border-width))"
       , paddingBottom: str "calc(var(--input-bottom-padding) - var(--border-width))"
-      , height: str "calc(var(--s2))"
       , gap: str "calc(var(--input-side-padding) / 2)"
       , borderRadius: var "--input-border-radius"
       }
 
-containerContainer ∷ ∀ r. { | Props OptionalProp r } -> Style
-containerContainer props = css { "--border-width": str "1px"
-  , "--input-border-radius": var "--s-1"
-  , width: str "calc(var(--s4) * 2)"
-  , background: str (props.background ?|| colour.inputBackground)
-  , boxSizing: contentBox
-  , borderRadius: var "--input-border-radius"
+containerBackground ∷ ∀ r. { | Props OptionalProp r } -> Style
+containerBackground props = css {
+   background: str (props.background ?|| colour.inputBackground)
   , boxShadow: str """
             0 1px 1px rgba(200,200,255,0.2),
             0 2px 2px rgba(200,200,255,0.1),
             0 4px 8px rgba(200,200,255,0.03)"""
   , border: str $ "var(--border-width) solid " <> colour.inputBorder
+  , borderRadius: var "--input-border-radius"
+
+}
+
+containerContainer ∷ ∀ r. { | Props OptionalProp r } -> Style
+containerContainer props = css {
+  "& > *": nested $ css {
+    gridColumn: int 1,
+    gridRow: int 1
+   }, width: str "calc(var(--s4) * 2)"
+  , height: str "calc(var(--s2) - var(--border-width) * 2)"
+  , "--border-width": str "1px"
+  , "--input-border-radius": var "--s-1"
+  , borderRadius: var "--input-border-radius"
+  , display: grid
+  , overflow: visible
   }
 
 inputWrapper ∷ Style

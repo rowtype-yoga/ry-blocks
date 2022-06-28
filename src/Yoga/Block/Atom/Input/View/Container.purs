@@ -50,7 +50,8 @@ rawContainer =
         containerVariants = mkContainerVariants dimensions
         containerVariantLabels = mkContainerVariantLabels containerVariants
         result = R.div' </* { css: Style.containerContainer props } />
-          [ M.div
+          [ R.div' </*> { className: "container-background", css: Style.containerBackground props }
+          , M.div
               </*
                 ( { variants: M.variants containerVariants
                   , initial: M.initial false
