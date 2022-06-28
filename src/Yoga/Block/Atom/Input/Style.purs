@@ -175,20 +175,13 @@ inputContainer props = theCss <>? props.css
     css
       { "--left-icon-size": var "--s0"
       , "--right-icon-size": str "calc(var(--s0) * 1.2)"
-      , "--input-border-radius": var "--s-1"
       , "--input-side-padding": str "calc(var(--s-1) * 1.2)"
       , "--input-top-padding": var "--s-5"
       , "--input-bottom-padding": var "--s-5"
-      , "--border-width": str "1px"
       , letterSpacing: em (-0.011)
       , position: relative
       , cursor: str "text"
       , boxSizing: borderBox
-      , boxShadow: str """
-                0 1px 1px rgba(200,200,255,0.2),
-                0 2px 2px rgba(200,200,255,0.1),
-                0 4px 8px rgba(200,200,255,0.03)"""
-      , background: str (props.background ?|| colour.inputBackground)
       , display: flex
       , width: str "calc(var(--s4) * 2)"
       , """&[data-invalid="false"]""":
@@ -223,6 +216,20 @@ inputContainer props = theCss <>? props.css
       , gap: str "calc(var(--input-side-padding) / 2)"
       , borderRadius: var "--input-border-radius"
       }
+
+containerContainer ∷ ∀ r. { | Props OptionalProp r } -> Style
+containerContainer props = css { display: grid
+      , "--border-width": str "1px"
+  , "--input-border-radius": var "--s-1"
+  , background: str (props.background ?|| colour.inputBackground)
+  , boxSizing: contentBox
+  , borderRadius: var "--input-border-radius"
+  , boxShadow: str """
+            0 1px 1px rgba(200,200,255,0.2),
+            0 2px 2px rgba(200,200,255,0.1),
+            0 4px 8px rgba(200,200,255,0.03)"""
+      , border: str $ "var(--border-width) solid " <> colour.inputBorder
+  }
 
 inputWrapper ∷ Style
 inputWrapper =

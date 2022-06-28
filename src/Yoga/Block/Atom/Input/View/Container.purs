@@ -8,6 +8,7 @@ import Foreign.NullOrUndefined (undefined)
 import Framer.Motion as M
 import Partial.Unsafe (unsafeCrashWith)
 import React.Basic.DOM (CSS, css)
+import React.Basic.DOM as R
 import React.Basic.Emotion (Style)
 import React.Basic.Hooks as React
 import Unsafe.Coerce (unsafeCoerce)
@@ -48,29 +49,30 @@ rawContainer =
       let
         containerVariants = mkContainerVariants dimensions
         containerVariantLabels = mkContainerVariantLabels containerVariants
-        result =
-          M.div
-            </*
-              ( { variants: M.variants containerVariants
-                , initial: M.initial false
-                , animate:
-                    M.animate
-                      if props.hasFocus then
-                        containerVariantLabels.focussed
-                      else
-                        containerVariantLabels.blurred
-                , className: "ry-input-container"
-                , key: show sizes.innerWidth -- redraw
-                , css: Style.inputContainer props
-                , ref
-                } `unsafeAddProps`
-                  { "data-invalid":
-                      props.isInvalid
-                        # opToMaybe
-                        # maybe (unsafeCoerce undefined) show
-                  }
-              )
-            /> props.children
+        result = R.div' </* { css: Style.containerContainer props } />
+          [ M.div
+              </*
+                ( { variants: M.variants containerVariants
+                  , initial: M.initial false
+                  , animate:
+                      M.animate
+                        if props.hasFocus then
+                          containerVariantLabels.focussed
+                        else
+                          containerVariantLabels.blurred
+                  , className: "ry-input-container"
+                  , key: show sizes.innerWidth -- redraw
+                  , css: Style.inputContainer props
+                  , ref
+                  } `unsafeAddProps`
+                    { "data-invalid":
+                        props.isInvalid
+                          # opToMaybe
+                          # maybe (unsafeCoerce undefined) show
+                    }
+                )
+              /> props.children
+          ]
       pure result
 
 drawPathUntil ∷ Int -> Array Point -> String

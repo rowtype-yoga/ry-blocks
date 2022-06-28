@@ -62,13 +62,13 @@ input = do
                         }
                     ]
                 , Block.box
-                    { background: colour.backgroundLayer1
+                    { background: colour.backgroundInverted
                     }
                     [ element Input.component
                         { label: nes (Proxy ∷ _ "Another background")
-                        , background: colour.backgroundLayer3
+                        -- , background: colour.highlight
                         , textColour: "blue"
-                        , placeholderColour: colour.backgroundLayer3
+                        , placeholderColour: colour.backgroundInverted
                         , leading: R.text "🌭"
                         }
                     ]
