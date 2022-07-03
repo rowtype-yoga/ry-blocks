@@ -7,10 +7,10 @@ import Fahrtwind (background', hover, zIndex)
 import Yoga.Block.Container.Style (col, colour, size)
 
 type Props :: forall k. (Type -> k) -> Row k -> Row k
-type Props f r
-  = ( css ∷ f Style
-    | r
-    )
+type Props f r =
+  ( css ∷ f Style
+  | r
+  )
 
 gradientBackground ∷ StyleProperty
 gradientBackground =
@@ -30,7 +30,8 @@ gradientBackground =
 backgroundAnimation ∷ StyleProperty
 backgroundAnimation =
   keyframes
-    $ { "from": css { backgroundPosition: str "0% 50%" }
+    $
+      { "from": css { backgroundPosition: str "0% 50%" }
       , "to": css { backgroundPosition: str "100% 50%" }
       }
 
@@ -63,16 +64,16 @@ button =
         nested $ hover (background' col.highlightAlpha10) <> css
           { background: str "transparent"
           , boxShadow: none
-          , color: str colour.highlight
+          , color: str colour.highlightTextOnBackground
           , "&:active":
               nest
                 { boxShadow: none
                 }
           , """&[data-button-type="primary"]""":
-            nest {
-              background: str colour.highlight,
-              boxShadow: none
-            }
+              nest
+                { background: str colour.highlight
+                , boxShadow: none
+                }
           }
     , """&[data-button-shape="pill"]""":
         nest

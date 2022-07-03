@@ -265,7 +265,7 @@ defaultColours =
       , highlightRotatedBackwards: highlight # rotateHue (-13.0) # darken 0.05
       , highlightRotatedForwards: highlight # rotateHue 3.0 # lighten 0.05 # saturate 0.1
       , highlightText
-      , highlightTextOnBackground: highlight # rotateHue (-10.0) # darken 0.15 # saturate 0.1
+      , highlightTextOnBackground: highlight # darken 0.1 # saturate 0.1
       , inputBackground: lightBg
       , inputBorder: darken 0.07 >>> desaturate 0.2 $ lightBg
       , interfaceBackground
@@ -327,10 +327,10 @@ defaultColours =
       , highlightDarker: withAlpha 0.4 (Color.darken 0.5 highlightDark)
       , highlightDisabled: (desaturate 0.76 >>> darken 0.32) highlightDark
       , highlightLighter: withAlpha 0.2 (Color.lighten 0.5 highlightDark)
-      , highlightRotatedBackwards: highlightDark # rotateHue (-30.0)
-      , highlightRotatedForwards: highlightDark # rotateHue 30.0
-      , highlightText
-      , highlightTextOnBackground: highlightDark # rotateHue (-20.0) # lighten 0.14 # saturate 0.8
+      , highlightRotatedBackwards: highlightDark # rotateHue (-10.0)
+      , highlightRotatedForwards: highlightDark # rotateHue 50.0
+      , highlightText: highlightDark # lighten 0.3
+      , highlightTextOnBackground: highlightDark # lighten 0.09 # saturate 1.0
       , inputBackground: darkBg # saturate 0.1 # lighten 0.2
       , inputBorder: darkBg # saturate 0.1 # lighten 0.25
       , interfaceBackground: interfaceBackgroundDark
@@ -367,15 +367,15 @@ defaultColours =
   -- highlightBase = Color.hsla 275.0 0.82 0.4
   -- brightPurpleBase = Color.hsla 275.0 0.82 0.4
   -- highlightMurmurasBase = Color.hsla 220.0 0.60 0.5
-  highlightBase = Color.hsla 259.0 1.00 0.6
+  highlightBase = Color.hsla 244.0 0.9 0.62
 
   highlight = highlightBase 1.0
 
-  highlightDarkBase = Color.hsla 265.0 1.00 0.6
+  highlightDarkBase = Color.hsla 240.0 1.00 0.6
 
-  highlightDark = Color.hsla 258.0 1.00 0.63 1.0
+  highlightDark = Color.hsla 240.0 1.00 0.63 1.0
 
-  highlightText = Color.rgb 0xFF 0xFF 0xFF
+  highlightText = highlight # lighten 0.36 # saturate 0.4
 
   interfaceBackground = lightBg
 
