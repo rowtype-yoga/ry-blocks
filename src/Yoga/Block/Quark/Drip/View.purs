@@ -3,10 +3,8 @@ module Yoga.Block.Quark.Drip.View where
 import Yoga.Prelude.View
 
 import Data.Number (nan)
-import Effect.Unsafe (unsafePerformEffect)
 import React.Basic.DOM as R
 import React.Basic.DOM.SVG as SVG
-import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
 import Web.DOM.Node (toEventTarget)
 import Web.Event.Event (EventType(..))
@@ -32,14 +30,15 @@ defaultProps =
   , className: ""
   }
 
-component :: ReactComponent Props
-component = unsafePerformEffect $ reactComponent "Drip" \(props :: Props) -> React.do
-  dripRef <- useRef null
+component ∷ ReactComponent Props
+component = mkForwardRefComponent "Drip" \(props :: Props) propsRef -> React.do
+  backupRef <- React.useRef null
+  let ref = forwardedRefAsMaybe propsRef # fromMaybe backupRef
   let left = if props.x == nan then zero else props.x - 10.0
   let top = if props.y == nan then zero else props.y - 10.0
 
   useEffectAlways do
-    nʔ <- React.readRefMaybe dripRef
+    nʔ <- React.readRefMaybe ref
     nʔ # foldMap \n -> do
       let target = toEventTarget n
       let et = EventType "animationend"
@@ -52,7 +51,7 @@ component = unsafePerformEffect $ reactComponent "Drip" \(props :: Props) -> Rea
       </*
         { css: Style.drip
         , className: "ry-drip"
-        , ref: dripRef
+        , ref
         }
       />
         [ SVG.svg'

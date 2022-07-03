@@ -201,10 +201,6 @@ inputContainer props = theCss <>? props.css
             , borderColor: str colour.highlight
             , marginTop: str "-1px"
             , transition: str "border-color 0s linear 0.1s"
-            -- , boxShadow: str $ """
-            --     0 1px 2px """ <> colour.highlightAlpha25 <> """,
-            --     0 2px 4px """ <> colour.highlightAlpha25 <> """,
-            --     0 4px 12px """ <> colour.highlightAlpha25
             , animation: plopAnimation <> str " 260ms ease-in"
             }
       , alignItems: center
