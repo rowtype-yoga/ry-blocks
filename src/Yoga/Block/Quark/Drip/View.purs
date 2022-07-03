@@ -39,12 +39,15 @@ component = mkForwardRefComponent "Drip" \(props :: Props) propsRef -> React.do
 
   useEffectAlways do
     nʔ <- React.readRefMaybe ref
-    nʔ # foldMap \n -> do
-      let target = toEventTarget n
-      let et = EventType "animationend"
-      listener <- eventListener (const props.onComplete)
-      addEventListener et listener false target
-      pure $ removeEventListener et listener false target
+    nʔ # case _ of
+      Just n -> do
+        let target = toEventTarget n
+        let et = EventType "animationend"
+        listener <- eventListener (const props.onComplete)
+        addEventListener et listener false target
+        pure $ removeEventListener et listener false target
+      Nothing ->
+        pure (pure unit)
 
   pure $ guard props.visible do
     R.div'
