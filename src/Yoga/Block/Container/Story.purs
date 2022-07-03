@@ -28,7 +28,12 @@ container =
                     [ el Box.component { style: css { background: colour.backgroundLayer3 } }
                         [ el Box.component { style: css { background: colour.backgroundLayer4 } }
                             [ el Box.component { style: css { background: colour.backgroundLayer5 } }
-                                []
+                                [ R.div { style: css { color: colour.text }, children: [ R.text "Text" ] }
+                                , R.div { style: css { color: colour.textPaler1 }, children: [ R.text "Text Paler 1" ] }
+                                , R.div { style: css { color: colour.textPaler2 }, children: [ R.text "Text Paler 2" ] }
+                                , R.div { style: css { color: colour.textPaler3 }, children: [ R.text "Text Paler 3" ] }
+                                , R.div { style: css { color: colour.textPaler4 }, children: [ R.text "Text Paler 4" ] }
+                                ]
                             ]
                         ]
                     ]
@@ -43,6 +48,16 @@ container =
                               }
                         }
                         [ R.text "Highlight" ]
+                    ]
+                , Block.stack { space: E.str "10px" }
+                    [ Block.box
+                        { style:
+                            css
+                              { background: colour.background
+                              , color: colour.highlightTextOnBackground
+                              }
+                        }
+                        [ R.text "Highlight Text on Background" ]
                     ]
                 , Block.box
                     { style:

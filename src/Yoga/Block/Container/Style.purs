@@ -265,6 +265,7 @@ defaultColours =
       , highlightRotatedBackwards: highlight # rotateHue (-13.0) # darken 0.05
       , highlightRotatedForwards: highlight # rotateHue 3.0 # lighten 0.05 # saturate 0.1
       , highlightText
+      , highlightTextOnBackground: highlight # rotateHue (-10.0) # darken 0.15 # saturate 0.1
       , inputBackground: lightBg
       , inputBorder: darken 0.07 >>> desaturate 0.2 $ lightBg
       , interfaceBackground
@@ -288,10 +289,10 @@ defaultColours =
       , textPaler3: text # lighten 0.3
       , textPaler4: text # lighten 0.4
       , textInverted: lightBg
-      , textInvertedPaler1: lightBg # darken 0.1
-      , textInvertedPaler2: lightBg # darken 0.2
-      , textInvertedPaler3: lightBg # darken 0.3
-      , textInvertedPaler4: lightBg # darken 0.4
+      , textInvertedPaler1: textDark # darken 0.1 # desaturate 0.2
+      , textInvertedPaler2: textDark # darken 0.2 # desaturate 0.24
+      , textInvertedPaler3: textDark # darken 0.3 # desaturate 0.30
+      , textInvertedPaler4: textDark # darken 0.4 # desaturate 0.30
       , boxShadow: boxShadowLight
       }
   , dark:
@@ -329,6 +330,7 @@ defaultColours =
       , highlightRotatedBackwards: highlightDark # rotateHue (-30.0)
       , highlightRotatedForwards: highlightDark # rotateHue 30.0
       , highlightText
+      , highlightTextOnBackground: highlightDark # rotateHue (-20.0) # lighten 0.14 # saturate 0.8
       , inputBackground: darkBg # saturate 0.1 # lighten 0.2
       , inputBorder: darkBg # saturate 0.1 # lighten 0.25
       , interfaceBackground: interfaceBackgroundDark
@@ -347,10 +349,10 @@ defaultColours =
       , success: successDark
       , successText
       , text: textDark
-      , textPaler1: textDark # darken 0.1 # desaturate 0.25
-      , textPaler2: textDark # darken 0.2 # desaturate 0.25
-      , textPaler3: textDark # darken 0.3 # desaturate 0.25
-      , textPaler4: textDark # darken 0.4 # desaturate 0.25
+      , textPaler1: textDark # darken 0.1 # desaturate 0.2
+      , textPaler2: textDark # darken 0.2 # desaturate 0.24
+      , textPaler3: textDark # darken 0.3 # desaturate 0.30
+      , textPaler4: textDark # darken 0.4 # desaturate 0.30
       , textInverted: darkBg
       , textInvertedPaler1: darkBg # lighten 0.1
       , textInvertedPaler2: darkBg # lighten 0.2
@@ -371,7 +373,7 @@ defaultColours =
 
   highlightDarkBase = Color.hsla 265.0 1.00 0.6
 
-  highlightDark = Color.hsla 262.0 1.00 0.63 1.0
+  highlightDark = Color.hsla 258.0 1.00 0.63 1.0
 
   highlightText = Color.rgb 0xFF 0xFF 0xFF
 
@@ -464,6 +466,7 @@ type FlatTheme a =
   , highlightLighter ∷ a
   , highlightDisabled ∷ a
   , highlightText ∷ a
+  , highlightTextOnBackground :: a
   , success ∷ a
   , successText ∷ a
   , invalid ∷ a

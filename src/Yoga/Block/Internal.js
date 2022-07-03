@@ -4,7 +4,6 @@ export function mkForwardRefComponent(displayName) {
   return (renderFn) => {
     const component = (props, ref) => renderFn(props)(ref)()
     component.displayName = displayName
-    component.whyDidYouRender = true
     return forwardRef(component)
   }
 }
