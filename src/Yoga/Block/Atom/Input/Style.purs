@@ -125,7 +125,7 @@ labelLarge { left, width } =
     -- , height: str "calc(var(--s0) * 1.2)"
     , letterSpacing: em (-0.011)
     , maxWidth: str $ i "calc(" width "px - 2ch)"
-    , marginTop: str "calc(18px / 2 * var(--input-size-factor))"
+    , marginTop: str "calc(9px * var(--input-size-factor))"
     , marginLeft: str $ i left "px"
     , marginRight: var "--input-side-padding"
     , color: str colour.textPaler3
