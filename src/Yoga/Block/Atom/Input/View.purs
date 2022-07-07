@@ -14,10 +14,11 @@ import Record.Builder as RB
 import Type.Prelude (Proxy(..))
 import Web.HTML.HTMLInputElement as InputElement
 import Yoga.Block.Atom.Icon as Icon
+import Yoga.Block.Atom.Input.Style (SizeVariant(..))
 import Yoga.Block.Atom.Input.Style as Style
 import Yoga.Block.Atom.Input.Types (HTMLInputType)
 import Yoga.Block.Atom.Input.Types as InputTypes
-import Yoga.Block.Atom.Input.View.Container (rawContainer)
+import Yoga.Block.Atom.Input.View.Container as Container
 import Yoga.Block.Atom.Input.View.HTMLInput as HTMLInput
 import Yoga.Block.Atom.Input.View.Label as Label
 import Yoga.Block.Container.Style (colour)
@@ -99,7 +100,7 @@ rawComponent =
               , labelText
               , background: props.background ?|| colour.interfaceBackground
               , textColour: props.textColour ?|| colour.text
-
+              , sizeVariant: props.sizeVariant ?|| SizeMedium
               }
 
         leading ∷ Maybe JSX
@@ -162,7 +163,7 @@ rawComponent =
                 ) # deleteUndefineds
               )
         inputContainer =
-          rawContainer
+          Container.rawContainer
             </
               { hasFocus: hasFocus
               , isInvalid: aria # Object.lookup "invalid" <#> (_ == "true") # maybeToOp
@@ -171,6 +172,7 @@ rawComponent =
               , borderColour: props.borderColour
               , textColor: props.textColour
               , ref
+              , hasLabel: props.label # opToMaybe # isJust
               }
             />
               [ leading # foldMap \l -> div </ {} /> [ l ]

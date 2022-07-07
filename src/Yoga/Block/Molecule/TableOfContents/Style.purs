@@ -18,9 +18,9 @@ button =
     , "&:focus": nest { outline: str "none" }
     , border: str $ "1px solid " <> colour.backgroundLayer2
     , "&:focus-visible":
-      nest
-        { boxShadow: str $ "0 0 0 var(--s-4) " <> colour.highlight
-        }
+        nest
+          { boxShadow: str $ "0 0 0 var(--s-4) " <> colour.highlight
+          }
     , borderRadius: str "calc(var(--s2) / 2)"
     , height: var "--s2"
     , width: str "calc(var(--s2) + var(--s1))"
@@ -57,8 +57,8 @@ tableOfContentsTextContainer =
     , fontWeight: str "bold"
     , position: absolute
     , top: str "1px"
-    , fontSize: str "calc(var(--s2)*0.5)"
-    , lineHeight: str "calc(var(--s2)*0.5)"
+    , fontSize: str "calc(var(--s2) * 0.5)"
+    , lineHeight: str "calc(var(--s2) * 0.5)"
     , textAlign: center
     , height: var "--s2"
     , display: flex
@@ -87,7 +87,7 @@ tableOfContentsText =
     , alignItems: center
     , color: disabledTextColour
     , "& > *":
-      nest
-        { color: successTextColour
-        }
+        nest
+          { color: successTextColour
+          }
     }

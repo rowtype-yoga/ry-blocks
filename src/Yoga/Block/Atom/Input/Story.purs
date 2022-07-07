@@ -18,6 +18,7 @@ import Type.Proxy (Proxy(..))
 import Yoga ((</>))
 import Yoga.Block as Block
 import Yoga.Block.Atom.Input as Input
+import Yoga.Block.Atom.Input.Style (SizeVariant(..))
 import Yoga.Block.Atom.Input.Types as HTMLInput
 import Yoga.Block.Atom.Input.View (passwordIcon)
 import Yoga.Block.Container.Style (colour)
@@ -47,11 +48,13 @@ input = do
             , R.h3_ [ R.text "With a label" ]
             , Block.cluster {}
                 [ element Input.component { label: nes (Proxy ∷ _ "This has a label"), value: "And text", onChange: handler_ mempty }
-                , element Input.component { label: nes (Proxy ∷ _ "This has a label"), value: "", onChange: handler_ mempty }
-                , element Input.component { label: nes (Proxy ∷ _ "This has a label"), placeholder: "A very long placeholder, too..." }
+                , element Input.component { label: nes (Proxy ∷ _ "This z` gggj"), value: "", onChange: handler_ mempty }
+                , element Input.component { label: nes (Proxy ∷ _ "This has a label"), placeholder: "A j very g long y placeholder, too..." }
                 , element Input.component { label: nes (Proxy ∷ _ "Pig nose"), leading: R.text "🐽🤣" }
                 , element Input.component { label: nes (Proxy ∷ _ "Pig nose"), trailing: R.text "🤫" }
                 , element Input.component { label: nes (Proxy ∷ _ "Pig nose"), leading: R.text "🌭" }
+                , element Input.component { sizeVariant: SizeSmall, label: nes (Proxy ∷ _ "Small") }
+                , element Input.component { sizeVariant: SizeSmall, placeholder: "Small without label" }
                 , Block.box
                     { background: colour.backgroundLayer3
                     }

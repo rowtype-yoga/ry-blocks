@@ -8,22 +8,22 @@ import Effect (Effect)
 import React.Basic.Hooks (UseState, Hook, coerceHook)
 import React.Basic.Hooks as React
 
+-- Thanks to
+useStateEq :: forall a. Eq a => a -> Hook (UseStateEq a) (a /\ ((a -> a) -> Effect Unit))
+useStateEq initialValue = coerceHook React.do
+  value /\ setValue <- React.useState initialValue
+  let
+    updateEq f = setValue \value' -> do
+      let newValue = f value'
+      if newValue /= value' then newValue else value'
+  pure (value /\ updateEq)
+
 newtype UseStateEq a hooks = UseStateEq (UseState a hooks)
 
 derive instance Newtype (UseStateEq a hooks) _
 
--- [TODO] I'm too stupid to write this
--- useStateEq :: forall a. Eq a => a -> Hook (UseStateEq a) (a /\ ((a -> a) -> Effect Unit))
--- useStateEq initialValue = coerceHook React.do
---   value /\ update <- React.useState initialValue
---   let
---     updateEq modify = do
---       modified <- modify value
---       when (modified /= value) do update (const modified)
---   pure (value /\ updateEq)
-
 useStateEq' :: forall a. Eq a => a -> Hook (UseStateEq a) (a /\ (a -> Effect Unit))
 useStateEq' initialValue = coerceHook React.do
   value /\ setValue <- React.useState' initialValue
-  let updateEq newValue = do when (newValue /= value) do setValue newValue
+  let updateEq newValue = when (newValue /= value) (setValue newValue)
   pure (value /\ updateEq)

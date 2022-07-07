@@ -7,7 +7,9 @@ module Yoga.Block.Container.View
   ) where
 
 import Yoga.Prelude.View
+
 import Data.Array as Array
+import Fahrtwind as F
 import React.Basic.DOM as R
 import React.Basic.Emotion as E
 import React.Basic.Hooks as React
@@ -25,7 +27,7 @@ type PropsF f =
   )
 
 type Props =
-  ( | PropsF Id )
+  (| PropsF Id)
 
 component ∷ ∀ p q. Union p q Props => ReactComponent { | p }
 component = rawComponent
@@ -78,31 +80,31 @@ rawComponent =
         $ fragment
             [ R.div' </ { ref }
                 /> Array.cons
-                    ( element E.global
-                        { styles: (_ <>? props.globalStyles)
+                  ( element E.global
+                      { styles: F.globalStyles <> (_ <>? props.globalStyles)
                           case propsThemeVariant, systemThemeVariant of
                             Nothing, Nothing -> Styles.global
                             Just Styles.DarkMode, _ -> Styles.darkMode
                             Just Styles.LightMode, _ -> Styles.lightMode
                             Nothing, Just DarkMode -> Styles.darkMode
                             Nothing, Just LightMode -> Styles.lightMode
-                        } 
-                    )
-                    children
+                      }
+                  )
+                  children
             , R.div { id: modalContainerId }
             , E.element R.div'
                 { id: tooltipContainerId
                 , className: tooltipContainerId
                 , css:
-                  E.css
-                    { width: 100.0 # E.vw
-                    , height: 100.0 # E.vh
-                    , position: E.fixed
-                    , top: E.str "0"
-                    , left: E.str "0"
-                    , pointerEvents: E.none
-                    , zIndex: E.str "9999"
-                    }
+                    E.css
+                      { width: 100.0 # E.vw
+                      , height: 100.0 # E.vh
+                      , position: E.fixed
+                      , top: E.str "0"
+                      , left: E.str "0"
+                      , pointerEvents: E.none
+                      , zIndex: E.str "9999"
+                      }
                 }
             ]
 

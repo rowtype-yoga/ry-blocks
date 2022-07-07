@@ -1,6 +1,7 @@
 module Yoga.Block.Atom.Input.View.Label where
 
 import Yoga.Prelude.View
+
 import Data.String.NonEmpty (NonEmptyString)
 import Data.String.NonEmpty as NonEmptyString
 import Effect.Class.Console (warn)
@@ -11,6 +12,7 @@ import React.Basic.DOM as R
 import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
 import Record.Extra (sequenceRecord)
+import Yoga.Block.Atom.Input.Style (SizeVariant, sizeVariantToFactor)
 import Yoga.Block.Atom.Input.Style as Style
 
 type Props =
@@ -25,6 +27,7 @@ type Props =
   , labelText ∷ NonEmptyString
   , background ∷ String
   , textColour ∷ String
+  , sizeVariant :: SizeVariant
   }
 
 component ∷ ReactComponent Props
@@ -64,14 +67,13 @@ component =
         -- UI
         let
           text = R.text $ NonEmptyString.toString props.labelText
-          result =
-            container
-              [ labelContainer
-                  [ labelSpan
-                      [ text ]
-                  ]
-              ]
-          container = div </* { className: "ry-input-label-container", css: Style.labelContainer }
+          result = container [ labelContainer [ labelSpan [ text ] ] ]
+
+          container = div </*
+            { className: "ry-input-label-container"
+            , style: R.css { "--input-size-factor": props.sizeVariant # sizeVariantToFactor }
+            , css: Style.labelContainer
+            }
           labelContainer =
             maybeOffsets
               # foldMap case _ of

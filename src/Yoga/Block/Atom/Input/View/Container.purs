@@ -24,6 +24,7 @@ type PropsF f =
 type MandatoryProps r =
   ( children ∷ Array JSX
   , hasFocus ∷ Boolean
+  , hasLabel :: Boolean
   | r
   )
 
@@ -49,30 +50,44 @@ rawContainer =
       let
         containerVariants = mkContainerVariants dimensions
         containerVariantLabels = mkContainerVariantLabels containerVariants
+        animated =
+          M.div
+            </*
+              ( { variants: M.variants containerVariants
+                , initial: M.initial false
+                , animate: M.animate
+                    if props.hasFocus then
+                      containerVariantLabels.focussed
+                    else
+                      containerVariantLabels.blurred
+                , className: "ry-input-container"
+                , key: show sizes.innerWidth -- redraw
+                , css: Style.inputContainer props
+                , ref
+                } `unsafeAddProps`
+                  { "data-invalid":
+                      props.isInvalid
+                        # opToMaybe
+                        # maybe (unsafeCoerce undefined) show
+                  }
+              )
+        static =
+          R.div'
+            </*
+              ( { className: "ry-input-container"
+                , key: show sizes.innerWidth -- redraw
+                , css: Style.inputContainer props <> Style.ploppedFocusWithin
+                , ref
+                } `unsafeAddProps`
+                  { "data-invalid":
+                      props.isInvalid
+                        # opToMaybe
+                        # maybe (unsafeCoerce undefined) show
+                  }
+              )
         result = R.div' </* { css: Style.containerContainer props } />
           [ R.div' </*> { className: "container-background", css: Style.containerBackground props }
-          , M.div
-              </*
-                ( { variants: M.variants containerVariants
-                  , initial: M.initial false
-                  , animate:
-                      M.animate
-                        if props.hasFocus then
-                          containerVariantLabels.focussed
-                        else
-                          containerVariantLabels.blurred
-                  , className: "ry-input-container"
-                  , key: show sizes.innerWidth -- redraw
-                  , css: Style.inputContainer props
-                  , ref
-                  } `unsafeAddProps`
-                    { "data-invalid":
-                        props.isInvalid
-                          # opToMaybe
-                          # maybe (unsafeCoerce undefined) show
-                    }
-                )
-              /> props.children
+          , (if props.hasLabel then animated else static) props.children
           ]
       pure result
 
