@@ -331,8 +331,8 @@ defaultColours =
       , highlightRotatedForwards: highlightDark # rotateHue 50.0
       , highlightText: highlightDark # lighten 0.3
       , highlightTextOnBackground: highlightDark # lighten 0.09 # saturate 1.0
-      , inputBackground: darkBg # saturate 0.1 # lighten 0.2
-      , inputBorder: darkBg # saturate 0.1 # lighten 0.25
+      , inputBackground: lighten 0.09 >>> saturate 0.04 $ darkBg
+      , inputBorder: lighten 0.12 >>> saturate 0.02 $ darkBg
       , interfaceBackground: interfaceBackgroundDark
       , interfaceBackgroundDangerous: interfaceBackgroundDangerousDark
       , interfaceBackgroundDisabled: lighten 0.14 >>> saturate 0.02 $ darkBg

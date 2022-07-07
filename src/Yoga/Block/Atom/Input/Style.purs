@@ -188,7 +188,7 @@ inputContainer props = theCss <>? props.css
       , letterSpacing: em (-0.011)
       , position: relative
       , cursor: str "text"
-      , boxSizing: borderBox
+      , boxSizing: contentBox
       , display: flex
       , """&[data-invalid="false"]""":
           nest
@@ -200,6 +200,7 @@ inputContainer props = theCss <>? props.css
           nest
             { borderColor: str colour.invalid
             , marginTop: str "-1px"
+            , marginLeft: str "-1px"
             , "--border-width": str "2px"
             }
       , "&:focus-within":
@@ -225,7 +226,9 @@ ploppedFocusWithin = css
   { "&:focus-within":
       nest
         { transition: str "border-color 0.18s ease-out"
+        , boxSizing: contentBox
         }
+
   }
 
 containerBackground ∷ ∀ r. { | Props OptionalProp r } -> Style
@@ -253,6 +256,7 @@ containerContainer props = css
       SizeMedium -> str "var(--s-1)"
       SizeSmall -> str "var(--s-2)"
   , borderRadius: var "--input-border-radius"
+  , boxSizing: contentBox
   , display: grid
   , overflow: visible
   }
@@ -287,7 +291,6 @@ input props =
           , paddingLeft: _0
           , paddingRight: _0
           , fontSize: str "calc(var(--input-size-factor) * 16px)"
-          -- , fontSize: str "calc(var(--s0))"
           , "&::placeholder":
               nest
                 { color: str (props.placeholderColour ?|| colour.placeholderText)
