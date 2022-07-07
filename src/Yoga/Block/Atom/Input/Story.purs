@@ -54,7 +54,9 @@ input = do
                 , element Input.component { label: nes (Proxy ∷ _ "Pig nose"), trailing: R.text "🤫" }
                 , element Input.component { label: nes (Proxy ∷ _ "Pig nose"), leading: R.text "🌭" }
                 , element Input.component { sizeVariant: SizeSmall, label: nes (Proxy ∷ _ "Small") }
+                , element Input.component { sizeVariant: SizeTiny, label: nes (Proxy ∷ _ "Tiny") }
                 , element Input.component { sizeVariant: SizeSmall, placeholder: "Small without label" }
+                , element Input.component { sizeVariant: SizeTiny, placeholder: "Tiny without label" }
                 , Block.box
                     { background: colour.backgroundLayer3
                     }

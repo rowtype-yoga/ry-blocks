@@ -1,15 +1,17 @@
 module Yoga.Block.Atom.Input.Style where
 
 import Yoga.Prelude.Style
+
 import Data.Interpolate (i)
 import Yoga.Block.Container.Style (colour)
 
-data SizeVariant = SizeMedium | SizeSmall
+data SizeVariant = SizeMedium | SizeSmall | SizeTiny
 
 sizeVariantToFactor ∷ SizeVariant → String
 sizeVariantToFactor = case _ of
   SizeMedium -> "1"
-  SizeSmall -> "0.85"
+  SizeSmall -> "0.9"
+  SizeTiny -> "0.85"
 
 type Props :: forall k. (Type -> k) -> Row k -> Row k
 type Props f r =
@@ -117,16 +119,16 @@ labelSmallFocusBackground =
 labelLarge ∷ { left ∷ Number, width ∷ Number } -> Style
 labelLarge { left, width } =
   css
-    { fontSize: str "calc(var(--input-size-factor) * 16px)"
+    { fontSize: str "calc(var(--input-size-factor) * 15px)"
     , padding: _0
     , whiteSpace: nowrap -- force on one line
     -- , height: str "calc(var(--s0) * 1.2)"
     , letterSpacing: em (-0.011)
     , maxWidth: str $ i "calc(" width "px - 2ch)"
-    , marginTop: str "calc(var(--s-1) * var(--input-size-factor))"
+    , marginTop: str "calc(18px / 2 * var(--input-size-factor))"
     , marginLeft: str $ i left "px"
     , marginRight: var "--input-side-padding"
-    , color: str colour.textPaler2
+    , color: str colour.textPaler3
     , fontWeight: str "400"
     , overflowX: str "hidden"
     , textOverflow: str "ellipsis"
@@ -181,15 +183,15 @@ inputContainer props = theCss <>? props.css
     css
       { "--left-icon-size": var "--s0"
       , "--right-icon-size": str "calc(var(--s0) * 1.2)"
-      , "--input-side-padding": str "calc(var(--s-1) * var(--input-size-factor) * 1.2)"
-      , "--input-top-padding": str "calc(var(--s-5) * var(--input-size-factor))"
-      , "--input-bottom-padding": str "calc(var(--s-5) * var(--input-size-factor))"
       , "--input-size-factor": str ((props.sizeVariant ?|| SizeMedium) # sizeVariantToFactor)
+      , "--input-side-padding": str "calc(var(--s-1) * var(--input-size-factor) * 1.2)"
+      , "--input-top-padding": str "calc(6px)"
+      , "--input-bottom-padding": str "calc(6px)"
       , letterSpacing: em (-0.011)
       , position: relative
       , cursor: str "text"
       , boxSizing: borderBox
-      , "--base-height": str "calc(42px * var(--input-size-factor))"
+      , "--base-height": str "calc(38px * var(--input-size-factor))"
       , height: str "var(--base-height)"
       , display: flex
       , """&[data-invalid="false"]""":
@@ -216,9 +218,9 @@ inputContainer props = theCss <>? props.css
       , alignItems: center
       , justifyContent: center
       , border: str $ "var(--border-width) solid " <> colour.inputBorder
-      , paddingLeft: str "calc((var(--input-side-padding) - var(--border-width)) * var(--input-size-factor))"
-      , paddingRight: str "calc((var(--input-side-padding) - var(--border-width)) * var(--input-size-factor))"
-      , paddingTop: str "calc((var(--input-top-padding) - var(--border-width)) * var(--input-size-factor))"
+      , paddingLeft: str "calc((var(--input-side-padding) - var(--border-width)) )"
+      , paddingRight: str "calc((var(--input-side-padding) - var(--border-width)) )"
+      , paddingTop: str "calc((var(--input-top-padding) - var(--border-width)) )"
       , paddingBottom: str "calc((var(--input-bottom-padding)) - var(--border-width))"
       , gap: str "calc(var(--input-side-padding) / 2)"
       , borderRadius: var "--input-border-radius"
@@ -258,6 +260,7 @@ containerContainer props = css
   , "--input-border-radius": case props.sizeVariant ?|| SizeMedium of
       SizeMedium -> str "var(--s-1)"
       SizeSmall -> str "var(--s-2)"
+      SizeTiny -> str "var(--s-3)"
   , borderRadius: var "--input-border-radius"
   , boxSizing: contentBox
   , display: grid
@@ -287,13 +290,14 @@ input props =
           , minWidth: _0
           , margin: _0
           , overflowY: visible
-          , "--padding-top": str "calc(var(--s-1) * var(--input-size-factor))"
-          , "--padding-bottom": str "calc(var(--s-1) * var(--input-size-factor))"
+          , "--padding-top": str "calc(6px)"
+          , "--padding-bottom": str "calc(6px)"
           , paddingTop: var "--padding-top"
           , paddingBottom: var "--padding-bottom"
           , paddingLeft: _0
           , paddingRight: _0
-          , fontSize: str "calc(var(--input-size-factor) * 16px)"
+          , fontSize: str "calc(var(--input-size-factor) * 15px)"
+          , letterSpacing: var "--letter-spacing"
           , "&::placeholder":
               nest
                 { color: str (props.placeholderColour ?|| colour.placeholderText)

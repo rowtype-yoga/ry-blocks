@@ -289,10 +289,10 @@ defaultColours =
       , textPaler3: text # lighten 0.3
       , textPaler4: text # lighten 0.4
       , textInverted: lightBg
-      , textInvertedPaler1: textDark # darken 0.1 # desaturate 0.2
-      , textInvertedPaler2: textDark # darken 0.2 # desaturate 0.24
-      , textInvertedPaler3: textDark # darken 0.3 # desaturate 0.30
-      , textInvertedPaler4: textDark # darken 0.4 # desaturate 0.30
+      , textInvertedPaler1: textDark # darken 0.1 # desaturate 0.02
+      , textInvertedPaler2: textDark # darken 0.2 # desaturate 0.04
+      , textInvertedPaler3: textDark # darken 0.3 # desaturate 0.06
+      , textInvertedPaler4: textDark # darken 0.4 # desaturate 0.08
       , boxShadow: boxShadowLight
       }
   , dark:
@@ -343,16 +343,16 @@ defaultColours =
       , invalid: invalidDark
       , invalidText: invalidTextDark
       , link: linkDark
-      , placeholderText: darken 0.4 white
+      , placeholderText: textDark # darken 0.3 # desaturate 0.30
       , required
       , ripple: lighten 0.31 >>> saturate 0.00 $ darkBg
       , success: successDark
       , successText
       , text: textDark
-      , textPaler1: textDark # darken 0.1 # desaturate 0.2
-      , textPaler2: textDark # darken 0.2 # desaturate 0.24
-      , textPaler3: textDark # darken 0.3 # desaturate 0.30
-      , textPaler4: textDark # darken 0.4 # desaturate 0.30
+      , textPaler1: textDark # darken 0.1 # desaturate 0.02
+      , textPaler2: textDark # darken 0.2 # desaturate 0.04
+      , textPaler3: textDark # darken 0.3 # desaturate 0.06
+      , textPaler4: textDark # darken 0.4 # desaturate 0.08
       , textInverted: darkBg
       , textInvertedPaler1: darkBg # lighten 0.1
       , textInvertedPaler2: darkBg # lighten 0.2
@@ -415,7 +415,7 @@ defaultColours =
 
   text = lightBg # darken 0.8
 
-  textDark = Color.rgb 240 245 250
+  textDark = Color.rgb 204 212 220
 
   boxShadowLight = Color.rgba 0 0 0 0.2
 
