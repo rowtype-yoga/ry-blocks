@@ -11,7 +11,7 @@ sizeVariantToFactor ∷ SizeVariant → String
 sizeVariantToFactor = case _ of
   SizeMedium -> "1"
   SizeSmall -> "0.9"
-  SizeTiny -> "0.85"
+  SizeTiny -> "0.8"
 
 type Props :: forall k. (Type -> k) -> Row k -> Row k
 type Props f r =
@@ -290,8 +290,8 @@ input props =
           , minWidth: _0
           , margin: _0
           , overflowY: visible
-          , "--padding-top": str "calc(6px)"
-          , "--padding-bottom": str "calc(6px)"
+          , "--padding-top": str "calc(6px * var(--input-size-factor))"
+          , "--padding-bottom": str "calc(6px * var(--input-size-factor))"
           , paddingTop: var "--padding-top"
           , paddingBottom: var "--padding-bottom"
           , paddingLeft: _0
