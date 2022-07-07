@@ -173,6 +173,7 @@ rawComponent =
               , textColor: props.textColour
               , ref
               , hasLabel: props.label # opToMaybe # isJust
+              , sizeVariant: props.sizeVariant
               }
             />
               [ leading # foldMap \l -> div </ {} /> [ l ]

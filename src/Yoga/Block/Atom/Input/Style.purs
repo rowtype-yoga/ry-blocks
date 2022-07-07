@@ -48,7 +48,7 @@ labelAndInputWrapper =
     -- , display: inlineBlock
     , "--left-icon-size": str "calc(var(--s0) * var(--input-size-factor))"
     , "--right-icon-size": str "calc(var(--s0) * var(--input-size-factor)) * 1.2)"
-    , "--input-border-radius": str "calc(var(--s-1) * var(--input-size-factor))"
+    , "--input-border-radius": str "calc(var(--s-1) * var(--input-size-factor) * var(--input-size-factor))"
     , "--input-side-padding": var "--s-1"
     , width: inherit
     , margin: _0
@@ -224,8 +224,7 @@ ploppedFocusWithin ∷ Style
 ploppedFocusWithin = css
   { "&:focus-within":
       nest
-        { animation: str "plop 180ms ease"
-        , animationName: plopAnimation
+        { transition: str "border-color 0.18s ease-out"
         }
   }
 
@@ -250,7 +249,9 @@ containerContainer props = css
       }
   , "--border-width": str "1px"
   , "--input-size-factor": str ((props.sizeVariant ?|| SizeMedium) # sizeVariantToFactor)
-  , "--input-border-radius": str "calc(var(--s-1) * var(--input-size-factor))"
+  , "--input-border-radius": case props.sizeVariant ?|| SizeMedium of
+      SizeMedium -> str "var(--s-1)"
+      SizeSmall -> str "var(--s-2)"
   , borderRadius: var "--input-border-radius"
   , display: grid
   , overflow: visible
@@ -315,8 +316,8 @@ plopAnimation ∷ StyleProperty
 plopAnimation =
   keyframes
     $
-      { "from": css { transform: str "scale3d(1.03,1.02,1)" }
+      { "from": css { transform: str "scale3d(1.003,1.02,1)" }
       , "67.7%": css { transform: str "scale3d(0.997,0.98,1)" }
-      , "86.7%": css { transform: str "scale3d(1.004,1.01,1)" }
+      , "86.7%": css { transform: str "scale3d(1.001,1.01,1)" }
       , "to": css { transform: str "scale3d(1,1,1)" }
       }
