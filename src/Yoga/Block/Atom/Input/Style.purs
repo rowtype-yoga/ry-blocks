@@ -9,7 +9,7 @@ data SizeVariant = SizeMedium | SizeSmall
 sizeVariantToFactor ∷ SizeVariant → String
 sizeVariantToFactor = case _ of
   SizeMedium -> "1"
-  SizeSmall -> "0.8"
+  SizeSmall -> "0.85"
 
 type Props :: forall k. (Type -> k) -> Row k -> Row k
 type Props f r =
@@ -188,26 +188,30 @@ inputContainer props = theCss <>? props.css
       , letterSpacing: em (-0.011)
       , position: relative
       , cursor: str "text"
-      , boxSizing: contentBox
+      , boxSizing: borderBox
+      , "--base-height": str "calc(42px * var(--input-size-factor))"
+      , height: str "var(--base-height)"
       , display: flex
       , """&[data-invalid="false"]""":
           nest
             { borderColor: str colour.success
             , marginTop: str "-1px"
+            , marginBottom: str "-1px"
             , "--border-width": str "2px"
             }
       , """&[data-invalid="true"]""":
           nest
             { borderColor: str colour.invalid
-            , marginTop: str "-1px"
-            , marginLeft: str "-1px"
+            -- , marginTop: str "-1px"
+            -- , marginBottom: str "-1px"
+            -- , marginLeft: str "-1px"
             , "--border-width": str "2px"
             }
       , "&:focus-within":
           nest
             { "--border-width": str "2px"
             , borderColor: str colour.highlight
-            , marginTop: str "-1px"
+            -- , boxSizing: borderBox
             }
       , alignItems: center
       , justifyContent: center
@@ -226,7 +230,6 @@ ploppedFocusWithin = css
   { "&:focus-within":
       nest
         { transition: str "border-color 0.18s ease-out"
-        , boxSizing: contentBox
         }
 
   }
