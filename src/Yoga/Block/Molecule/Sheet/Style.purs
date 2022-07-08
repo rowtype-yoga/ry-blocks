@@ -2,8 +2,8 @@ module Yoga.Block.Molecule.Sheet.Style where
 
 import Yoga.Prelude.Style
 
-import Fahrtwind (boxSizingBorderBox, boxSizingContentBox, mL', mR', mT, mX, mX', maxHeight', minHeight, overflowYScroll, pB, pB', pL', pR, pT, pT', pX', pY')
-import Fahrtwind.Style.ScollBar (scrollBar, scrollBar')
+import Fahrtwind (maxHeight', overflowYScroll, pX', pY')
+import Fahrtwind.Style.ScollBar (scrollBar')
 import Yoga.Block.Container.Style (col, colour)
 
 type Props :: forall k. (Type -> k) -> Row k -> Row k
@@ -20,6 +20,7 @@ sheet = styles
       { zIndex: str "3"
       , position: fixed
       , left: str "0"
+      , pointerEvents: auto
       , width: str "100vw"
       , background: str colour.backgroundLayer4
       , borderRadius: str $ "var(--s1) var(--s1) 0 0"

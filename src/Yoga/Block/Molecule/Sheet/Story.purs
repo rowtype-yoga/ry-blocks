@@ -47,7 +47,8 @@ sheet = do
           pure
             $ fragment
                 [ R.h2_ [ R.text "No Options" ]
-                , R.div { id: "modal-container" }
+                , R.div { id: "clickaway-container", style: R.css { userSelect: "none" } }
+                , R.div { id: "modal-container", style: R.css { userSelect: "none" } }
                 , element Sheet.component
                     { header: R.h2_ [ R.text "Would you like us to track you?" ]
                     , footer: Block.cluster { justify: "flex-end", space: "var(--s-1)" }
@@ -88,6 +89,7 @@ sheet = do
                               setText "Please answer the question"
                               setIsOpen true
                           setIsOpen false
-                    , target: "modal-container"
+                    , containerId: "modal-container"
+                    , clickAwayId: "clickaway-container"
                     }
                 ]

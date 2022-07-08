@@ -30,34 +30,35 @@ type Props =
   , footer :: JSX
   , isOpen ∷ Boolean
   , onDismiss ∷ Effect Unit
-  , target ∷ String
+  , containerId ∷ String
+  , clickAwayId :: String
   | ()
   }
 
 component ∷ ReactComponent Props
 component =
   unsafePerformEffect
-    $ reactComponent "Sheet Wrapper" \{ header, content, footer, isOpen, onDismiss, target } -> React.do
-        renderInPortal <- useRenderInPortal target
+    $ reactComponent "Sheet Wrapper" \{ header, content, footer, isOpen, onDismiss, containerId, clickAwayId } -> React.do
+        renderInPortal <- useRenderInPortal containerId
         useKeyDown case _ of
           KeyCode.Escape -> onDismiss
           _ -> mempty
-        clickAwayRef <- React.useRef Nullable.null
         let
           toRender ∷ JSX
           toRender =
             R.div' </ {}
               />
-                [ Motion.animatePresence </ {} /> [ guard isOpen $ element clickaway { theRef: clickAwayRef, onDismiss } ]
+                [ Motion.animatePresence </ {} /> [ guard isOpen $ element clickaway { containerId: clickAwayId, onDismiss } ]
                 , element window { onDismiss, header, content, footer, isOpen }
                 ]
         pure (renderInPortal toRender)
 
-clickaway ∷ ReactComponent { theRef ∷ Ref (Nullable Node), onDismiss ∷ Effect Unit }
+clickaway ∷ ReactComponent { containerId ∷ String, onDismiss ∷ Effect Unit }
 clickaway =
   unsafePerformEffect
-    $ reactComponent "Sheet Clickaway" \{ theRef, onDismiss } -> React.do
-        pure $ Emotion.elementKeyed Motion.div
+    $ reactComponent "Sheet Clickaway" \{ containerId, onDismiss } -> React.do
+        renderInPortal <- useRenderInPortal containerId
+        pure $ renderInPortal $ Emotion.elementKeyed Motion.div
           $
             { key: "ry-modal-clickaway"
             , onClick: handler_ onDismiss
@@ -66,7 +67,6 @@ clickaway =
             , initial: Motion.prop $ css { opacity: 0.0 }
             , animate: Motion.prop $ css { opacity: 1.0 }
             , exit: Motion.prop $ css { opacity: 0.0 }
-            , ref: theRef
             }
 
 type WindowProps =
