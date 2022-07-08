@@ -10,17 +10,17 @@ import Effect.Unsafe (unsafePerformEffect)
 import Framer.Motion as Motion
 import MotionValue (useMotionValue)
 import MotionValue as MotionValue
-import React.Basic.DOM (createPortal, css)
+import React.Basic.DOM (css)
 import React.Basic.DOM as R
 import React.Basic.Emotion as E
 import React.Basic.Emotion as Emotion
 import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
-import Web.DOM (Element)
 import Web.HTML as HTML
 import Web.HTML.Window (innerHeight)
 import Yoga.Block.Hook.Key as KeyCode
 import Yoga.Block.Hook.UseKeyDown (useKeyDown)
+import Yoga.Block.Hook.UseRenderInPortal (useRenderInPortal)
 import Yoga.Block.Layout.Stack as Stack
 import Yoga.Block.Molecule.Sheet.Style as Style
 
@@ -30,7 +30,7 @@ type Props =
   , footer :: JSX
   , isOpen ∷ Boolean
   , onDismiss ∷ Effect Unit
-  , target ∷ Element
+  , target ∷ String
   | ()
   }
 
@@ -38,6 +38,7 @@ component ∷ ReactComponent Props
 component =
   unsafePerformEffect
     $ reactComponent "Sheet Wrapper" \{ header, content, footer, isOpen, onDismiss, target } -> React.do
+        renderInPortal <- useRenderInPortal target
         useKeyDown case _ of
           KeyCode.Escape -> onDismiss
           _ -> mempty
@@ -50,7 +51,7 @@ component =
                 [ Motion.animatePresence </ {} /> [ guard isOpen $ element clickaway { theRef: clickAwayRef, onDismiss } ]
                 , element window { onDismiss, header, content, footer, isOpen }
                 ]
-        pure (createPortal toRender target)
+        pure (renderInPortal toRender)
 
 clickaway ∷ ReactComponent { theRef ∷ Ref (Nullable Node), onDismiss ∷ Effect Unit }
 clickaway =

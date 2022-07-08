@@ -58,6 +58,7 @@ clickaway =
     , position: fixed
     , left: _0
     , top: _0
+    , pointerEvents: auto
     , backdropFilter: str "blur(4px) brightness(80%)"
     , zIndex: str "3"
     }
