@@ -309,10 +309,10 @@ defaultColours =
       , backgroundLayer5: lighten 0.23 >>> saturate 0.00 $ darkBg
       , backgroundBright1: darkBg
       , backgroundBright2: lighten 0.04 >>> saturate 0.1 $ darkBg
-      , backgroundBright3: lighten 0.11 >>> saturate 0.04 $ darkBg
-      , backgroundBright4: lighten 0.14 >>> saturate 0.02 $ darkBg
-      , backgroundBright5: lighten 0.18 >>> saturate 0.00 $ darkBg
-      , backgroundBright6: lighten 0.21 >>> saturate 0.00 $ darkBg
+      , backgroundBright3: lighten 0.13 >>> saturate 0.04 $ darkBg
+      , backgroundBright4: lighten 0.15 >>> saturate 0.02 $ darkBg
+      , backgroundBright5: lighten 0.19 >>> saturate 0.00 $ darkBg
+      , backgroundBright6: lighten 0.23 >>> saturate 0.00 $ darkBg
       , backgroundLayer5Border: lighten 0.37 $ darkBg
       , backgroundCard: lighten 0.05 >>> saturate 0.1 $ darkBg
       , popperBackground: (withAlpha 0.8 >>> lighten 0.09 >>> saturate 0.05) darkBg
