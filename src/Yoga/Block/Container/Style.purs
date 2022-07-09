@@ -58,15 +58,6 @@ foreign import getElementStyle ∷ Element → Effect ElementStyle
 
 foreign import setStyleProperty ∷ String → String → ElementStyle → Effect Unit
 
-foreign import data MediaQueryList ∷ Type
-
-foreign import matchMedia ∷ String → Window → Effect MediaQueryList
-
-foreign import matches ∷ MediaQueryList → Effect Boolean
-
-toEventTarget ∷ MediaQueryList → EventTarget
-toEventTarget = unsafeCoerce
-
 getDocumentElement ∷ MaybeT Effect Element
 getDocumentElement = do
   win ← window # lift

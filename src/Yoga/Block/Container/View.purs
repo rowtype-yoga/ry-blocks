@@ -10,13 +10,16 @@ import Yoga.Prelude.View
 
 import Data.Array as Array
 import Fahrtwind as F
+import MediaQuery (matchMedia, matches)
+import MediaQuery.Types (MediaQueryList)
+import MediaQuery.Types as MediaQueryList
 import React.Basic.DOM as R
 import React.Basic.Emotion as E
 import React.Basic.Hooks as React
 import Web.Event.EventTarget (addEventListener, eventListener, removeEventListener)
 import Web.HTML (window)
 import Web.HTML.Event.EventTypes as Event
-import Yoga.Block.Container.Style (DarkOrLightMode(..), matchMedia, matches, setDarkOrLightMode)
+import Yoga.Block.Container.Style (DarkOrLightMode(..), setDarkOrLightMode)
 import Yoga.Block.Container.Style as Styles
 
 type PropsF f =
@@ -32,10 +35,10 @@ type Props =
 component ∷ ∀ p q. Union p q Props => ReactComponent { | p }
 component = rawComponent
 
-mkPrefersDark ∷ Effect Styles.MediaQueryList
+mkPrefersDark ∷ Effect MediaQueryList
 mkPrefersDark = matchMedia "(prefers-color-scheme: dark)" =<< window
 
-mkPrefersLight ∷ Effect Styles.MediaQueryList
+mkPrefersLight ∷ Effect MediaQueryList
 mkPrefersLight = matchMedia "(prefers-color-scheme: light)" =<< window
 
 rawComponent ∷ ∀ p. ReactComponent { | p }
@@ -64,18 +67,18 @@ rawComponent =
             whenM (matches prefersDarkMediaQuery) do
               setSystemThemeVariant (Just DarkMode)
               notifySystemThemeChanged DarkMode
-        addEventListener Event.change darkModeListener true (Styles.toEventTarget prefersDarkMediaQuery)
+        addEventListener Event.change darkModeListener true (MediaQueryList.toEventTarget prefersDarkMediaQuery)
         -- Light Mode listener
         lightModeListener <-
           eventListener \_ -> do
             whenM (matches prefersLightMediaQuery) do
               setSystemThemeVariant (Just LightMode)
               notifySystemThemeChanged LightMode
-        addEventListener Event.change darkModeListener true (Styles.toEventTarget prefersDarkMediaQuery)
-        addEventListener Event.change lightModeListener true (Styles.toEventTarget prefersLightMediaQuery)
+        addEventListener Event.change darkModeListener true (MediaQueryList.toEventTarget prefersDarkMediaQuery)
+        addEventListener Event.change lightModeListener true (MediaQueryList.toEventTarget prefersLightMediaQuery)
         pure do
-          removeEventListener Event.change darkModeListener true (Styles.toEventTarget prefersDarkMediaQuery)
-          removeEventListener Event.change lightModeListener true (Styles.toEventTarget prefersLightMediaQuery)
+          removeEventListener Event.change darkModeListener true (MediaQueryList.toEventTarget prefersDarkMediaQuery)
+          removeEventListener Event.change lightModeListener true (MediaQueryList.toEventTarget prefersLightMediaQuery)
       pure
         $ fragment
             [ R.div' </ { ref }
