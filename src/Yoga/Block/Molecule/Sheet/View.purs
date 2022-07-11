@@ -3,7 +3,6 @@ module Yoga.Block.Molecule.Sheet.View (component, Props) where
 import Yoga.Prelude.View
 
 import Data.Int as Int
-import Data.Nullable as Nullable
 import Data.Number (pow)
 import Effect.Class.Console (log)
 import Effect.Unsafe (unsafePerformEffect)

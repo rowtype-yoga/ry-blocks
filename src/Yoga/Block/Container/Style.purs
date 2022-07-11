@@ -275,10 +275,10 @@ defaultColours =
       , success
       , successText
       , text: text
-      , textPaler1: text # lighten 0.1
-      , textPaler2: text # lighten 0.2
-      , textPaler3: text # lighten 0.3
-      , textPaler4: text # lighten 0.4
+      , textPaler1: text # lighten 0.1 # desaturate 0.04
+      , textPaler2: text # lighten 0.2 # desaturate 0.08
+      , textPaler3: text # lighten 0.3 # desaturate 0.12
+      , textPaler4: text # lighten 0.4 # desaturate 0.16
       , textInverted: lightBg
       , textInvertedPaler1: textDark # darken 0.1 # desaturate 0.02
       , textInvertedPaler2: textDark # darken 0.2 # desaturate 0.04
@@ -345,10 +345,10 @@ defaultColours =
       , textPaler3: textDark # darken 0.3 # desaturate 0.06
       , textPaler4: textDark # darken 0.4 # desaturate 0.08
       , textInverted: darkBg
-      , textInvertedPaler1: darkBg # lighten 0.1
-      , textInvertedPaler2: darkBg # lighten 0.2
-      , textInvertedPaler3: darkBg # lighten 0.3
-      , textInvertedPaler4: darkBg # lighten 0.4
+      , textInvertedPaler1: darkBg # lighten 0.1 # desaturate 0.02
+      , textInvertedPaler2: darkBg # lighten 0.2 # desaturate 0.04
+      , textInvertedPaler3: darkBg # lighten 0.3 # desaturate 0.06
+      , textInvertedPaler4: darkBg # lighten 0.4 # desaturate 0.08
       , boxShadow: boxShadowDark
       }
   }

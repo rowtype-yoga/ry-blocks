@@ -145,5 +145,5 @@ var purescript = function (hljs) {
     ]
   }
 }
-Light.registerLanguage("puresscript", purescript)
+Light.registerLanguage("purescript", purescript)
 export const syntaxHighlighter = Light

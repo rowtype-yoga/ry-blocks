@@ -4,13 +4,13 @@ import Yoga.Prelude.Style
 import Data.Interpolate (i)
 import Yoga.Block.Container.Style (colour)
 
-type Props :: forall k. (Type -> k) -> Row k -> Row k
+type Props ∷ ∀ k. (Type → k) → Row k → Row k
 type Props f r =
   ( css ∷ f Style
   | r
   )
 
-range ∷ ∀ p. { | Props OptionalProp p } -> Style
+range ∷ ∀ p. { | Props OptionalProp p } → Style
 range props = styles <>? props.css
   where
   styles =
@@ -41,7 +41,13 @@ container =
           }
     , "input[type=range]::-webkit-slider-thumb": nested thumbStyle
     , "input[type=range]::-moz-range-thumb": nested thumbStyle
-    , boxSizing: borderBox
+    , "input[type=range]:focus-visible":
+        nest
+          { "&::-webkit-slider-thumb": nest
+              { border: str $ i "3px solid " colour.highlight
+              , boxSizing: contentBox
+              }
+          }
     }
 
 thumbStyle ∷ Style
@@ -54,7 +60,7 @@ thumbStyle =
     , borderRadius: 50.0 # percent
     , background: str "white"
     , boxShadow: str "0 calc(var(--s-4)/2) var(--s-3) rgba(70,70,70,0.6)"
-    , boxSizing: borderBox
+    , transform: str "translateY(-1px)"
     }
 
 inputDisabled ∷ Style
@@ -81,7 +87,7 @@ focusCircle =
     , border: str $ i "3px solid " colour.highlight
     , boxShadow: str $ i "0 0 var(--s-3) " <> colour.highlight
     , position: absolute
-    , transform: str "scale(1.4)"
+    , transform: str "scale(1.2)"
     , zIndex: str "12"
     }
 

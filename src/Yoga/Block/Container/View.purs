@@ -2,8 +2,6 @@ module Yoga.Block.Container.View
   ( Props
   , PropsF
   , component
-  , modalContainerId
-  , tooltipContainerId
   ) where
 
 import Yoga.Prelude.View
@@ -44,7 +42,7 @@ mkPrefersLight = matchMedia "(prefers-color-scheme: light)" =<< window
 rawComponent ∷ ∀ p. ReactComponent { | p }
 rawComponent =
   mkForwardRefComponent "Container" do
-    \(props@{ children } ∷ { | PropsF OptionalProp }) ref -> React.do
+    \(props@{ children } ∷ { | PropsF OptionalProp }) _ref -> React.do
       let propsThemeVariant = props.themeVariant # opToMaybe # join
       let notifySystemThemeChanged = props.onPreferredSystemThemeChange ?|| mempty
       systemThemeVariant /\ setSystemThemeVariant <- React.useState' Nothing
@@ -81,38 +79,15 @@ rawComponent =
           removeEventListener Event.change lightModeListener true (MediaQueryList.toEventTarget prefersLightMediaQuery)
       pure
         $ fragment
-            [ R.div' </ { ref }
-                /> Array.cons
-                  ( element E.global
-                      { styles: F.globalStyles <> (_ <>? props.globalStyles)
-                          case propsThemeVariant, systemThemeVariant of
-                            Nothing, Nothing -> Styles.global
-                            Just Styles.DarkMode, _ -> Styles.darkMode
-                            Just Styles.LightMode, _ -> Styles.lightMode
-                            Nothing, Just DarkMode -> Styles.darkMode
-                            Nothing, Just LightMode -> Styles.lightMode
-                      }
-                  )
-                  children
-            , R.div { id: modalContainerId }
-            , E.element R.div'
-                { id: tooltipContainerId
-                , className: tooltipContainerId
-                , css:
-                    E.css
-                      { width: 100.0 # E.vw
-                      , height: 100.0 # E.vh
-                      , position: E.fixed
-                      , top: E.str "0"
-                      , left: E.str "0"
-                      , pointerEvents: E.none
-                      , zIndex: E.str "9999"
-                      }
+        $ Array.cons
+            ( element E.global
+                { styles: F.globalStyles <> (_ <>? props.globalStyles)
+                    case propsThemeVariant, systemThemeVariant of
+                      Nothing, Nothing -> Styles.global
+                      Just Styles.DarkMode, _ -> Styles.darkMode
+                      Just Styles.LightMode, _ -> Styles.lightMode
+                      Nothing, Just DarkMode -> Styles.darkMode
+                      Nothing, Just LightMode -> Styles.lightMode
                 }
-            ]
-
-modalContainerId ∷ String
-modalContainerId = "ry-modal-container"
-
-tooltipContainerId ∷ String
-tooltipContainerId = "ry-tooltip-container"
+            )
+            children
