@@ -3,6 +3,7 @@ module Yoga.Block.Container.Style where
 import Yoga.Prelude.Style
 
 import Color as Color
+import Data.String as String
 import Data.Symbol (class IsSymbol, reflectSymbol)
 import Effect.Uncurried (EffectFn2, runEffectFn2)
 import Foreign.Object (Object)
@@ -25,10 +26,10 @@ data DarkOrLightMode
 derive instance eqDarkOrLightMode ∷ Eq DarkOrLightMode
 
 lightModeStyle ∷ Style
-lightModeStyle = unsafeCoerce lightModeVariables
+lightModeStyle = unsafeCoerce (lightModeVariables <> lightModeRGBVariables)
 
 darkModeStyle ∷ Style
-darkModeStyle = unsafeCoerce darkModeVariables
+darkModeStyle = unsafeCoerce (darkModeVariables <> darkModeRGBVariables)
 
 darkMode ∷ Style
 darkMode = mkGlobal (Just DarkMode)
@@ -256,7 +257,7 @@ defaultColours =
       , highlightRotatedBackwards: highlight # rotateHue (-13.0) # darken 0.05
       , highlightRotatedForwards: highlight # rotateHue 3.0 # lighten 0.05 # saturate 0.1
       , highlightText
-      , highlightTextOnBackground: highlight # darken 0.1 # saturate 0.1
+      , highlightTextOnBackground: highlight # rotateHue 3.0 # darken 0.15 # desaturate 0.1
       , inputBackground: lightBg
       , inputBorder: darken 0.07 >>> desaturate 0.2 $ lightBg
       , interfaceBackground
@@ -354,62 +355,36 @@ defaultColours =
   }
   where
   darkBg = Color.hsl 210.0 0.21 0.02
-
   -- highlightBase = Color.hsla 275.0 0.82 0.4
   -- brightPurpleBase = Color.hsla 275.0 0.82 0.4
   -- highlightMurmurasBase = Color.hsla 220.0 0.60 0.5
-  highlightBase = Color.hsla 244.0 0.9 0.62
-
+  highlightBase = Color.hsla 252.0 0.9 0.62
   highlight = highlightBase 1.0
-
   highlightDarkBase = Color.hsla 240.0 1.00 0.6
-
   highlightDark = Color.hsla 240.0 1.00 0.63 1.0
-
   highlightText = highlight # lighten 0.36 # saturate 0.4
-
   interfaceBackground = lightBg
-
   interfaceBackgroundDangerous = interfaceBackground
-
   interfaceBackgroundDangerousDark = Color.hsl 340.0 0.55 0.30
-
   interfaceBackgroundDark = lighten 0.14 >>> saturate 0.12 $ darkBg
-
   interfaceDangerousText = invalid
-
   interfaceDangerousTextDark = Color.hsl 340.0 1.0 0.90
-
   invalidDark = Color.rgb 230 30 60
-
   invalid = Color.rgb 173 0 69
-
   invalidText = Color.white
-
   invalidTextDark = successText
-
   -- lightBg = Color.hsl 240.0 0.5 0.982
   -- lightBg = Color.hsl 230.0 0.5 0.982
   lightBg = Color.hsl 205.0 0.13 0.982
-
   link = Color.hsl 320.0 1.0 0.33
-
   linkDark = Color.hsl 265.0 1.0 0.83
-
   required = Color.rgb 200 50 80
-
   success = Color.rgb 10 150 25
-
   successDark = Color.rgb 20 200 60
-
   successText = Color.rgb 250 250 250
-
   text = lightBg # darken 0.8
-
   textDark = Color.rgb 204 212 220
-
   boxShadowLight = Color.rgba 0 0 0 0.2
-
   boxShadowDark = Color.rgba 0 0 0 0.6
 
 type FlatTheme a =
@@ -499,6 +474,11 @@ colour =
   hmap (\x → "var(" <> x <> ")")
     $ makeCSSVarLabels defaultColours.light
 
+colourWithAlpha ∷ FlatTheme (Number -> String)
+colourWithAlpha =
+  hmap (\x → \alpha -> "rgba(var(--rgb-" <> String.drop 2 x <> "), " <> show alpha <> ")")
+    $ makeCSSVarLabels defaultColours.light
+
 col ∷ FlatTheme StyleProperty
 col = colour # mapRecord str
 
@@ -536,6 +516,32 @@ darkModeVariables =
   Object.fromHomogeneous defaultColours.dark
     # Object.foldMap \k v →
         Object.singleton ("--" <> k) (str (Color.cssStringRGBA v))
+
+lightModeRGBVariables :: Object StyleProperty
+lightModeRGBVariables =
+  Object.fromHomogeneous defaultColours.light
+    # Object.foldMap \k v →
+        Object.singleton ("--rgb-" <> k) (str (rgb v))
+  where
+  rgb theCol = red <> ", " <> green <> ", " <> blue
+    where
+    c = toRGBA theCol
+    red = show c.r
+    green = show c.g
+    blue = show c.b
+
+darkModeRGBVariables :: Object StyleProperty
+darkModeRGBVariables =
+  Object.fromHomogeneous defaultColours.dark
+    # Object.foldMap \k v →
+        Object.singleton ("--rgb-" <> k) (str (rgb v))
+  where
+  rgb theCol = red <> ", " <> green <> ", " <> blue
+    where
+    c = toRGBA theCol
+    red = show c.r
+    green = show c.g
+    blue = show c.b
 
 variables ∷ Style
 variables =

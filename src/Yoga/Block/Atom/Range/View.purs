@@ -36,15 +36,12 @@ rawComponent =
       let disabled = props.disabled ?|| false
       fallbackValue /\ setFallbackValue ← useState' v
       let value = props.value ?|| fallbackValue
-      hasFocus /\ setHasFocus ← useState' false
       pure
         $ div
         </*
           { className: "ry-range"
           , css: Style.container <> guard disabled Style.inputDisabled <>?
               props.css
-          , onFocus: handler_ $ setHasFocus true
-          , onBlur: handler_ $ setHasFocus false
           , style: fold props.style <> css
               { "--val": value - min, "--max": max - min }
           , _data: Object.singleton "testid" "range-testid"
