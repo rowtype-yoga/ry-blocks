@@ -13,6 +13,7 @@ derive instance eqSidebarSide :: Eq SidebarSide
 type Props :: forall k. (Type -> k) -> Row k -> Row k
 type Props f r =
   ( css ∷ f Style
+  , sideBarCss :: f Style
   , space ∷ f String
   , side ∷ f SidebarSide
   , sideWidth ∷ f String
@@ -57,6 +58,7 @@ sidebar props = styles <>? props.css
             , flexBasis: props.sideWidth # foldMap str
             }
             <> foldMap (nest <<< { flexBasis: _ } <<< str) props.sideWidth
+            <> foldMap nested props.sideBarCss
       }
       <> case side of
         SidebarLeft -> css { "& > * > :last-child": nonSidebarStyle }
