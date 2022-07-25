@@ -14,7 +14,7 @@ module Yoga.Prelude.Default
   , runMaybeT_
   ) where
 
-import Prelude
+import Prelude hiding (top, bottom)
 import Control.Alt ((<|>))
 import Control.Monad.Maybe.Trans (MaybeT(..), runMaybeT)
 import Control.Monad.Trans.Class (lift)

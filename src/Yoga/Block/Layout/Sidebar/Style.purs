@@ -45,12 +45,13 @@ sidebar props = styles <>? props.css
     css
       { overflow: hidden
       , "& > *":
-          nest
-            { display: flex
-            , flexWrap: if props.reverseOnWrap # isTruthy then str "wrap-reverse" else wrap
-            , margin: "calc(" <> space <> " / 2 * -1)" # str
-            , alignItems: props.noStretch # foldMap if _ then str "flex-start" else mempty
-            }
+          nested
+            $ flex
+            <> css
+              { flexWrap: if props.reverseOnWrap # isTruthy then str "wrap-reverse" else wrap
+              , margin: "calc(" <> space <> " / 2 * -1)" # str
+              , alignItems: props.noStretch # foldMap if _ then str "flex-start" else mempty
+              }
       , "& > * > *":
           nest
             { margin: "calc(" <> space <> " / 2)" # str

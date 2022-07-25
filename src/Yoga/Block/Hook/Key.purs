@@ -1,12 +1,42 @@
 module Yoga.Block.Hook.Key where
 
+import Prelude
+
+import Data.Array (foldl)
 import Data.Maybe (Maybe(..))
-import Web.Event.Event (Event)
+import Data.Set (Set)
+import Data.Set as Set
+import Data.Tuple.Nested ((/\))
+import Web.UIEvent.KeyboardEvent (KeyboardEvent)
+import Web.UIEvent.KeyboardEvent as KeyboardEvent
 
-foreign import getKeyImpl ∷ ∀ a. (a -> Maybe a) -> Maybe a -> Event -> Maybe Int
+foreign import getKeyImpl ∷ ∀ a. (a -> Maybe a) -> Maybe a -> KeyboardEvent -> Maybe Int
 
-getKeyCode ∷ Event -> Maybe Int
+getKeyCode ∷ KeyboardEvent -> Maybe Int
 getKeyCode = getKeyImpl Just Nothing
+
+getModifiers :: KeyboardEvent -> Set Modifier
+getModifiers event =
+  foldl fn Set.empty
+    [ KeyboardEvent.metaKey /\ Command
+    , KeyboardEvent.altKey /\ Alt
+    , KeyboardEvent.shiftKey /\ Shift
+    , KeyboardEvent.ctrlKey /\ Control
+    ]
+
+  where
+  fn acc (check /\ key) =
+    if check event then Set.insert key acc
+    else acc
+
+data Modifier
+  = Shift
+  | Command
+  | Control
+  | Alt
+
+derive instance Eq Modifier
+derive instance Ord Modifier
 
 data KeyCode
   = Return
@@ -19,6 +49,9 @@ data KeyCode
   | Down
   | Delete
   | Backspace
+
+derive instance Eq KeyCode
+derive instance Ord KeyCode
 
 keyCodeToInt ∷ KeyCode -> Int
 keyCodeToInt = case _ of

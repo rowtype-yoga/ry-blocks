@@ -34,14 +34,7 @@ gapSize ∷ String
 gapSize = "var(--s-3)"
 
 iconContainer ∷ Style
-iconContainer =
-  css
-    { display: inlineFlex
-    , alignItems: center
-    -- , padding: str "0px 10px"
-    -- , background: str $ colour.interfaceBackground
-    -- , borderLeft: str $ "1px solid " <> colour.interfaceBackgroundShadow
-    }
+iconContainer = inlineFlex <> itemsCenter
 
 labelAndInputWrapper ∷ Style
 labelAndInputWrapper =
@@ -58,15 +51,13 @@ labelAndInputWrapper =
 
 labelContainer ∷ Style
 labelContainer =
-  css
-    { position: absolute
-    , overflow: visible
-    , left: _0
-    , top: _0
-    , display: inlineBlock
-    , zIndex: str "2"
-    , pointerEvents: none
-    }
+  inlineBlock
+    <> positionAbsolute
+    <> overflowVisible
+    <> pointerEventsNone
+    <> zIndex 2
+    <> left 0
+    <> top 0
 
 labelSmall ∷ String -> String -> Style
 labelSmall background textColour =
@@ -118,47 +109,42 @@ labelSmallFocusBackground =
 
 labelLarge ∷ { left ∷ Number, width ∷ Number } -> Style
 labelLarge { left, width } =
-  css
-    { fontSize: str "calc(var(--input-size-factor) * 15px)"
-    , padding: _0
-    , whiteSpace: nowrap -- force on one line
-    -- , height: str "calc(var(--s0) * 1.2)"
-    , letterSpacing: em (-0.011)
-    , maxWidth: str $ i "calc(" width "px - 2ch)"
-    , marginTop: str "calc(7px * var(--input-size-factor))"
-    , marginLeft: str $ i left "px"
-    , marginRight: var "--input-side-padding"
-    , color: str colour.textPaler3
-    , fontWeight: str "400"
-    , overflowX: str "hidden"
-    , textOverflow: str "ellipsis"
-    , overflowY: visible
-    , scrollbarWidth: none
-    , "&::-webkit-scrollbar": nested $ css
-        { display: none }
-    -- , fontWeight: str "600"
-    , """&[data-required="true"]:after""":
-        nest
-          { content: str "'*'"
-          , color: str colour.required
-          , fontFamily: str "Helvetica, Arial, Inter, sans-serif"
-          , lineHeight: str "calc(var(--s0) * 0.85 * var(--input-size-factor))"
-          }
-    }
+  overflowXHidden <>
+    css
+      { fontSize: str "calc(var(--input-size-factor) * 15px)"
+      , padding: _0
+      , whiteSpace: nowrap -- force on one line
+      -- , height: str "calc(var(--s0) * 1.2)"
+      , letterSpacing: em (-0.011)
+      , maxWidth: str $ i "calc(" width "px - 2ch)"
+      , marginTop: str "calc(7px * var(--input-size-factor))"
+      , marginLeft: str $ i left "px"
+      , marginRight: var "--input-side-padding"
+      , color: str colour.textPaler3
+      , fontWeight: str "400"
+      , textOverflow: str "ellipsis"
+      , scrollbarWidth: none
+      , "&::-webkit-scrollbar": nested $ css
+          { display: none }
+      -- , fontWeight: str "600"
+      , """&[data-required="true"]:after""":
+          nest
+            { content: str "'*'"
+            , color: str colour.required
+            , fontFamily: str "Helvetica, Arial, Inter, sans-serif"
+            , lineHeight: str "calc(var(--s0) * 0.85 * var(--input-size-factor))"
+            }
+      }
 
 rightIconContainer ∷ Style
 rightIconContainer =
   iconContainer
+    <> inlineFlex
     <> css
-      { display: inlineFlex
-      , alignItems: center
+      { alignItems: center
       , justifyContent: center
       , "& > *":
-          nest
-            { display: inlineFlex
-            , alignItems: center
-            , justifyContent: center
-            }
+          nested $ inlineFlex <> itemsCenter <> justifyCenter
       , ".ry-icon":
           nest
             { "--stroke-colour": str colour.text
@@ -180,52 +166,52 @@ inputContainer ∷ ∀ r. { | Props OptionalProp r } -> Style
 inputContainer props = theCss <>? props.css
   where
   theCss =
-    css
-      { "--left-icon-size": var "--s0"
-      , "--right-icon-size": str "calc(var(--s0) * 1.2)"
-      , "--input-size-factor": str ((props.sizeVariant ?|| SizeMedium) # sizeVariantToFactor)
-      , "--input-side-padding": str "calc(var(--s-1) * var(--input-size-factor) * 1.2)"
-      , "--input-top-padding": str "calc(6px)"
-      , "--input-bottom-padding": str "calc(6px)"
-      , letterSpacing: em (-0.011)
-      , position: relative
-      , cursor: str "text"
-      , boxSizing: borderBox
-      , "--base-height": str "calc(38px * var(--input-size-factor))"
-      , height: str "var(--base-height)"
-      , display: flex
-      , """&[data-invalid="false"]""":
-          nest
-            { borderColor: str colour.success
-            , marginTop: str "-1px"
-            , marginBottom: str "-1px"
-            , "--border-width": str "2px"
-            }
-      , """&[data-invalid="true"]""":
-          nest
-            { borderColor: str colour.invalid
-            -- , marginTop: str "-1px"
-            -- , marginBottom: str "-1px"
-            -- , marginLeft: str "-1px"
-            , "--border-width": str "2px"
-            }
-      , "&:focus-within":
-          nest
-            { "--border-width": str "2px"
-            , borderColor: str colour.highlight
-            -- , boxSizing: borderBox
-            }
-      , alignItems: center
-      , justifyContent: center
-      , border: str $ "var(--border-width) solid " <> colour.inputBorder
-      , paddingLeft: str "calc((var(--input-side-padding) - var(--border-width)) )"
-      , paddingRight: str "calc((var(--input-side-padding) - var(--border-width)) )"
-      , paddingTop: str "calc((var(--input-top-padding) - var(--border-width)) )"
-      , paddingBottom: str "calc((var(--input-bottom-padding)) - var(--border-width))"
-      , gap: str "calc(var(--input-side-padding) / 2)"
-      , borderRadius: var "--input-border-radius"
-      , overflow: visible
-      }
+    flex <>
+      css
+        { "--left-icon-size": var "--s0"
+        , "--right-icon-size": str "calc(var(--s0) * 1.2)"
+        , "--input-size-factor": str ((props.sizeVariant ?|| SizeMedium) # sizeVariantToFactor)
+        , "--input-side-padding": str "calc(var(--s-1) * var(--input-size-factor) * 1.2)"
+        , "--input-top-padding": str "calc(6px)"
+        , "--input-bottom-padding": str "calc(6px)"
+        , letterSpacing: em (-0.011)
+        , position: relative
+        , cursor: str "text"
+        , boxSizing: borderBox
+        , "--base-height": str "calc(38px * var(--input-size-factor))"
+        , height: str "var(--base-height)"
+        , """&[data-invalid="false"]""":
+            nest
+              { borderColor: str colour.success
+              , marginTop: str "-1px"
+              , marginBottom: str "-1px"
+              , "--border-width": str "2px"
+              }
+        , """&[data-invalid="true"]""":
+            nest
+              { borderColor: str colour.invalid
+              -- , marginTop: str "-1px"
+              -- , marginBottom: str "-1px"
+              -- , marginLeft: str "-1px"
+              , "--border-width": str "2px"
+              }
+        , "&:focus-within":
+            nest
+              { "--border-width": str "2px"
+              , borderColor: str colour.highlight
+              -- , boxSizing: borderBox
+              }
+        , alignItems: center
+        , justifyContent: center
+        , border: str $ "var(--border-width) solid " <> colour.inputBorder
+        , paddingLeft: str "calc((var(--input-side-padding) - var(--border-width)) )"
+        , paddingRight: str "calc((var(--input-side-padding) - var(--border-width)) )"
+        , paddingTop: str "calc((var(--input-top-padding) - var(--border-width)) )"
+        , paddingBottom: str "calc((var(--input-bottom-padding)) - var(--border-width))"
+        , gap: str "calc(var(--input-side-padding) / 2)"
+        , borderRadius: var "--input-border-radius"
+        , overflow: str "visible"
+        }
 
 ploppedFocusWithin ∷ Style
 ploppedFocusWithin = css
@@ -264,7 +250,7 @@ containerContainer props = css
   , borderRadius: var "--input-border-radius"
   , boxSizing: contentBox
   , display: grid
-  , overflow: visible
+  , overflow: str "visible"
   }
 
 inputWrapper ∷ Style
@@ -289,7 +275,7 @@ input props =
           , width: _100percent
           , minWidth: _0
           , margin: _0
-          , overflowY: visible
+          , overflowY: str "visible"
           , "--padding-top": str "calc(6px * var(--input-size-factor))"
           , "--padding-bottom": str "calc(6px * var(--input-size-factor))"
           , paddingTop: var "--padding-top"

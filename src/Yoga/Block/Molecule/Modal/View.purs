@@ -28,7 +28,7 @@ component ∷ ReactComponent Props
 component =
   unsafePerformEffect
     $ reactComponent "Modal Wrapper" \{ content, isOpen, onDismiss, target } -> React.do
-        useKeyDown case _ of
+        useKeyDown $ \_ _ -> case _ of
           KeyCode.Escape -> onDismiss
           _ -> mempty
         clickAwayRef <- React.useRef Nullable.null
@@ -36,7 +36,8 @@ component =
           toRender ∷ JSX
           toRender =
             R.div' </ {}
-              /> [ Motion.animatePresence </ {} /> [ guard isOpen $ element clickaway { theRef: clickAwayRef, onDismiss } ]
+              />
+                [ Motion.animatePresence </ {} /> [ guard isOpen $ element clickaway { theRef: clickAwayRef, onDismiss } ]
                 , Motion.animatePresence </ {} /> [ guard isOpen $ element window { clickAwayRef, onDismiss, content } ]
                 ]
         pure (createPortal toRender target)
@@ -46,7 +47,8 @@ clickaway =
   unsafePerformEffect
     $ reactComponent "Modal Clickaway" \{ theRef, onDismiss } -> React.do
         pure $ Emotion.elementKeyed Motion.div
-          $ { key: "ry-modal-clickaway"
+          $
+            { key: "ry-modal-clickaway"
             , onClick: handler_ onDismiss
             , className: "ry-modal-clickaway"
             , css: Style.clickaway
@@ -68,16 +70,17 @@ window =
                 , ref: imposterRef
                 , onClick: handler_ onDismiss
                 , children:
-                  [ Motion.div
-                      </* { className: "ry-modal"
-                        , css: Style.modal
-                        , drag: Motion.prop true
-                        , dragMomentum: Motion.prop false
-                        , dragConstraints: Motion.prop clickAwayRef
-                        , onClick: handler stopPropagation mempty
-                        }
-                      /> [ content ]
-                  ]
+                    [ Motion.div
+                        </*
+                          { className: "ry-modal"
+                          , css: Style.modal
+                          , drag: Motion.prop true
+                          , dragMomentum: Motion.prop false
+                          , dragConstraints: Motion.prop clickAwayRef
+                          , onClick: handler stopPropagation mempty
+                          }
+                        /> [ content ]
+                    ]
                 }
                   `withMotion`
                     { initial: css { transform: "translate(-50%, -50%) scale3d(0.1,0.1,0.1)", opacity: 0 }

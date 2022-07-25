@@ -39,7 +39,7 @@ component =
   unsafePerformEffect
     $ reactComponent "Sheet Wrapper" \{ header, content, footer, isOpen, onDismiss, containerId, clickAwayId } -> React.do
         renderInPortal <- useRenderInPortal containerId
-        useKeyDown case _ of
+        useKeyDown $ \_ _ -> case _ of
           KeyCode.Escape -> onDismiss
           _ -> mempty
         let

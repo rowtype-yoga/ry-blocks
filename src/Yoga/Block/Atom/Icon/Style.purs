@@ -18,24 +18,24 @@ type Props f r =
 
 span ∷ ∀ r. { | Props OptionalProp r } -> Style
 span props =
-  css
-    { "--stroke-colour": strokeColour
-    , "--fill-colour": fillColour
-    , margin: _0
-    , padding: _0
-    , display: inlineFlex
-    , justifyContent: center
-    , alignItems: center
-    , width: auto
-    , height: auto
-    , "& > svg":
-      nest
-        { width
-        , height
-        , margin: _0
-        , padding: _0
-        }
-    }
+  inlineFlex <>
+    css
+      { "--stroke-colour": strokeColour
+      , "--fill-colour": fillColour
+      , margin: _0
+      , padding: _0
+      , justifyContent: center
+      , alignItems: center
+      , width: auto
+      , height: auto
+      , "& > svg":
+          nest
+            { width
+            , height
+            , margin: _0
+            , padding: _0
+            }
+      }
   where
 
   strokeColour = (props.stroke <|> props.colour) ?|| (str colour.text)

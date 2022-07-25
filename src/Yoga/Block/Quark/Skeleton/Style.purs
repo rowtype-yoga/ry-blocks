@@ -6,11 +6,9 @@ import Fahrtwind (transform)
 import Yoga.Block.Container.Style (col, colourWithAlpha)
 
 skeletonBox ∷ Style
-skeletonBox = css
-  { display: inlineBlock
-  , height: em 1.0
+skeletonBox = inlineBlock <> overflowHidden <> css
+  { height: em 1.0
   , position: relative
-  , overflow: hidden
   , backgroundColor: str (colourWithAlpha.textPaler4 0.33)
   , "&::after": nest
       { position: absolute

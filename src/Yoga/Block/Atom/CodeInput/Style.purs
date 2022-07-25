@@ -13,10 +13,10 @@ type Props f r =
 codeInput ∷ ∀ p. { maxLength ∷ OptionalProp Int | Props OptionalProp p } -> Style
 codeInput props = styles <>? props.css
   where
-    styles =
+  styles =
+    overflowVisible <>
       css
-        { overflow: visible
-        , boxSizing: borderBox
+        { boxSizing: borderBox
         , verticalAlign: baseline
         , background: str colour.inputBackground
         , border: str $ i "solid 1px " colour.inputBorder
@@ -28,21 +28,22 @@ codeInput props = styles <>? props.css
         , padding: str "calc(var(--s-4) - 1px)"
         , color: str colour.text
         , "&:focus":
-          nest
-            { outline: none
-            }
+            nest
+              { outline: none
+              }
         , "&:focus-visible":
-          nest
-            { animation: plopAnimation <> str " 260ms ease-in"
-            , border: str $ "solid var(--s-4) " <> colour.highlight
-            , padding: _0
-            }
+            nest
+              { animation: plopAnimation <> str " 260ms ease-in"
+              , border: str $ "solid var(--s-4) " <> colour.highlight
+              , padding: _0
+              }
         }
 
 plopAnimation ∷ StyleProperty
 plopAnimation =
   keyframes
-    $ { "from": css { transform: str "scale3d(0.85,0.85,0.85)" }
+    $
+      { "from": css { transform: str "scale3d(0.85,0.85,0.85)" }
       , "33%": css { transform: str "scale3d(1.07,1.07,1.07)" }
       , "67.7%": css { transform: str "scale3d(0.93,0.93,0.93)" }
       , "86.7%": css { transform: str "scale3d(1.02,1.02,1.02)" }
@@ -50,7 +51,4 @@ plopAnimation =
       }
 
 codeInputWrapper ∷ Style
-codeInputWrapper =
-  css
-    { display: inlineBlock
-    }
+codeInputWrapper = inlineBlock

@@ -2,9 +2,11 @@ module Yoga.Block where
 
 import Prim.Row (class Lacks, class Union)
 import React.Basic (JSX, ReactComponent)
-import Yoga (el, leaf)
+import React.Basic as React
+import Yoga (el)
 import Yoga.Block.Atom.Button as Button
 import Yoga.Block.Atom.Icon as Icon
+import Yoga.Block.Atom.Image as Image
 import Yoga.Block.Atom.Input as Input
 import Yoga.Block.Atom.Range as Range
 import Yoga.Block.Atom.Segmented as Segmented
@@ -85,6 +87,9 @@ icon = Icon.component
 input ∷ ∀ p q. Union p q Input.Props ⇒ ReactComponent { | p }
 input = Input.component
 
+image :: forall p q. Union p q Image.Props => { | p } -> JSX
+image = React.element Image.component
+
 imposter ∷ ∀ p q. Union p q Imposter.Props ⇒ ReactComponent { | p }
 imposter = Imposter.component
 
@@ -98,7 +103,7 @@ segmented' ∷ ReactComponent Segmented.Props
 segmented' = Segmented.component
 
 segmented ∷ Segmented.Props → JSX
-segmented = leaf Segmented.component
+segmented = React.element Segmented.component
 
 sidebar' ∷ ∀ p q. Union p q Sidebar.Props ⇒ ReactComponent { sidebar ∷ JSX, children ∷ Array JSX | p }
 sidebar' = Sidebar.component

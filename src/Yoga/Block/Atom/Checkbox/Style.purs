@@ -10,15 +10,15 @@ type Props f r =
 
 checkmark ∷ Style
 checkmark =
-  css
-    { display: block
-    , path: nested $ css
-        { transformOrigin: str "50% 50%"
-        , strokeDasharray: int 48
-        , strokeDashoffset: int 48
-        , animation: str
-            "checkmarkAnimation .25s cubic-bezier(0.65, 0, 0.45, 1) forwards"
-        , animationName: keyframes
-            { to: css { strokeDashoffset: int 0 } }
-        }
-    }
+  block <>
+    css
+      { path: nested $ css
+          { transformOrigin: str "50% 50%"
+          , strokeDasharray: int 48
+          , strokeDashoffset: int 48
+          , animation: str
+              "checkmarkAnimation .25s cubic-bezier(0.65, 0, 0.45, 1) forwards"
+          , animationName: keyframes
+              { to: css { strokeDashoffset: int 0 } }
+          }
+      }

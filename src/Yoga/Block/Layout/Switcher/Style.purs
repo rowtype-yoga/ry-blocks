@@ -6,13 +6,13 @@ import Foreign.Object as Object
 import Unsafe.Coerce (unsafeCoerce)
 
 type Props ∷ ∀ k. (Type → k) → Row k → Row k
-type Props f r
-  = ( css ∷ f Style
-    , space ∷ f String
-    , threshold ∷ f String
-    , limit ∷ f Int
-    | r
-    )
+type Props f r =
+  ( css ∷ f Style
+  , space ∷ f String
+  , threshold ∷ f String
+  , limit ∷ f Int
+  | r
+  )
 
 switcher ∷ ∀ p. { | Props OptionalProp p } → Style
 switcher props = styles <>? props.css
@@ -24,6 +24,7 @@ switcher props = styles <>? props.css
   lastKey ∷ String
   lastKey =
     "" -- this is for readability
+
       <> i "& > * > :nth-last-child(n+" (limit + 1) "), "
       <> i "& > * > :nth-last-child(n+" (limit + 1) ") ~ *"
 
@@ -36,17 +37,18 @@ switcher props = styles <>? props.css
   styles =
     nthLastChild
       <> css
-          { "& > *":
-              nest
-                { display: flex
-                , flexWrap: wrap
+        { "& > *":
+            nested
+              $ flex
+              <> css
+                { flexWrap: wrap
                 , margin: i "calc((" space " / 2) * -1)" # str
                 }
-          , "& > * > *":
-              nest
-                { flexGrow: str "1"
-                , flexBasis:
-                    i "calc((" threshold " - (100% - " space ")) * 999)" # str
-                , margin: "calc(" <> space <> " / 2)" # str
-                }
-          }
+        , "& > * > *":
+            nest
+              { flexGrow: str "1"
+              , flexBasis:
+                  i "calc((" threshold " - (100% - " space ")) * 999)" # str
+              , margin: "calc(" <> space <> " / 2)" # str
+              }
+        }

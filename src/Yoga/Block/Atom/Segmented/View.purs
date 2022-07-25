@@ -59,7 +59,7 @@ component =
             for_ itemRefs do blurAtIndex activeIndex
             updateIndex toIndex
             for_ itemRefs do focusAtIndex toIndex
-        useKeyDown case _ of
+        useKeyDown $ \_ _ -> case _ of
           Key.Right ->
             when (activeIndex < maxIndex) do
               updateTo (activeIndex + 1)

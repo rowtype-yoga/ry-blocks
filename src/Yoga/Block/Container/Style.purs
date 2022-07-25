@@ -45,8 +45,8 @@ foreign import data ComputedStyle ∷ Type
 
 foreign import getComputedStyleImpl ∷ EffectFn2 Element Window ComputedStyle
 
-getComputedStyle ∷ Element → Window → Effect ComputedStyle
-getComputedStyle = runEffectFn2 getComputedStyleImpl
+getComputedStyle ∷ Window → Element → Effect ComputedStyle
+getComputedStyle = flip (runEffectFn2 getComputedStyleImpl)
 
 foreign import getPropertyValueImpl ∷ EffectFn2 String ComputedStyle String -- Not sure it always returns a string
 
@@ -71,7 +71,7 @@ getDarkOrLightMode =
   runMaybeT do
     win ← window # lift
     docElem ∷ Element ← getDocumentElement
-    computedStyle ← getComputedStyle docElem win # lift
+    computedStyle ← getComputedStyle win docElem # lift
     pv ← getPropertyValue "--theme-variant" computedStyle # lift
     if pv == "dark" then
       DarkMode # pure
@@ -294,13 +294,13 @@ defaultColours =
       , backgroundAlpha50: withAlpha 0.5 darkBg
       , backgroundAlpha75: withAlpha 0.75 darkBg
       , backgroundInverted: lightBg
-      , backgroundLayer1: lighten 0.04 >>> saturate 0.1 $ darkBg
+      , backgroundLayer1: lighten 0.10 >>> saturate 0.1 $ darkBg
       , backgroundLayer2: lighten 0.13 >>> saturate 0.04 $ darkBg
       , backgroundLayer3: lighten 0.15 >>> saturate 0.02 $ darkBg
       , backgroundLayer4: lighten 0.19 >>> saturate 0.00 $ darkBg
       , backgroundLayer5: lighten 0.23 >>> saturate 0.00 $ darkBg
       , backgroundBright1: darkBg
-      , backgroundBright2: lighten 0.04 >>> saturate 0.1 $ darkBg
+      , backgroundBright2: lighten 0.10 >>> saturate 0.1 $ darkBg
       , backgroundBright3: lighten 0.13 >>> saturate 0.04 $ darkBg
       , backgroundBright4: lighten 0.15 >>> saturate 0.02 $ darkBg
       , backgroundBright5: lighten 0.19 >>> saturate 0.00 $ darkBg
@@ -354,7 +354,7 @@ defaultColours =
       }
   }
   where
-  darkBg = Color.hsl 210.0 0.21 0.02
+  darkBg = Color.hsl 210.0 0.21 0.04
   -- highlightBase = Color.hsla 275.0 0.82 0.4
   -- brightPurpleBase = Color.hsla 275.0 0.82 0.4
   -- highlightMurmurasBase = Color.hsla 220.0 0.60 0.5
@@ -469,6 +469,11 @@ instance makeCSSVarLabels' ∷
 makeCSSVarLabels ∷ ∀ a b. HMapWithIndex MakeCSSVarLabels a b ⇒ a → b
 makeCSSVarLabels = hmapWithIndex MakeCSSVarLabels
 
+colourVariableName ∷ FlatTheme String
+colourVariableName =
+  hmap (\(x :: String) -> x)
+    $ makeCSSVarLabels defaultColours.light
+
 colour ∷ FlatTheme String
 colour =
   hmap (\x → "var(" <> x <> ")")
@@ -477,6 +482,20 @@ colour =
 colourWithAlpha ∷ FlatTheme (Number -> String)
 colourWithAlpha =
   hmap (\x → \alpha -> "rgba(var(--rgb-" <> String.drop 2 x <> "), " <> show alpha <> ")")
+    $ makeCSSVarLabels defaultColours.light
+
+colourWithDarkLightAlpha ∷ FlatTheme ({ darkAlpha :: Number, lightAlpha :: Number } -> String)
+colourWithDarkLightAlpha =
+  hmap
+    ( \x → \{ darkAlpha, lightAlpha } ->
+        "rgba(var(--rgb-" <> String.drop 2 x <> "),"
+          <> " calc("
+          <> (show lightAlpha <> " * var(--light-mode)")
+          <> " + "
+          <> (show darkAlpha <> " *  var(--dark-mode)")
+          <> ")" -- calc
+          <> ")" -- rgba
+    )
     $ makeCSSVarLabels defaultColours.light
 
 col ∷ FlatTheme StyleProperty

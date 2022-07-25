@@ -14,12 +14,12 @@ range ∷ ∀ p. { | Props OptionalProp p } → Style
 range props = styles <>? props.css
   where
   styles =
-    css
-      { position: str "relative"
-      , height: str "var(--s0)"
-      , display: inlineBlock
-      , boxSizing: borderBox
-      }
+    inlineBlock <>
+      css
+        { position: str "relative"
+        , height: str "var(--s0)"
+        , boxSizing: borderBox
+        }
 
 container ∷ Style
 container =
