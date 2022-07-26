@@ -502,27 +502,8 @@ col ∷ FlatTheme StyleProperty
 col = colour # mapRecord str
 
 autoSwitchColourTheme ∷ Style
-autoSwitchColourTheme = lightT
-  where
-  darkT ∷ Style
-  darkT = unsafeCoerce darkObj
-
-  darkObj ∷ Object StyleProperty
-  darkObj =
-    Object.fromHomogeneous defaultColours.dark
-      # Object.foldMap \k v →
-          Object.singleton ("--" <> k) (str (Color.cssStringRGBA v))
-
-  lightObj ∷ Object StyleProperty
-  lightObj =
-    Object.fromHomogeneous defaultColours.light
-      # Object.foldMap \k v →
-          Object.singleton ("--" <> k) (str (Color.cssStringRGBA v))
-            # Object.insert "@media (prefers-color-scheme: dark)" (nested darkT)
-            # Object.insert "&:th" (nested darkT)
-
-  lightT ∷ Style
-  lightT = unsafeCoerce lightObj
+autoSwitchColourTheme =
+  lightModeStyle <> css { "@media (prefers-color-scheme: dark)": (nested darkModeStyle) }
 
 lightModeVariables ∷ Object StyleProperty
 lightModeVariables =
