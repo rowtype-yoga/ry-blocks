@@ -13,7 +13,7 @@ import React.Basic.Emotion (Style)
 import React.Basic.Hooks as React
 import Unsafe.Coerce (unsafeCoerce)
 import Yoga.Block.Atom.Input.Style as Style
-import Yoga.Block.Hook.UseResize (useResize)
+import Yoga.Block.Hook.UseWindowResize (useWindowResize)
 
 type PropsF f =
   ( css ∷ f Style
@@ -41,7 +41,7 @@ rawContainer ∷ ∀ p. ReactComponent { | p }
 rawContainer =
   mkForwardRefComponent "InputContainer" do
     \(props ∷ { | PropsOptional }) ref -> React.do
-      sizes <- useResize
+      sizes <- useWindowResize
       dimensions /\ setDimensions <- useState' zero
       useEffect sizes.innerWidth do
         maybeDimensions <- getOffsetDimensionsFromRef ref

@@ -55,10 +55,12 @@ You can edit this file as you like.
   , "typelevel-peano"
   , "typelevel-prelude"
   , "unsafe-coerce"
+  , "unsafe-reference"
   , "untagged-union"
   , "web-dom"
   , "web-events"
   , "web-html"
+  , "web-uievents"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs" ]

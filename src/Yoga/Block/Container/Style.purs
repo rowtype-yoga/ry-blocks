@@ -14,7 +14,6 @@ import Type.Proxy (Proxy)
 import Unsafe.Coerce (unsafeCoerce)
 import Web.DOM (Element)
 import Web.DOM.Document (documentElement)
-import Web.Event.Internal.Types (EventTarget)
 import Web.HTML (Window, window)
 import Web.HTML.HTMLDocument as HTMLDocument
 import Web.HTML.Window (document)
@@ -58,6 +57,10 @@ foreign import data ElementStyle ∷ Type
 foreign import getElementStyle ∷ Element → Effect ElementStyle
 
 foreign import setStyleProperty ∷ String → String → ElementStyle → Effect Unit
+
+foreign import getStyleProperty :: String -> ElementStyle -> Effect String
+
+foreign import removeStyleProperty ∷ String → ElementStyle → Effect Unit
 
 getDocumentElement ∷ MaybeT Effect Element
 getDocumentElement = do

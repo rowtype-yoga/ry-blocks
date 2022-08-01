@@ -65,10 +65,7 @@ button =
             { background: str "transparent"
             , boxShadow: none
             , color: str colour.highlightTextOnBackground
-            , "&:active":
-                nest
-                  { boxShadow: none
-                  }
+            , "&:active": nest { boxShadow: none }
             , """&[data-button-type="primary"]""":
                 nest
                   { background: str colour.highlight

@@ -1,5 +1,4 @@
 -- This module provides FFI bindings for the Resize Observer API.
--- TODO: Create a PR to make this a part of `purescript-web-dom`.
 -- NOTE: I'm not using the uncurried package as `web-dom` doesn't use it either.
 module Web.DOM.ResizeObserver
   ( ResizeObserver
@@ -39,9 +38,7 @@ data ResizeObserverBoxOptions
 
 optionsToFFI ∷ ResizeObserverBoxOptions -> String
 optionsToFFI BorderBox = "border-box"
-
 optionsToFFI ContentBox = "content-box"
-
 optionsToFFI DevicePixelContentBox = "device-pixel-content-box"
 
 foreign import resizeObserver
@@ -51,12 +48,13 @@ foreign import resizeObserver
 foreign import _observe ∷ ∀ r. Element -> Record r -> ResizeObserver -> Effect Unit
 
 observe
-  ∷ Element
-  -> ResizeObserverBoxOptions
+  ∷ ResizeObserverBoxOptions
   -> ResizeObserver
+  -> Element
   -> Effect Unit
-observe element options = _observe element { box: optionsToFFI options }
+observe options observer element =
+  _observe element { box: optionsToFFI options } observer
 
-foreign import unobserve ∷ Element -> ResizeObserver -> Effect Unit
+foreign import unobserve ∷ ResizeObserver -> Element -> Effect Unit
 
 foreign import disconnect ∷ ResizeObserver -> Effect Unit

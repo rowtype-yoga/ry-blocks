@@ -1,4 +1,4 @@
-module Yoga.Block.Hook.UseResize where
+module Yoga.Block.Hook.UseWindowResize where
 
 import Prelude
 
@@ -31,12 +31,12 @@ registerListener listener = do
 type Sizes =
   { innerWidth ∷ Number, innerHeight ∷ Number }
 
-newtype UseResize hooks = UseResize (UseLayoutEffect Unit (UseState Sizes hooks))
+newtype UseWindowResize hooks = UseWindowResize (UseLayoutEffect Unit (UseState Sizes hooks))
 
-derive instance ntUseResize ∷ Newtype (UseResize hooks) _
+derive instance Newtype (UseWindowResize hooks) _
 
-useResize ∷ Hook UseResize Sizes
-useResize =
+useWindowResize ∷ Hook UseWindowResize Sizes
+useWindowResize =
   coerceHook React.do
     size /\ setSize <- React.useState' zero
     useLayoutEffect unit do

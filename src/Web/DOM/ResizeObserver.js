@@ -18,8 +18,8 @@ export function _observe(element) {
   }
 }
 
-export function unobserve(element) {
-  return function (observer) {
+export function unobserve(observer) {
+  return function (element) {
     return function () {
       return observer.unobserve(element)
     }

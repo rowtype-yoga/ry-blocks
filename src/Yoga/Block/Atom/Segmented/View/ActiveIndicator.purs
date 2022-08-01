@@ -23,14 +23,14 @@ import Unsafe.Coerce (unsafeCoerce)
 import Yoga.Block.Atom.Segmented.Style as Style
 import Yoga.Block.Atom.Segmented.View.Types (Item)
 import Yoga.Block.Hook.Scroll (useScrollPosition)
-import Yoga.Block.Hook.UseResize as UseResize
+import Yoga.Block.Hook.UseWindowResize as UseWindowResize
 
 type Props =
   { activeItemRefs ∷ TwoOrMore (Ref (Nullable Node))
   , buttonContents ∷ TwoOrMore Item
   , activeItemIndex ∷ Int
   , updateActiveItem ∷ Item -> Int -> Effect Unit
-  , windowSize ∷ UseResize.Sizes
+  , windowSize ∷ UseWindowResize.Sizes
   }
 
 component ∷ ReactComponent Props

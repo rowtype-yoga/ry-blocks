@@ -11,3 +11,11 @@ export function getElementStyle(el) {
 export function setStyleProperty(prop) {
   return (value) => (style) => () => style.setProperty(prop, value)
 }
+
+export function getStyleProperty(prop) {
+  return (style) => () => style[prop]
+}
+
+export function removeStyleProperty(prop) {
+  return (style) => () => delete style[prop]
+}

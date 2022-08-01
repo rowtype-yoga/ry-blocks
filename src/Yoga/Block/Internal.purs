@@ -31,6 +31,7 @@ module Yoga.Block.Internal
   , unsafeAddProps
   , createRef
   , getBoundingBoxFromRef
+  , getClientDimensionsFromRef
   , getElementFromRef
   , getHTMLElementFromRef
   , getOffsetHeightFromRef
@@ -44,6 +45,7 @@ module Yoga.Block.Internal
   ) where
 
 import Prelude
+
 import Control.Monad.Cont.Trans (lift)
 import Control.Monad.Maybe.Trans (MaybeT(..), runMaybeT)
 import Data.Array as Array
@@ -64,11 +66,12 @@ import React.Basic.Emotion as E
 import React.Basic.Events (EventHandler)
 import React.Basic.Hooks (JSX, ReactComponent, Ref, Render, readRefMaybe)
 import Record.Extra (class Keys, keys)
+import Record.Unsafe.Union (unsafeUnion)
 import Type.Proxy (Proxy(..))
 import Unsafe.Coerce (unsafeCoerce)
 import Untagged.Union (UndefinedOr, uorToMaybe)
 import Web.DOM (Element, Node)
-import Web.DOM.Element (scrollHeight, scrollWidth, DOMRect, getBoundingClientRect)
+import Web.DOM.Element (DOMRect, clientHeight, clientWidth, getBoundingClientRect, scrollHeight, scrollWidth)
 import Web.DOM.Element as Element
 import Web.DOM.NonElementParentNode (getElementById)
 import Web.HTML (window)
@@ -78,7 +81,6 @@ import Web.HTML.HTMLElement as HTMLElement
 import Web.HTML.Window (document)
 import Yoga.Block.Internal.CSS (_0)
 import Yoga.Block.Internal.OptionalProp (OptionalProp(..), Id, appendIfDefined, asOptional, composeHandler, getOr, getOrFlipped, ifTrue, isTruthy, maybeToOp, opToMaybe, setOrDelete, unsafeUnMaybe, unsafeUnOptional, (<>?), (?||))
-import Record.Unsafe.Union (unsafeUnion)
 
 unsafeAddProps ∷ ∀ r s. { | r } → { | s } → { | r }
 unsafeAddProps = unsafeUnion
@@ -152,6 +154,15 @@ getScrollDimensionsFromRef itemRef =
     elem <- MaybeT $ pure $ Element.fromNode node
     width <- lift $ scrollWidth elem
     height <- lift $ scrollHeight elem
+    pure { width, height }
+
+getClientDimensionsFromRef ∷ NodeRef -> Effect (Maybe { height ∷ Number, width ∷ Number })
+getClientDimensionsFromRef itemRef =
+  runMaybeT do
+    node <- MaybeT $ readRefMaybe itemRef
+    elem <- MaybeT $ pure $ Element.fromNode node
+    width <- lift $ clientWidth elem
+    height <- lift $ clientHeight elem
     pure { width, height }
 
 getHTMLElementFromRef ∷ Ref (Nullable Node) -> Effect (Maybe HTMLElement)

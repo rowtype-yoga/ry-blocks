@@ -24,7 +24,7 @@ import Yoga.Block.Atom.Segmented.View.ActiveIndicator as ActiveIndicator
 import Yoga.Block.Atom.Segmented.View.Types (Item)
 import Yoga.Block.Hook.Key as Key
 import Yoga.Block.Hook.UseKeyDown (useKeyDown)
-import Yoga.Block.Hook.UseResize (useResize)
+import Yoga.Block.Hook.UseWindowResize (useWindowResize)
 
 type Props =
   { buttonContents ∷ TwoOrMore Item
@@ -71,7 +71,7 @@ component =
           _ -> pure unit
         -------------------------------------------
         -- Ensure redraw on window resize
-        newWindowSize <- useResize
+        newWindowSize <- useWindowResize
         useAff newWindowSize do
           let δw = abs (newWindowSize.innerWidth - windowSize.innerWidth)
           let δh = abs (newWindowSize.innerHeight - windowSize.innerHeight)
