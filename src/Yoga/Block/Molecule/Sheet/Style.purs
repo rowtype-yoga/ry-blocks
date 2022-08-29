@@ -3,7 +3,7 @@ module Yoga.Block.Molecule.Sheet.Style where
 import Yoga.Prelude.Style
 
 import Fahrtwind (maxHeight', overflowYScroll, pX', pY')
-import Fahrtwind.Style.ScollBar (scrollBar')
+import Fahrtwind.Style.ScrollBar (scrollBar')
 import Yoga.Block.Container.Style (col, colour)
 
 type Props :: forall k. (Type -> k) -> Row k -> Row k

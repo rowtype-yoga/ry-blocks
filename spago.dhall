@@ -61,6 +61,7 @@ You can edit this file as you like.
   , "web-events"
   , "web-html"
   , "web-uievents"
+  , "yoga-tree"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs" ]

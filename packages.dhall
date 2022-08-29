@@ -99,8 +99,8 @@ in  upstream
 -------------------------------
 -}
 let upstream =
-      https://github.com/purescript/package-sets/releases/download/psc-0.15.2-20220531/packages.dhall
-        sha256:278d3608439187e51136251ebf12fabda62d41ceb4bec9769312a08b56f853e3
+      https://github.com/purescript/package-sets/releases/download/psc-0.15.4-20220822/packages.dhall
+        sha256:908b4ffbfba37a0a4edf806513a555d0dbcdd0cde7abd621f8d018d2e8ecf828
 
 in  upstream
   with either.version = "v6.0.0"
@@ -549,7 +549,7 @@ in  upstream
       , "typelevel-prelude"
       , "unsafe-coerce"
       ]
-    , version = "654be2533b0ea950511f26e29ba9ab574f7abc03"
+    , version = "6f457d26d56d15f8eb3609dd687dba19fbfd85b5"
     }
   with react-virtuoso =
     { dependencies =
@@ -558,4 +558,17 @@ in  upstream
         ).dependencies
     , repo = "https://github.com/rowtype-yoga/purescript-react-virtuoso.git"
     , version = "ad50a215c024f4ee3393916c8a3307a9a7c9b4a5"
+    }
+  with yoga-tree =
+    { dependencies =
+      [ "arrays"
+      , "control"
+      , "foldable-traversable"
+      , "free"
+      , "maybe"
+      , "prelude"
+      , "tailrec"
+      ]
+    , version = "master"
+    , repo = "https://github.com/rowtype-yoga/purescript-yoga-tree.git"
     }
