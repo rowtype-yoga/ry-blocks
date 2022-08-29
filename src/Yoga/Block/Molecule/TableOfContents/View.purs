@@ -5,7 +5,7 @@ module Yoga.Block.Molecule.TableOfContents.View
   , PropsF
   ) where
 
-import Data.Tree (Forest)
+import Yoga.Tree (Forest)
 import React.Basic.DOM (css)
 import React.Basic.DOM as R
 import Yoga.Block.Container.Style (colour)
@@ -39,26 +39,30 @@ rawComponent =
     \(_ ∷ { | PropsOptional }) ref -> React.do
       pure do
         R.div'
-          </ { style:
-              css
-                { position: "fixed"
-                , background: colour.backgroundLayer2
-                , padding: 0
-                , margin: 0
-                }
+          </
+            { style:
+                css
+                  { position: "fixed"
+                  , background: colour.backgroundLayer2
+                  , padding: 0
+                  , margin: 0
+                  }
             , ref
             }
-          /> [ R.div'
-                </ { style:
-                    css
-                      { display: "flex"
-                      , flexDirection: "row"
-                      , alignItems: "stretch"
-                      , justifyContent: "flex-start"
-                      , padding: 0
-                      , margin: 0
-                      }
+          />
+            [ R.div'
+                </
+                  { style:
+                      css
+                        { display: "flex"
+                        , flexDirection: "row"
+                        , alignItems: "stretch"
+                        , justifyContent: "flex-start"
+                        , padding: 0
+                        , margin: 0
+                        }
                   }
-                /> [ R.text "Hi"
+                />
+                  [ R.text "Hi"
                   ]
             ]

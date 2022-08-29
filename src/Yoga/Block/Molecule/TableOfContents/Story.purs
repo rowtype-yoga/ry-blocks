@@ -7,7 +7,7 @@ import Data.Foldable (fold)
 import Data.Tuple.Nested ((/\))
 import Data.Monoid (power)
 import Data.Traversable (traverse)
-import Data.Tree (Forest, Tree, mkLeaf, mkTree)
+import Yoga.Tree (Forest, Tree, mkLeaf, mkTree)
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
 import React.Basic (JSX, element, fragment)
@@ -19,19 +19,19 @@ import Yoga.Block.Container.Style as Styles
 import Yoga.Block.Internal (createRef)
 import Yoga.Block.Molecule.TableOfContents as TableOfContents
 
-default ∷
-  { decorators ∷ Array (Effect JSX -> JSX)
-  , title ∷ String
-  }
+default
+  ∷ { decorators ∷ Array (Effect JSX -> JSX)
+    , title ∷ String
+    }
 default =
   { title: "Molecule/TableOfContents"
   , decorators:
-    [ \storyFn ->
-        R.div_
-          [ element E.global { styles: Styles.global }
-          , unsafePerformEffect storyFn
-          ]
-    ]
+      [ \storyFn ->
+          R.div_
+            [ element E.global { styles: Styles.global }
+            , unsafePerformEffect storyFn
+            ]
+      ]
   }
 
 tableOfContents ∷ Effect JSX
@@ -83,6 +83,7 @@ tableOfContents = do
                     _ -> R.h4'
                 (fragment [ heading </ { ref } /> [ R.text label ], blabla depth ])
                   <> foldMap (go (depth + 1)) children
+
           content ∷ Array JSX
           content = tocData <#> treeToHeading
         toc <> fold content
