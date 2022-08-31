@@ -38,13 +38,11 @@ useOverflows = coerceHook React.do
           Array.head entries # traverse_ \{ target } -> do
             -- get old style
             styleʔ <- elʔ # traverse getElementStyle
-            let _ = spy "setting style visible" styleʔ
             oldOverflowʔ <- styleʔ # traverse (getStyleProperty "overflow")
             for_ styleʔ \style -> do
               setStyleProperty "overflow" "scroll" style
               -- force reflow: https://gist.github.com/paulirish/5d52fb081b3570c81e3a
               -- (elʔ >>= HTMLElement.fromElement) # traverse_ (offsetTop)
-              let _ = spy "setting style visible" style
               pure unit
             -- get sizes
             sw <- scrollWidth target

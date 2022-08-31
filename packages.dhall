@@ -553,11 +553,9 @@ in  upstream
     }
   with react-virtuoso =
     { dependencies =
-        ( https://raw.githubusercontent.com/rowtype-yoga/purescript-react-virtuoso/main/spago.dhall
-            sha256:9c7c1ced896538360ba325dcefe912fed8c0207bc828f68ebadf5f3b83ee5012
-        ).dependencies
+      [ "effect", "functions", "prelude", "react-basic", "react-basic-dom" ]
     , repo = "https://github.com/rowtype-yoga/purescript-react-virtuoso.git"
-    , version = "ad50a215c024f4ee3393916c8a3307a9a7c9b4a5"
+    , version = "5be142c5a651509e9e9a68582ed1807c029ba1b5"
     }
   with yoga-tree =
     { dependencies =
