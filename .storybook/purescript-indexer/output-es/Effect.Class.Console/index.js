@@ -1,0 +1,17 @@
+import * as $runtime from "../runtime.js";
+import * as Effect$dConsole from "../Effect.Console/index.js";
+const warnShow = dictMonadEffect => dictShow => x => dictMonadEffect.liftEffect(Effect$dConsole.warn(dictShow.show(x)));
+const warn = dictMonadEffect => x => dictMonadEffect.liftEffect(Effect$dConsole.warn(x));
+const timeLog = dictMonadEffect => x => dictMonadEffect.liftEffect(Effect$dConsole.timeLog(x));
+const timeEnd = dictMonadEffect => x => dictMonadEffect.liftEffect(Effect$dConsole.timeEnd(x));
+const time = dictMonadEffect => x => dictMonadEffect.liftEffect(Effect$dConsole.time(x));
+const logShow = dictMonadEffect => dictShow => x => dictMonadEffect.liftEffect(Effect$dConsole.log(dictShow.show(x)));
+const log = dictMonadEffect => x => dictMonadEffect.liftEffect(Effect$dConsole.log(x));
+const infoShow = dictMonadEffect => dictShow => x => dictMonadEffect.liftEffect(Effect$dConsole.info(dictShow.show(x)));
+const info = dictMonadEffect => x => dictMonadEffect.liftEffect(Effect$dConsole.info(x));
+const errorShow = dictMonadEffect => dictShow => x => dictMonadEffect.liftEffect(Effect$dConsole.error(dictShow.show(x)));
+const error = dictMonadEffect => x => dictMonadEffect.liftEffect(Effect$dConsole.error(x));
+const debugShow = dictMonadEffect => dictShow => x => dictMonadEffect.liftEffect(Effect$dConsole.debug(dictShow.show(x)));
+const debug = dictMonadEffect => x => dictMonadEffect.liftEffect(Effect$dConsole.debug(x));
+const clear = dictMonadEffect => dictMonadEffect.liftEffect(Effect$dConsole.clear);
+export {clear, debug, debugShow, error, errorShow, info, infoShow, log, logShow, time, timeEnd, timeLog, warn, warnShow};

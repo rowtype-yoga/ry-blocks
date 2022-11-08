@@ -65,7 +65,7 @@ import React.Basic.Emotion (Style)
 import React.Basic.Emotion as E
 import React.Basic.Events (EventHandler)
 import React.Basic.Hooks (JSX, ReactComponent, Ref, Render, readRefMaybe)
-import Record.Extra (class Keys, keys)
+import Record.Studio (class Keys, keys)
 import Record.Unsafe.Union (unsafeUnion)
 import Type.Proxy (Proxy(..))
 import Unsafe.Coerce (unsafeCoerce)
@@ -223,11 +223,10 @@ unsafeDiv = dangerous "div"
 foreign import pickDefinedFn ∷ ∀ r1 r2. Fn3 (Ref (Nullable Node)) (Array String) (Record r1) (Record r2)
 
 pickDefined
-  ∷ ∀ a r b l
+  ∷ ∀ a r b
    . Row.Union b r a
-  => RL.RowToList b l
   => Ref (Nullable Node)
-  -> Keys l
+  -> Keys b
   => Record a
   -> { ref ∷ Ref (Nullable Node) | b }
 pickDefined ref = runFn3 pickDefinedFn ref ks

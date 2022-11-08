@@ -7,11 +7,11 @@ import Data.String.NonEmpty as NonEmptyString
 import Effect.Class.Console (warn)
 import Effect.Unsafe (unsafePerformEffect)
 import Framer.Motion as M
+import Heterogeneous.Extrablatt.Rec (hsequenceRec)
 import React.Basic.DOM (css)
 import React.Basic.DOM as R
 import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
-import Record.Extra (sequenceRecord)
 import Yoga.Block.Atom.Input.Style (SizeVariant, sizeVariantToFactor)
 import Yoga.Block.Atom.Input.Style as Style
 
@@ -41,7 +41,7 @@ component =
           inputRect <- getBoundingBoxFromRef inputRef
           parentWidth <- getOffsetWidthFromRef parentRef
           parentRect <- getBoundingBoxFromRef parentRef
-          case sequenceRecord $ { inputWidth, parentWidth, inputRect, parentRect } of
+          case hsequenceRec $ { inputWidth, parentWidth, inputRect, parentRect } of
             Just p -> do
               let
                 newOffsets =

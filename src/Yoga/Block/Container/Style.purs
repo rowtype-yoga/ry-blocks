@@ -8,8 +8,8 @@ import Data.Symbol (class IsSymbol, reflectSymbol)
 import Effect.Uncurried (EffectFn2, runEffectFn2)
 import Foreign.Object (Object)
 import Foreign.Object as Object
+import Heterogeneous.Extrablatt.Rec (hmapRec)
 import Heterogeneous.Mapping (class HMapWithIndex, class MappingWithIndex, hmap, hmapWithIndex)
-import Record.Extra (mapRecord)
 import Type.Proxy (Proxy)
 import Unsafe.Coerce (unsafeCoerce)
 import Web.DOM (Element)
@@ -502,7 +502,7 @@ colourWithDarkLightAlpha =
     $ makeCSSVarLabels defaultColours.light
 
 col ∷ FlatTheme StyleProperty
-col = colour # mapRecord str
+col = colour # hmapRec str
 
 autoSwitchColourTheme ∷ Style
 autoSwitchColourTheme =

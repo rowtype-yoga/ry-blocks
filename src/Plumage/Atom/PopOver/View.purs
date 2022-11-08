@@ -133,23 +133,63 @@ mkPopOverView = do
 
         -- [FIXME] I need to take the placement ref into account, it'll be the
         -- longest if else in the world
-        let (Placement _ secondary) = oldPlacement
-        bbʔ <#> \bb → do
-          if (bb.height > h) || (bb.width > w) then
-            oldPlacement
-          else if bb.right > w then
-            (Placement LeftOf secondary)
-          else if bb.left < zero then
-            (Placement RightOf secondary)
-          else if bb.top < zero then
-            (Placement Below secondary)
-          else if bb.bottom > h then
-            (Placement Above secondary)
-          else do
-            oldPlacement
+        let (Placement primary secondary) = oldPlacement
+        bbʔ <#> \bb → case primary of
+          Below ->
+            if (bb.height > h) || (bb.width > w) then
+              oldPlacement
+            else if bb.right > w then
+              (Placement LeftOf secondary)
+            else if bb.left < zero then
+              (Placement RightOf secondary)
+            else if bb.top < zero then
+              (Placement Below secondary)
+            else if bb.bottom > h then
+              (Placement Above secondary)
+            else do
+              oldPlacement
+          Above ->
+            if (bb.height > h) || (bb.width > w) then
+              oldPlacement
+            else if bb.right > w then
+              (Placement LeftOf secondary)
+            else if bb.left < zero then
+              (Placement RightOf secondary)
+            else if bb.top < zero then
+              (Placement Below secondary)
+            else if bb.bottom > h then
+              (Placement Above secondary)
+            else do
+              oldPlacement
+          LeftOf ->
+            if (bb.height > h) || (bb.width > w) then
+              oldPlacement
+            else if bb.right > w then
+              (Placement LeftOf secondary)
+            else if bb.left < zero then
+              (Placement RightOf secondary)
+            else if bb.top < zero then
+              (Placement Below secondary)
+            else if bb.bottom > h then
+              (Placement Above secondary)
+            else do
+              oldPlacement
+          RightOf ->
+            if (bb.height > h) || (bb.width > w) then
+              oldPlacement
+            else if bb.right > w then
+              (Placement LeftOf secondary)
+            else if bb.left < zero then
+              (Placement RightOf secondary)
+            else if bb.top < zero then
+              (Placement Below secondary)
+            else if bb.bottom > h then
+              (Placement Above secondary)
+            else do
+              oldPlacement
 
-      getBestPlacement ∷
-        { bbʔ ∷ Maybe DOMRect, w ∷ Number, h ∷ Number } → Placement → Placement
+      getBestPlacement
+        ∷ { bbʔ ∷ Maybe DOMRect, w ∷ Number, h ∷ Number } → Placement → Placement
       getBestPlacement bbWidthAndHeight oldPlacement = ST.run do
         pRef ← ST.new oldPlacement
         let
