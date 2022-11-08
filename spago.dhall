@@ -21,10 +21,8 @@ You can edit this file as you like.
   , "foreign-generic"
   , "foreign-object"
   , "framer-motion"
-  , "free"
   , "functions"
   , "heterogeneous"
-  , "heterogeneous-extrablatt"
   , "integers"
   , "interpolate"
   , "literals"
@@ -50,10 +48,8 @@ You can edit this file as you like.
   , "refs"
   , "remotedata"
   , "spec"
-  , "spec-discovery"
   , "st"
   , "strings"
-  , "tailrec"
   , "transformers"
   , "tuples"
   , "two-or-more"
@@ -66,7 +62,6 @@ You can edit this file as you like.
   , "web-events"
   , "web-html"
   , "web-uievents"
-  , "yoga-tree"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs" ]
