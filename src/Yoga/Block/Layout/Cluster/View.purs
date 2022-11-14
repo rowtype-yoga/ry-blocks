@@ -35,14 +35,12 @@ rawComponent ∷ ∀ p. ReactComponent { | p }
 rawComponent =
   mkForwardRefComponent "Cluster" do
     \(props ∷ { | PropsOptional }) ref -> React.do
-      let wrap = props.wrapper ?|| R.div_
-      let wrapChild = props.childWrapper ?|| R.div_
       -- Must be careful here because React fiddles with children
       let safeChildren = reactChildrenToArray (unsafeCoerce props.children)
-      let wrappedChildren = safeChildren <#> wrapChild
+      let wrappedChildren = safeChildren
       pure
         $ emotionDiv ref props
             { className: "ry-cluster " <>? props.className
             , css: Style.cluster props
-            , children: [ wrap wrappedChildren ]
+            , children: wrappedChildren
             }

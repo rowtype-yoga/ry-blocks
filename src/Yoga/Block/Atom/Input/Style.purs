@@ -2,10 +2,13 @@ module Yoga.Block.Atom.Input.Style where
 
 import Yoga.Prelude.Style
 
+import Data.Generic.Rep (class Generic)
 import Data.Interpolate (i)
 import Yoga.Block.Container.Style (colour)
 
 data SizeVariant = SizeMedium | SizeSmall | SizeTiny
+
+derive instance Generic SizeVariant _
 
 sizeVariantToFactor ∷ SizeVariant → String
 sizeVariantToFactor = case _ of

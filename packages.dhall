@@ -167,8 +167,8 @@ in  upstream
     }
   with record-studio =
     { repo = "https://github.com/rowtype-yoga/purescript-record-studio.git"
-    , version = "v1.0.1"
+    , version = "v1.0.4"
     , dependencies =
       [ "heterogeneous", "lists", "prelude", "record", "typelevel-prelude" ]
     }
-  with react-basic-storybook.version = "v2.0.0"
+  with react-basic-storybook = ../purescript-react-basic-storybook/spago.dhall as Location

@@ -18,7 +18,7 @@ import Yoga.Block.Layout.Sidebar.Style (SidebarSide(..))
 import Yoga.Block.Typography as Typo
 import Storybook
 
-default ∷ Meta
+-- default ∷ Meta
 default = meta
   { title: "Layout"
   , decorators:

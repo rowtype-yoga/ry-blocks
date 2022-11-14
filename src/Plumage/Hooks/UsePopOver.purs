@@ -13,6 +13,7 @@ type Options =
   { dismissBehaviourʔ ∷ Maybe HookDismissBehaviour
   , containerId ∷ String
   , placement ∷ Placement
+  , fallbackPlacements :: Array Placement
   }
 
 type Result =
@@ -38,6 +39,7 @@ usePopOver options = coerceHook React.do
       , childʔ: if isVisible then Just content else Nothing
       , placementRef: targetRef
       , placement: options.placement
+      , fallbackPlacements: options.fallbackPlacements
       , dismissBehaviourʔ: options.dismissBehaviourʔ <#> toDismissBehaviour
           targetRef
       , containerId: options.containerId

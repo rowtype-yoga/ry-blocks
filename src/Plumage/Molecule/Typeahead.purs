@@ -79,12 +79,12 @@ type Props a =
   , inputProps ∷ InputProps
   }
 
-mkDefaultArgs ∷
-  ∀ a.
-  { suggestionToText ∷ a → String
-  , contextMenuLayerId ∷ String
-  } →
-  Args a
+mkDefaultArgs
+  ∷ ∀ a
+  . { suggestionToText ∷ a → String
+    , contextMenuLayerId ∷ String
+    }
+  → Args a
 mkDefaultArgs
   { suggestionToText
   , contextMenuLayerId
@@ -151,12 +151,12 @@ type ViewProps a =
   , updateActiveIndex ∷
       ( { activeIndex ∷ Maybe Int
         , updatedByKeyboard ∷ Boolean
-        } →
-        { activeIndex ∷ Maybe Int
-        , updatedByKeyboard ∷ Boolean
         }
-      ) →
-      Effect Unit
+        → { activeIndex ∷ Maybe Int
+          , updatedByKeyboard ∷ Boolean
+          }
+      )
+      → Effect Unit
   , onSelected ∷
       a → Effect { overrideInputValue ∷ Maybe String, dismiss ∷ Boolean }
   , onRemoved ∷ a → Effect Unit
@@ -165,17 +165,17 @@ type ViewProps a =
   , inputProps ∷ InputProps
   }
 
-mkTypeaheadView ∷
-  ∀ a.
-  Eq a ⇒
-  { contextMenuLayerId ∷ String
-  , scrollSeekPlaceholderʔ ∷ Maybe ScrollSeekPlaceholder
-  , scrollSeekConfigurationʔ ∷ Maybe ScrollSeekConfiguration
-  , overscan ∷ Overscan
-  , containerStyle ∷ E.Style
-  , itemStyle ∷ E.Style
-  } →
-  Effect (ReactComponent (ViewProps a))
+mkTypeaheadView
+  ∷ ∀ a
+  . Eq a
+  ⇒ { contextMenuLayerId ∷ String
+    , scrollSeekPlaceholderʔ ∷ Maybe ScrollSeekPlaceholder
+    , scrollSeekConfigurationʔ ∷ Maybe ScrollSeekConfiguration
+    , overscan ∷ Overscan
+    , containerStyle ∷ E.Style
+    , itemStyle ∷ E.Style
+    }
+  → Effect (ReactComponent (ViewProps a))
 mkTypeaheadView
   args@{ contextMenuLayerId } = do
   -- loader ← mkLoader
@@ -285,6 +285,7 @@ mkTypeaheadView
           , popOver
               { hide: blurCurrentItem
               , placement: Placement Below Start
+              , fallbackPlacements: [ Placement Below End, Placement Above Start, Placement Above End ]
               , placementRef: inputContainerRef
               , dismissBehaviourʔ: Nothing
               , onAnimationStateChange: setIsAnimating
@@ -444,19 +445,19 @@ parseKey = case _ of
   "Enter" → Just Key.Return
   _ → Nothing
 
-mkHandleKeyUp ∷
-  ∀ a.
-  { activeIndex ∷ Maybe Int
-  , focusInput ∷ Effect Unit
-  , suggestions ∷ (Array a)
-  , updateActiveIndex ∷
-      (Maybe Int → Maybe Int) →
-      Effect Unit
-  , onSelected ∷ a → Effect Unit
-  , onDismiss ∷ Effect Unit
-  } →
-  KeyCode →
-  Effect Unit
+mkHandleKeyUp
+  ∷ ∀ a
+  . { activeIndex ∷ Maybe Int
+    , focusInput ∷ Effect Unit
+    , suggestions ∷ (Array a)
+    , updateActiveIndex ∷
+        (Maybe Int → Maybe Int)
+        → Effect Unit
+    , onSelected ∷ a → Effect Unit
+    , onDismiss ∷ Effect Unit
+    }
+  → KeyCode
+  → Effect Unit
 mkHandleKeyUp
   { activeIndex
   , suggestions
@@ -490,22 +491,22 @@ mkHandleKeyUp
       onDismiss
     _ → mempty
 
-mkForwardRefComponent ∷
-  ∀ ref props.
-  Lacks "ref" props ⇒
-  String →
-  ReactComponent { ref ∷ React.Ref ref | props } →
-  Effect (ReactComponent { | props })
+mkForwardRefComponent
+  ∷ ∀ ref props
+  . Lacks "ref" props
+  ⇒ String
+  → ReactComponent { ref ∷ React.Ref ref | props }
+  → Effect (ReactComponent { | props })
 mkForwardRefComponent name component = mkForwardRefComponentEffect name
   \(props ∷ { | props }) ref → React.do
     pure $ React.element component (Record.insert (Proxy ∷ _ "ref") ref props)
 
-mkForwardRefEmotionComponent ∷
-  ∀ ref props.
-  Lacks "ref" props ⇒
-  String →
-  ReactComponent { className ∷ String, ref ∷ React.Ref ref | props } →
-  Effect (ReactComponent { className ∷ String, css ∷ E.Style | props })
+mkForwardRefEmotionComponent
+  ∷ ∀ ref props
+  . Lacks "ref" props
+  ⇒ String
+  → ReactComponent { className ∷ String, ref ∷ React.Ref ref | props }
+  → Effect (ReactComponent { className ∷ String, css ∷ E.Style | props })
 mkForwardRefEmotionComponent name component =
   mkForwardRefComponentEffect name
     \(props ∷ { className ∷ String, css ∷ E.Style | props }) ref → React.do
@@ -513,25 +514,25 @@ mkForwardRefEmotionComponent name component =
         ( Record.insert (Proxy ∷ _ "ref") ref props
         )
 
-mkForwardRefComponentWithStyle ∷
-  ∀ ref props.
-  Lacks "ref" props ⇒
-  Lacks "className" props ⇒
-  Union props
-    (className ∷ String, css ∷ E.Style)
-    (className ∷ String, css ∷ E.Style | props) ⇒
-  Nub (className ∷ String, css ∷ E.Style | props)
-    (className ∷ String, css ∷ E.Style | props) ⇒
-  String →
-  E.Style →
-  ReactComponent { className ∷ String, ref ∷ React.Ref ref | props } →
-  Effect (ReactComponent { | props })
+mkForwardRefComponentWithStyle
+  ∷ ∀ ref props
+  . Lacks "ref" props
+  ⇒ Lacks "className" props
+  ⇒ Union props
+      (className ∷ String, css ∷ E.Style)
+      (className ∷ String, css ∷ E.Style | props)
+  ⇒ Nub (className ∷ String, css ∷ E.Style | props)
+      (className ∷ String, css ∷ E.Style | props)
+  ⇒ String
+  → E.Style
+  → ReactComponent { className ∷ String, ref ∷ React.Ref ref | props }
+  → Effect (ReactComponent { | props })
 mkForwardRefComponentWithStyle name css component = mkForwardRefComponentEffect
   name
   \(props ∷ { | props }) ref → React.do
     pure $ E.element component
       ( Record.insert (Proxy ∷ _ "ref") ref
-          ( (props `Record.disjointUnion` { className: name, css }) ∷
-              { className ∷ String, css ∷ E.Style | props }
+          ( (props `Record.disjointUnion` { className: name, css })
+              ∷ { className ∷ String, css ∷ E.Style | props }
           )
       )

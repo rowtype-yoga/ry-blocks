@@ -19,7 +19,6 @@ import Data.String.Regex (Regex)
 import Data.String.Regex as Regex
 import Data.String.Regex.Flags as RF
 import Data.String.Regex.Unsafe (unsafeRegex)
-import Debug (spy)
 import Effect.Aff (Aff, attempt, throwError)
 import Effect.Class (liftEffect)
 import Effect.Class.Console as Console
@@ -34,7 +33,7 @@ import PureScript.CST.Traversal (defaultMonoidalVisitor, foldMapModule)
 import PureScript.CST.Types as CST
 import Record (merge)
 import SourceMap.Types (SourceMap)
-import Storybook.CSFTools (parseCsf, setStoryCode)
+import Storybook.CSFTools (formatCsf, parseCsf, setStoryCode)
 import Storybook.CSFTools as CSF
 import Storybook.CSFTools.Types (CsfFile, CsfOptions)
 import Unsafe.Coerce (unsafeCoerce)
@@ -48,25 +47,24 @@ indexer fileName options = do
   fileContent <- readTextFile UTF8 fileName
   -- withSourceMapConsumer
   let fixedFileContent = adjustSourceForStorybook fileContent
-  parsed <- parseCsf fixedFileContent (options # merge { fileName })# liftEffect
-  Console.log("\n\n\n\n\n")
-  Console.log (JSON.writeJSON ((unsafeCoerce parsed) :: Foreign))
-  Console.log("\n\n\n\n\n")
+  parsed <- parseCsf fixedFileContent (options # merge { fileName }) # liftEffect
 
   enriched <- enrichWithPureScriptInfo fileName parsed
-  case enriched of
+  csf <- case enriched of
     Left err -> do
       Console.errorShow err
       pure parsed
     Right r -> pure r
-
+  liftEffect do
+    formatted <- formatCsf csf
+    parseCsf formatted options
 
 enrichWithPureScriptInfo ∷ String → CsfFile → Aff (Either Error CsfFile)
 enrichWithPureScriptInfo fileName parsed = attempt do
   sourceMapText <- readTextFile UTF8 (fileName <> ".map")
   sourceMap :: SourceMap <- JSON.readJSON sourceMapText # throwJSONErr
   sourcePath <- sourceMap.sources # Array.head # throwMaybe "empty source path"
-  absoluteSourcePath <- resolve [(dirname fileName)] sourcePath # liftEffect
+  absoluteSourcePath <- resolve [ (dirname fileName) ] sourcePath # liftEffect
   psFile <- readTextFile UTF8 absoluteSourcePath
   cst <- case parseModule psFile of
     ParseSucceeded mod -> pure mod
@@ -79,14 +77,16 @@ enrichWithPureScriptInfo fileName parsed = attempt do
   for_ storyNames \storyName -> do
     for_ (Map.lookup storyName (unwrap topLevelDecls)) \(pos :: (First CST.SourceRange)) -> liftEffect do
       let { start, end } = un First pos
-      let completeLines = Array.slice (start.line) (end.line-2) lines
-      case lines !! (start.line) , lines !! (end.line) of
-        Just startLine , Just endLine -> do
+      let completeLines = Array.slice (start.line) (end.line - 2) lines
+      case lines !! (start.line), lines !! (end.line) of
+        Just startLine, Just endLine -> do
           let
             code =
-              SCU.drop start.column startLine <> "\n" <>
-              Array.intercalate "\n" completeLines <> "\n" <>
-              SCU.take end.column endLine
+              SCU.drop start.column startLine <> "\n"
+                <> Array.intercalate "\n" completeLines
+                <> "\n"
+                <>
+                  SCU.take end.column endLine
           before <- Ref.read resultRef
           after <- setStoryCode { storyName, code } before
           Ref.write after resultRef
@@ -113,7 +113,7 @@ getTopLevelValueDeclarations = foldMapModule $ defaultMonoidalVisitor
   }
 
 adjustSourceForStorybook ∷ String → String
-adjustSourceForStorybook  =
+adjustSourceForStorybook =
   Regex.replace
     defaultVariableRecordRegex
     """var $$$$default = { $1 };"""

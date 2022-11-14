@@ -110,13 +110,19 @@ const adjustSourceForStorybook = /* #__PURE__ */ Data$dString$dRegex.replace(def
 const indexer = fileName => options => Effect$dAff._bind(Node$dFS$dAff.toAff2(Node$dFS$dAsync.readTextFile)(Node$dEncoding.UTF8)(fileName))(fileContent => Effect$dAff._bind(Effect$dAff._liftEffect(Storybook$dCSFTools.parseCsf(adjustSourceForStorybook(fileContent))({
   ...options,
   fileName: fileName
-})))(parsed => Effect$dAff._bind(Effect$dAff._liftEffect(Effect$dConsole.log("\n\n\n\n\n")))(() => Effect$dAff._bind(Effect$dAff._liftEffect(Effect$dConsole.log(Yoga$dJSON._unsafeStringify(parsed))))(() => Effect$dAff._bind(Effect$dAff._liftEffect(Effect$dConsole.log("\n\n\n\n\n")))(() => Effect$dAff._bind(enrichWithPureScriptInfo(fileName)(parsed))(enriched => {
+})))(parsed => Effect$dAff._bind(enrichWithPureScriptInfo(fileName)(parsed))(enriched => Effect$dAff._bind((() => {
   if (enriched.tag === "Left") {
     return Effect$dAff._bind(Effect$dAff._liftEffect(Effect$dConsole.error(Effect$dException.showErrorImpl(enriched._1))))(() => Effect$dAff._pure(parsed));
   }
   if (enriched.tag === "Right") { return Effect$dAff._pure(enriched._1); }
   $runtime.fail();
-}))))));
+})())(csf => Effect$dAff._liftEffect((() => {
+  const $6 = Storybook$dCSFTools.formatCsf(csf);
+  return () => {
+    const formatted = $6();
+    return Storybook$dCSFTools.parseCsf(formatted)(options)();
+  };
+})())))));
 export {
   adjustSourceForStorybook,
   defaultVariableRecordRegex,
