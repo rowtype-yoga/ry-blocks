@@ -8,7 +8,7 @@ data SidebarSide
   = SidebarLeft
   | SidebarRight
 
-derive instance eqSidebarSide :: Eq SidebarSide
+derive instance Eq SidebarSide
 
 type Props :: forall k. (Type -> k) -> Row k -> Row k
 type Props f r =
@@ -23,44 +23,26 @@ type Props f r =
   | r
   )
 
-sidebar ∷ ∀ p. { | Props OptionalProp p } -> Style
-sidebar props = styles <>? props.css
+sidebarContainer ∷ ∀ p. { | Props OptionalProp p } -> Style
+sidebarContainer props = styles <>? props.css
   where
   adjustedSpace = props.space <#> \s -> if s == "0" then "0px" else s
-
   space = adjustedSpace ?|| "1rem"
-
-  side = props.side ?|| SidebarLeft
-
-  contentMin = props.contentMin ?|| "50%"
-
-  nonSidebarStyle =
-    nest
-      { flexBasis: _0
-      , flexGrow: "999" # str
-      , minWidth: i "calc(" contentMin " - " space " - " space ")" # str
-      }
-
   styles =
     css
-      { overflow: hidden
-      , "& > *":
-          nested
-            $ flex
-            <> css
-              { flexWrap: if props.reverseOnWrap # isTruthy then str "wrap-reverse" else wrap
-              , margin: "calc(" <> space <> " / 2 * -1)" # str
-              , alignItems: props.noStretch # foldMap if _ then str "flex-start" else mempty
-              }
-      , "& > * > *":
-          nest
-            { margin: "calc(" <> space <> " / 2)" # str
-            , flexGrow: "1" # str
-            , flexBasis: props.sideWidth # foldMap str
-            }
-            <> foldMap (nest <<< { flexBasis: _ } <<< str) props.sideWidth
-            <> foldMap nested props.sideBarCss
+      { display: str "flex"
+      , flexWrap: wrap
+      , gap: str space
       }
-      <> case side of
-        SidebarLeft -> css { "& > * > :last-child": nonSidebarStyle }
-        SidebarRight -> css { "& > * > :first-child": nonSidebarStyle }
+
+sidebar ∷ Style
+sidebar = css { flexBasis: 20.0 # rem, flexGrow: int 1 }
+
+notSidebar ∷ ∀ p. { | Props OptionalProp p } -> Style
+notSidebar props = css
+  { flexBasis: int 0
+  , flexGrow: int 999
+  , minInlineSize: str contentMin
+  }
+  where
+  contentMin = props.contentMin ?|| "50%"

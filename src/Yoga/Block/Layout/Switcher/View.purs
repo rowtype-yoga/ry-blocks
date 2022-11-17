@@ -1,19 +1,25 @@
-module Yoga.Block.Layout.Switcher.View (component, Props, PropsF) where
+module Yoga.Block.Layout.Switcher.View (component, Props, PropsNoChildren, PropsF) where
 
 import Yoga.Prelude.View
+
 import React.Basic.DOM as R
+import Yoga.Block.Internal (DivPropsNoChildrenF)
 import Yoga.Block.Layout.Switcher.Style as Style
 
-type PropsF f =
+type PropsF :: forall k. (Type -> k) -> Row k -> Row k
+type PropsF f r =
   ( className ∷ f String
-  | Style.Props f DivProps
+  | Style.Props f r
   )
 
+type PropsNoChildren =
+  PropsF Id (DivPropsNoChildrenF Id ())
+
 type Props =
-  PropsF Id
+  PropsF Id (DivPropsF Id ())
 
 type PropsOptional =
-  PropsF OptionalProp
+  PropsF OptionalProp (DivProps)
 
 component ∷ ∀ p p_. Union p p_ Props => ReactComponent { | p }
 component = rawComponent
@@ -26,5 +32,5 @@ rawComponent =
         $ emotionDiv ref props
             { className: "ry-switcher " <>? props.className
             , css: Style.switcher props
-            , children: [ R.div_ props.children ]
+            , children: props.children
             }

@@ -1,48 +1,51 @@
 module Yoga.Block.Internal
-  ( mkForwardRefComponent
-  , mkForwardRefComponentEffect
-  , forwardedRefAsMaybe
-  , unsafeEmotion
-  , unsafeDiv
-  , dangerous
-  , deleteUndefineds
+  ( ButtonReadableProps
+  , ButtonReadablePropsF
+  , ButtonReadablePropsNoChildrenF
+  , ButtonWritableProps
+  , ButtonWritablePropsF
+  , ButtonWritablePropsNoChildrenF
   , DivProps
   , DivPropsF
   , DivPropsNoChildren
   , DivPropsNoChildrenF
   , InputReadableProps
-  , InputWritableProps
   , InputReadablePropsF
+  , InputWritableProps
   , InputWritablePropsF
-  , ButtonWritableProps
-  , ButtonReadableProps
-  , ButtonReadablePropsF
-  , ButtonReadablePropsNoChildrenF
-  , ButtonWritablePropsF
-  , ButtonWritablePropsNoChildrenF
   , NodeRef
+  , createRef
+  , dangerous
+  , deleteUndefineds
+  , emotionButton
   , emotionDiv
   , emotionInput
-  , emotionButton
-  , module Yoga.Block.Internal.OptionalProp
-  , module Yoga.Block.Internal.CSS
-  , unsafeUnionDroppingUndefined
-  , unsafeMergeSecond
-  , unsafeAddProps
-  , createRef
+  , findElementByIdInDocument
+  , focusNodeRef
+  , forwardedRefAsMaybe
   , getBoundingBoxFromRef
   , getClientDimensionsFromRef
   , getElementFromRef
   , getHTMLElementFromRef
+  , getOffsetDimensionsFromRef
   , getOffsetHeightFromRef
   , getOffsetWidthFromRef
-  , getOffsetDimensionsFromRef
+  , getScrollDimensionsFromRef
   , getScrollHeightFromRef
   , getScrollWidthFromRef
-  , getScrollDimensionsFromRef
-  , findElementByIdInDocument
-  , focusNodeRef
-  ) where
+  , mkForwardRefComponent
+  , mkForwardRefComponentEffect
+  , module Yoga.Block.Internal.CSS
+  , module Yoga.Block.Internal.OptionalProp
+  , objectToStyle
+  , toStyleObject
+  , unsafeAddProps
+  , unsafeDiv
+  , unsafeEmotion
+  , unsafeMergeSecond
+  , unsafeUnionDroppingUndefined
+  )
+  where
 
 import Prelude
 
@@ -57,11 +60,12 @@ import Data.Traversable (for, for_)
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
 import Foreign.Object (Object)
+import Foreign.Object as Object
 import Prim.Row (class Lacks, class Union)
 import Prim.Row as Row
-import Prim.RowList as RL
 import React.Basic.DOM (CSS, unsafeCreateDOMComponent)
-import React.Basic.Emotion (Style)
+import React.Basic.DOM as R
+import React.Basic.Emotion (Style, StyleProperty)
 import React.Basic.Emotion as E
 import React.Basic.Events (EventHandler)
 import React.Basic.Hooks (JSX, ReactComponent, Ref, Render, readRefMaybe)
@@ -105,6 +109,13 @@ focusNodeRef ∷ NodeRef -> Effect Unit
 focusNodeRef ref = do
   maybeHTMLElement <- getHTMLElementFromRef ref
   for_ maybeHTMLElement focus
+
+objectToStyle :: Object StyleProperty -> R.CSS
+objectToStyle = unsafeCoerce
+
+toStyleObject :: String -> OptionalProp StyleProperty -> Object StyleProperty
+toStyleObject styleName prop =
+  (prop <#> Object.singleton styleName) ?|| mempty
 
 findElementByIdInDocument ∷ String -> Effect (Maybe Element)
 findElementByIdInDocument id = do

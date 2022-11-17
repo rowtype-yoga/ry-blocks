@@ -123,8 +123,14 @@ stack = el stack'
 stack_ ∷ Array JSX → JSX
 stack_ = stack {}
 
-switcher ∷ ∀ p q. Union p q Switcher.Props ⇒ ReactComponent { | p }
-switcher = Switcher.component
+switcher' ∷ ∀ p q. Union p q Switcher.Props ⇒ ReactComponent { | p }
+switcher' = Switcher.component
+
+switcher ∷ ∀ p q. Lacks "children" p ⇒ Union p q Switcher.PropsNoChildren ⇒ { | p } → Array JSX → JSX
+switcher = el switcher'
+
+switcher_ ∷ Array JSX → JSX
+switcher_ = switcher {}
 
 toggle ∷ ∀ p q. Union p q Toggle.Props ⇒ ReactComponent { | p }
 toggle = Toggle.component

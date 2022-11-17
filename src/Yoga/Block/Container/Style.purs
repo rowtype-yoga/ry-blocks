@@ -111,7 +111,7 @@ mkGlobal maybeMode =
     { "html, body":
         nested
           $ css
-              { minHeight: 100.0 # percent
+              { height: 100.0 # percent
               , minWidth: 100.0 # percent
               , "WebkitTextSizeAdjust": 100.0 # percent
               }
