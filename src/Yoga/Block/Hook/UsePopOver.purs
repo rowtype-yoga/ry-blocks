@@ -1,12 +1,12 @@
-module Plumage.Hooks.UsePopOver where
+module Yoga.Block.Hook.UsePopOver where
 
 import Yoga.Prelude.View
 
 import Data.Newtype (class Newtype)
 import Effect.Unsafe (unsafePerformEffect)
-import Plumage.Atom.PopOver.Types (HookDismissBehaviour, Placement, toDismissBehaviour)
-import Plumage.Atom.PopOver.View (mkPopOverView)
-import Plumage.Atom.PopOver.View as PopOver
+import Yoga.Block.Atom.PopOver.Types (HookDismissBehaviour, Placement, toDismissBehaviour)
+import Yoga.Block.Atom.PopOver.View (mkPopOverView)
+import Yoga.Block.Atom.PopOver.View as PopOver
 import React.Basic.Hooks as React
 
 type Options =

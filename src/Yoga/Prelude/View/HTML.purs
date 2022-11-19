@@ -1,4 +1,4 @@
-module Plumage.Util.HTML where
+module Yoga.Prelude.View.HTML where
 
 import React.Basic (JSX, ReactComponent)
 import React.Basic.DOM as R

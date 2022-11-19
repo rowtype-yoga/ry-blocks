@@ -46,7 +46,7 @@ component = rawComponent
 
 mkLeftIcon ∷ JSX -> JSX
 mkLeftIcon icon =
-  div
+  div'
     </*
       { className: "ry-input-left-icon-container"
       , css: Style.leftIconContainer
@@ -176,20 +176,17 @@ rawComponent =
               , sizeVariant: props.sizeVariant
               }
             />
-              [ leading # foldMap \l -> div </ {} /> [ l ]
+              [ leading # foldMap \l -> div' </ {} /> [ l ]
               , theInput
-              , trailing # foldMap \t -> div </ {} /> [ t ]
+              , trailing # foldMap \t -> div' </ {} /> [ t ]
               ]
       pure
         $ case maybeLabelText of
             Nothing -> inputContainer
             Just labelText ->
-              div
-                </*
-                  { className: "ry-label-and-input-wrapper"
-                  , css: Style.labelAndInputWrapper <>? props.css
-                  }
-                /> [ inputContainer, mkLabel labelText ]
+              div "ry-label-and-input-wrapper"
+                (Style.labelAndInputWrapper <>? props.css)
+                [ inputContainer, mkLabel labelText ]
 
 passwordIcon
   ∷ ReactComponent
@@ -199,7 +196,7 @@ passwordIcon
 passwordIcon =
   unsafePerformEffect
     $ reactComponent "Password Icon" \props -> React.do
-        pure $ div
+        pure $ div'
           </*
             { onClick: handler preventDefault \_ -> props.modifyHidePassword not
             , className: "ry-input-right-icon-container"

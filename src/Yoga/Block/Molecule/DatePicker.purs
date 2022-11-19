@@ -1,11 +1,11 @@
-module Plumage.Atom.DatePicker where
+module Yoga.Block.Atom.DatePicker where
 
 import Yoga.Prelude.View
 
 import Data.Date (Date, Month, Year)
 import Effect.Now (nowDate)
-import Plumage.Atom.DatePicker.View (mkDatePickerView)
-import Plumage.Atom.DatePicker.View as DateView
+import Yoga.Block.Atom.DatePicker.View (mkDatePickerView)
+import Yoga.Block.Atom.DatePicker.View as DateView
 import React.Basic.Hooks (mkReducer)
 import React.Basic.Hooks as React
 

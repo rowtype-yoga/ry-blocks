@@ -1,4 +1,4 @@
-module Plumage.Atom.PopOver.View where
+module Yoga.Block.Atom.PopOver.View where
 
 import Yoga.Prelude.View
 
@@ -13,11 +13,11 @@ import Data.Traversable (for)
 import Fahrtwind (acceptClicks, positionAbsolute)
 import Fahrtwind.Style.BoxShadow (shadow)
 import Framer.Motion as M
-import Plumage.Atom.Modal.View (mkClickAway)
-import Plumage.Atom.PopOver.Types (DismissBehaviour(..), Placement(..), PrimaryPlacement(..), SecondaryPlacement(..))
-import Plumage.Hooks.UseRenderInPortal (useRenderInPortal)
-import Plumage.Hooks.UseResize2 (useOnResize)
-import Plumage.Prelude.Style (Style)
+import Yoga.Block.Atom.Modal.View (mkClickAway)
+import Yoga.Block.Atom.PopOver.Types (DismissBehaviour(..), Placement(..), PrimaryPlacement(..), SecondaryPlacement(..))
+import Yoga.Block.Hook.UseRenderInPortal (useRenderInPortal)
+import Yoga.Block.Hook.UseResize2 (useOnResize)
+import Yoga.Prelude.Style (Style)
 import React.Basic.DOM as R
 import React.Basic.Hooks as React
 import Unsafe.Reference (reallyUnsafeRefEq)
@@ -396,4 +396,3 @@ placeAt bb { width, height } (Placement primary secondary) = complete case prima
     }
   where
   complete { x, y } = { x, y, width, height, left: x, top: y, right: x + width, bottom: y + height }
-

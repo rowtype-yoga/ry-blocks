@@ -1,8 +1,6 @@
-module Plumage.Molecule.Typeahead.Style where
+module Yoga.Block.Molecule.Typeahead.Style where
 
 import Yoga.Prelude.Style
-
-import Yoga.Block.Container.Style (col)
 
 resultsContainer ∷ Style
 resultsContainer =

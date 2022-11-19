@@ -1,4 +1,4 @@
-module React.Aria.Interactions2 where
+module React.Aria.Interactions where
 
 import Prelude
 
@@ -25,11 +25,11 @@ foreign import useFocusWithinImpl ∷ ∀ props. EffectFn1 props FocusWithinResu
 
 newtype UseFocusWithin a = UseFocusWithin a
 
-useFocusWithin ∷
-  ∀ props props_.
-  Union props props_ FocusWithinProps ⇒
-  { | props } →
-  Hook UseFocusWithin FocusWithinResult
+useFocusWithin
+  ∷ ∀ props props_
+  . Union props props_ FocusWithinProps
+  ⇒ { | props }
+  → Hook UseFocusWithin FocusWithinResult
 useFocusWithin = unsafeHook <<< runEffectFn1 useFocusWithinImpl
 
 -- UseFocus
@@ -48,9 +48,9 @@ foreign import useFocusImpl ∷ ∀ props. EffectFn1 props FocusResult
 
 newtype UseFocus a = UseFocus a
 
-useFocus ∷
-  ∀ props props_.
-  Union props props_ FocusProps ⇒
-  { | props } →
-  Hook UseFocus FocusResult
+useFocus
+  ∷ ∀ props props_
+  . Union props props_ FocusProps
+  ⇒ { | props }
+  → Hook UseFocus FocusResult
 useFocus = unsafeHook <<< runEffectFn1 useFocusImpl

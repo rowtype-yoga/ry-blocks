@@ -13,6 +13,7 @@ module Yoga.Prelude.View
   , module Data.Nullable
   , module Untagged.Castable
   , module Web.DOM.Element
+  , module Yoga.Prelude.View.HTML
   ) where
 
 import Yoga.Prelude.Default hiding (div)
@@ -28,5 +29,7 @@ import Untagged.Castable (cast)
 import Web.DOM (Node)
 import Web.DOM.Element (DOMRect, getBoundingClientRect)
 import Web.HTML.HTMLElement (HTMLElement, blur, focus)
-import Yoga ((/>), (</), (</*), (</*>), (</>), div, span, button)
+import Yoga ((/>), (</), (</*), (</*>), (</>), div', span', button')
 import Yoga.Block.Internal (ButtonReadableProps, ButtonReadablePropsF, ButtonWritableProps, ButtonWritablePropsF, DivProps, DivPropsF, Id, InputReadableProps, InputReadablePropsF, InputWritableProps, InputWritablePropsF, NodeRef, OptionalProp(..), _0, appendIfDefined, asOptional, composeHandler, createRef, dangerous, deleteUndefineds, emotionButton, emotionDiv, emotionInput, forwardedRefAsMaybe, getBoundingBoxFromRef, getHTMLElementFromRef, getOffsetDimensionsFromRef, getOffsetHeightFromRef, getOffsetWidthFromRef, getOr, getOrFlipped, getScrollDimensionsFromRef, getScrollHeightFromRef, getScrollWidthFromRef, ifTrue, isTruthy, maybeToOp, mkForwardRefComponent, mkForwardRefComponentEffect, opToMaybe, setOrDelete, unsafeAddProps, unsafeDiv, unsafeEmotion, unsafeMergeSecond, unsafeUnMaybe, unsafeUnOptional, unsafeUnionDroppingUndefined, (<>?), (?||))
+
+import Yoga.Prelude.View.HTML (div, div_, h1_, h2_, h3_, h4_, h5_, h6_, jsx, jsx_, li, li_, nav, nav_, p, p_, section, section_, span, span_, ul, ul_)

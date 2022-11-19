@@ -95,7 +95,7 @@ component =
           contentToChild idx ({ id, value } /\ ref) = do
             let isLast = idx + 1 == TwoOrMore.length buttonContents
             let isFirst = idx == 0
-            button
+            button'
               </*
                 { key: show idx
                 , ref
@@ -112,7 +112,7 @@ component =
                       }
                 }
               />
-                [ span
+                [ span'
                     </*
                       { className: "ry-segmented-button__content"
                       , css: Style.buttonContent { isFirst, isLast }

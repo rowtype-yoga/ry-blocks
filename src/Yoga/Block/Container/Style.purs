@@ -129,7 +129,7 @@ mkGlobal maybeMode =
               <> variables
               <> fontVariables
                 { main: """"Inter V", "Inter var", Inter"""
-                , mono: "Victor Mono, Menlo, Consolas, Monaco, Liberation Mono, Lucida Console"
+                , mono: "Jetbrains Mono, Menlo, Consolas, Monaco, Liberation Mono, Lucida Console"
                 }
     , html:
         nested
@@ -158,40 +158,6 @@ mkGlobal maybeMode =
           { fontWeight: str "700"
           -- , margin: _0
           }
-    -- , h1:
-    --     nested
-    --       $ css
-    --           { "--h1size": str "calc( min( var(--s2) + 2vw , var(--s4) ) )"
-    --           , fontSize: var "--h1size"
-    --           , letterSpacing: str "calc(var(--h1size) * -0.04)"
-    --           -- , marginBottom: var "--s0"
-    --           -- , marginTop: var "--s-1"
-    --           }
-    -- , h2:
-    --     nested
-    --       $ css
-    --           { "--h2size": str "calc( min( (var(--s1)*1.1) + 2vw , var(--s3) ) )"
-    --           , fontSize: var "--h2size"
-    --           , letterSpacing: str "calc(var(--h2size) * -0.035)"
-    --           -- , marginBottom: var "--s-1"
-    --           -- , marginTop: var "--s-2"
-    --           }
-    -- , h3:
-    --     nested
-    --       $ css
-    --           { "--h3size": str "calc( min( var(--s0) + 2vw , var(--s2) ) )"
-    --           , fontSize: var "--h3size"
-    --           , letterSpacing: str "calc(var(--h3size) * -0.03)"
-    --           -- , marginBottom: var "--s-2"
-    --           -- , marginTop: var "--s-3"
-    --           }
-    -- , p:
-    --     nested
-    --       $ css
-    --           { "--psize": str "calc( min( (var(--s-1) * 1.7) + 0.7vw , var(--s0)*1.1 ) )"
-    --           , fontSize: var "--psize"
-    --           , letterSpacing: str "calc(var(--psize) * -0.03)"
-    --           }
     , a:
         nested $ css
           { fontWeight: str "600"
@@ -465,10 +431,10 @@ instance makeCSSVarLabels' ∷
 makeCSSVarLabels ∷ ∀ a b. HMapWithIndex MakeCSSVarLabels a b ⇒ a → b
 makeCSSVarLabels = hmapWithIndex MakeCSSVarLabels
 
-colourVariableName ∷ FlatTheme String
-colourVariableName =
-  hmap (\(x :: String) -> x)
-    $ makeCSSVarLabels defaultColours.light
+-- colourVariableName ∷ FlatTheme String
+-- colourVariableName =
+--   hmap (\(x :: String) -> x)
+--     $ makeCSSVarLabels defaultColours.light
 
 colour ∷ FlatTheme String
 colour =
@@ -579,12 +545,7 @@ type Sizes f =
       , copy ∷ f
       , small ∷ f
       , tiny ∷ f
-      , heading ∷
-          { h1 ∷ f
-          , h2 ∷ f
-          , h3 ∷ f
-          , h4 ∷ f
-          }
+      , heading ∷ { h1 ∷ f, h2 ∷ f, h3 ∷ f, h4 ∷ f }
       }
   , xl ∷ f
   , xs ∷ f

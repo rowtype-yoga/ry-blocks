@@ -69,7 +69,7 @@ component =
           text = R.text $ NonEmptyString.toString props.labelText
           result = container [ labelContainer [ labelSpan [ text ] ] ]
 
-          container = div </*
+          container = div' </*
             { className: "ry-input-label-container"
             , style: R.css { "--input-size-factor": props.sizeVariant # sizeVariantToFactor }
             , css: Style.labelContainer

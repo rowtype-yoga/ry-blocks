@@ -23,8 +23,9 @@ rawComponent ∷ ∀ p. ReactComponent { | p }
 rawComponent =
   mkForwardRefComponent "Yoga Icon" \(props ∷ { | PropsF OptionalProp }) ref -> React.do
     pure
-      $ span
-      </* { className: "ry-icon" <>? props.className
+      $ span'
+      </*
+        { className: "ry-icon" <>? props.className
         , css: Style.span props
         , ref
         }

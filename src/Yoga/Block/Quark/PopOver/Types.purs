@@ -1,10 +1,10 @@
-module Plumage.Atom.PopOver.Types where
+module Yoga.Block.Atom.PopOver.Types where
 
 import Yoga.Prelude.View
 
 import Data.Array.NonEmpty (NonEmptyArray)
 import Data.Array.NonEmpty as NEA
-import Plumage.Prelude.Style (Style)
+import Yoga.Prelude.Style (Style)
 
 data HookDismissBehaviour
   = DismissPopOverOnClickAway { id ∷ String, css ∷ Style }

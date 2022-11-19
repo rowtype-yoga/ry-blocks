@@ -1,4 +1,4 @@
-module Plumage.Hooks.UseTypeAhead where
+module Yoga.Block.Hook.UseTypeAhead where
 
 import Yoga.Prelude.View
 

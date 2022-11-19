@@ -1,4 +1,4 @@
-module Plumage.Molecule.Typeahead where
+module Yoga.Block.Molecule.Typeahead.View where
 
 import Yoga.Prelude.View
 
@@ -15,12 +15,11 @@ import Fahrtwind.Style.ScrollBar (scrollBar')
 import Framer.Motion as M
 import Network.RemoteData (RemoteData)
 import Network.RemoteData as RemoteData
-import Plumage.Atom.PopOver.Types (Placement(..), PrimaryPlacement(..), SecondaryPlacement(..))
-import Plumage.Atom.PopOver.View (mkPopOverView)
-import Plumage.Molecule.Typeahead.Style as Style
-import Plumage.Util.HTML as H
+import Yoga.Block.Atom.PopOver.Types (Placement(..), PrimaryPlacement(..), SecondaryPlacement(..))
+import Yoga.Block.Atom.PopOver.View (mkPopOverView)
+import Yoga.Block.Molecule.Typeahead.Style as Style
 import Prim.Row (class Lacks, class Nub)
-import React.Aria.Interactions2 (useFocus, useFocusWithin)
+import React.Aria.Interactions (useFocus, useFocusWithin)
 import React.Aria.Utils (mergeProps)
 import React.Basic.DOM as R
 import React.Basic.DOM.Events (capture_)
@@ -291,7 +290,7 @@ mkTypeaheadView
               , onAnimationStateChange: setIsAnimating
               , containerId: contextMenuLayerId
               , childʔ:
-                  if focusIsWithin then Just $ R.div'
+                  if focusIsWithin then Just $ div'
                     </
                       { onFocus: focusWithinProps.onFocus
                       , onBlur: focusWithinProps.onBlur
@@ -321,7 +320,7 @@ mkTypeaheadView
                 , onFocus: focusProps.onFocus
                 , onBlur: focusProps.onBlur
                 , trailing:
-                    if isLoading then H.div_
+                    if isLoading then div_
                       (widthAndHeight 18 <> textCol' col.textPaler2)
                       [ spinner ]
                     else (unsafeCoerce inputProps.trailing)

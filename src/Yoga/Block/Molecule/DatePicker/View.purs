@@ -1,6 +1,6 @@
-module Plumage.Atom.DatePicker.View where
+module Yoga.Block.Atom.DatePicker.View where
 
-import Plumage.Prelude.Style
+import Yoga.Prelude.View
 
 import Data.Date (Date, Day, Month(..), Weekday(..), Year)
 import Data.Date as Date
@@ -8,19 +8,15 @@ import Data.Enum (enumFromTo, fromEnum)
 import Data.Enum as Enum
 import Data.String as String
 import Data.Time.Duration (Days(..), negateDuration)
-import Data.Tuple.Nested (type (/\), (/\))
+import Fahrtwind.Icon.Heroicons as Heroicons
 import Framer.Motion as M
 import Literals.Undefined (undefined)
-import Fahrtwind.Icon.Heroicons as Heroicons
-import Plumage.Util.HTML as H
 import Prelude as Bounded
-import React.Basic (JSX)
 import React.Basic.DOM as R
-import React.Basic.Emotion (Style)
 import React.Basic.Emotion as E
-import React.Basic.Events (handler_)
 import React.Basic.Hooks as React
 import Record (disjointUnion)
+import Yoga.Block.Molecule.DatePicker.Style as Style
 
 type Props = { state ∷ State, dispatch ∷ Action → Effect Unit }
 
@@ -89,14 +85,14 @@ mkDatePickerView = do
       Just s → renderDate ({ dispatch } `disjointUnion` s)
       Nothing → mempty
 
-renderDate ∷
-  { dispatch ∷ Action → Effect Unit
-  , currentDate ∷ Date
-  , selectedDateʔ ∷ Maybe Date
-  , showingMonth ∷ Month /\ Year
-  , transitioningʔ ∷ Maybe TransitionDirection
-  } →
-  JSX
+renderDate
+  ∷ { dispatch ∷ Action → Effect Unit
+    , currentDate ∷ Date
+    , selectedDateʔ ∷ Maybe Date
+    , showingMonth ∷ Month /\ Year
+    , transitioningʔ ∷ Maybe TransitionDirection
+    }
+  → JSX
 renderDate
   { dispatch
   , currentDate
@@ -111,11 +107,11 @@ renderDate
     previousMonth /\ previousYear = previousMonth (showingMonth /\ showingYear)
   let
     previousDate = Date.canonicalDate previousYear previousMonth Bounded.bottom
-  H.div_ dateContainerStyle
-    [ H.div_ titleAndControlsStyle
+  div_ Style.dateContainer
+    [ div_ Style.titleAndControls
         [ E.element R.button'
-            { className: "plm-cal-btn"
-            , css: monthChangeButtonStyle
+            { className: "ry-cal-btn"
+            , css: Style.monthChangeButton
             , onClick: handler_ (dispatch (StartTransition ToPreviousMonth))
             , children: [ Heroicons.chevronLeft ]
             }
@@ -128,7 +124,7 @@ renderDate
         --                 if showingYear == Date.year currentDate then ""
         --                 else " " <> yearString showingYear
         --             ]
-        --         , H.div_
+        --         , div_
         --             ( width 20
         --                 <> height' (E.str "calc(100% - 6px)")
         --                 <> flexRow
@@ -139,7 +135,7 @@ renderDate
         --                 <> borderSolid
         --                 <> borderCol gray._200
         --             )
-        --             [ H.div_ (widthAndHeight 16)
+        --             [ div_ (widthAndHeight 16)
         --                 [ Heroicons.chevronDown ]
         --             ]
         --         ]
@@ -149,24 +145,24 @@ renderDate
             else " " <> yearString showingYear
 
         , E.element R.button'
-            { className: "plm-cal-btn"
-            , css: monthChangeButtonStyle
+            { className: "ry-cal-btn"
+            , css: Style.monthChangeButton
             , onClick: handler_ (dispatch (StartTransition ToNextMonth))
             , children: [ Heroicons.chevronRight ]
             }
         ]
     , E.element R.div'
         { className: "days-container"
-        , css: daysContainerStyle
+        , css: Style.daysContainer
         , children:
-            [ H.div_ daysHeadingsStyle
+            [ div_ Style.daysHeadings
                 ( enumFromTo Monday Sunday <#>
                     (weekdayName >>> String.take 3 >>> \n → R.div_ [ R.text n ])
                 )
             , E.element M.div
                 { className: "the-days"
                 , key: monthName showingMonth
-                , css: flexRow <> width (7 * size) <> height 260
+                , css: Style.theDays
                 , initial: M.initial $ R.css { x: "-100%" }
                 , animate: M.animate case transitioningʔ of
                     Just ToNextMonth → R.css
@@ -180,7 +176,7 @@ renderDate
                       Just ToPreviousMonth → const $ dispatch ShowPreviousMonth
                       _ → mempty
                 , children:
-                    [ H.div "days" daysStyle
+                    [ div "days" Style.days
                         $ renderMonthNumbers
                             { date: previousDate
                             , selectedDateʔ: Nothing
@@ -188,7 +184,7 @@ renderDate
                             , showingMonth: previousMonth
                             , dispatch: mempty
                             }
-                    , H.div "days" daysStyle
+                    , div "days" Style.days
                         $ renderMonthNumbers
                             { date
                             , selectedDateʔ
@@ -196,7 +192,7 @@ renderDate
                             , showingMonth
                             , dispatch
                             }
-                    , H.div "days" daysStyle
+                    , div "days" Style.days
                         $ renderMonthNumbers
                             { date: nextDate
                             , selectedDateʔ: Nothing
@@ -210,14 +206,14 @@ renderDate
         }
     ]
 
-renderMonthNumbers ∷
-  { currentDateʔ ∷ Maybe Date
-  , date ∷ Date
-  , dispatch ∷ Action → Effect Unit
-  , selectedDateʔ ∷ Maybe Date
-  , showingMonth ∷ Month
-  } →
-  Array JSX
+renderMonthNumbers
+  ∷ { currentDateʔ ∷ Maybe Date
+    , date ∷ Date
+    , dispatch ∷ Action → Effect Unit
+    , selectedDateʔ ∷ Maybe Date
+    , showingMonth ∷ Month
+    }
+  → Array JSX
 renderMonthNumbers { date, selectedDateʔ, currentDateʔ, showingMonth, dispatch } =
   do
     let firstDay = firstMondayBefore $ setDay Bounded.bottom date
@@ -230,25 +226,25 @@ renderMonthNumbers { date, selectedDateʔ, currentDateʔ, showingMonth, dispatch
         <#> \(d ∷ Date) →
           E.element R.button'
             { className: "day"
-            , css: dayStyle <>
+            , css: Style.day <>
                 if Date.month d /= showingMonth then
-                  otherMonthDayStyle
+                  Style.otherMonthDay
                 else mempty
             , children:
                 [ E.element M.div
                     { css:
-                        dayRoundStyle
+                        Style.dayRound
                           <>
                             ( if selectedDateʔ == Just d then
-                                selectedDayStyle
+                                Style.selectedDay
                               else mempty
                             )
                           <>
-                            ( if Just d == currentDateʔ then currentDayStyle
+                            ( if Just d == currentDateʔ then Style.currentDay
                               else mempty
                             )
                           <>
-                            if (fromEnum $ Date.day d) == 1 then oneDayStyle
+                            if (fromEnum $ Date.day d) == 1 then Style.oneDay
                             else mempty
                     , initial:
                         if selectedDateʔ == Just d then
@@ -312,131 +308,6 @@ firstSundayAfter date = go date
   go d =
     if Date.weekday d == Sunday then d
     else Date.adjust (Days 1.0) d # maybe d go
-
-commonDaysStyle ∷ Style
-commonDaysStyle = displayGrid <> templateCols "repeat(7, 1fr)" <> textCenter
-
-daysHeadingsStyle ∷ Style
-daysHeadingsStyle = commonDaysStyle
-  <> textCol gray._500
-  <> fontMedium
-  <> textXs
-  <> pT 10
-  <> pB 8
-
-daysStyle ∷ Style
-daysStyle = commonDaysStyle <> templateRows ("repeat(7," <> show size <> "px)")
-
-size ∷ Int
-size = 42
-
-padding ∷ Int
-padding = 2
-
-dayStyle ∷ Style
-dayStyle = width size <> height size <> borderNone
-  <> E.css { background: E.none }
-  <> mXY 0
-  <> pXY padding
-  <> textCol (gray._500 # darken 0.07)
-  <> fontMedium
-  <> textSm
-
-dayRoundStyle ∷ Style
-dayRoundStyle = roundedXl <> widthFull <> heightFull <> boxSizingBorderBox
-  <> pT 6
-  <> transition "all 160ms ease-out"
-  <> hover
-    ( background coolGray._100
-        <> borderCol coolGray._100
-        <> cursorPointer
-        <> textCol black
-    )
-  <> border 3
-  <> borderCol white
-  <> borderSolid
-
-selectedDayStyle ∷ Style
-selectedDayStyle = s <> hover s
-  where
-  s = background violet._100
-    <> borderCol violet._500
-    <> textCol violet._800
-
-oneDayStyle ∷ Style
-oneDayStyle = pR' (E.str "1px")
-
-currentDayStyle ∷ Style
-currentDayStyle = positionRelative
-  <> E.css { fontVariantNumeric: E.str "tabular-nums" }
-  <> afterElement
-    ( positionAbsolute <> bottom' (6 # E.px) <> right' (50.0 # E.percent)
-        <> width 18
-        <> height 3
-        <> background (gray._500 # withAlpha 0.5)
-        <> translate "50%" "50%"
-        <> roundedFull
-    )
-
-otherMonthDayStyle ∷ Style
-otherMonthDayStyle = textCol gray._400
-
-dateContainerStyle ∷ Style
-dateContainerStyle = roundedLg <> shadowMd <> flexCol <> justifyCenter
-  <> itemsCenter
-  <> pX 12
-  <> pT 16
-  <> pB 12
-  <> background (white)
-  <> textSm
-  <> overflowXHidden
-  <> border 1
-  <> borderSolid
-  <> borderCol gray._200
-  <> E.css { width: E.str "fit-content" }
-
-titleAndControlsStyle ∷ Style
-titleAndControlsStyle = flexRow
-  <> justifyBetween
-  <> itemsCenter
-  <> widthFull
-
-monthChangeButtonStyle ∷ Style
-monthChangeButtonStyle =
-  border 1
-    <> roundedMd
-    <> borderSolid
-    <> textCol gray._600
-    <> background white
-    <> borderCol gray._200
-    <> widthAndHeight 30
-    <> shadowSm
-    <> pXY 6
-    <> boxSizingBorderBox
-    <> mXY 0
-    <> hover (background gray._100)
-
-monthAndYearStyle ∷ Style
-monthAndYearStyle =
-  textDefault <> fontMedium <> textCol gray._600
-    <> background white
-    <> border 1
-    <> borderSolid
-    <> roundedMd
-    <> borderCol gray._200
-    <> pXY 0
-    <> width 180
-    <> height 30
-    <> itemsCenter
-    <> mXY 0
-    <> pX 5
-    <> flexRow
-    <> textSm
-    <> justifyBetween
-    <> shadowSm
-
-daysContainerStyle ∷ Style
-daysContainerStyle = pT 8
 
 yearString ∷ Year → String
 yearString = fromEnum >>> show

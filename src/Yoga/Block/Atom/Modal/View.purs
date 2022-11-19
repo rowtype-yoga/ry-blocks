@@ -1,4 +1,4 @@
-module Plumage.Atom.Modal.View where
+module Yoga.Block.Atom.Modal.View where
 
 import Yoga.Prelude.View
 
@@ -10,30 +10,21 @@ import Fahrtwind.Style.Inset (left, left', top) as P
 import Fahrtwind.Style.Position (positionFixed)
 import Fahrtwind.Style.Size (heightScreen, widthScreen) as P
 import Fahrtwind.Style.Transform (translate)
-import Plumage.Hooks.UseRenderInPortal (useRenderInPortal)
-import Plumage.Util.HTML as H
+import Yoga.Block.Hook.UseRenderInPortal (useRenderInPortal)
 import React.Basic.DOM as R
 import React.Basic.Emotion (Style)
 import React.Basic.Emotion as E
 import React.Basic.Hooks as React
-
-clickAwayStyle ∷ Style
-clickAwayStyle =
-  P.widthScreen
-    <> P.heightScreen
-    <> positionFixed
-    <> P.left 0
-    <> P.top 0
-    <> acceptClicks
+import Yoga.Block.Atom.Modal.Style as Style
 
 -- [TODO] Move out
-mkClickAway ∷
-  React.Component
-    { css ∷ Style
-    , hide ∷ Effect Unit
-    , isVisible ∷ Boolean
-    , clickAwayId ∷ String
-    }
+mkClickAway
+  ∷ React.Component
+      { css ∷ Style
+      , hide ∷ Effect Unit
+      , isVisible ∷ Boolean
+      , clickAwayId ∷ String
+      }
 mkClickAway = do
   React.component "Clickaway"
     \{ css, isVisible, hide, clickAwayId } →
@@ -45,16 +36,10 @@ mkClickAway = do
           $ R.div'
           </*>
             { className: "click-away"
-            , css: clickAwayStyle <> css
+            , css: Style.clickAway <> css
             , onMouseUp: handler_ hide
             , onTouchEnd: handler_ hide
             }
-
-modalStyle ∷ Style
-modalStyle = positionFixed <> P.left' (50.0 # E.percent)
-  <> P.top 0
-  <> translate "-50%" "0"
-  <> acceptClicks
 
 type ModalIds = { clickAwayId ∷ String, modalContainerId ∷ String }
 
@@ -87,5 +72,5 @@ mkModal = do
           , isVisible
           , clickAwayId
           }
-      , renderInPortal (H.div "modal" modalStyle [ content ])
+      , renderInPortal (div "modal" Style.modal [ content ])
       ]

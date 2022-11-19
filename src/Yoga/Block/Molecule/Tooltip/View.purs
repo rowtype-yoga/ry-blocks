@@ -1,10 +1,10 @@
-module Plumage.Atom.Tooltip.View where
+module Yoga.Block.Atom.Tooltip.View where
 
 import Yoga.Prelude.View
 
 import Effect.Unsafe (unsafePerformEffect)
-import Plumage.Atom.PopOver.Types (Placement)
-import Plumage.Hooks.UsePopOver (usePopOver)
+import Yoga.Block.Atom.PopOver.Types (Placement)
+import Yoga.Block.Hook.UsePopOver (usePopOver)
 import React.Basic.DOM as R
 import React.Basic.Hooks as React
 

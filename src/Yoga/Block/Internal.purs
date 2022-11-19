@@ -44,8 +44,7 @@ module Yoga.Block.Internal
   , unsafeEmotion
   , unsafeMergeSecond
   , unsafeUnionDroppingUndefined
-  )
-  where
+  ) where
 
 import Prelude
 

@@ -23,7 +23,10 @@ default = meta
   , decorators:
       [ metaDecorator \storyFn ->
           fragment
-            [ element E.global { styles: Styles.global }
+            [ element E.global
+                { styles: Styles.global
+                    <> css { "highlight-col": str "#ec0" }
+                }
             , storyFn
             ]
       ]
@@ -62,7 +65,7 @@ layout = pure $ Block.box { css: heightFull <> background' col.backgroundBright3
       [ Block.stack
           { space: sizeStyle.s
           , css: FW.background' col.backgroundLayer1
-          , splitAfter: 1
+          , splitAfter: 3
           }
           [ colBox col.backgroundLayer1
               [ Block.cluster { space: size.m, rowSpace: size.s, justifyContent: JEnd, alignItems: ACenter }
@@ -73,14 +76,30 @@ layout = pure $ Block.box { css: heightFull <> background' col.backgroundBright3
                   , Block.button {} [ R.text "Sign in" ]
                   ]
               ]
-          , Block.cluster { space: size.s, rowSpace: size.zero }
-              [ colBox col.backgroundLayer4 [ R.text "Child Row 2 1" ]
-              , colBox col.backgroundLayer4 [ R.text "Child Row 2 2" ]
+          , Block.box_
+              [ Block.grid { min: "150px" }
+                  [ colBox col.backgroundLayer4 [ R.text "Child Row 2 2" ]
+                  , colBox col.backgroundLayer4 [ R.text "Child Row 2 2" ]
+                  , colBox col.backgroundLayer4 [ R.text "Child Row 2 2" ]
+                  , colBox col.backgroundLayer4 [ R.text "Child Row 2 2" ]
+                  ]
               ]
-          , Block.switcher { rowGap: "8px" }
-              [ colBox col.backgroundLayer4 [ R.text "Switch me up" ]
-              , colBox col.backgroundLayer4 [ R.text "Switch me too" ]
-              , colBox col.backgroundLayer4 [ R.text "Switchy" ]
+          , Block.box_
+              [ Block.cluster { space: size.s, rowSpace: size.xs }
+                  [ colBox col.backgroundLayer4 [ R.text "Child Row 2 1" ]
+                  , colBox col.backgroundLayer4 [ R.text "Child Row 2 2" ]
+                  , colBox col.backgroundLayer4 [ R.text "Child Row 2 2" ]
+                  , colBox col.backgroundLayer4 [ R.text "Child Row 2 2" ]
+                  , colBox col.backgroundLayer4 [ R.text "Child Row 2 2" ]
+                  , colBox col.backgroundLayer4 [ R.text "Child Row 2 2" ]
+                  ]
+              ]
+          , Block.box_
+              [ Block.switcher { rowGap: "8px" }
+                  [ colBox col.backgroundLayer4 [ R.text "Switch me up" ]
+                  , colBox col.backgroundLayer4 [ R.text "Switch me too" ]
+                  , colBox col.backgroundLayer4 [ R.text "Switchy" ]
+                  ]
               ]
           ]
       ]

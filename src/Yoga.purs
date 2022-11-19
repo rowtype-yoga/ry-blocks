@@ -11,14 +11,14 @@ import Record as Record
 import Type.Proxy (Proxy(..))
 import Unsafe.Coerce (unsafeCoerce)
 
-div ∷ ∀ attrs attrs_. Union attrs attrs_ Props_div ⇒ ReactComponent (Record attrs)
-div = R.div'
+div' ∷ ∀ attrs attrs_. Union attrs attrs_ Props_div ⇒ ReactComponent (Record attrs)
+div' = R.div'
 
-span ∷ ∀ attrs attrs_. Union attrs attrs_ Props_span ⇒ ReactComponent (Record attrs)
-span = R.span'
+span' ∷ ∀ attrs attrs_. Union attrs attrs_ Props_span ⇒ ReactComponent (Record attrs)
+span' = R.span'
 
-button ∷ ∀ attrs attrs_. Union attrs attrs_ Props_button ⇒ ReactComponent (Record attrs)
-button = R.button'
+button' ∷ ∀ attrs attrs_. Union attrs attrs_ Props_button ⇒ ReactComponent (Record attrs)
+button' = R.button'
 
 el
   ∷ ∀ props
