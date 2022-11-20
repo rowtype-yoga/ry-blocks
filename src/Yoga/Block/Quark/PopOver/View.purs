@@ -13,11 +13,6 @@ import Data.Traversable (for)
 import Fahrtwind (acceptClicks, positionAbsolute)
 import Fahrtwind.Style.BoxShadow (shadow)
 import Framer.Motion as M
-import Yoga.Block.Atom.Modal.View (mkClickAway)
-import Yoga.Block.Atom.PopOver.Types (DismissBehaviour(..), Placement(..), PrimaryPlacement(..), SecondaryPlacement(..))
-import Yoga.Block.Hook.UseRenderInPortal (useRenderInPortal)
-import Yoga.Block.Hook.UseResize2 (useOnResize)
-import Yoga.Prelude.Style (Style)
 import React.Basic.DOM as R
 import React.Basic.Hooks as React
 import Unsafe.Reference (reallyUnsafeRefEq)
@@ -27,6 +22,11 @@ import Web.HTML (window)
 import Web.HTML.HTMLDocument as HTMLDocument
 import Web.HTML.Window (document, innerHeight, innerWidth, requestAnimationFrame, scrollX, scrollY)
 import Web.UIEvent.MouseEvent as MouseEvent
+import Yoga.Block.Atom.PopOver.Types (DismissBehaviour(..), Placement(..), PrimaryPlacement(..), SecondaryPlacement(..))
+import Yoga.Block.Hook.UseRenderInPortal (useRenderInPortal)
+import Yoga.Block.Hook.UseResize2 (useOnResize)
+import Yoga.Block.Quark.ClickAway.View as ClickAway
+import Yoga.Prelude.Style (Style)
 
 popOverShadow ∷ Style
 popOverShadow =
@@ -128,19 +128,27 @@ mkPopOverView = do
 
       getBbsWidthAndHeight = ado
         bbʔ ← getBoundingBoxFromRef contentRef
-        targetBbʔ <- getBoundingBoxFromRef props.placementRef
+        targetBbʔ ← getBoundingBoxFromRef props.placementRef
         w ← window >>= innerWidth <#> Int.toNumber
         h ← window >>= innerHeight <#> Int.toNumber
         in { bbʔ, targetBbʔ, w, h }
 
-      getBestPlacement
-        ∷ { bbʔ ∷ Maybe DOMRect, targetBbʔ ∷ Maybe DOMRect, w ∷ Number, h ∷ Number } → Placement -> Array Placement → Placement
-      getBestPlacement bbsWidthAndHeight oldPlacement fallbackPlacements = fromMaybe oldPlacement do
-        let { w, h } = bbsWidthAndHeight
-        targetBb <- bbsWidthAndHeight.targetBbʔ
-        bb <- bbsWidthAndHeight.bbʔ
-        (oldPlacement : fallbackPlacements) # Array.find \placement ->
-          isWithin { w, h } (placeAt targetBb bb placement)
+      getBestPlacement ∷
+        { bbʔ ∷ Maybe DOMRect
+        , targetBbʔ ∷ Maybe DOMRect
+        , w ∷ Number
+        , h ∷ Number
+        } →
+        Placement →
+        Array Placement →
+        Placement
+      getBestPlacement bbsWidthAndHeight oldPlacement fallbackPlacements =
+        fromMaybe oldPlacement do
+          let { w, h } = bbsWidthAndHeight
+          targetBb ← bbsWidthAndHeight.targetBbʔ
+          bb ← bbsWidthAndHeight.bbʔ
+          (oldPlacement : fallbackPlacements) # Array.find \placement →
+            isWithin { w, h } (placeAt targetBb bb placement)
     -- :: DOMRect -> { width :: Number, height :: Number } -> Placement
 
     let
@@ -237,7 +245,6 @@ toTransformOrigin (Placement primary secondary) = primaryOrigin <> " " <>
 
 mkPopOver ∷ React.Component Props
 mkPopOver = do
-  clickAway ← mkClickAway
   React.component "popOver" \props → React.do
     let { hide, isVisible, content, dismissBehaviourʔ, containerId } = props
     refBB /\ setRefBB ← React.useState' (zero ∷ DOMRect)
@@ -265,7 +272,7 @@ mkPopOver = do
     pure $ fragment
       [ case dismissBehaviourʔ of
           Just (DismissOnClickAway { id, css }) →
-            clickAway { css, hide, isVisible, clickAwayId: id }
+            ClickAway.component </> { css, hide, isVisible, clickAwayId: id }
           _ → mempty
       , renderInPortal
           ( R.div'
@@ -279,8 +286,10 @@ mkPopOver = do
           )
       ]
 
-isWithin ∷ { w :: Number, h :: Number } -> DOMRect → Boolean
-isWithin { w, h } bb = bb.top >= 0.0 && bb.left >= 0.0 && bb.bottom <= h && bb.right <= w
+isWithin ∷ { w ∷ Number, h ∷ Number } → DOMRect → Boolean
+isWithin { w, h } bb = bb.top >= 0.0 && bb.left >= 0.0 && bb.bottom <= h
+  && bb.right
+  <= w
 
 toAbsoluteCSS ∷ DOMRect → Placement → R.CSS
 toAbsoluteCSS bb (Placement primary secondary) =
@@ -344,55 +353,66 @@ toAbsoluteCSS bb (Placement primary secondary) =
       , transform: "translate(-100%, 0)"
       }
 
-placeAt :: forall r. DOMRect -> { width :: Number, height :: Number | r } -> Placement -> DOMRect
-placeAt bb { width, height } (Placement primary secondary) = complete case primary, secondary of
-  Above, Centre →
-    { x: bb.left + (bb.width / 2.0) - (width / 2.0)
-    , y: bb.top - (height / 2.0)
-    }
-  Above, Start →
-    { x: bb.left
-    , y: bb.top - height
-    }
-  Above, End →
-    { x: bb.right - width
-    , y: bb.top - height
-    }
-  RightOf, Centre →
-    { x: bb.right
-    , y: bb.y + (bb.height / 2.0) - (height / 2.0)
-    }
-  RightOf, Start →
-    { x: bb.right
-    , y: bb.top
-    }
-  RightOf, End →
-    { x: bb.right
-    , y: bb.bottom - height
-    }
-  LeftOf, Centre →
-    { x: bb.left - width
-    , y: bb.top + (bb.height / 2.0) - (height / 2.0)
-    }
-  LeftOf, Start →
-    { x: bb.left - width
-    , y: bb.top
-    }
-  LeftOf, End →
-    { x: bb.left - width
-    , y: bb.bottom - height
-    }
-  Below, Centre →
-    { x: bb.left + (bb.width / 2.0) - (width / 2.0)
-    , y: bb.bottom
-    }
-  Below, Start →
-    { x: bb.left
-    , y: bb.bottom
-    }
-  Below, End →
-    { x: bb.right - width
-    , y: bb.bottom
-    }
+placeAt ∷
+  ∀ r. DOMRect → { width ∷ Number, height ∷ Number | r } → Placement → DOMRect
+placeAt bb { width, height } (Placement primary secondary) = complete
+  case primary, secondary of
+    Above, Centre →
+      { x: bb.left + (bb.width / 2.0) - (width / 2.0)
+      , y: bb.top - (height / 2.0)
+      }
+    Above, Start →
+      { x: bb.left
+      , y: bb.top - height
+      }
+    Above, End →
+      { x: bb.right - width
+      , y: bb.top - height
+      }
+    RightOf, Centre →
+      { x: bb.right
+      , y: bb.y + (bb.height / 2.0) - (height / 2.0)
+      }
+    RightOf, Start →
+      { x: bb.right
+      , y: bb.top
+      }
+    RightOf, End →
+      { x: bb.right
+      , y: bb.bottom - height
+      }
+    LeftOf, Centre →
+      { x: bb.left - width
+      , y: bb.top + (bb.height / 2.0) - (height / 2.0)
+      }
+    LeftOf, Start →
+      { x: bb.left - width
+      , y: bb.top
+      }
+    LeftOf, End →
+      { x: bb.left - width
+      , y: bb.bottom - height
+      }
+    Below, Centre →
+      { x: bb.left + (bb.width / 2.0) - (width / 2.0)
+      , y: bb.bottom
+      }
+    Below, Start →
+      { x: bb.left
+      , y: bb.bottom
+      }
+    Below, End →
+      { x: bb.right - width
+      , y: bb.bottom
+      }
   where
-  complete { x, y } = { x, y, width, height, left: x, top: y, right: x + width, bottom: y + height }
+  complete { x, y } =
+    { x
+    , y
+    , width
+    , height
+    , left: x
+    , top: y
+    , right: x + width
+    , bottom: y + height
+    }

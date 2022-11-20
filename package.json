@@ -8,7 +8,6 @@
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.18.0",
-    "storybook": "^7.0.0-alpha.48",
     "@storybook/addon-essentials": "^7.0.0-alpha.48",
     "@storybook/addon-interactions": "^7.0.0-alpha.48",
     "@storybook/react-webpack5": "^7.0.0-alpha.48",
@@ -23,8 +22,7 @@
     "jsdom-global": "^3.0.2",
     "react-refresh": "^0.13.0",
     "rimraf": "^3.0.2",
-    "source-map": "GerHobbelt/source-map#patch-8",
-    "source-map-loader": "^3.0.1",
+    "storybook": "^7.0.0-alpha.48",
     "svg2psreact": "^2.1.0",
     "webpack": "^5.72.1",
     "webpack-cli": "^4.9.2",
@@ -54,12 +52,15 @@
     "@dnd-kit/utilities": "^3.2.0",
     "@emotion/react": "^11.9.0",
     "@popperjs/core": "^2.11.5",
+    "@react-aria/interactions": "^3.13.0",
+    "@react-aria/utils": "^3.14.1",
     "downshift": "^6.1.7",
     "framer-motion": "^6.3.3",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-intersection-observer": "^9.1.0",
     "react-popper": "^2.3.0",
-    "react-syntax-highlighter": "^15.5.0"
+    "react-syntax-highlighter": "^15.5.0",
+    "react-virtuoso": "^3.1.4"
   }
 }

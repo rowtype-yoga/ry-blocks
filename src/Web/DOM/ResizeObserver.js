@@ -1,33 +1,20 @@
 "use strict"
 
-export function resizeObserver(cb) {
-  return function () {
-    return new ResizeObserver(function (entries, observer) {
-      return cb(entries)(observer)()
-    })
-  }
-}
-
-export function _observe(element) {
-  return function (config) {
-    return function (observer) {
-      return function () {
-        return observer.observe(element, config)
-      }
+export const resizeObserver = cb => () => {
+  return new ResizeObserver(
+    (entries, observer) => { 
+      cb(entries)(observer)()
     }
-  }
+  )
 }
 
-export function unobserve(observer) {
-  return function (element) {
-    return function () {
-      return observer.unobserve(element)
-    }
-  }
-}
+export const _observe = 
+  config => observer => element => () => 
+    observer.observe(element, config)
+  
+export const unobserve = 
+  observer => element => () => 
+    observer.unobserve(element)
 
-export function disconnect(observer) {
-  return function () {
-    return observer.disconnect()
-  }
-}
+export const disconnect = 
+  observer => () => observer.disconnect()

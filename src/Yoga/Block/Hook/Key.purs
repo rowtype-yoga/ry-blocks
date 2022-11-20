@@ -49,6 +49,7 @@ data KeyCode
   | Down
   | Delete
   | Backspace
+  | Tab
 
 derive instance Eq KeyCode
 derive instance Ord KeyCode
@@ -56,6 +57,7 @@ derive instance Ord KeyCode
 keyCodeToInt ∷ KeyCode -> Int
 keyCodeToInt = case _ of
   Backspace -> 8
+  Tab -> 9
   Return -> 13
   Escape -> 27
   End -> 35
@@ -69,6 +71,7 @@ keyCodeToInt = case _ of
 intToKeyCode ∷ Int -> Maybe KeyCode
 intToKeyCode = case _ of
   8 -> Just Backspace
+  9 -> Just Tab
   13 -> Just Return
   27 -> Just Escape
   35 -> Just End

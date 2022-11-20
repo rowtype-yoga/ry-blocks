@@ -4,6 +4,7 @@ import Yoga.Prelude.View
 
 import Data.Array as Array
 import Data.Newtype (class Newtype)
+import Debug (spy)
 import React.Basic.Hooks as React
 import Type.Function (type (#))
 import Web.DOM.ResizeObserver (ResizeObserverBoxOptions(..), observe, resizeObserver, unobserve)
@@ -17,19 +18,18 @@ derive instance Newtype (UseOnElementResizeWithRef hooks) _
 type OnResize = { old :: DOMRect, new :: DOMRect } -> Effect Unit
 
 useOnElementResizeWithRef ∷ NodeRef -> OnResize -> Hook UseOnElementResizeWithRef Unit
-useOnElementResizeWithRef ref onResize =
-  coerceHook React.do
-    useLayoutEffectOnce do
-      elʔ <- getElementFromRef ref
-      case elʔ of
-        Nothing -> mempty
-        Just elem -> do
-          observer <- resizeObserver \entries _ ->
-            Array.head entries # traverse_ \{ contentRect: new } -> do
-              old <- getBoundingClientRect elem
+useOnElementResizeWithRef ref onResize = coerceHook React.do
+  useLayoutEffectOnce do
+    elʔ <- getElementFromRef ref
+    case elʔ of
+      Nothing -> mempty
+      Just elem -> do
+        observer <- resizeObserver \entries _ -> do
+          Array.head entries # traverse_ \{ contentRect: new } -> do
+            getBoundingClientRect elem >>= \old ->
               onResize { old, new }
-          elem # observe BorderBox observer
-          pure (elem # unobserve observer)
+        observe ContentBox observer elem
+        pure (unobserve observer elem)
 
 newtype UseOnElementResize hooks = UseOnElementResize
   (hooks # UseRef (Nullable Node) # UseOnElementResizeWithRef)

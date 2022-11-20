@@ -42,6 +42,13 @@ backgroundAnimation =
 varOr :: String -> StyleProperty -> StyleProperty
 varOr varName alternative = str $ "var(" <> varName <> ", " <> unsafeCoerce alternative <> ")"
 
+style
+  :: { background :: String
+     , borderCol :: String
+     , hoverBackgroundCol :: String
+     , textCol :: String
+     , width :: String
+     }
 style =
   { background: prefix <> "background"
   , textCol: prefix <> "color"
@@ -54,8 +61,9 @@ style =
 
 button ∷ Style
 button =
-  inlineFlex <>
-    css
+  inlineFlex
+    <> cursorPointer
+    <> css
       { background: varOr style.background (str colour.backgroundLayer5)
       , width: varOr style.width auto
       , borderWidth: int 0
@@ -114,13 +122,9 @@ button =
             , borderColor: str "transparent"
             , color: varOr style.textCol (str colour.highlightText)
             , "&:focus-visible":
-                nest
-                  { borderColor: col.background
-                  }
+                nest { borderColor: col.background }
             , "&:active":
-                nest
-                  { boxShadow: str "inset 0 1px 6px rgba(0,0,0,0.40)"
-                  }
+                nest { boxShadow: str "inset 0 1px 6px rgba(0,0,0,0.40)" }
             }
       , """&[data-button-type="dangerous"]""":
           nest

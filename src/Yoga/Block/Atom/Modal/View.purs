@@ -2,44 +2,18 @@ module Yoga.Block.Atom.Modal.View where
 
 import Yoga.Prelude.View
 
-import Fahrtwind (acceptClicks)
+import Effect.Unsafe (unsafePerformEffect)
 import Fahrtwind.Style.Color.Background (background)
 import Fahrtwind.Style.Color.Tailwind as TW
 import Fahrtwind.Style.Color.Util (withAlpha)
-import Fahrtwind.Style.Inset (left, left', top) as P
-import Fahrtwind.Style.Position (positionFixed)
-import Fahrtwind.Style.Size (heightScreen, widthScreen) as P
-import Fahrtwind.Style.Transform (translate)
-import Yoga.Block.Hook.UseRenderInPortal (useRenderInPortal)
+import Framer.Motion as M
 import React.Basic.DOM as R
-import React.Basic.Emotion (Style)
-import React.Basic.Emotion as E
 import React.Basic.Hooks as React
 import Yoga.Block.Atom.Modal.Style as Style
-
--- [TODO] Move out
-mkClickAway
-  ∷ React.Component
-      { css ∷ Style
-      , hide ∷ Effect Unit
-      , isVisible ∷ Boolean
-      , clickAwayId ∷ String
-      }
-mkClickAway = do
-  React.component "Clickaway"
-    \{ css, isVisible, hide, clickAwayId } →
-      React.do
-        renderInPortal ← useRenderInPortal clickAwayId
-        pure
-          $ guard isVisible
-          $ renderInPortal
-          $ R.div'
-          </*>
-            { className: "click-away"
-            , css: Style.clickAway <> css
-            , onMouseUp: handler_ hide
-            , onTouchEnd: handler_ hide
-            }
+import Yoga.Block.Hook.UseRenderInPortal (useRenderInPortal)
+import Yoga.Block.Layout.Centre.View as Centre
+import Yoga.Block.Layout.Cover.View as Cover
+import Yoga.Block.Quark.ClickAway.View as ClickAway
 
 type ModalIds = { clickAwayId ∷ String, modalContainerId ∷ String }
 
@@ -52,10 +26,9 @@ type Props =
   , modalContainerId ∷ String
   }
 
-mkModal ∷ React.Component Props
-mkModal = do
-  clickAway ← mkClickAway
-  React.component "Modal" \props → React.do
+component ∷ ReactComponent Props
+component = unsafePerformEffect do
+  React.reactComponent "Modal" \props → React.do
     let
       { hide
       , isVisible
@@ -65,12 +38,53 @@ mkModal = do
       , modalContainerId
       } = props
     renderInPortal ← useRenderInPortal modalContainerId
+    let
+      child = div "ry-modal" Style.modal [ content ]
     pure $ fragment
-      [ clickAway
+      [ ClickAway.component </>
           { css: background (TW.gray._900 # withAlpha 0.5)
           , hide: if allowClickAway then hide else mempty
           , isVisible
           , clickAwayId
           }
-      , renderInPortal (div "modal" Style.modal [ content ])
+      , renderInPortal
+          $ Cover.component
+          </ {}
+          />
+            [ Centre.component </ {} />
+                [ M.animatePresence </ {} />
+                    [ guard isVisible
+                        $ M.div
+                        </
+                          { key: "popOver"
+                          , initial: M.initial
+                              ( R.css
+                                  { opacity: 0.0
+                                  , scale: 0.3
+                                  }
+                              )
+                          , animate: M.animate
+                              ( R.css
+                                  { opacity: 1
+                                  , scale: 1.0
+                                  , transition:
+                                      { duration: 0.4, type: "spring" }
+                                  }
+                              )
+                          , exit: M.exit
+                              ( R.css
+                                  { opacity: 0
+                                  , scale: 0.3
+                                  , transition: { duration: 0.2 }
+                                  }
+                              )
+                          -- , onAnimationComplete
+                          -- , onAnimationStart
+                          -- , ref: motionRef
+                          }
+                        />
+                          [ child ]
+                    ]
+                ]
+            ]
       ]

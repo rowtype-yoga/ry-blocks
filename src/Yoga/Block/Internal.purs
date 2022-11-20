@@ -85,6 +85,7 @@ import Web.HTML.Window (document)
 import Yoga.Block.Internal.CSS (_0)
 import Yoga.Block.Internal.OptionalProp (OptionalProp(..), Id, appendIfDefined, asOptional, composeHandler, getOr, getOrFlipped, ifTrue, isTruthy, maybeToOp, opToMaybe, setOrDelete, unsafeUnMaybe, unsafeUnOptional, (<>?), (?||))
 
+
 unsafeAddProps ∷ ∀ r s. { | r } → { | s } → { | r }
 unsafeAddProps = unsafeUnion
 

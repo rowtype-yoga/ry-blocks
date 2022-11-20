@@ -1,4 +1,4 @@
-module Yoga.Block.Atom.Modal.Style where
+module Yoga.Block.Quark.ClickAway.Style where
 
 import Yoga.Prelude.Style
 
@@ -10,6 +10,3 @@ clickAway =
     <> left zero
     <> top zero
     <> acceptClicks
-
-modal ∷ Style
-modal = acceptClicks
