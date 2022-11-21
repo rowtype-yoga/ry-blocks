@@ -1,32 +1,27 @@
-module Story.Yoga.Block.Atom.Modal.Story (default, modal) where
+module Story.Yoga.Block.Molecule.Modal.Story (default, modal) where
 
 import Prelude
 
-import Data.Monoid (guard)
 import Data.Tuple.Nested ((/\))
 import Effect (Effect)
-import Effect.Unsafe (unsafePerformEffect)
-import Fahrtwind (background', mXY, pXY, roundedLg, textXl)
+import Fahrtwind (background', mXY, roundedLg, textXl)
 import React.Basic (JSX, element, fragment)
-import React.Basic as React
 import React.Basic.DOM as R
 import React.Basic.Emotion as E
 import React.Basic.Events (handler_)
-import React.Basic.Hooks as React
-import Record (merge)
+import React.Basic.Hooks (bind, component, element, useState') as React
 import Storybook (Meta, meta, metaDecorator)
-import Storybook.Addon.Actions (action)
 import Yoga ((/>), (</*), (</>))
 import Yoga.Block as Block
-import Yoga.Block.Atom.Modal as Modal
-import Yoga.Block.Container.Style (col, colour)
+import Yoga.Block.Molecule.Modal as Modal
+import Yoga.Block.Container.Style (col)
 import Yoga.Block.Container.Style as Styles
 import Yoga.Block.Icon.SVG as SVGIcon
 import Yoga.Block.Layout.Types (JustifyContent(..))
 
 default ∷ Meta Modal.Props
 default = meta
-  { title: "Atom/Modal"
+  { title: "Molecule/Modal"
   , component: (pure <<< React.element) Modal.component
   , decorators:
       [ metaDecorator \storyFn →

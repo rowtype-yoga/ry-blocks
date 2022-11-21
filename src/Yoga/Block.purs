@@ -22,7 +22,7 @@ import Yoga.Block.Layout.Imposter as Imposter
 import Yoga.Block.Layout.Sidebar as Sidebar
 import Yoga.Block.Layout.Stack as Stack
 import Yoga.Block.Layout.Switcher as Switcher
-import Yoga.Block.Atom.Modal as Modal
+import Yoga.Block.Molecule.Modal as Modal
 import Yoga.Block.Molecule.ReadMore as ReadMore
 import Yoga.Block.Quark.Layer as Layer
 
@@ -207,4 +207,3 @@ toggle = Toggle.component
 
 readMore ∷ ∀ p q. Union p q ReadMore.Props ⇒ ReactComponent (Record p)
 readMore = ReadMore.component
-
