@@ -172,3 +172,23 @@ in  upstream
       [ "heterogeneous", "lists", "prelude", "record", "typelevel-prelude" ]
     }
   with react-basic-storybook = ../purescript-react-basic-storybook/spago.dhall as Location
+  with react-aria =
+    { repo = "https://github.com/rowtype-yoga/purescript-react-aria"
+    , version = "v0.2.0"
+    , dependencies =
+      [ "aff"
+      , "effect"
+      , "foreign"
+      , "foreign-object"
+      , "nullable"
+      , "ordered-collections"
+      , "prelude"
+      , "react-basic"
+      , "react-basic-dom"
+      , "react-basic-hooks"
+      , "unsafe-coerce"
+      , "untagged-union"
+      , "web-dom"
+      , "web-html"
+      ]
+    }
