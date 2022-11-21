@@ -10,6 +10,7 @@ import Yoga.Block.Atom.Icon as Icon
 import Yoga.Block.Atom.Image as Image
 import Yoga.Block.Atom.Input as Input
 import Yoga.Block.Atom.Range as Range
+import Yoga.Block.Atom.Select as Select
 import Yoga.Block.Atom.Segmented as Segmented
 import Yoga.Block.Atom.Toggle as Toggle
 import Yoga.Block.Container as Container
@@ -151,6 +152,12 @@ layer = React.element layer'
 
 range ∷ ∀ p q. Union p q Range.Props ⇒ ReactComponent { | p }
 range = Range.component
+
+select' ∷ ∀ a. ReactComponent (Select.Props a)
+select' = Select.component
+
+select ∷ ∀ a. (Select.Props a) → JSX
+select = React.element select'
 
 segmented' ∷ ReactComponent Segmented.Props
 segmented' = Segmented.component

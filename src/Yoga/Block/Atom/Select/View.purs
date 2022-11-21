@@ -7,16 +7,15 @@ import Yoga.Block.Atom.Select.Style as Style
 import React.Basic.DOM as R
 import React.Basic.Hooks as React
 
-component ∷
-  ∀ a.
-  ReactComponent
-    ( { choice ∷ a
-      , choices ∷ Array a
-      , onChange ∷ Array a → Effect Unit
-      , toString ∷ a → String
-      , toValue ∷ a → String
-      }
-    )
+type Props a =
+  { choice ∷ a
+  , choices ∷ Array a
+  , onChange ∷ Array a → Effect Unit
+  , toString ∷ a → String
+  , toValue ∷ a → String
+  }
+
+component ∷ ∀ a. ReactComponent (Props a)
 component = unsafePerformEffect do
   React.reactComponent "Select" \{ toString, toValue, choices } → React.do
     pure $
