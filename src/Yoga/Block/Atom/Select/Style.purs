@@ -30,6 +30,8 @@ select =
     <> pY' sizeStyle.xxs
     <> pL' sizeStyle.s
     <> textDefault
+    <> textCol' col.text
+    <> background transparent
     <> svgBackgroundImage
       ( SVG.svg
           { viewBox: "0 0 24 24"
