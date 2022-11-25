@@ -4,7 +4,6 @@ import Prelude
 
 import Data.Interpolate (i)
 import Effect (Effect)
-import Effect.Unsafe (unsafePerformEffect)
 import React.Basic (JSX, element, fragment)
 import React.Basic.DOM as R
 import React.Basic.Emotion (nested)
@@ -17,18 +16,16 @@ import Yoga.Block.Container.Style as Styles
 import Yoga.Block.Internal.CSS (nest)
 import Yoga.Block.Layout.Sidebar.Style (SidebarSide(..))
 import Yoga.Block.Typography as Typo
+import Storybook
 
-default
-  ∷ { decorators ∷ Array (Effect JSX -> JSX)
-    , title ∷ String
-    }
-default =
+-- default ∷ Meta
+default = meta
   { title: "Layout"
   , decorators:
-      [ \storyFn ->
+      [ metaDecorator $ \story -> do
           R.div_
             [ element E.global { styles: Styles.global }
-            , unsafePerformEffect storyFn
+            , story
             ]
       ]
   }

@@ -1,0 +1,26 @@
+{
+  "name": "purescript-indexer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.mjs",
+  "type": "module",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:production": "spago -x production.dhall build",
+    "prebundle": "npm run build:production",
+    "bundle": "esbuild output-es/Main/index.js --minify --format=esm --bundle --platform=node --outfile=dist/index.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "source-map": "^0.7.4"
+  },
+  "devDependencies": {
+    "esbuild": "^0.15.13",
+    "purs-backend-es": "^1.2.0"
+  }
+}

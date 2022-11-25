@@ -8,12 +8,10 @@
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.18.0",
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.6",
-    "@storybook/addons": "^6.5.9",
-    "@storybook/builder-webpack5": "^6.5.9",
-    "@storybook/manager-webpack5": "^6.5.9",
-    "@storybook/react": "^6.5.9",
-    "@storybook/theming": "^6.5.9",
+    "@storybook/addon-essentials": "^7.0.0-alpha.48",
+    "@storybook/addon-interactions": "^7.0.0-alpha.48",
+    "@storybook/react-webpack5": "^7.0.0-alpha.48",
+    "@storybook/testing-library": "^0.0.13",
     "@testing-library/react": "^13.2.0",
     "@testing-library/user-event": "^14.2.0",
     "babel-loader": "^8.2.5",
@@ -24,8 +22,7 @@
     "jsdom-global": "^3.0.2",
     "react-refresh": "^0.13.0",
     "rimraf": "^3.0.2",
-    "source-map": "GerHobbelt/source-map#patch-8",
-    "source-map-loader": "^3.0.1",
+    "storybook": "^7.0.0-alpha.48",
     "svg2psreact": "^2.1.0",
     "webpack": "^5.72.1",
     "webpack-cli": "^4.9.2",
@@ -35,6 +32,7 @@
   "scripts": {
     "clean": "rimraf node_modules output dce-output .spago dist/* *.lock dist",
     "build": "spago build",
+    "build:stories": "spago -x stories.dhall build",
     "convert-svgs": "node convert-svgs.js",
     "postinstall": "spago install",
     "pretest": "yarn build",
@@ -42,10 +40,10 @@
     "prestart": "yarn build",
     "start": "webpack-dev-server --open --config webpack.dev.js",
     "bundle": "yarn bundle:build && yarn bundle:dce && yarn bundle:webpack",
-    "prestorybook": "yarn build",
-    "storybook": "start-storybook -p 6006",
+    "prestorybook": "yarn build:stories",
+    "storybook": "storybook dev -p 6006",
     "prebuild-storybook": "yarn build",
-    "build-storybook": "build-storybook"
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.0.1",
@@ -54,12 +52,15 @@
     "@dnd-kit/utilities": "^3.2.0",
     "@emotion/react": "^11.9.0",
     "@popperjs/core": "^2.11.5",
+    "@react-aria/interactions": "^3.13.0",
+    "@react-aria/utils": "^3.14.1",
     "downshift": "^6.1.7",
     "framer-motion": "^6.3.3",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-intersection-observer": "^9.1.0",
     "react-popper": "^2.3.0",
-    "react-syntax-highlighter": "^15.5.0"
+    "react-syntax-highlighter": "^15.5.0",
+    "react-virtuoso": "^3.1.4"
   }
 }

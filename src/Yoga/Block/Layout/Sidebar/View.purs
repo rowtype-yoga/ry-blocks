@@ -3,7 +3,8 @@ module Yoga.Block.Layout.Sidebar.View (component, Props, PropsF) where
 import Yoga.Prelude.View
 
 import Data.Array as Array
-import React.Basic.DOM (div_)
+import React.Basic.DOM (aside', div')
+import React.Basic.Emotion as Emotion
 import Yoga.Block.Layout.Sidebar.Style (SidebarSide(..))
 import Yoga.Block.Layout.Sidebar.Style as Style
 
@@ -26,19 +27,28 @@ rawComponent ∷ ∀ p. ReactComponent { | p }
 rawComponent =
   mkForwardRefComponent "Sidebar" do
     \(props ∷ { | PropsOptional }) ref -> React.do
-      let 
-        flipChildren = 
-          if (props.side ?|| SidebarLeft) == SidebarRight then 
-            Array.reverse else identity
+      let
+        flipChildren =
+          if (props.side ?|| SidebarLeft) == SidebarRight then
+            Array.reverse
+          else identity
+
       pure
         $ emotionDiv ref
             props
-            { className: "ry-sidebar " <>? props.className
-            , css: Style.sidebar props
+            { className: "ry-sidebar__container " <>? props.className
+            , css: Style.sidebarContainer props
             , children:
-              [ div_ $ flipChildren
-                  [ div_ [ props.sidebar ]
-                  , div_ props.children
+                flipChildren
+                  [ Emotion.element aside'
+                      { className: "ry-sidebar__sidebar"
+                      , css: Style.sidebar
+                      , children: [ props.sidebar ]
+                      }
+                  , Emotion.element div'
+                      { className: "ry-sidebar__not-sidebar"
+                      , css: Style.notSidebar props
+                      , children: props.children
+                      }
                   ]
-              ]
             }

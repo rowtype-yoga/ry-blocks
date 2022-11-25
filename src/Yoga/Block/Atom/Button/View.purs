@@ -3,17 +3,20 @@ module Yoga.Block.Atom.Button.View where
 import Yoga.Prelude.View
 
 import Data.Array as Array
+import Data.Tuple (uncurry)
 import Effect.Uncurried (runEffectFn1)
 import Foreign.Object as Object
+import React.Basic.DOM as R
 import React.Basic.Hooks as React
 import Record.Unsafe (unsafeGet, unsafeSet)
+import Unsafe.Coerce (unsafeCoerce)
 import Untagged.Union (uorToMaybe)
 import Yoga.Block.Atom.Button.Style as Style
 import Yoga.Block.Atom.Button.Types (ButtonShape, ButtonType, renderButtonShape, renderButtonType)
 import Yoga.Block.Atom.Button.Types as Button
 import Yoga.Block.Container.Style (colour)
 import Yoga.Block.Hook.UseDrip (useDrip)
-import Yoga.Block.Internal (ButtonWritablePropsNoChildrenF)
+import Yoga.Block.Internal (ButtonWritablePropsNoChildrenF, objectToStyle, toStyleObject)
 import Yoga.Block.Quark.Drip.View as Drip
 
 type PropsF :: forall k. (Type -> k) -> Row k -> Row k
@@ -93,5 +96,14 @@ rawComponent =
             props'
             { className: "ry-button"
             , css: Style.button <>? props.css
+            , style: objectToStyle
+                ( foldMap (uncurry toStyleObject)
+                    [ Style.style.background /\ props.backgroundCol
+                    , Style.style.textCol /\ props.textCol
+                    , Style.style.borderCol /\ props.borderCol
+                    , Style.style.width /\ props.width
+                    , Style.style.hoverBackgroundCol /\ props.hoverBackgroundCol
+                    ]
+                )
             , _data
             }

@@ -37,7 +37,7 @@ rawComponent =
       fallbackValue /\ setFallbackValue ← useState' v
       let value = props.value ?|| fallbackValue
       pure
-        $ div
+        $ div'
         </*
           { className: "ry-range"
           , css: Style.container <> guard disabled Style.inputDisabled <>?
@@ -47,11 +47,11 @@ rawComponent =
           , _data: Object.singleton "testid" "range-testid"
           }
         />
-          [ div </*>
+          [ div' </*>
               { className: "ry-range-filled"
               , css: Style.filled <> guard disabled Style.disabled
               }
-          , div </*>
+          , div' </*>
               { className: "ry-range-not-filled"
               , css: Style.notFilled <> guard disabled Style.disabled
               }

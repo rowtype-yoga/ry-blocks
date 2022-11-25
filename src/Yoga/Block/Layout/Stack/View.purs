@@ -35,10 +35,9 @@ rawComponent =
       let safeChildren = reactChildrenToArray (unsafeCoerce props.children)
       -- Wrapping children to use `:nth-of-type` instead of `:nth-child` 
       -- in CSS because the latter is problematic in SSR
-      let wrappedChildren = safeChildren <#> \c -> div </ {} /> [ c ]
       pure
         $ emotionDiv ref props
             { className: "ry-stack " <>? props.className
             , css: Style.stack props
-            , children: wrappedChildren
+            , children: safeChildren
             }

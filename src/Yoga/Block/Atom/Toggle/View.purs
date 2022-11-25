@@ -134,13 +134,13 @@ rawComponent =
             , children
             }
         textContainer =
-          div
+          div'
             </*
               { className: "ry-toggle-text"
               , css: Style.toggleTextContainer
               }
         textOnContainer =
-          div
+          div'
             </*
               { className: "ry-toggle-text-on"
               , css: Style.toggleText
@@ -153,7 +153,7 @@ rawComponent =
                       ]
               ]
         textOffContainer =
-          div
+          div'
             </*
               { className: "ry-toggle-text-off"
               , css: Style.toggleText
@@ -202,16 +202,16 @@ rawComponent =
             , toggle
             ]
 
-toggleCircle ∷
-  ReactComponent
-    { onChange ∷ TogglePosition -> Effect Unit
-    , toggleRef ∷ NodeRef
-    , buttonRef ∷ NodeRef
-    , togglePosition ∷ TogglePosition
-    , dragStateRef ∷ Ref DragState
-    , setDragState ∷ DragState -> Effect Unit
-    , tapState ∷ Ref TappingState
-    }
+toggleCircle
+  ∷ ReactComponent
+      { onChange ∷ TogglePosition -> Effect Unit
+      , toggleRef ∷ NodeRef
+      , buttonRef ∷ NodeRef
+      , togglePosition ∷ TogglePosition
+      , dragStateRef ∷ Ref DragState
+      , setDragState ∷ DragState -> Effect Unit
+      , tapState ∷ Ref TappingState
+      }
 toggleCircle =
   unsafePerformEffect
     $ reactComponent "ToggleCircle" do

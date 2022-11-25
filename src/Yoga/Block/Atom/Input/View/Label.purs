@@ -11,7 +11,7 @@ import React.Basic.DOM (css)
 import React.Basic.DOM as R
 import React.Basic.Hooks (reactComponent)
 import React.Basic.Hooks as React
-import Record.Extra (sequenceRecord)
+import Record.Studio (sequenceRecord)
 import Yoga.Block.Atom.Input.Style (SizeVariant, sizeVariantToFactor)
 import Yoga.Block.Atom.Input.Style as Style
 
@@ -69,7 +69,7 @@ component =
           text = R.text $ NonEmptyString.toString props.labelText
           result = container [ labelContainer [ labelSpan [ text ] ] ]
 
-          container = div </*
+          container = div' </*
             { className: "ry-input-label-container"
             , style: R.css { "--input-size-factor": props.sizeVariant # sizeVariantToFactor }
             , css: Style.labelContainer

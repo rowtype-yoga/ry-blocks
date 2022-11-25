@@ -1,15 +1,20 @@
 module Yoga.Block.Container.Style where
 
-import Yoga.Prelude.Style
+import Prelude
 
+import Color (Color, darken, desaturate, lighten, rotateHue, saturate, toRGBA)
 import Color as Color
+import Control.Monad.Maybe.Trans (MaybeT(..), lift, runMaybeT)
+import Data.Maybe (Maybe(..))
 import Data.String as String
 import Data.Symbol (class IsSymbol, reflectSymbol)
+import Effect (Effect)
 import Effect.Uncurried (EffectFn2, runEffectFn2)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Heterogeneous.Mapping (class HMapWithIndex, class MappingWithIndex, hmap, hmapWithIndex)
-import Record.Extra (mapRecord)
+import React.Basic.Emotion (Style, StyleProperty, css, nested, none, percent, rem, str)
+import Record.Studio (mapRecord)
 import Type.Proxy (Proxy)
 import Unsafe.Coerce (unsafeCoerce)
 import Web.DOM (Element)
@@ -85,7 +90,7 @@ getDarkOrLightMode =
 
 setDarkOrLightMode ∷ DarkOrLightMode → Effect Unit
 setDarkOrLightMode desiredMode =
-  runMaybeT_ do
+  void $ runMaybeT do
     docElem ← getDocumentElement
     style ← getElementStyle docElem # lift
     lift case desiredMode of
@@ -106,25 +111,26 @@ mkGlobal maybeMode =
     { "html, body":
         nested
           $ css
-              { minHeight: 100.0 # percent
+              { height: 100.0 # percent
               , minWidth: 100.0 # percent
-              , "WebkitTextSizeAdjust": _100percent
+              , "WebkitTextSizeAdjust": 100.0 # percent
               }
     , ":root":
         nested
-          $ css
+          $
+            css
               { "@media (prefers-color-scheme: dark)":
-                  nest
+                  nested $ css
                     { "--theme-variant": str "dark"
                     , "--light-mode": str "0"
                     , "--dark-mode": str "1"
                     }
               }
-          <> variables
-          <> fontVariables
-            { main: """"Inter V", "Inter var", Inter"""
-            , mono: "Victor Mono, Menlo, Consolas, Monaco, Liberation Mono, Lucida Console"
-            }
+              <> variables
+              <> fontVariables
+                { main: """"Inter V", "Inter var", Inter"""
+                , mono: "Jetbrains Mono, Menlo, Consolas, Monaco, Liberation Mono, Lucida Console"
+                }
     , html:
         nested
           $ css
@@ -132,90 +138,43 @@ mkGlobal maybeMode =
               }
     , body:
         nested
-          $ css
+          $
+            css
               { fontFamily: str "var(--main-font)"
               , backgroundColor: col.background
               , color: col.text
               , margin: str "0"
               }
-          <> case maybeMode of
-            Nothing → autoSwitchColourTheme
-            Just DarkMode → darkModeStyle
-            Just LightMode → lightModeStyle
+              <> case maybeMode of
+                Nothing → autoSwitchColourTheme
+                Just DarkMode → darkModeStyle
+                Just LightMode → lightModeStyle
     , "pre,code":
-        nest
+        nested $ css
           { fontFamily: str "var(--mono-font)"
           }
     , "h1,h2,h3,h4":
-        nest
+        nested $ css
           { fontWeight: str "700"
           -- , margin: _0
           }
-    -- , h1:
-    --     nested
-    --       $ css
-    --           { "--h1size": str "calc( min( var(--s2) + 2vw , var(--s4) ) )"
-    --           , fontSize: var "--h1size"
-    --           , letterSpacing: str "calc(var(--h1size) * -0.04)"
-    --           -- , marginBottom: var "--s0"
-    --           -- , marginTop: var "--s-1"
-    --           }
-    -- , h2:
-    --     nested
-    --       $ css
-    --           { "--h2size": str "calc( min( (var(--s1)*1.1) + 2vw , var(--s3) ) )"
-    --           , fontSize: var "--h2size"
-    --           , letterSpacing: str "calc(var(--h2size) * -0.035)"
-    --           -- , marginBottom: var "--s-1"
-    --           -- , marginTop: var "--s-2"
-    --           }
-    -- , h3:
-    --     nested
-    --       $ css
-    --           { "--h3size": str "calc( min( var(--s0) + 2vw , var(--s2) ) )"
-    --           , fontSize: var "--h3size"
-    --           , letterSpacing: str "calc(var(--h3size) * -0.03)"
-    --           -- , marginBottom: var "--s-2"
-    --           -- , marginTop: var "--s-3"
-    --           }
-    -- , p:
-    --     nested
-    --       $ css
-    --           { "--psize": str "calc( min( (var(--s-1) * 1.7) + 0.7vw , var(--s0)*1.1 ) )"
-    --           , fontSize: var "--psize"
-    --           , letterSpacing: str "calc(var(--psize) * -0.03)"
-    --           }
     , a:
-        nest
+        nested $ css
           { fontWeight: str "600"
           , textDecoration: str "underline"
           , cursor: str "pointer"
           , "&:hover":
-              nest
+              nested $ css
                 { textDecoration: str "none"
                 }
           }
     , "::selection":
-        nest
+        nested $ css
           { color: col.highlightText
           , background: col.highlight
           }
     , "*, *:before, *:after":
-        nested
-          $ css
-              { boxSizing: str "inherit"
-              -- , fontFeatureSettings:
-              --   str
-              --     $ intercalate ","
-              --     $ show
-              --     <$> [ "ss03" -- curved r
-              --       , "cv03" -- open six
-              --       , "cv04" -- open nine
-              --       -- , "cv05" -- lower case l with tail
-              --       , "cv07" -- German double-s
-              --       , "cv09" -- Flat top three
-              --       ]
-              }
+        nested $ css { boxSizing: str "inherit" }
     }
 
 withAlpha ∷ Number → Color → Color
@@ -248,7 +207,7 @@ defaultColours =
       , popperBackground: (withAlpha 0.9 >>> darken 0.07 >>> desaturate 0.3) lightBg
       , popperBackgroundNoAlpha: (darken 0.07 >>> desaturate 0.3) lightBg
       , popperInnerBorder: (withAlpha 0.9 >>> darken 0.25 >>> desaturate 0.3) lightBg
-      , popperOuterBorder: transparent
+      , popperOuterBorder: (withAlpha 0.0) lightBg
       , highlight
       , highlightAlpha10: highlightBase 0.10
       , highlightAlpha25: highlightBase 0.25
@@ -472,10 +431,10 @@ instance makeCSSVarLabels' ∷
 makeCSSVarLabels ∷ ∀ a b. HMapWithIndex MakeCSSVarLabels a b ⇒ a → b
 makeCSSVarLabels = hmapWithIndex MakeCSSVarLabels
 
-colourVariableName ∷ FlatTheme String
-colourVariableName =
-  hmap (\(x :: String) -> x)
-    $ makeCSSVarLabels defaultColours.light
+-- colourVariableName ∷ FlatTheme String
+-- colourVariableName =
+--   hmap (\(x :: String) -> x)
+--     $ makeCSSVarLabels defaultColours.light
 
 colour ∷ FlatTheme String
 colour =
@@ -570,36 +529,32 @@ variables =
     , "--dark-mode": str "0"
     }
 
-type Sizes =
-  { "3xl" ∷ String
-  , "3xs" ∷ String
-  , "4xl" ∷ String
-  , "4xs" ∷ String
-  , "5xl" ∷ String
-  , "5xs" ∷ String
-  , l ∷ String
-  , m ∷ String
-  , s ∷ String
+type Sizes f =
+  { "3xl" ∷ f
+  , "3xs" ∷ f
+  , "4xl" ∷ f
+  , "4xs" ∷ f
+  , "5xl" ∷ f
+  , "5xs" ∷ f
+  , l ∷ f
+  , m ∷ f
+  , s ∷ f
   , text ∷
-      { interactive ∷ String
-      , label ∷ String
-      , copy ∷ String
-      , small ∷ String
-      , tiny ∷ String
-      , heading ∷
-          { h1 ∷ String
-          , h2 ∷ String
-          , h3 ∷ String
-          , h4 ∷ String
-          }
+      { interactive ∷ f
+      , label ∷ f
+      , copy ∷ f
+      , small ∷ f
+      , tiny ∷ f
+      , heading ∷ { h1 ∷ f, h2 ∷ f, h3 ∷ f, h4 ∷ f }
       }
-  , xl ∷ String
-  , xs ∷ String
-  , xxl ∷ String
-  , xxs ∷ String
+  , xl ∷ f
+  , xs ∷ f
+  , xxl ∷ f
+  , xxs ∷ f
+  , zero :: f
   }
 
-size ∷ Sizes
+size ∷ Sizes String
 size =
   { "5xs": "var(--s-6)"
   , "4xs": "var(--s-5)"
@@ -627,7 +582,12 @@ size =
           , h4: "calc(var(--s0) * 1.1)"
           }
       }
+  , zero: "0"
   }
+
+sizeStyle ∷ Sizes StyleProperty
+sizeStyle =
+  mapRecord str size
 
 type BoxShadows =
   { s ∷ String
