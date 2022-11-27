@@ -4,8 +4,8 @@ import Yoga.Prelude.View
 
 import Data.Array as Array
 import Data.Interpolate (i)
-import Foreign.NullOrUndefined (undefined)
 import Framer.Motion as M
+import Literals.Undefined (undefined)
 import Partial.Unsafe (unsafeCrashWith)
 import React.Basic.DOM (CSS, css)
 import React.Basic.DOM as R
@@ -24,7 +24,7 @@ type PropsF f =
 type MandatoryProps r =
   ( children ∷ Array JSX
   , hasFocus ∷ Boolean
-  , hasLabel :: Boolean
+  , hasLabel ∷ Boolean
   | r
   )
 
@@ -34,17 +34,17 @@ type Props =
 type PropsOptional =
   PropsF OptionalProp
 
-component ∷ ∀ p q. Union p q Props => ReactComponent { | MandatoryProps p }
+component ∷ ∀ p q. Union p q Props ⇒ ReactComponent { | MandatoryProps p }
 component = rawContainer
 
 rawContainer ∷ ∀ p. ReactComponent { | p }
 rawContainer =
   mkForwardRefComponent "InputContainer" do
-    \(props ∷ { | PropsOptional }) ref -> React.do
-      sizes <- useWindowResize
-      dimensions /\ setDimensions <- useState' zero
+    \(props ∷ { | PropsOptional }) ref → React.do
+      sizes ← useWindowResize
+      dimensions /\ setDimensions ← useState' zero
       useEffect sizes.innerWidth do
-        maybeDimensions <- getOffsetDimensionsFromRef ref
+        maybeDimensions ← getOffsetDimensionsFromRef ref
         for_ maybeDimensions setDimensions
         mempty
       let
@@ -86,17 +86,20 @@ rawContainer =
                   }
               )
         result = R.div' </* { css: Style.containerContainer props } />
-          [ R.div' </*> { className: "container-background", css: Style.containerBackground props }
+          [ R.div' </*>
+              { className: "container-background"
+              , css: Style.containerBackground props
+              }
           , (if props.hasLabel then animated else static) props.children
           ]
       pure result
 
-drawPathUntil ∷ Int -> Array Point -> String
+drawPathUntil ∷ Int → Array Point → String
 drawPathUntil idx thePath = do
   let
     fn { x, y } = i x "px" " " y "px"
     firstFew = Array.take idx thePath
-    lastOne = Array.last firstFew # fromMaybe' \_ -> unsafeCrashWith "ogod"
+    lastOne = Array.last firstFew # fromMaybe' \_ → unsafeCrashWith "ogod"
     lastFew =
       Array.replicate
         (Array.length thePath - Array.length firstFew)
@@ -104,7 +107,7 @@ drawPathUntil idx thePath = do
     rendered = intercalate "," $ fn <$> (firstFew <> lastFew)
   i "polygon(" rendered ")"
 
-mkPath ∷ { width ∷ Number, height ∷ Number } -> Array Point
+mkPath ∷ { width ∷ Number, height ∷ Number } → Array Point
 mkPath { width, height } = do
   let
     inside =
@@ -151,23 +154,23 @@ mkPath { width, height } = do
 
   outerCornerBorder = 8.3
 
-  p ∷ Number -> Number -> Point
+  p ∷ Number → Number → Point
   p x y = { x, y }
 
-mkContainerVariantLabels
-  ∷ { blurred ∷ CSS
-    , focussed ∷ CSS
-    }
-  -> { blurred ∷ M.VariantLabel
-     , focussed ∷ M.VariantLabel
-     }
+mkContainerVariantLabels ∷
+  { blurred ∷ CSS
+  , focussed ∷ CSS
+  } →
+  { blurred ∷ M.VariantLabel
+  , focussed ∷ M.VariantLabel
+  }
 mkContainerVariantLabels = M.makeVariantLabels
 
-mkContainerVariants
-  ∷ { width ∷ Number, height ∷ Number }
-  -> { blurred ∷ CSS
-     , focussed ∷ CSS
-     }
+mkContainerVariants ∷
+  { width ∷ Number, height ∷ Number } →
+  { blurred ∷ CSS
+  , focussed ∷ CSS
+  }
 mkContainerVariants dimensions =
   { focussed:
       css
@@ -183,7 +186,8 @@ mkContainerVariants dimensions =
   where
   path = mkPath dimensions
 
-  clipPathFocussed = 13 Array... (Array.length path) <#> \ln -> drawPathUntil ln path
+  clipPathFocussed = 13 Array... (Array.length path) <#> \ln → drawPathUntil ln
+    path
 
 type Point =
   { x ∷ Number, y ∷ Number }

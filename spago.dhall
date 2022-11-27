@@ -18,7 +18,6 @@ You can edit this file as you like.
   , "fahrtwind"
   , "foldable-traversable"
   , "foreign"
-  , "foreign-generic"
   , "foreign-object"
   , "framer-motion"
   , "functions"
@@ -63,6 +62,7 @@ You can edit this file as you like.
   , "web-events"
   , "web-html"
   , "web-uievents"
+  , "yoga-json"
   ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs" ]

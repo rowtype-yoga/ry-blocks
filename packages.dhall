@@ -134,20 +134,20 @@ in  upstream
       , "web-uievents"
       ]
     }
-  with foreign-generic =
-    { repo =
-        "https://github.com/working-group-purescript-es/purescript-foreign-generic.git"
-    , version = "v0.15.0-updates"
-    , dependencies =
-      [ "effect"
-      , "exceptions"
-      , "foreign"
-      , "foreign-object"
-      , "identity"
-      , "ordered-collections"
-      , "record"
-      ]
-    }
+-- with foreign-generic =
+--   { repo =
+--       "https://github.com/working-group-purescript-es/purescript-foreign-generic.git"
+--   , version = "v0.15.0-updates"
+--   , dependencies =
+--     [ "effect"
+--     , "exceptions"
+--     , "foreign"
+--     , "foreign-object"
+--     , "identity"
+--     , "ordered-collections"
+--     , "record"
+--     ]
+--   }
   with fahrtwind =
     { repo = "https://github.com/rowtype-yoga/purescript-fahrtwind.git"
     , version = "v1.0.1"
