@@ -85,225 +85,242 @@ import Web.HTML.Window (document)
 import Yoga.Block.Internal.CSS (_0)
 import Yoga.Block.Internal.OptionalProp (OptionalProp(..), Id, appendIfDefined, asOptional, composeHandler, getOr, getOrFlipped, ifTrue, isTruthy, maybeToOp, opToMaybe, setOrDelete, unsafeUnMaybe, unsafeUnOptional, (<>?), (?||))
 
-
 unsafeAddProps ∷ ∀ r s. { | r } → { | s } → { | r }
 unsafeAddProps = unsafeUnion
 
-foreign import mkForwardRefComponent
-  ∷ ∀ inputProps props a hooks
-   . String
-  -> ({ | inputProps } -> Ref a -> Render Unit hooks JSX)
-  -> ReactComponent { | props }
+foreign import mkForwardRefComponent ∷
+  ∀ inputProps props a hooks.
+  String →
+  ({ | inputProps } → Ref a → Render Unit hooks JSX) →
+  ReactComponent { | props }
 
-foreign import mkForwardRefComponentEffect
-  ∷ ∀ inputProps props a hooks
-   . String
-  -> ({ | inputProps } -> Ref a -> Render Unit hooks JSX)
-  -> Effect (ReactComponent { | props })
+foreign import mkForwardRefComponentEffect ∷
+  ∀ inputProps props a hooks.
+  String →
+  ({ | inputProps } → Ref a → Render Unit hooks JSX) →
+  Effect (ReactComponent { | props })
 
 foreign import createRef ∷ ∀ a. Effect (Ref a)
 
 type NodeRef = Ref (Nullable Node)
 
-focusNodeRef ∷ NodeRef -> Effect Unit
+focusNodeRef ∷ NodeRef → Effect Unit
 focusNodeRef ref = do
-  maybeHTMLElement <- getHTMLElementFromRef ref
+  maybeHTMLElement ← getHTMLElementFromRef ref
   for_ maybeHTMLElement focus
 
-objectToStyle :: Object StyleProperty -> R.CSS
+objectToStyle ∷ Object StyleProperty → R.CSS
 objectToStyle = unsafeCoerce
 
-toStyleObject :: String -> OptionalProp StyleProperty -> Object StyleProperty
+toStyleObject ∷ String → OptionalProp StyleProperty → Object StyleProperty
 toStyleObject styleName prop =
   (prop <#> Object.singleton styleName) ?|| mempty
 
-findElementByIdInDocument ∷ String -> Effect (Maybe Element)
+findElementByIdInDocument ∷ String → Effect (Maybe Element)
 findElementByIdInDocument id = do
-  doc <- window >>= document
+  doc ← window >>= document
   let
     node = HTMLDocument.toNonElementParentNode doc
   getElementById id node
 
-getBoundingBoxFromRef ∷ NodeRef -> Effect (Maybe DOMRect)
+getBoundingBoxFromRef ∷ NodeRef → Effect (Maybe DOMRect)
 getBoundingBoxFromRef itemRef = do
-  elem <- getElementFromRef itemRef
+  elem ← getElementFromRef itemRef
   for elem getBoundingClientRect
 
-getOffsetWidthFromRef ∷ NodeRef -> Effect (Maybe Number)
+getOffsetWidthFromRef ∷ NodeRef → Effect (Maybe Number)
 getOffsetWidthFromRef itemRef = do
-  htmlElem <- getHTMLElementFromRef itemRef
+  htmlElem ← getHTMLElementFromRef itemRef
   for htmlElem offsetWidth
 
-getOffsetHeightFromRef ∷ NodeRef -> Effect (Maybe Number)
+getOffsetHeightFromRef ∷ NodeRef → Effect (Maybe Number)
 getOffsetHeightFromRef itemRef = do
-  htmlElem <- getHTMLElementFromRef itemRef
+  htmlElem ← getHTMLElementFromRef itemRef
   for htmlElem offsetHeight
 
-getOffsetDimensionsFromRef ∷ NodeRef -> Effect (Maybe { height ∷ Number, width ∷ Number })
+getOffsetDimensionsFromRef ∷
+  NodeRef → Effect (Maybe { height ∷ Number, width ∷ Number })
 getOffsetDimensionsFromRef itemRef =
   runMaybeT do
-    node <- MaybeT $ readRefMaybe itemRef
-    elem <- MaybeT $ pure $ HTMLElement.fromNode node
-    width <- lift $ offsetWidth elem
-    height <- lift $ offsetHeight elem
+    node ← MaybeT $ readRefMaybe itemRef
+    elem ← MaybeT $ pure $ HTMLElement.fromNode node
+    width ← lift $ offsetWidth elem
+    height ← lift $ offsetHeight elem
     pure { width, height }
 
-getScrollWidthFromRef ∷ NodeRef -> Effect (Maybe Number)
+getScrollWidthFromRef ∷ NodeRef → Effect (Maybe Number)
 getScrollWidthFromRef itemRef = do
-  elem <- getElementFromRef itemRef
+  elem ← getElementFromRef itemRef
   for elem scrollWidth
 
-getScrollHeightFromRef ∷ NodeRef -> Effect (Maybe Number)
+getScrollHeightFromRef ∷ NodeRef → Effect (Maybe Number)
 getScrollHeightFromRef itemRef = do
-  elem <- getElementFromRef itemRef
+  elem ← getElementFromRef itemRef
   for elem scrollHeight
 
-getScrollDimensionsFromRef ∷ NodeRef -> Effect (Maybe { height ∷ Number, width ∷ Number })
+getScrollDimensionsFromRef ∷
+  NodeRef → Effect (Maybe { height ∷ Number, width ∷ Number })
 getScrollDimensionsFromRef itemRef =
   runMaybeT do
-    node <- MaybeT $ readRefMaybe itemRef
-    elem <- MaybeT $ pure $ Element.fromNode node
-    width <- lift $ scrollWidth elem
-    height <- lift $ scrollHeight elem
+    node ← MaybeT $ readRefMaybe itemRef
+    elem ← MaybeT $ pure $ Element.fromNode node
+    width ← lift $ scrollWidth elem
+    height ← lift $ scrollHeight elem
     pure { width, height }
 
-getClientDimensionsFromRef ∷ NodeRef -> Effect (Maybe { height ∷ Number, width ∷ Number })
+getClientDimensionsFromRef ∷
+  NodeRef → Effect (Maybe { height ∷ Number, width ∷ Number })
 getClientDimensionsFromRef itemRef =
   runMaybeT do
-    node <- MaybeT $ readRefMaybe itemRef
-    elem <- MaybeT $ pure $ Element.fromNode node
-    width <- lift $ clientWidth elem
-    height <- lift $ clientHeight elem
+    node ← MaybeT $ readRefMaybe itemRef
+    elem ← MaybeT $ pure $ Element.fromNode node
+    width ← lift $ clientWidth elem
+    height ← lift $ clientHeight elem
     pure { width, height }
 
-getHTMLElementFromRef ∷ Ref (Nullable Node) -> Effect (Maybe HTMLElement)
+getHTMLElementFromRef ∷ Ref (Nullable Node) → Effect (Maybe HTMLElement)
 getHTMLElementFromRef itemRef =
   runMaybeT do
-    node <- MaybeT $ readRefMaybe itemRef
+    node ← MaybeT $ readRefMaybe itemRef
     MaybeT $ pure $ HTMLElement.fromNode node
 
-getElementFromRef ∷ Ref (Nullable Node) -> Effect (Maybe Element)
+getElementFromRef ∷ Ref (Nullable Node) → Effect (Maybe Element)
 getElementFromRef itemRef =
   runMaybeT do
-    node <- MaybeT $ readRefMaybe itemRef
+    node ← MaybeT $ readRefMaybe itemRef
     MaybeT $ pure $ Element.fromNode node
 
-forwardedRefAsMaybe ∷ ∀ a. Ref a -> Maybe (Ref a)
+forwardedRefAsMaybe ∷ ∀ a. Ref a → Maybe (Ref a)
 forwardedRefAsMaybe r = safelyWrapped # uorToMaybe >>= Nullable.toMaybe
   where
   safelyWrapped ∷ UndefinedOr (Nullable (Ref a))
   safelyWrapped = unsafeCoerce r
 
-foreign import unsafeUnionDroppingUndefined ∷ ∀ r1 r2 r3. Record r1 -> Record r2 -> Record r3
+foreign import unsafeUnionDroppingUndefined ∷
+  ∀ r1 r2 r3. Record r1 → Record r2 → Record r3
 
-foreign import deleteUndefineds ∷ ∀ r. Record r -> Record r
+foreign import deleteUndefineds ∷ ∀ r. Record r → Record r
 
-foreign import unsafeMergeSecond ∷ ∀ r1 r2 r3. Record r1 -> Record r2 -> Record r3
+foreign import unsafeMergeSecond ∷ ∀ r1 r2 r3. Record r1 → Record r2 → Record r3
 
-unsafeEmotion ∷ ∀ props propsA propsB. ReactComponent { className ∷ String, css ∷ E.Style | props } -> Record propsA -> { className ∷ String, css ∷ E.Style | propsB } -> JSX
-unsafeEmotion component propsA propsB = E.element component (unsafeUnionDroppingUndefined propsB propsA)
+unsafeEmotion ∷
+  ∀ props propsA propsB.
+  ReactComponent { className ∷ String, css ∷ E.Style | props } →
+  Record propsA →
+  { className ∷ String, css ∷ E.Style | propsB } →
+  JSX
+unsafeEmotion component propsA propsB = E.element component
+  (unsafeUnionDroppingUndefined propsB propsA)
 
-emotionDiv_
-  ∷ ∀ props props_
-   . Lacks "ref" props
-  => Union props props_ (className ∷ String, css ∷ Style, ref ∷ Ref (Nullable Node) | DivProps)
-  => (Record (DivProps))
-  -> { className ∷ String
-     , css ∷ Style
-     | props
-     }
-  -> JSX
+emotionDiv_ ∷
+  ∀ props props_.
+  Lacks "ref" props ⇒
+  Union props props_
+    (className ∷ String, css ∷ Style, ref ∷ Ref (Nullable Node) | DivProps) ⇒
+  (Record (DivProps)) →
+  { className ∷ String
+  , css ∷ Style
+  | props
+  } →
+  JSX
 emotionDiv_ = unsafeEmotion unsafeDiv
 
-emotionDiv
-  ∷ ∀ props props_ more
-   . Lacks "ref" props
-  => Union props props_ (className ∷ String, css ∷ Style, ref ∷ Ref (Nullable Node) | DivProps)
-  => Ref (Nullable Node)
-  -> { | DivPropsF Id more }
-  -> { className ∷ String
-     , css ∷ Style
-     | props
-     }
-  -> JSX
+emotionDiv ∷
+  ∀ props props_ more.
+  Lacks "ref" props ⇒
+  Union props props_
+    (className ∷ String, css ∷ Style, ref ∷ Ref (Nullable Node) | DivProps) ⇒
+  Ref (Nullable Node) →
+  { | DivPropsF Id more } →
+  { className ∷ String
+  , css ∷ Style
+  | props
+  } →
+  JSX
 emotionDiv ref = emotionDiv_ <<< pickDefined ref
 
 unsafeDiv ∷ ∀ r. ReactComponent (Record r)
 unsafeDiv = dangerous "div"
 
-foreign import pickDefinedFn ∷ ∀ r1 r2. Fn3 (Ref (Nullable Node)) (Array String) (Record r1) (Record r2)
+foreign import pickDefinedFn ∷
+  ∀ r1 r2. Fn3 (Ref (Nullable Node)) (Array String) (Record r1) (Record r2)
 
-pickDefined
-  ∷ ∀ a r b
-   . Row.Union b r a
-  => Ref (Nullable Node)
-  -> Keys b
-  => Record a
-  -> { ref ∷ Ref (Nullable Node) | b }
+pickDefined ∷
+  ∀ a r b.
+  Row.Union b r a ⇒
+  Ref (Nullable Node) →
+  Keys b ⇒
+  Record a →
+  { ref ∷ Ref (Nullable Node) | b }
 pickDefined ref = runFn3 pickDefinedFn ref ks
   where
   ks = Array.fromFoldable $ keys (Proxy ∷ Proxy b)
 
-emotionInput_
-  ∷ ∀ props props_
-   . Union props props_ (className ∷ String, css ∷ Style | InputWritablePropsF Id ())
-  => { | InputWritableProps }
-  -> { className ∷ String
-     , css ∷ Style
-     | props
-     }
-  -> JSX
+emotionInput_ ∷
+  ∀ props props_.
+  Union props props_
+    (className ∷ String, css ∷ Style | InputWritablePropsF Id ()) ⇒
+  { | InputWritableProps } →
+  { className ∷ String
+  , css ∷ Style
+  | props
+  } →
+  JSX
 emotionInput_ = unsafeEmotion unsafeInput
 
-emotionInput
-  ∷ ∀ props props_ more
-   . Union props props_ (className ∷ String, css ∷ Style | InputWritableProps)
-  => Ref (Nullable Node)
-  -> { | InputReadablePropsF OptionalProp more }
-  -> { className ∷ String
-     , css ∷ Style
-     | props
-     }
-  -> JSX
+emotionInput ∷
+  ∀ props props_ more.
+  Union props props_ (className ∷ String, css ∷ Style | InputWritableProps) ⇒
+  Ref (Nullable Node) →
+  { | InputReadablePropsF OptionalProp more } →
+  { className ∷ String
+  , css ∷ Style
+  | props
+  } →
+  JSX
 emotionInput ref = emotionInput_ <<< pickDefined ref <<< coerceUnOptional
   where
-  coerceUnOptional ∷ { | InputReadablePropsF OptionalProp more } -> { | InputReadablePropsF Id more }
+  coerceUnOptional ∷
+    { | InputReadablePropsF OptionalProp more } →
+    { | InputReadablePropsF Id more }
   coerceUnOptional = unsafeCoerce
 
 unsafeInput ∷ ∀ r. ReactComponent (Record r)
 unsafeInput = dangerous "input"
 
-emotionButton_
-  ∷ ∀ props props_
-   . Union props props_ (className ∷ String, css ∷ Style | ButtonWritableProps)
-  => { | ButtonWritableProps }
-  -> { className ∷ String
-     , css ∷ Style
-     | props
-     }
-  -> JSX
+emotionButton_ ∷
+  ∀ props props_.
+  Union props props_ (className ∷ String, css ∷ Style | ButtonWritableProps) ⇒
+  { | ButtonWritableProps } →
+  { className ∷ String
+  , css ∷ Style
+  | props
+  } →
+  JSX
 emotionButton_ = unsafeEmotion unsafeButton
 
-emotionButton
-  ∷ ∀ props props_ more
-   . Lacks "ref" props
-  => Union props props_ (className ∷ String, css ∷ Style | ButtonWritableProps)
-  => Ref (Nullable Node)
-  -> { | ButtonReadablePropsF OptionalProp more }
-  -> { className ∷ String
-     , css ∷ Style
-     | props
-     }
-  -> JSX
+emotionButton ∷
+  ∀ props props_ more.
+  Lacks "ref" props ⇒
+  Union props props_ (className ∷ String, css ∷ Style | ButtonWritableProps) ⇒
+  Ref (Nullable Node) →
+  { | ButtonReadablePropsF OptionalProp more } →
+  { className ∷ String
+  , css ∷ Style
+  | props
+  } →
+  JSX
 emotionButton ref = emotionButton_ <<< pickDefined ref <<< coerceUnOptional
   where
-  coerceUnOptional ∷ { | ButtonReadablePropsF OptionalProp more } -> { | ButtonReadablePropsF Id more }
+  coerceUnOptional ∷
+    { | ButtonReadablePropsF OptionalProp more } →
+    { | ButtonReadablePropsF Id more }
   coerceUnOptional = unsafeCoerce
 
 unsafeButton ∷ ∀ r. ReactComponent (Record r)
 unsafeButton = dangerous "button"
 
-dangerous ∷ ∀ props. String -> ReactComponent (Record props)
+dangerous ∷ ∀ props. String → ReactComponent (Record props)
 dangerous = unsafePerformEffect <<< unsafeCreateDOMComponent
 
 -- type DivProps =
@@ -617,22 +634,23 @@ type ButtonReadableProps = ButtonReadablePropsF OptionalProp ()
 
 type ButtonWritableProps = ButtonWritablePropsF Id ()
 
-type ButtonWritablePropsF :: forall k. (Type -> k) -> Row k -> Row k
+type ButtonWritablePropsF ∷ ∀ k. (Type → k) → Row k → Row k
 type ButtonWritablePropsF f more = ButtonReadablePropsF f
   ( ref ∷ f (Ref (Nullable Node))
   | more
   )
 
-type ButtonWritablePropsNoChildrenF :: forall k. (Type -> k) -> Row k -> Row k
+type ButtonWritablePropsNoChildrenF ∷ ∀ k. (Type → k) → Row k → Row k
 type ButtonWritablePropsNoChildrenF f more = ButtonReadablePropsNoChildrenF f
   ( ref ∷ f (Ref (Nullable Node))
   | more
   )
 
-type ButtonReadablePropsF :: forall k. (Type -> k) -> Row k -> Row k
-type ButtonReadablePropsF f more = ButtonReadablePropsNoChildrenF f (children ∷ f (Array JSX) | more)
+type ButtonReadablePropsF ∷ ∀ k. (Type → k) → Row k → Row k
+type ButtonReadablePropsF f more = ButtonReadablePropsNoChildrenF f
+  (children ∷ f (Array JSX) | more)
 
-type ButtonReadablePropsNoChildrenF :: forall k. (Type -> k) -> Row k -> Row k
+type ButtonReadablePropsNoChildrenF ∷ ∀ k. (Type → k) → Row k → Row k
 type ButtonReadablePropsNoChildrenF f more =
   ( _aria ∷ f (Object String)
   , _data ∷ f (Object String)

@@ -1,4 +1,4 @@
-module Yoga.Block.Organism.Form.Story where
+module Story.Yoga.Block.Organism.Form where
 
 import Prelude
 
@@ -26,14 +26,14 @@ import Yoga.Block.Organism.Form (FormBuilder, Validated(..), formDefaults)
 import Yoga.Block.Organism.Form as Form
 import Yoga.Block.Organism.Form.Types (RequiredField(..))
 
-default
-  ∷ { decorators ∷ Array (Effect JSX -> JSX)
-    , title ∷ String
-    }
+default ∷
+  { decorators ∷ Array (Effect JSX → JSX)
+  , title ∷ String
+  }
 default =
   { title: "Organism/Form"
   , decorators:
-      [ \storyFn ->
+      [ \storyFn →
           Block.container
             </ {}
             />
@@ -69,17 +69,17 @@ type ValidFriend =
   , age ∷ Int
   }
 
-aForm ∷ Effect JSX
-aForm = do
-  example <- mkExample
+form ∷ Effect JSX
+form = do
+  example ← mkExample
   pure $ example </> {}
   where
   mkExample =
-    reactComponent "FormExample" \_ -> React.do
+    reactComponent "FormExample" \_ → React.do
       inputRef ← useTypingPlaceholders "First name"
         [ "Type in your given name", "WAAAAARUMÄ" ]
-      _userDialog /\ setUserDialog <- useState' Nothing
-      { setModified, reset: _reset, validated, form } <-
+      _userDialog /\ setUserDialog ← useState' Nothing
+      { setModified, reset: _reset, validated, form } ←
         Form.useForm (userForm inputRef)
           { initialState: formDefaults
           , formProps:
@@ -93,17 +93,21 @@ aForm = do
                 -- on the form's submit button and `preventDefault` to keep the browser
                 -- from reloading the page on submission.
                 { onSubmit:
-                    handler preventDefault \_ -> case validated of
-                      Nothing -> do
+                    handler preventDefault \_ → case validated of
+                      Nothing → do
                         setModified
-                      Just { firstName, lastName } -> setUserDialog $ Just { firstName, lastName }
+                      Just { firstName, lastName } → setUserDialog $ Just
+                        { firstName, lastName }
                 , style: R.css { alignSelf: "stretch" }
                 , children: [ form ]
                 }
             , R.text $ show validated
             ]
     where
-    tagsForm ∷ ∀ props. FormBuilder { readOnly ∷ Boolean | props } (Form.Validated String) NonEmptyString
+    tagsForm ∷
+      ∀ props.
+      FormBuilder { readOnly ∷ Boolean | props } (Form.Validated String)
+        NonEmptyString
     tagsForm =
       Form.validated
         ( Form.nonEmpty' "You need to provide some tags"
@@ -111,16 +115,18 @@ aForm = do
         $ Form.inputBox (nes (Proxy ∷ _ "Tag")) Required
             { placeholder: "Tag" }
 
-    friendForm ∷ ∀ props. FormBuilder { readOnly ∷ Boolean | props } Friend ValidFriend
+    friendForm ∷
+      ∀ props. FormBuilder { readOnly ∷ Boolean | props } Friend ValidFriend
     friendForm = ado
-      nickname <-
+      nickname ←
         Form.focus (prop (Proxy ∷ _ "nickname"))
           $ Form.validated (Form.nonEmpty "Nickname")
           $ Form.inputBox (nes (Proxy ∷ _ "Nickname")) Required
               { placeholder: "for example Eddy..." }
-      age <-
+      age ←
         Form.focus (prop (Proxy ∷ _ "age"))
-          $ Form.validated (Form.validNatBetween (Proxy ∷ _ "18") (Proxy ∷ _ "69") "Age")
+          $ Form.validated
+              (Form.validNatBetween (Proxy ∷ _ "18") (Proxy ∷ _ "69") "Age")
           $ Form.inputBox (nes (Proxy ∷ _ "Age")) Required
               { placeholder: "for example 78..."
               , min: "1"
@@ -129,22 +135,30 @@ aForm = do
               }
       in { nickname, age }
 
-    userForm ∷ ∀ props. NodeRef -> FormBuilder { readOnly ∷ Boolean | props } User ValidUser
+    userForm ∷
+      ∀ props.
+      NodeRef →
+      FormBuilder { readOnly ∷ Boolean | props } User ValidUser
     userForm inputRef = ado
-      firstName <-
+      firstName ←
         Form.focus (prop (Proxy ∷ _ "firstName"))
           $ Form.validated (Form.nonEmpty' "You must have a first name")
-          $ Form.inputBox (nes (Proxy ∷ _ "First Name")) Required
+          $ Form.labelledInputBox
+              { label: (nes (Proxy ∷ _ "First Name"))
+              , id: (nes (Proxy ∷ _ "Heinz"))
+              }
+              Required
               { id: "firstName", inputRef }
-      lastName <-
+      lastName ←
         Form.focus (prop (Proxy ∷ _ "lastName"))
           $ Form.validated
-              ( Form.nonEmpty' "I am telling you now for the very last time that you need to make sure Last name is provided to me so I can create a user for you"
+              ( Form.nonEmpty'
+                  "I am telling you now for the very last time that you need to make sure Last name is provided to me so I can create a user for you"
               )
           $ Form.inputBox (nes (Proxy ∷ _ "Last Name")) Required
               { placeholder: "Last name"
               }
-      tags <-
+      tags ←
         Form.indent "Tags" Neither
           $ Form.focus (prop (Proxy ∷ _ "tags"))
           $ Form.sortableArray
@@ -153,7 +167,7 @@ aForm = do
               , defaultValue: formDefaults
               , editor: tagsForm
               }
-      friends <-
+      friends ←
         Form.indent "Friends" Neither
           $ Form.focus (prop (Proxy ∷ _ "friends"))
           $ Form.array
@@ -162,7 +176,7 @@ aForm = do
               , defaultValue: { nickname: Fresh "", age: Fresh "" }
               , editor: friendForm
               }
-      isAdmin <-
+      isAdmin ←
         Form.indent "Admin?" Neither
           $ Form.focus (prop (Proxy ∷ _ "isAdmin"))
           $ Form.toggle {}

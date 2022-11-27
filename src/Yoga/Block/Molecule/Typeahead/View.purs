@@ -7,13 +7,12 @@ import Data.Array as Array
 import Data.Function.Uncurried (mkFn3)
 import Data.Time.Duration (Milliseconds(..))
 import Effect.Aff (Aff, attempt, delay)
-import Effect.Console as Console
 import Effect.Exception (Error)
-import Effect.Uncurried (mkEffectFn1, runEffectFn1, runEffectFn2)
+import Effect.Uncurried (mkEffectFn1, runEffectFn1)
 import Fahrtwind (overflowHidden, textCol', widthAndHeight)
 import Fahrtwind.Style.ScrollBar (scrollBar')
 import Framer.Motion as M
-import Literals.Undefined (Undefined, undefined)
+import Literals.Undefined (undefined)
 import Network.RemoteData (RemoteData)
 import Network.RemoteData as RemoteData
 import Prim.Row (class Lacks, class Nub)
@@ -42,7 +41,6 @@ import Yoga.Block.Atom.PopOver.View (mkPopOverView)
 import Yoga.Block.Container.Style (col, sizeStyle)
 import Yoga.Block.Hook.Key (KeyCode)
 import Yoga.Block.Hook.Key as Key
-import Yoga.Block.Hook.UseOnElementResize (useOnElementResizeWithRef)
 import Yoga.Block.Hook.UseResize2 (useOnResize)
 import Yoga.Block.Icon.SVG.Spinner (spinner)
 import Yoga.Block.Internal (focusNodeRef)

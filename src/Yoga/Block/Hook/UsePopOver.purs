@@ -13,7 +13,7 @@ type Options =
   { dismissBehaviourʔ ∷ Maybe HookDismissBehaviour
   , containerId ∷ String
   , placement ∷ Placement
-  , fallbackPlacements :: Array Placement
+  , fallbackPlacements ∷ Array Placement
   }
 
 type Result =
