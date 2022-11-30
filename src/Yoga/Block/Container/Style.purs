@@ -52,7 +52,8 @@ foreign import getComputedStyleImpl ∷ EffectFn2 Element Window ComputedStyle
 getComputedStyle ∷ Window → Element → Effect ComputedStyle
 getComputedStyle = flip (runEffectFn2 getComputedStyleImpl)
 
-foreign import getPropertyValueImpl ∷ EffectFn2 String ComputedStyle String -- Not sure it always returns a string
+foreign import getPropertyValueImpl ∷
+  EffectFn2 String ComputedStyle String -- Not sure it always returns a string
 
 getPropertyValue ∷ String → ComputedStyle → Effect String
 getPropertyValue = runEffectFn2 getPropertyValueImpl
@@ -63,7 +64,7 @@ foreign import getElementStyle ∷ Element → Effect ElementStyle
 
 foreign import setStyleProperty ∷ String → String → ElementStyle → Effect Unit
 
-foreign import getStyleProperty :: String -> ElementStyle -> Effect String
+foreign import getStyleProperty ∷ String → ElementStyle → Effect String
 
 foreign import removeStyleProperty ∷ String → ElementStyle → Effect Unit
 
@@ -129,7 +130,8 @@ mkGlobal maybeMode =
               <> variables
               <> fontVariables
                 { main: """"Inter V", "Inter var", Inter"""
-                , mono: "Jetbrains Mono, Menlo, Consolas, Monaco, Liberation Mono, Lucida Console"
+                , mono:
+                    "Jetbrains Mono, Menlo, Consolas, Monaco, Liberation Mono, Lucida Console"
                 }
     , html:
         nested
@@ -204,9 +206,11 @@ defaultColours =
       , backgroundBright6: darken 0.12 >>> saturate 0.05 $ lightBg
       , backgroundLayer5Border: lightBg
       , backgroundCard: lightBg
-      , popperBackground: (withAlpha 0.9 >>> darken 0.07 >>> desaturate 0.3) lightBg
+      , popperBackground: (withAlpha 0.9 >>> darken 0.07 >>> desaturate 0.3)
+          lightBg
       , popperBackgroundNoAlpha: (darken 0.07 >>> desaturate 0.3) lightBg
-      , popperInnerBorder: (withAlpha 0.9 >>> darken 0.25 >>> desaturate 0.3) lightBg
+      , popperInnerBorder: (withAlpha 0.9 >>> darken 0.25 >>> desaturate 0.3)
+          lightBg
       , popperOuterBorder: (withAlpha 0.0) lightBg
       , highlight
       , highlightAlpha10: highlightBase 0.10
@@ -217,9 +221,11 @@ defaultColours =
       , highlightDisabled: (desaturate 0.60 >>> lighten 0.5) highlight
       , highlightLighter: withAlpha 0.2 (Color.lighten 0.2 highlight)
       , highlightRotatedBackwards: highlight # rotateHue (-13.0) # darken 0.05
-      , highlightRotatedForwards: highlight # rotateHue 3.0 # lighten 0.05 # saturate 0.1
+      , highlightRotatedForwards: highlight # rotateHue 13.0 # darken 0.05 #
+          saturate 0.1
       , highlightText
-      , highlightTextOnBackground: highlight # rotateHue 3.0 # darken 0.15 # desaturate 0.1
+      , highlightTextOnBackground: highlight # rotateHue 3.0 # darken 0.15 #
+          desaturate 0.1
       , inputBackground: lightBg
       , inputBorder: darken 0.07 >>> desaturate 0.2 $ lightBg
       , interfaceBackground
@@ -269,9 +275,11 @@ defaultColours =
       , backgroundBright6: lighten 0.23 >>> saturate 0.00 $ darkBg
       , backgroundLayer5Border: lighten 0.37 $ darkBg
       , backgroundCard: lighten 0.05 >>> saturate 0.1 $ darkBg
-      , popperBackground: (withAlpha 0.8 >>> lighten 0.09 >>> saturate 0.05) darkBg
+      , popperBackground: (withAlpha 0.8 >>> lighten 0.09 >>> saturate 0.05)
+          darkBg
       , popperBackgroundNoAlpha: (lighten 0.09 >>> saturate 0.05) darkBg
-      , popperInnerBorder: (withAlpha 0.9 >>> darken 0.7 >>> desaturate 0.3) lightBg
+      , popperInnerBorder: (withAlpha 0.9 >>> darken 0.7 >>> desaturate 0.3)
+          lightBg
       , popperOuterBorder: darkBg
       , highlight: highlightDark
       , highlightAlpha10: highlightDarkBase 0.1
@@ -293,7 +301,9 @@ defaultColours =
       , interfaceBackgroundHighlight: lighten 0.1 interfaceBackgroundDark
       , interfaceBackgroundShadow: darken 0.1 interfaceBackgroundDark
       , interfaceDangerousText: interfaceDangerousTextDark
-      , interfaceTextDisabled: (desaturate 0.3 >>> lighten 0.25 >>> desaturate 0.3) interfaceBackgroundDark
+      , interfaceTextDisabled:
+          (desaturate 0.3 >>> lighten 0.25 >>> desaturate 0.3)
+            interfaceBackgroundDark
       , invalid: invalidDark
       , invalidText: invalidTextDark
       , link: linkDark
@@ -394,7 +404,7 @@ type FlatTheme a =
   , highlightLighter ∷ a
   , highlightDisabled ∷ a
   , highlightText ∷ a
-  , highlightTextOnBackground :: a
+  , highlightTextOnBackground ∷ a
   , success ∷ a
   , successText ∷ a
   , invalid ∷ a
@@ -441,15 +451,19 @@ colour =
   hmap (\x → "var(" <> x <> ")")
     $ makeCSSVarLabels defaultColours.light
 
-colourWithAlpha ∷ FlatTheme (Number -> String)
+colourWithAlpha ∷ FlatTheme (Number → String)
 colourWithAlpha =
-  hmap (\x → \alpha -> "rgba(var(--rgb-" <> String.drop 2 x <> "), " <> show alpha <> ")")
+  hmap
+    ( \x → \alpha → "rgba(var(--rgb-" <> String.drop 2 x <> "), " <> show alpha
+        <> ")"
+    )
     $ makeCSSVarLabels defaultColours.light
 
-colourWithDarkLightAlpha ∷ FlatTheme ({ darkAlpha :: Number, lightAlpha :: Number } -> String)
+colourWithDarkLightAlpha ∷
+  FlatTheme ({ darkAlpha ∷ Number, lightAlpha ∷ Number } → String)
 colourWithDarkLightAlpha =
   hmap
-    ( \x → \{ darkAlpha, lightAlpha } ->
+    ( \x → \{ darkAlpha, lightAlpha } →
         "rgba(var(--rgb-" <> String.drop 2 x <> "),"
           <> " calc("
           <> (show lightAlpha <> " * var(--light-mode)")
@@ -465,7 +479,8 @@ col = colour # mapRecord str
 
 autoSwitchColourTheme ∷ Style
 autoSwitchColourTheme =
-  lightModeStyle <> css { "@media (prefers-color-scheme: dark)": (nested darkModeStyle) }
+  lightModeStyle <> css
+    { "@media (prefers-color-scheme: dark)": (nested darkModeStyle) }
 
 lightModeVariables ∷ Object StyleProperty
 lightModeVariables =
@@ -479,7 +494,7 @@ darkModeVariables =
     # Object.foldMap \k v →
         Object.singleton ("--" <> k) (str (Color.cssStringRGBA v))
 
-lightModeRGBVariables :: Object StyleProperty
+lightModeRGBVariables ∷ Object StyleProperty
 lightModeRGBVariables =
   Object.fromHomogeneous defaultColours.light
     # Object.foldMap \k v →
@@ -492,7 +507,7 @@ lightModeRGBVariables =
     green = show c.g
     blue = show c.b
 
-darkModeRGBVariables :: Object StyleProperty
+darkModeRGBVariables ∷ Object StyleProperty
 darkModeRGBVariables =
   Object.fromHomogeneous defaultColours.dark
     # Object.foldMap \k v →
@@ -551,7 +566,7 @@ type Sizes f =
   , xs ∷ f
   , xxl ∷ f
   , xxs ∷ f
-  , zero :: f
+  , zero ∷ f
   }
 
 size ∷ Sizes String
@@ -603,7 +618,8 @@ boxShadow =
   { s: "0 1px 2px 0 rgba(0,0,0,0.05)"
   , m: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
   , l: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)"
-  , xl: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+  , xl:
+      "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
   , xxl: "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
   , default: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"
   }
@@ -611,7 +627,8 @@ boxShadow =
 fontVariables ∷ { main ∷ String, mono ∷ String } → Style
 fontVariables { main, mono } =
   css
-    { "--main-font": str $ main <> """, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol""""
+    { "--main-font": str $ main <>
+        """, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol""""
     , "--mono-font": str $ mono <> ", monospace, monospace"
     }
 
