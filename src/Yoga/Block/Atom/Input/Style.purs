@@ -4,7 +4,6 @@ import Yoga.Prelude.Style
 
 import Data.Generic.Rep (class Generic)
 import Data.Interpolate (i)
-import Yoga.Block.Container.Style (colour)
 
 data SizeVariant = SizeMedium | SizeSmall | SizeTiny
 
@@ -58,7 +57,6 @@ labelContainer ∷ Style
 labelContainer =
   inlineBlock
     <> positionAbsolute
-    <> overflowVisible
     <> pointerEventsNone
     <> zIndex 2
     <> left 0
@@ -115,19 +113,22 @@ labelSmallFocusBackground =
 
 labelLarge ∷ { left ∷ Number, width ∷ Number } → Style
 labelLarge { left, width } =
-  overflowXHidden <>
-    css
+  overflowXHidden
+    <> textDefault
+    <> fontMedium
+    <> css
       { fontSize: str "calc(var(--input-size-factor) * 15px)"
+      , overflowY: str "visible"
       , padding: _0
       , whiteSpace: nowrap -- force on one line
-      , height: str "calc(var(--s0) * 1.2)"
-      , letterSpacing: em (-0.011)
+      , height: str "var(--s1)"
+      -- , letterSpacing: em (-0.011)
       , maxWidth: str $ i "calc(" width "px - 2ch)"
-      , marginTop: str "calc(10px * var(--input-size-factor))"
+      , marginTop: str
+          "calc(7px - calc(20px * calc(1 - var(--input-size-factor))))"
       , marginLeft: str $ i left "px"
       , marginRight: var "--input-side-padding"
-      , color: str colour.textPaler3
-      , fontWeight: str "400"
+      , color: str colour.textPaler1
       , textOverflow: str "ellipsis"
       , scrollbarWidth: none
       , "&::-webkit-scrollbar": nested $ css

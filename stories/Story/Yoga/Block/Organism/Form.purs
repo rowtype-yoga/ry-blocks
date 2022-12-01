@@ -19,6 +19,7 @@ import Type.Prelude (Proxy(..))
 import Yoga ((/>), (</), (</>))
 import Yoga.Block as Block
 import Yoga.Block.Atom.Input.Hook.UseTypingPlaceholders (useTypingPlaceholders)
+import Yoga.Block.Atom.Input.Style (SizeVariant(..))
 import Yoga.Block.Atom.Input.Types as InputType
 import Yoga.Block.Container.Style as Styles
 import Yoga.Block.Internal (NodeRef)
@@ -145,7 +146,7 @@ form = do
           $ Form.validated (Form.nonEmpty' "You must have a first name")
           $ Form.labelledInputBox
               { label: (nes (Proxy ∷ _ "First Name"))
-              , id: (nes (Proxy ∷ _ "Heinz"))
+              , id: "Heinz"
               }
               Required
               { id: "firstName", inputRef }
@@ -157,6 +158,26 @@ form = do
               )
           $ Form.inputBox (nes (Proxy ∷ _ "Last Name")) Required
               { placeholder: "Last name"
+              }
+      lastName2 ←
+        Form.focus (prop (Proxy ∷ _ "lastName"))
+          $ Form.validated
+              ( Form.nonEmpty'
+                  "I am telling you now for the very last time that you need to make sure Last name is provided to me so I can create a user for you"
+              )
+          $ Form.inputBox (nes (Proxy ∷ _ "gast yame")) Required
+              { placeholder: "Last name"
+              , sizeVariant: SizeSmall
+              }
+      lastName3 ←
+        Form.focus (prop (Proxy ∷ _ "lastName"))
+          $ Form.validated
+              ( Form.nonEmpty'
+                  "I am telling you now for the very last time that you need to make sure Last name is provided to me so I can create a user for you"
+              )
+          $ Form.inputBox (nes (Proxy ∷ _ "gajt yamT")) Required
+              { placeholder: "Last name"
+              , sizeVariant: SizeTiny
               }
       tags ←
         Form.indent "Tags" Neither

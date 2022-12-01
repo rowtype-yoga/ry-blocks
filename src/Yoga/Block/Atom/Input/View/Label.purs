@@ -27,22 +27,24 @@ type Props =
   , labelText ∷ NonEmptyString
   , background ∷ String
   , textColour ∷ String
-  , sizeVariant :: SizeVariant
+  , sizeVariant ∷ SizeVariant
   }
 
 component ∷ ReactComponent Props
 component =
   unsafePerformEffect
-    $ reactComponent "InputLabel" \props@{ inputRef, parentRef } -> React.do
-        maybeOffsets /\ setOffsets <- useState' Nothing
+    $ reactComponent "InputLabel" \props@{ inputRef, parentRef } → React.do
+        maybeOffsets /\ setOffsets ← useState' Nothing
         -- this is so complicated because we need to take scale into account
         useLayoutEffectAlways do
-          inputWidth <- getOffsetWidthFromRef inputRef
-          inputRect <- getBoundingBoxFromRef inputRef
-          parentWidth <- getOffsetWidthFromRef parentRef
-          parentRect <- getBoundingBoxFromRef parentRef
-          case sequenceRecord $ { inputWidth, parentWidth, inputRect, parentRect } of
-            Just p -> do
+          inputWidth ← getOffsetWidthFromRef inputRef
+          inputRect ← getBoundingBoxFromRef inputRef
+          parentWidth ← getOffsetWidthFromRef parentRef
+          parentRect ← getBoundingBoxFromRef parentRef
+          case
+            sequenceRecord $ { inputWidth, parentWidth, inputRect, parentRect }
+            of
+            Just p → do
               let
                 newOffsets =
                   Just
@@ -62,7 +64,7 @@ component =
                         }
               unless (newOffsets == maybeOffsets) do
                 setOffsets newOffsets
-            Nothing -> warn "couldn't get stuff"
+            Nothing → warn "couldn't get stuff"
           mempty
         -- UI
         let
@@ -71,20 +73,25 @@ component =
 
           container = div' </*
             { className: "ry-input-label-container"
-            , style: R.css { "--input-size-factor": props.sizeVariant # sizeVariantToFactor }
+            , style: R.css
+                { "--input-size-factor": props.sizeVariant # sizeVariantToFactor
+                }
             , css: Style.labelContainer
             }
           labelContainer =
             maybeOffsets
               # foldMap case _ of
-                  Nothing ->
+                  Nothing →
                     M.div
                       </*
                         ( { className: "ry-input-label-small"
                           , layout: M.layout true
-                          , layoutId: M.layoutId ("ry-input-label-" <> props.labelId)
-                          , css: Style.labelSmall props.background props.textColour
-                          , transition: M.transition { duration: 0.18, ease: "easeOut" }
+                          , layoutId: M.layoutId
+                              ("ry-input-label-" <> props.labelId)
+                          , css: Style.labelSmall props.background
+                              props.textColour
+                          , transition: M.transition
+                              { duration: 0.18, ease: "easeOut" }
                           , initial: M.initial false
                           } `unsafeAddProps`
                             { "data-has-focus": props.isFocussed
@@ -92,7 +99,7 @@ component =
                             , "data-required": show props.isRequired
                             }
                         )
-                  Just { largeLeft, largeWidth } ->
+                  Just { largeLeft, largeWidth } →
                     M.div
                       </*
                         ( { className:
@@ -101,13 +108,17 @@ component =
                               else
                                 "ry-input-label-small"
                           , layout: M.layout true
-                          , layoutId: M.layoutId ("ry-input-label-" <> props.labelId)
+                          , layoutId: M.layoutId
+                              ("ry-input-label-" <> props.labelId)
                           , css:
                               if props.renderLargeLabel then
-                                Style.labelLarge { left: largeLeft, width: largeWidth }
+                                Style.labelLarge
+                                  { left: largeLeft, width: largeWidth }
                               else
-                                Style.labelSmall props.background props.textColour
-                          , transition: M.transition { duration: 0.18, ease: "easeOut" }
+                                Style.labelSmall props.background
+                                  props.textColour
+                          , transition: M.transition
+                              { duration: 0.18, ease: "easeOut" }
                           , initial: M.initial false
                           } `unsafeAddProps`
                             { "data-has-focus": props.isFocussed

@@ -551,7 +551,6 @@ inputBox label requiredField inputProps =
 
 type ValidatedLabelledInputFixedProps =
   ( value ∷ String
-  , id ∷ NonEmptyString
   , onChange ∷ EventHandler
   , _aria ∷ Object String
   , css ∷ E.Style
@@ -565,7 +564,7 @@ labelledInputBox ∷
   Union p ValidatedLabelledInputFixedProps q ⇒
   Union q r Input.Props ⇒
   Nub q q ⇒
-  { label ∷ NonEmptyString, id ∷ NonEmptyString } →
+  { label ∷ NonEmptyString, id ∷ String } →
   RequiredField →
   Record p →
   FormBuilder
@@ -582,12 +581,14 @@ labelledInputBox { label, id } requiredField inputProps =
   f { readOnly, validationError } s =
     { edit:
         \onChange →
-          Cluster.component </ {} />
+          Cluster.component </ { rowSpace: S.size.xxs } />
             [ R.label'
                 </*
-                  { css: S.width 200 <> S.fontMedium <> S.textSm <> S.textCol'
-                      S.col.textPaler1
-                  , htmlFor: NES.toString id
+                  { css: S.width 200 <> S.fontMedium <> S.textXs
+                      <> S.textCol'
+                        S.col.textPaler1
+                      <> S.pL' S.sizeStyle.xxs
+                  , htmlFor: id
                   }
                 />
                   [ R.text (NES.toString label) ]
@@ -597,7 +598,6 @@ labelledInputBox { label, id } requiredField inputProps =
                       ( inputProps
                           `disjointUnion`
                             { value: s
-                            , id
                             , onChange: handler targetValue
                                 (traverse_ (onChange <<< const))
                             , readOnly: readOnly
