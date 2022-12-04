@@ -23,14 +23,14 @@ import Yoga.Block.Container.Style as Styles
 type PropsF f =
   ( children ∷ Array JSX
   , themeVariant ∷ f (Maybe DarkOrLightMode)
-  , onPreferredSystemThemeChange ∷ f (DarkOrLightMode -> Effect Unit)
-  , globalStyles :: f E.Style
+  , onPreferredSystemThemeChange ∷ f (DarkOrLightMode → Effect Unit)
+  , globalStyles ∷ f E.Style
   )
 
 type Props =
   (| PropsF Id)
 
-component ∷ ∀ p q. Union p q Props => ReactComponent { | p }
+component ∷ ∀ p q. Union p q Props ⇒ ReactComponent { | p }
 component = rawComponent
 
 mkPrefersDark ∷ Effect MediaQueryList
@@ -42,16 +42,17 @@ mkPrefersLight = matchMedia "(prefers-color-scheme: light)" =<< window
 rawComponent ∷ ∀ p. ReactComponent { | p }
 rawComponent =
   mkForwardRefComponent "Container" do
-    \(props@{ children } ∷ { | PropsF OptionalProp }) _ref -> React.do
+    \(props@{ children } ∷ { | PropsF OptionalProp }) _ref → React.do
       let propsThemeVariant = props.themeVariant # opToMaybe # join
-      let notifySystemThemeChanged = props.onPreferredSystemThemeChange ?|| mempty
-      systemThemeVariant /\ setSystemThemeVariant <- React.useState' Nothing
+      let
+        notifySystemThemeChanged = props.onPreferredSystemThemeChange ?|| mempty
+      systemThemeVariant /\ setSystemThemeVariant ← React.useState' Nothing
       useEffect propsThemeVariant do
         for_ propsThemeVariant setDarkOrLightMode
         mempty
       useEffectOnce do
-        prefersDarkMediaQuery <- mkPrefersDark
-        prefersLightMediaQuery <- mkPrefersLight
+        prefersDarkMediaQuery ← mkPrefersDark
+        prefersLightMediaQuery ← mkPrefersLight
         -- Init system preference
         whenM (matches prefersDarkMediaQuery) do
           setSystemThemeVariant (Just DarkMode)
@@ -60,34 +61,39 @@ rawComponent =
           setSystemThemeVariant (Just LightMode)
           notifySystemThemeChanged LightMode
         -- Dark Mode listener
-        darkModeListener <-
-          eventListener \_ -> do
+        darkModeListener ←
+          eventListener \_ → do
             whenM (matches prefersDarkMediaQuery) do
               setSystemThemeVariant (Just DarkMode)
               notifySystemThemeChanged DarkMode
-        addEventListener Event.change darkModeListener true (MediaQueryList.toEventTarget prefersDarkMediaQuery)
+        addEventListener Event.change darkModeListener true
+          (MediaQueryList.toEventTarget prefersDarkMediaQuery)
         -- Light Mode listener
-        lightModeListener <-
-          eventListener \_ -> do
+        lightModeListener ←
+          eventListener \_ → do
             whenM (matches prefersLightMediaQuery) do
               setSystemThemeVariant (Just LightMode)
               notifySystemThemeChanged LightMode
-        addEventListener Event.change darkModeListener true (MediaQueryList.toEventTarget prefersDarkMediaQuery)
-        addEventListener Event.change lightModeListener true (MediaQueryList.toEventTarget prefersLightMediaQuery)
+        addEventListener Event.change darkModeListener true
+          (MediaQueryList.toEventTarget prefersDarkMediaQuery)
+        addEventListener Event.change lightModeListener true
+          (MediaQueryList.toEventTarget prefersLightMediaQuery)
         pure do
-          removeEventListener Event.change darkModeListener true (MediaQueryList.toEventTarget prefersDarkMediaQuery)
-          removeEventListener Event.change lightModeListener true (MediaQueryList.toEventTarget prefersLightMediaQuery)
+          removeEventListener Event.change darkModeListener true
+            (MediaQueryList.toEventTarget prefersDarkMediaQuery)
+          removeEventListener Event.change lightModeListener true
+            (MediaQueryList.toEventTarget prefersLightMediaQuery)
       pure
         $ fragment
         $ Array.cons
             ( element E.global
                 { styles: F.globalStyles <> (_ <>? props.globalStyles)
                     case propsThemeVariant, systemThemeVariant of
-                      Nothing, Nothing -> Styles.global
-                      Just Styles.DarkMode, _ -> Styles.darkMode
-                      Just Styles.LightMode, _ -> Styles.lightMode
-                      Nothing, Just DarkMode -> Styles.darkMode
-                      Nothing, Just LightMode -> Styles.lightMode
+                      Nothing, Nothing → Styles.global
+                      Just Styles.DarkMode, _ → Styles.darkMode
+                      Just Styles.LightMode, _ → Styles.lightMode
+                      Nothing, Just DarkMode → Styles.darkMode
+                      Nothing, Just LightMode → Styles.lightMode
                 }
             )
             children

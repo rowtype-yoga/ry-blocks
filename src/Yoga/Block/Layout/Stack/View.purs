@@ -1,4 +1,10 @@
-module Yoga.Block.Layout.Stack.View (component, Props, PropsNoChildren, PropsNoChildrenF, PropsF) where
+module Yoga.Block.Layout.Stack.View
+  ( component
+  , Props
+  , PropsNoChildren
+  , PropsNoChildrenF
+  , PropsF
+  ) where
 
 import Yoga.Prelude.View
 import Unsafe.Coerce (unsafeCoerce)
@@ -24,13 +30,13 @@ type PropsNoChildren =
 type PropsOptional =
   PropsF OptionalProp
 
-component ∷ ∀ p q. Union p q Props => ReactComponent { children ∷ Array JSX | p }
+component ∷ ∀ p q. Union p q Props ⇒ ReactComponent { children ∷ Array JSX | p }
 component = rawComponent
 
 rawComponent ∷ ∀ p. ReactComponent { | p }
 rawComponent =
   mkForwardRefComponent "Stack" do
-    \(props ∷ { | PropsOptional }) ref -> React.do
+    \(props ∷ { | PropsOptional }) ref → React.do
       -- Must be careful here because React fiddles with children
       let safeChildren = reactChildrenToArray (unsafeCoerce props.children)
       -- Wrapping children to use `:nth-of-type` instead of `:nth-child` 

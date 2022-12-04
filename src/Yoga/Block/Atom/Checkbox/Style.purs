@@ -2,12 +2,12 @@ module Yoga.Block.Atom.Checkbox.Style where
 
 import Yoga.Prelude.Style
 
-type Props :: forall k. (Type -> k) -> Row k -> Row k
+type Props ∷ ∀ k. (Type → k) → Row k → Row k
 type Props f r =
   ( css ∷ f Style
   , size ∷ f Number
-  , stroke :: f String
-  , strokeWidth :: f Number
+  , stroke ∷ f String
+  , strokeWidth ∷ f Number
   | r
   )
 
@@ -27,6 +27,7 @@ checkmark =
           }
       }
 
+checkmarkChecked ∷ Style
 checkmarkChecked =
   block
     <> widthFull
@@ -40,14 +41,23 @@ checkmarkChecked =
           , stroke: str "currentColor"
           , strokeWidth: int 4
           , animation: str
-              "checkmarkAnimation .25s cubic-bezier(0.35, 0, 0.45, 1) forwards"
+              "checkmarkAnimation 0s cubic-bezier(0.35, 0, 0.45, 1) forwards"
           , animationName: keyframes
               { to: css { strokeDashoffset: int 0 } }
-          , animationDelay: str "125ms"
+
           }
       }
 
-checkmarkContainer :: Style
+checkmarkCheckedAnimated ∷ Style
+checkmarkCheckedAnimated = css
+  { animation: str
+      "checkmarkAnimation .25s cubic-bezier(0.35, 0, 0.45, 1) forwards"
+  , animationName: keyframes
+      { to: css { strokeDashoffset: int 0 } }
+  , animationDelay: str "125ms"
+  }
+
+checkmarkContainer ∷ Style
 checkmarkContainer =
   background' col.highlight
     <> textCol' col.highlightText
@@ -62,20 +72,22 @@ checkmarkContainer =
     <> roundness
     <> ignoreClicks
 
-checkmarkContainerChecked :: Style
+checkmarkContainerChecked ∷ Style
 checkmarkContainerChecked =
   css { clipPath: str "circle(100%)" }
 
-checkmarkContainerNotChecked :: Style
+checkmarkContainerNotChecked ∷ Style
 checkmarkContainerNotChecked =
   css { clipPath: str "circle(0%)" }
 
+checkboxBorder ∷ Int
 checkboxBorder = 2
 
+roundness ∷ Style
 roundness =
   roundedDefault
 
-container :: Style
+container ∷ Style
 container =
   width' sizeStyle.l
     <> height' sizeStyle.l
@@ -95,7 +107,9 @@ container =
               <> roundness
               <> css
                 { boxShadow:
-                    str $ "0px 1px 12px 7px " <> colourWithDarkLightAlpha.highlight { darkAlpha: 0.8, lightAlpha: 0.4 }
+                    str $ "0px 1px 12px 7px " <>
+                      colourWithDarkLightAlpha.highlight
+                        { darkAlpha: 0.8, lightAlpha: 0.4 }
                 }
               <> border 1
               <> borderCol' (str $ colourWithAlpha.highlight 0.1)
@@ -110,7 +124,7 @@ container =
           )
       )
 
-checkbox :: Style
+checkbox ∷ Style
 checkbox = (css { appearance: none })
   <> widthFull
   <> heightFull

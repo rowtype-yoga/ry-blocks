@@ -2,6 +2,9 @@ module Yoga.Block.Molecule.Typeahead.Style where
 
 import Yoga.Prelude.Style
 
+import Story.Yoga.Block.Atom.PopOver.Story as PopOverStyle
+import Yoga.Block.Atom.PopOver.Style as PopOverStyle
+
 type Props f r = (| r)
 
 resultsContainer ∷ Style
@@ -27,13 +30,12 @@ resultsContainer =
     <> border 1
     <> borderSolid
     <> borderCol' col.inputBorder
+    <> PopOverStyle.popOverStyle
     <> css { ".TypeaheadList": nested (pXY 0 <> mXY 0) }
 
 resultContainer ∷ Style
 resultContainer =
-  pX 0
-    <> cursorPointer
-    <> overflowHidden
+  (pX 0 <> cursorPointer <> overflowHidden)
 
 item ∷ Style
 item =

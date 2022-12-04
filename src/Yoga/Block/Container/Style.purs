@@ -129,7 +129,8 @@ mkGlobal maybeMode =
               }
               <> variables
               <> fontVariables
-                { main: """"Inter V", "Inter var", Inter"""
+                { main: "Inter, sans-serif"
+                , mainVariable: "'Inter var', sans-serif"
                 , mono:
                     "Jetbrains Mono, Menlo, Consolas, Monaco, Liberation Mono, Lucida Console"
                 }
@@ -220,8 +221,8 @@ defaultColours =
       , highlightDarker: withAlpha 0.15 (Color.darken 0.2 highlight)
       , highlightDisabled: (desaturate 0.60 >>> lighten 0.5) highlight
       , highlightLighter: withAlpha 0.2 (Color.lighten 0.2 highlight)
-      , highlightRotatedBackwards: highlight # rotateHue (-13.0) # darken 0.05
-      , highlightRotatedForwards: highlight # rotateHue 13.0 # darken 0.05 #
+      , highlightRotatedBackwards: highlight # rotateHue (-24.0) # darken 0.05
+      , highlightRotatedForwards: highlight # rotateHue 24.0 # darken 0.05 #
           saturate 0.1
       , highlightText
       , highlightTextOnBackground: highlight # rotateHue 3.0 # darken 0.15 #
@@ -244,10 +245,10 @@ defaultColours =
       , success
       , successText
       , text: text
-      , textPaler1: text # lighten 0.1 # desaturate 0.04
-      , textPaler2: text # lighten 0.2 # desaturate 0.08
-      , textPaler3: text # lighten 0.3 # desaturate 0.12
-      , textPaler4: text # lighten 0.4 # desaturate 0.16
+      , textPaler1: text # lighten 0.05 # desaturate 0.02
+      , textPaler2: text # lighten 0.10 # desaturate 0.04
+      , textPaler3: text # lighten 0.15 # desaturate 0.06
+      , textPaler4: text # lighten 0.20 # desaturate 0.08
       , textInverted: lightBg
       , textInvertedPaler1: textDark # darken 0.1 # desaturate 0.02
       , textInvertedPaler2: textDark # darken 0.2 # desaturate 0.04
@@ -314,9 +315,9 @@ defaultColours =
       , successText
       , text: textDark
       , textPaler1: textDark # darken 0.1 # desaturate 0.02
-      , textPaler2: textDark # darken 0.2 # desaturate 0.04
-      , textPaler3: textDark # darken 0.3 # desaturate 0.06
-      , textPaler4: textDark # darken 0.4 # desaturate 0.08
+      , textPaler2: textDark # darken 0.17 # desaturate 0.04
+      , textPaler3: textDark # darken 0.24 # desaturate 0.06
+      , textPaler4: textDark # darken 0.31 # desaturate 0.08
       , textInverted: darkBg
       , textInvertedPaler1: darkBg # lighten 0.1 # desaturate 0.02
       , textInvertedPaler2: darkBg # lighten 0.2 # desaturate 0.04
@@ -523,7 +524,7 @@ darkModeRGBVariables =
 variables ∷ Style
 variables =
   css
-    { "--ratio": "1.61" # str
+    { "--ratio": "1.618" # str
     , "--line-height": str "var(--ratio)"
     , "--line-height-small": str "calc(var(--ratio) * 0.8)"
     , "--s-6": str "calc(var(--s-5) / var(--ratio))"
@@ -624,11 +625,16 @@ boxShadow =
   , default: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"
   }
 
-fontVariables ∷ { main ∷ String, mono ∷ String } → Style
-fontVariables { main, mono } =
+fontVariables ∷ { main ∷ String, mainVariable ∷ String, mono ∷ String } → Style
+fontVariables { main, mainVariable, mono } =
   css
     { "--main-font": str $ main <>
         """, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol""""
+    , "@supports (font-variation-settings: normal)": nested $
+        css
+          { "--main-font": str $ mainVariable <>
+              """, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol""""
+          }
     , "--mono-font": str $ mono <> ", monospace, monospace"
     }
 

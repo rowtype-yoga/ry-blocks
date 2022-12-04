@@ -23,6 +23,7 @@ import Yoga.Block.Layout.Imposter as Imposter
 import Yoga.Block.Layout.Sidebar as Sidebar
 import Yoga.Block.Layout.Stack as Stack
 import Yoga.Block.Layout.Switcher as Switcher
+import Yoga.Block.Layout.Layers as Layers
 import Yoga.Block.Molecule.Breadcrumbs as Breadcrumbs
 import Yoga.Block.Molecule.Modal as Modal
 import Yoga.Block.Molecule.ReadMore as ReadMore
@@ -156,6 +157,22 @@ layer' = Layer.component
 
 layer ∷ { | Layer.Props } → JSX
 layer = React.element layer'
+
+layers' ∷
+  ∀ p q. Union p q Layers.Props ⇒ ReactComponent { | p }
+layers' = Layers.component
+
+layers ∷
+  ∀ p q.
+  Lacks "children" p ⇒
+  Union p q Layers.PropsNoChildren ⇒
+  { | p } →
+  Array JSX →
+  JSX
+layers = el layers'
+
+layers_ ∷ Array JSX → JSX
+layers_ = layers {}
 
 range ∷ ∀ p q. Union p q Range.Props ⇒ ReactComponent { | p }
 range = Range.component

@@ -28,7 +28,11 @@ rawComponent ∷ ∀ p. ReactComponent { | p }
 rawComponent = mkForwardRefComponent "Checkbox"
   \(props ∷ { | PropsF OptionalProp }) ref → React.do
     checkedBackup /\ setChecked ← React.useState' false
+    hasChanged /\ setHasChanged ← React.useState' false
     let checked = props.checked ?|| checkedBackup
+    useEffect checked do
+      when (not hasChanged) do setHasChanged true
+      mempty
     pure $ div "ry-checkbox-container" Style.container
       [ R.input' </*>
           { className: "ry-checkbox"
@@ -53,8 +57,9 @@ rawComponent = mkForwardRefComponent "Checkbox"
               </*
                 { className: "ry-checkmark"
                 , css: Style.checkmark <>
-                    if checked then
-                      Style.checkmarkChecked
+                    if checked && hasChanged then
+                      Style.checkmarkCheckedAnimated <> Style.checkmarkChecked
+                    else if checked then Style.checkmarkChecked
                     else Style.checkmark
                 , xmlns: "http://www.w3.org/2000/svg"
                 , viewBox: "0 0 52 52"

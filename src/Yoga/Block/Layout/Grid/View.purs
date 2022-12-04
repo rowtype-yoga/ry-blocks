@@ -14,13 +14,14 @@ type Props =
 type PropsOptional =
   PropsF OptionalProp
 
-component ∷ ∀ p p_. Union p p_ Props => ReactComponent { children ∷ Array JSX | p }
+component ∷
+  ∀ p p_. Union p p_ Props ⇒ ReactComponent { children ∷ Array JSX | p }
 component = rawComponent
 
 rawComponent ∷ ∀ p. ReactComponent { | p }
 rawComponent =
   mkForwardRefComponent "Grid" do
-    \(props ∷ { | PropsOptional }) ref -> React.do
+    \(props ∷ { | PropsOptional }) ref → React.do
       pure
         $ emotionDiv ref props
             { className: "ry-grid " <>? props.className

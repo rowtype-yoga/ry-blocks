@@ -402,7 +402,7 @@ mkTypeaheadView
                 scrollBar'
                   { background: col.backgroundBright2
                   , col: col.backgroundBright4
-                  , width: sizeStyle.m
+                  , width: sizeStyle.s
                   , borderRadius: E.px 5
                   , borderWidth: E.px 2
                   }

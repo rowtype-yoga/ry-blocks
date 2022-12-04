@@ -7,6 +7,7 @@ import Yoga.Prelude.Style
 
 import Data.Tuple.Nested ((/\))
 import Effect.Unsafe (unsafePerformEffect)
+import Fahrtwind (text3xl)
 import Fahrtwind as F
 import Fahrtwind as FW
 import React.Basic (JSX, element, fragment)
@@ -104,6 +105,45 @@ leftSidebar = Block.sidebar
               , padding: str "4px 0"
               }
               [ R.text "Sidebar First" ]
+          ]
+      , Block.box
+          { css:
+              border 1
+                <> roundedXl
+                <> transition
+                  "border-color 0.5s ease-in-out, background 0.2s ease-in-out"
+                <> borderCol' (col.backgroundLayer2)
+                <> shadowXl
+                <>
+                  ( hover
+                      ( borderGradient
+                          { borderGradient: linearGradientString' 35
+                              [ colourWithAlpha.highlightRotatedBackwards 0.5
+                              , colourWithAlpha.highlightTextOnBackground 0.8
+                              , colourWithAlpha.highlightTextOnBackground 0.8
+                              , colourWithAlpha.highlightRotatedForwards 0.5
+                              ]
+                          , backgroundGradient: linearGradientString' 0
+                              [ colour.backgroundLayer2
+                              , colour.backgroundLayer2
+                              ]
+                          }
+                      )
+                  )
+          }
+          [ R.text "Hi" ]
+
+      , Block.centre_
+          [ Block.layers
+              { css: text6xl <> hover
+                  ( infiniteSpinAnimation <> css
+                      { transformOrigin: str "center center" }
+                  )
+              }
+
+              [ Block.centre { andText: true } [ Block.box_ [ R.text "O" ] ]
+              , Block.centre { andText: true } [ Block.box_ [ R.text "=" ] ]
+              ]
           ]
       , colBox col.backgroundLayer3 [ R.text "Sidebar Second" ]
       ]

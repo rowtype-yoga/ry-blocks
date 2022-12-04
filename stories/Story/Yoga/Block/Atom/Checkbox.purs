@@ -29,9 +29,9 @@ import Yoga.Block.Container.Style as Styles
 import Yoga.Block.Layout.Types (JustifyContent(..))
 
 type Props =
-  { checked :: UndefinedOr Boolean
-  , id :: String
-  , onChecked :: Boolean -> Effect Unit
+  { checked ∷ UndefinedOr Boolean
+  , id ∷ String
+  , onChecked ∷ Boolean → Effect Unit
   }
 
 default ∷ Meta Props
@@ -40,7 +40,7 @@ default = meta
   , component: pure $ React.element Checkbox.rawComponent
   , tags: [ "docsPage" ]
   , decorators:
-      [ metaDecorator \storyFn ->
+      [ metaDecorator \storyFn →
           R.div_
             [ element E.global { styles: Styles.global }
             , storyFn
@@ -52,9 +52,9 @@ checkbox ∷ Story Props
 checkbox = story args argTypes
   where
   args =
-    { checked: cast undefined :: UndefinedOr Boolean
+    { checked: cast undefined ∷ UndefinedOr Boolean
     , id: "example"
-    , onChecked: LogAction \(x :: Boolean) -> "Checkbox is: " <> show x
+    , onChecked: LogAction \(x ∷ Boolean) → "Checkbox is: " <> show x
     }
 
   argTypes = inferArgTypes args
@@ -64,11 +64,12 @@ checkbox = story args argTypes
 -- # setRequired { buttonType: false }
 -- # setRequired { buttonShape: false }
 
-withLabel :: Effect JSX
+withLabel ∷ Effect JSX
 withLabel = do
   pure $ Block.cluster { space: size.xl, justifyContent: JEvenly }
     [ Block.stack { space: E.str size.m } (toLabelled <$> [ "a", "b", "c" ])
-    , Block.stack { space: E.str size.m } (toReverseLabelled <$> [ "d", "e", "f" ])
+    , Block.stack { space: E.str size.m }
+        (toReverseLabelled <$> [ "d", "e", "f" ])
     ]
   where
   toLabelled x =
