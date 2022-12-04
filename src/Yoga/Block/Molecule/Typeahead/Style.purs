@@ -2,7 +2,6 @@ module Yoga.Block.Molecule.Typeahead.Style where
 
 import Yoga.Prelude.Style
 
-import Story.Yoga.Block.Atom.PopOver.Story as PopOverStyle
 import Yoga.Block.Atom.PopOver.Style as PopOverStyle
 
 type Props f r = (| r)
