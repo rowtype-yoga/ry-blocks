@@ -18,9 +18,12 @@ popOverStyle =
               , colourWithDarkLightAlpha.backgroundInverted
                   { darkAlpha: 0.18, lightAlpha: 0.0 }
               ]
-          , backgroundGradient: linearGradientString' 0
-              [ colourWithAlpha.backgroundBright2 0.99
+          , backgroundGradient: linearGradientString' 45
+              [ colourWithAlpha.backgroundBright2 0.9
+              , colourWithAlpha.backgroundBright2 0.97
               , colourWithAlpha.backgroundBright2 0.99
+              , colourWithAlpha.backgroundBright2 0.97
+              , colourWithAlpha.backgroundBright2 0.9
               ]
           }
       )
