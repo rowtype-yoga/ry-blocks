@@ -39,8 +39,7 @@ resultContainer =
 item ∷ Style
 item =
   focus
-    ( background' col.highlight
-        <> textCol' col.highlightText
+    ( background' (str $ colourWithAlpha.highlight 0.15)
         <> outlineNone
     )
     <> border 0
