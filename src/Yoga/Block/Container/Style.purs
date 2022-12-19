@@ -13,6 +13,7 @@ import Effect.Uncurried (EffectFn2, runEffectFn2)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Heterogeneous.Mapping (class HMapWithIndex, class MappingWithIndex, hmap, hmapWithIndex)
+import MediaQuery (matchMedia, matches)
 import React.Basic.Emotion (Style, StyleProperty, css, nested, none, percent, rem, str)
 import Record.Studio (mapRecord)
 import Type.Proxy (Proxy)
@@ -86,8 +87,11 @@ getDarkOrLightMode =
       DarkMode # pure
     else if pv == "light" then
       LightMode # pure
-    else
-      Nothing # pure # MaybeT
+    else do
+      prefersDarkMediaQuery ← matchMedia "(prefers-color-scheme: dark)" win # lift
+      ifM (matches prefersDarkMediaQuery # lift)
+        (DarkMode # pure)
+        (LightMode # pure)
 
 setDarkOrLightMode ∷ DarkOrLightMode → Effect Unit
 setDarkOrLightMode desiredMode =

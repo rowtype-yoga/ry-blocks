@@ -3,7 +3,7 @@ module Yoga.Block.Atom.Toggle.Style where
 import Yoga.Prelude.Style
 import Yoga.Block.Container.Style (colour)
 
-type Props :: forall k. (Type -> k) -> Row k -> Row k
+type Props ∷ ∀ k. (Type → k) → Row k → Row k
 type Props f r =
   ( css ∷ f Style
   , backgroundLeft ∷ f Color
@@ -39,7 +39,7 @@ theToggle =
   css
     { width: str "calc(var(--s2) * 0.85)"
     , height: str "calc(var(--s2) * 0.85)"
-    , background: str $ "white"
+    , background: col.backgroundLayer5
     , border: none
     , borderRadius: str $ "calc(var(--s2) / 2)"
     , position: absolute

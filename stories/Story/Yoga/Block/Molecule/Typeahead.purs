@@ -21,6 +21,7 @@ import Storybook (Meta, meta, metaDecorator)
 import Storybook.Addon.Actions (action)
 import Type.Proxy (Proxy(..))
 import Yoga ((</*>))
+import React.Basic.Hooks as React
 import Yoga.Block as Block
 import Yoga.Block.Container.Style (sizeStyle)
 import Yoga.Block.Container.Style as Styles
@@ -61,30 +62,33 @@ typeahead = do
       { suggestionToText: identity
       , contextMenuLayerId: "ctx-menu"
       } # mkTypeahead
-  pure $ React.element ta
-    { onSelected: \s → do
-        pure { overrideInputValue: Nothing, dismiss: true }
-    , onRemoved: action "Removed"
-    , renderSuggestion: \s →
-        Block.box
-          { padding: sizeStyle.s
-          , css: FW.textSm
+  (_ $ unit) <$> React.component "TypeaheadStory" \_ → React.do
+    controlsRef ← React.useRef mempty
+    pure $ React.element ta
+      { onSelected: \s → do
+          pure { overrideInputValue: Nothing, dismiss: true }
+      , onRemoved: action "Removed"
+      , controlsRef
+      , renderSuggestion: \s →
+          Block.box
+            { padding: sizeStyle.s
+            , css: FW.textSm
+            }
+            [ R.text s ]
+      , loadSuggestions: \s →
+          pure $ pure $ Array.filter (String.contains (String.Pattern s))
+            [ "aardvark"
+            , "about"
+            , "after"
+            , "among"
+            , "again"
+            , "above"
+            , "along"
+            , "alone"
+            ]
+      , onDismiss: action "dismissed" unit
+      , inputProps: inputProps
+          { placeholder: "Heinz..."
+          , label: nes (Proxy ∷ _ "Test Typeahead")
           }
-          [ R.text s ]
-    , loadSuggestions: \s →
-        pure $ pure $ Array.filter (String.contains (String.Pattern s))
-          [ "aardvark"
-          , "about"
-          , "after"
-          , "among"
-          , "again"
-          , "above"
-          , "along"
-          , "alone"
-          ]
-    , onDismiss: action "dismissed" unit
-    , inputProps: inputProps
-        { placeholder: "Heinz..."
-        , label: nes (Proxy ∷ _ "Test Typeahead")
-        }
-    }
+      }

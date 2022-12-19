@@ -1,13 +1,19 @@
-module Story.Yoga.Block.Atom.Toggle where
+module Story.Yoga.Block.Atom.Toggle (default, toggle) where
 
 import Prelude
+
 import Color as Color
 import Data.Maybe (Maybe(..))
 import Data.Tuple.Nested ((/\))
+import Debug (spy)
 import Effect (Effect)
+import MediaQuery (matchMedia, matches)
+import MediaQuery.Types (MediaQueryList)
 import React.Basic (JSX, element, fragment)
 import React.Basic.DOM as R
 import React.Basic.Hooks as React
+import Storybook.Addon.Actions (action)
+import Web.HTML (window)
 import Yoga ((/>), (</))
 import Yoga.Block as Block
 import Yoga.Block.Atom.Toggle as Toggle
@@ -41,9 +47,12 @@ toggle = do
             , ariaLabel: "dark-light-toggle"
             }
 
-  mkDarkLightToggle =
+  mkDarkLightToggle = do
+    prefersDarkMediaQuery ← mkPrefersDark
+    prefersDark ← matches prefersDarkMediaQuery
     React.reactComponent "Toggle dark night example" \_p → React.do
-      togglePosition /\ setTogglePosition ← React.useState' ToggleIsLeft
+      togglePosition /\ setTogglePosition ← React.useState'
+        (if prefersDark then ToggleIsRight else ToggleIsLeft)
       theme /\ setTheme ← React.useState' Nothing
       let
         content =
@@ -56,14 +65,24 @@ toggle = do
                   setTheme case newTogglePosition of
                     ToggleIsRight → Just DarkMode
                     ToggleIsLeft → Just LightMode
-            , left: R.text "🌒"
+            , left: R.text "🌜"
             , right: R.text "🌞"
             , backgroundLeft:
                 Color.hsl 205.0 1.0 0.83
             , backgroundRight:
-                Color.hsl 260.0 0.7 0.45
+                Color.hsl 240.0 0.7 0.64
             }
       pure
         $ Block.container
             </ { themeVariant: theme }
-            /> [ content ]
+            />
+              [ content
+              , element Toggle.component
+                  { value: togglePosition
+                  , onChange: setTogglePosition
+                  , ariaLabel: "dark-light-toggle"
+                  }
+              ]
+
+mkPrefersDark ∷ Effect MediaQueryList
+mkPrefersDark = matchMedia "(prefers-color-scheme: dark)" =<< window

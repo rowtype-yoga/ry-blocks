@@ -83,10 +83,10 @@ rawComponent =
             (MediaQueryList.toEventTarget prefersDarkMediaQuery)
           removeEventListener Event.change lightModeListener true
             (MediaQueryList.toEventTarget prefersLightMediaQuery)
+
       pure
         $ fragment
-        $ Array.cons
-            ( element E.global
+            [ element E.global
                 { styles: F.globalStyles <> (_ <>? props.globalStyles)
                     case propsThemeVariant, systemThemeVariant of
                       Nothing, Nothing → Styles.global
@@ -95,5 +95,23 @@ rawComponent =
                       Nothing, Just DarkMode → Styles.darkMode
                       Nothing, Just LightMode → Styles.lightMode
                 }
-            )
-            children
+            , R.div'
+                </
+                  { id: "ry-block-container"
+                  , style: R.css
+                      { "--theme-variant":
+                          case systemThemeVariant of
+                            Just DarkMode → "dark"
+                            _ → "light"
+                      , "--light-mode":
+                          case systemThemeVariant of
+                            Just DarkMode → 0
+                            _ → 1
+                      , "--dark-mode":
+                          case systemThemeVariant of
+                            Just DarkMode → 1
+                            _ → 0
+                      }
+                  }
+                /> children
+            ]

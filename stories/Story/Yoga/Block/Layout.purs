@@ -24,7 +24,7 @@ import Yoga.Block.Layout.Types (AlignItems(..), JustifyContent(..))
 default ∷ Meta {}
 default = meta
   { title: "layout"
-  , component: mempty
+  , component: pure (\_ → mempty ∷ JSX)
   , decorators:
       [ metaDecorator \storyFn →
           fragment
