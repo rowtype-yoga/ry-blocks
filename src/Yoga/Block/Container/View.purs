@@ -96,8 +96,9 @@ rawComponent =
                       Nothing, Just LightMode → Styles.lightMode
                 }
             , R.div'
-                </
+                </*
                   { id: "ry-block-container"
+                  , css: Styles.containerStyle
                   , style: R.css
                       { "--theme-variant":
                           case systemThemeVariant of
