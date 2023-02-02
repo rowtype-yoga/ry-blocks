@@ -98,6 +98,7 @@ cluster_ = cluster {}
 container ∷ ∀ p q. Union p q Container.Props ⇒ ReactComponent { | p }
 container = Container.component
 
+-- component 
 cover' ∷ ∀ p q. Union p q Cover.Props ⇒ ReactComponent { | p }
 cover' = Cover.component
 

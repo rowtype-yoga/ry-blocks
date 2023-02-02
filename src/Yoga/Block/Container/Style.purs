@@ -10,6 +10,7 @@ import Data.String as String
 import Data.Symbol (class IsSymbol, reflectSymbol)
 import Effect (Effect)
 import Effect.Uncurried (EffectFn2, runEffectFn2)
+import Fahrtwind (heightFull, widthFull)
 import Foreign.Object (Object)
 import Foreign.Object as Object
 import Heterogeneous.Mapping (class HMapWithIndex, class MappingWithIndex, hmap, hmapWithIndex)
@@ -23,6 +24,9 @@ import Web.DOM.Document (documentElement)
 import Web.HTML (Window, window)
 import Web.HTML.HTMLDocument as HTMLDocument
 import Web.HTML.Window (document)
+
+containerStyle ∷ Style
+containerStyle = widthFull <> heightFull
 
 data DarkOrLightMode
   = DarkMode
@@ -88,7 +92,8 @@ getDarkOrLightMode =
     else if pv == "light" then
       LightMode # pure
     else do
-      prefersDarkMediaQuery ← matchMedia "(prefers-color-scheme: dark)" win # lift
+      prefersDarkMediaQuery ← matchMedia "(prefers-color-scheme: dark)" win #
+        lift
       ifM (matches prefersDarkMediaQuery # lift)
         (DarkMode # pure)
         (LightMode # pure)

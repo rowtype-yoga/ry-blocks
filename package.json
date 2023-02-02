@@ -56,11 +56,13 @@
     "@react-aria/utils": "^3.14.1",
     "downshift": "^6.1.7",
     "framer-motion": "^6.3.3",
+    "purescript": "^0.15.7",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-intersection-observer": "^9.1.0",
     "react-popper": "^2.3.0",
     "react-syntax-highlighter": "^15.5.0",
-    "react-virtuoso": "^3.1.4"
+    "react-virtuoso": "^3.1.4",
+    "spago": "^0.20.9"
   }
 }
