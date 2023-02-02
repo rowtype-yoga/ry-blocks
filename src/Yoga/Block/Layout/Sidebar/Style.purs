@@ -10,10 +10,11 @@ data SidebarSide
 
 derive instance Eq SidebarSide
 
-type Props :: forall k. (Type -> k) -> Row k -> Row k
+type Props ∷ ∀ k. (Type → k) → Row k → Row k
 type Props f r =
   ( css ∷ f Style
-  , sideBarCss :: f Style
+  , sideBarCss ∷ f Style
+  , notSideBarCss ∷ f Style
   , space ∷ f String
   , side ∷ f SidebarSide
   , sideWidth ∷ f String
@@ -23,10 +24,10 @@ type Props f r =
   | r
   )
 
-sidebarContainer ∷ ∀ p. { | Props OptionalProp p } -> Style
+sidebarContainer ∷ ∀ p. { | Props OptionalProp p } → Style
 sidebarContainer props = styles <>? props.css
   where
-  adjustedSpace = props.space <#> \s -> if s == "0" then "0px" else s
+  adjustedSpace = props.space <#> \s → if s == "0" then "0px" else s
   space = adjustedSpace ?|| "1rem"
   styles =
     css
@@ -38,7 +39,7 @@ sidebarContainer props = styles <>? props.css
 sidebar ∷ Style
 sidebar = css { flexBasis: 20.0 # rem, flexGrow: int 1 }
 
-notSidebar ∷ ∀ p. { | Props OptionalProp p } -> Style
+notSidebar ∷ ∀ p. { | Props OptionalProp p } → Style
 notSidebar props = css
   { flexBasis: int 0
   , flexGrow: int 999

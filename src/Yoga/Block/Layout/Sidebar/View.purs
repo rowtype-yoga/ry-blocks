@@ -20,13 +20,16 @@ type Props =
 type PropsOptional =
   PropsF OptionalProp
 
-component ∷ ∀ p p_. Union p p_ Props => ReactComponent { sidebar ∷ JSX, children ∷ Array JSX | p }
+component ∷
+  ∀ p p_.
+  Union p p_ Props ⇒
+  ReactComponent { sidebar ∷ JSX, children ∷ Array JSX | p }
 component = rawComponent
 
 rawComponent ∷ ∀ p. ReactComponent { | p }
 rawComponent =
   mkForwardRefComponent "Sidebar" do
-    \(props ∷ { | PropsOptional }) ref -> React.do
+    \(props ∷ { | PropsOptional }) ref → React.do
       let
         flipChildren =
           if (props.side ?|| SidebarLeft) == SidebarRight then
@@ -42,12 +45,12 @@ rawComponent =
                 flipChildren
                   [ Emotion.element aside'
                       { className: "ry-sidebar__sidebar"
-                      , css: Style.sidebar
+                      , css: Style.sidebar <>? props.sideBarCss
                       , children: [ props.sidebar ]
                       }
                   , Emotion.element div'
                       { className: "ry-sidebar__not-sidebar"
-                      , css: Style.notSidebar props
+                      , css: Style.notSidebar props <>? props.notSideBarCss
                       , children: props.children
                       }
                   ]
