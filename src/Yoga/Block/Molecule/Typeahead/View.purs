@@ -232,7 +232,8 @@ mkTypeaheadView
     isScrolling /\ setIsScrolling ← React.useState' false
     isAnimating /\ setIsAnimating ← React.useState' false
     inputContainerRef ← React.useRef null
-    inputRef ← React.useRef null
+    backupInputRef ← React.useRef null
+    let inputRef = inputProps.ref ?|| backupInputRef
     virtuosoRef ← React.useRef null
     width /\ setWidth ← React.useState' 210.0
 
