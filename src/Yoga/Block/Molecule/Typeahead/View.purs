@@ -6,6 +6,7 @@ import Data.Array ((!!))
 import Data.Array as Array
 import Data.Function.Uncurried (mkFn3)
 import Data.Time.Duration (Milliseconds(..))
+import Debug (spy)
 import Effect.Aff (Aff, attempt, delay)
 import Effect.Exception (Error)
 import Effect.Uncurried (mkEffectFn1, runEffectFn1)
@@ -231,11 +232,10 @@ mkTypeaheadView
     popupHasFocus /\ setPopupHasFocus ← React.useState' false
     isScrolling /\ setIsScrolling ← React.useState' false
     isAnimating /\ setIsAnimating ← React.useState' false
-    inputContainerRef ← React.useRef null
+    backupInputContainerRef ← React.useRef null
     backupInputRef ← React.useRef null
-    let
-      inputRef = (inputProps.ref ∷ OptionalProp NodeRef) # opToMaybe # fromMaybe
-        backupInputRef
+    let inputContainerRef = inputProps.ref ?|| backupInputContainerRef
+    let inputRef = inputProps.inputRef ?|| backupInputRef
     virtuosoRef ← React.useRef null
     width /\ setWidth ← React.useState' 210.0
 
