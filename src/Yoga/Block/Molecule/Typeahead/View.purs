@@ -233,7 +233,7 @@ mkTypeaheadView
     isAnimating /\ setIsAnimating ← React.useState' false
     inputContainerRef ← React.useRef null
     backupInputRef ← React.useRef null
-    let inputRef = inputProps.ref ?|| backupInputRef
+    let inputRef = inputProps.ref # uorToMaybe # fromMaybe backupInputRef
     virtuosoRef ← React.useRef null
     width /\ setWidth ← React.useState' 210.0
 
