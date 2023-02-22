@@ -9,6 +9,7 @@ import Yoga.Block.Container.Style (col, colour)
 type Props :: forall k. (Type -> k) -> Row k -> Row k
 type Props f r =
   ( css ∷ f Style
+  , clickawayBackground ∷ f StyleProperty
   | r
   )
 
@@ -41,8 +42,7 @@ sheetContent = styles
 
 sheetBody :: Style
 sheetBody =
-  maxHeight' (vh 67.7)
-    <> overflowYScroll
+  overflowYScroll
     <> scrollBar'
       { background: col.backgroundLayer4
       , col: col.textPaler3
@@ -51,8 +51,8 @@ sheetBody =
       , borderWidth: str "var(--s-3)"
       }
 
-clickaway ∷ Style
-clickaway =
+clickaway ∷ forall r. { | Props OptionalProp r } -> Style
+clickaway { clickawayBackground } =
   css
     { width: 100.0 # vw
     , height: 100.0 # vh
@@ -60,6 +60,6 @@ clickaway =
     , left: _0
     , top: _0
     , pointerEvents: auto
-    , backdropFilter: str "blur(4px) brightness(80%)"
+    , backdropFilter: clickawayBackground ?|| str "blur(4px) brightness(80%)"
     , zIndex: str "3"
     }

@@ -28,6 +28,7 @@ import Yoga.Block.Molecule.Breadcrumbs as Breadcrumbs
 import Yoga.Block.Molecule.Modal as Modal
 import Yoga.Block.Molecule.ReadMore as ReadMore
 import Yoga.Block.Quark.Layer as Layer
+import Yoga.Block.Molecule.Sheet as Sheet
 
 box' ∷ ∀ p q. Union p q Box.Props ⇒ ReactComponent { | p }
 box' = Box.component
@@ -138,8 +139,11 @@ grid_ = grid {}
 icon ∷ ∀ p q. Union p q Icon.Props ⇒ ReactComponent { | Icon.MandatoryProps p }
 icon = Icon.component
 
-input ∷ ∀ p q. Union p q Input.Props ⇒ ReactComponent { | p }
-input = Input.component
+input' ∷ ∀ p q. Union p q Input.Props ⇒ ReactComponent { | p }
+input' = Input.component
+
+input ∷ ∀ p q. Union p q Input.Props ⇒  { | p } → JSX
+input = React.element input'
 
 image ∷ ∀ p q. Union p q Image.Props ⇒ { | p } → JSX
 image = React.element Image.component
@@ -189,6 +193,18 @@ segmented' = Segmented.component
 
 segmented ∷ Segmented.Props → JSX
 segmented = React.element Segmented.component
+
+sheet' ∷ ∀ p q. Union p q Sheet.Props ⇒ ReactComponent { | p }
+sheet' = Sheet.component
+
+sheet ∷
+  ∀ p q.
+  Lacks "children" p ⇒
+  Union p q Sheet.PropsNoChildren ⇒
+  { | p } →
+  Array JSX →
+  JSX
+sheet = el sheet'
 
 sidebar' ∷
   ∀ p q.

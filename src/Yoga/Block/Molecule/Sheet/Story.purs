@@ -79,7 +79,7 @@ sheet = do
                               [ R.text "No" ]
                           ]
 
-                    , content: R.p_ [ R.text text ]
+                    , children: [ R.p_ [ R.text text ] ]
                     , isOpen
                     , onDismiss:
                         do
