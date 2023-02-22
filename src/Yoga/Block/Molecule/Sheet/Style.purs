@@ -18,7 +18,7 @@ sheet = styles
   where
   styles =
     css
-      { zIndex: str "3"
+      { zIndex: str "4"
       , position: fixed
       , left: str "0"
       , pointerEvents: auto
