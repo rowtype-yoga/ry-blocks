@@ -523,11 +523,11 @@ inputBox label requiredField inputProps =
                         , trailing:
                             case validationError of
                               Nothing → mempty
-                              Just (Just _) → Block.icon </>
+                              Just (Just _) → Block.icon' </>
                                 { icon: Icons.warn
                                 , stroke: E.str colour.invalid
                                 }
-                              Just Nothing → Block.icon </>
+                              Just Nothing → Block.icon' </>
                                 { icon: Icons.checkmark
                                 , stroke: E.str colour.success
                                 }
@@ -605,11 +605,11 @@ labelledInputBox { label, id } requiredField inputProps =
                             , trailing:
                                 case validationError of
                                   Nothing → mempty
-                                  Just (Just _) → Block.icon </>
+                                  Just (Just _) → Block.icon' </>
                                     { icon: Icons.warn
                                     , stroke: E.str colour.invalid
                                     }
-                                  Just Nothing → Block.icon </>
+                                  Just Nothing → Block.icon' </>
                                     { icon: Icons.checkmark
                                     , stroke: E.str colour.success
                                     }
@@ -960,7 +960,7 @@ itemComponent =
                         , cursor: E.str "grab"
                         }
                 }
-            dragIcon = Block.icon </>
+            dragIcon = Block.icon' </>
               { icon: Icons.draggableIndicator
               , size: E.str "var(--s1)"
               , colour: E.str colour.text
@@ -977,7 +977,7 @@ itemComponent =
                       }
               , onClick: handler_ (setShowMenu (not showMenu))
               }
-            menuIcon = Block.icon </>
+            menuIcon = Block.icon' </>
               { icon: Icons.ellipsis
               , size: E.str "var(--s1)"
               , colour: E.str colour.text

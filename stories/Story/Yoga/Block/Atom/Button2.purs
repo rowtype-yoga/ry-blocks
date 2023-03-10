@@ -81,7 +81,7 @@ button = do
             , R.h2_ [ R.text "Icon button" ]
             , Block.cluster { space: "var(--s-1)" }
                 [ Block.button {}
-                    [ Block.icon </>
+                    [ Block.icon' </>
                         { icon: Icon.questionMark
                         , size: str "var(--s2)"
                         , colour: str colour.highlight

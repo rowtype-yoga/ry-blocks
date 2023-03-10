@@ -80,7 +80,7 @@ modal = (_ $ unit) <$> React.component "ModalExample" \_ → React.do
       [ Block.stack { splitAfter: 2 }
           [ Block.cluster { space: "0", justifyContent: JBetween }
               [ R.h2' </* { css: textXl <> mXY 0 } /> [ R.text "Skandal!" ]
-              , Block.icon </> { icon: SVGIcon.cross }
+              , Block.icon' </> { icon: SVGIcon.cross }
               ]
           , R.p_
               [ R.text "This is the content of the modal it has a lot of text"
