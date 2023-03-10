@@ -36,8 +36,9 @@ sidebarContainer props = styles <>? props.css
       , gap: str space
       }
 
-sidebar ∷ Style
-sidebar = css { flexBasis: 20.0 # rem, flexGrow: int 1 }
+sidebar ∷ ∀ p. { | Props OptionalProp p } → Style
+sidebar props = css { flexBasis: str (props.sideWidth ?|| "20rem"), flexGrow: int 1 }
+  <>? props.sideBarCss
 
 notSidebar ∷ ∀ p. { | Props OptionalProp p } → Style
 notSidebar props = css

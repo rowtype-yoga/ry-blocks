@@ -45,7 +45,7 @@ rawComponent =
                 flipChildren
                   [ Emotion.element aside'
                       { className: "ry-sidebar__sidebar"
-                      , css: Style.sidebar <>? props.sideBarCss
+                      , css: Style.sidebar props
                       , children: [ props.sidebar ]
                       }
                   , Emotion.element div'

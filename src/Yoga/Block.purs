@@ -136,8 +136,8 @@ grid = el grid'
 grid_ ∷ Array JSX → JSX
 grid_ = grid {}
 
-icon ∷ ∀ p q. Union p q Icon.Props ⇒ ReactComponent { | Icon.MandatoryProps p }
-icon = Icon.component
+icon' ∷ ∀ p q. Union p q Icon.Props ⇒ ReactComponent { | Icon.MandatoryProps p }
+icon' = Icon.component
 
 input' ∷ ∀ p q. Union p q Input.Props ⇒ ReactComponent { | p }
 input' = Input.component
