@@ -328,6 +328,8 @@ mkTypeaheadView
                 , Placement Above End
                 , Placement Above Centre
                 , Placement Above Start
+                , Placement RightOf Centre
+                , Placement LeftOf Centre
                 ]
             , placementRef: inputContainerRef
             , dismissBehaviourʔ: Nothing
