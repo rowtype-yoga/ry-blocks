@@ -67,18 +67,18 @@ newtype UseOnResize hooks = UseOnResize
 
 derive instance ntUseOnResize ∷ Newtype (UseOnResize hooks) _
 
-useOnResize
-  ∷ ∀ d
-  . Duration d
-  ⇒ d
-  → ( { innerWidth ∷ Number
-      , innerHeight ∷ Number
-      , deltaWidth ∷ Number
-      , deltaHeight ∷ Number
-      }
-      → Effect Unit
-    )
-  → Hook UseOnResize Unit
+useOnResize ∷
+  ∀ d.
+  Duration d ⇒
+  d →
+  ( { innerWidth ∷ Number
+    , innerHeight ∷ Number
+    , deltaWidth ∷ Number
+    , deltaHeight ∷ Number
+    } →
+    Effect Unit
+  ) →
+  Hook UseOnResize Unit
 useOnResize debounceBy callback =
   coerceHook React.do
     fiberRef ← React.useRef Nothing

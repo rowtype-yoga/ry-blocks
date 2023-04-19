@@ -19,8 +19,8 @@ type Args =
   , renderNotifications ∷ Array (NotificationId /\ JSX) → JSX
   }
 
-mkNotificationCentreView
-  ∷ NotificationCentre → Args → Effect JSX
+mkNotificationCentreView ∷
+  NotificationCentre → Args → Effect JSX
 mkNotificationCentreView
   (NotificationCentre { subscribe })
   { containerId, renderNotifications } =
@@ -91,9 +91,9 @@ notificationDismissButton dismiss = R.button'
     }
   /> [ Heroicons.cross ]
 
-autoHideNotification
-  ∷ { autoHideAfter ∷ Milliseconds, body ∷ JSX, title ∷ String }
-  → Notification
+autoHideNotification ∷
+  { autoHideAfter ∷ Milliseconds, body ∷ JSX, title ∷ String } →
+  Notification
 autoHideNotification { autoHideAfter, title, body } =
   { render: \{ dismiss } →
       R.div'
@@ -105,8 +105,9 @@ autoHideNotification { autoHideAfter, title, body } =
               </*
                 { css: defaultAutoHideNotificationBackgroundStyle
                 , style: R.css
-                    { "--auto-hide-duration": show (un Milliseconds autoHideAfter)
-                        <> "ms"
+                    { "--auto-hide-duration":
+                        show (un Milliseconds autoHideAfter)
+                          <> "ms"
                     }
                 }
               /> []

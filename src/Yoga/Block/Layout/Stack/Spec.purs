@@ -12,11 +12,11 @@ spec =
         void
           $ renderComponent Stack.component { children: [] }
       it "accepts div props" do
-        { findByText } <-
+        { findByText } ←
           renderComponent Stack.component
             { role: "Heinz"
             , children: [ R.text "Find me!" ]
             }
-        elem <- findByText "Find me!"
-        parent <- elem # getParentOrFailWith "No parent!"
+        elem ← findByText "Find me!"
+        parent ← elem # getParentOrFailWith "No parent!"
         parent `shouldHaveAttribute` "role"

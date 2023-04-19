@@ -12,6 +12,7 @@ spec =
         void $ renderComponent Container.component {}
       it "displays its children" do
         let content = R.text "Test Text"
-        { findByText } <- renderComponent Container.component { children: [ content ] }
-        elem <- findByText "Test Text"
+        { findByText } ← renderComponent Container.component
+          { children: [ content ] }
+        elem ← findByText "Test Text"
         elem `textContentShouldEqual` "Test Text"

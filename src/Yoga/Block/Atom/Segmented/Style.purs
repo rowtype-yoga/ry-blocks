@@ -4,7 +4,7 @@ import Yoga.Prelude.Style
 import Data.Interpolate (i)
 import Yoga.Block.Container.Style (colour)
 
-type Props :: forall k. (Type -> k) -> Row k -> Row k
+type Props ∷ ∀ k. (Type → k) → Row k → Row k
 type Props f r =
   ( css ∷ f Style
   | r
@@ -65,7 +65,7 @@ activeElement =
       , zIndex: str "3"
       }
 
-button ∷ { isFirst ∷ Boolean, isLast ∷ Boolean } -> Style
+button ∷ { isFirst ∷ Boolean, isLast ∷ Boolean } → Style
 button _ =
   css
     { background: color transparent
@@ -89,7 +89,7 @@ button _ =
     , userSelect: none
     }
 
-buttonContent ∷ { isFirst ∷ Boolean, isLast ∷ Boolean } -> Style
+buttonContent ∷ { isFirst ∷ Boolean, isLast ∷ Boolean } → Style
 buttonContent { isFirst, isLast } =
   flex <>
     css

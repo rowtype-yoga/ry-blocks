@@ -13,14 +13,14 @@ import React.Basic.Emotion as E
 import Yoga.Block.Container.Style as Styles
 import Yoga.Block.Layout.Centre as Centre
 
-default
-  ∷ { decorators ∷ Array (Effect JSX -> JSX)
-    , title ∷ String
-    }
+default ∷
+  { decorators ∷ Array (Effect JSX → JSX)
+  , title ∷ String
+  }
 default =
   { title: "Layout/Centre"
   , decorators:
-      [ \storyFn ->
+      [ \storyFn →
           R.div
             { children:
                 [ element E.global { styles: Styles.global }
@@ -42,17 +42,24 @@ centre =
         , element Centre.component
             { children: [ R.text "Default" ]
             , style:
-                css { backgroundColor: cssStringRGBA F.orange._500, color: "black" }
+                css
+                  { backgroundColor: cssStringRGBA F.orange._500
+                  , color: "black"
+                  }
             }
         , element Centre.component
             { children: [ R.text "Text Centred" ]
             , style:
-                css { backgroundColor: cssStringRGBA F.violet._500, color: "white" }
+                css
+                  { backgroundColor: cssStringRGBA F.violet._500
+                  , color: "white"
+                  }
             , andText: true
             }
         , element Centre.component
             { children: [ R.text "With gutters" ]
-            , style: css { backgroundColor: cssStringRGBA F.pink._700, color: "white" }
+            , style: css
+                { backgroundColor: cssStringRGBA F.pink._700, color: "white" }
             , gutters: 3.0 # E.em
             }
         , E.element Centre.component

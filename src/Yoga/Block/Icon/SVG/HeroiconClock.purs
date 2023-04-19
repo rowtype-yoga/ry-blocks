@@ -3,7 +3,7 @@ module Yoga.Block.Icon.SVG.HeroiconClock where
 import React.Basic (JSX)
 import React.Basic.DOM.SVG as SVG
 
-heroiconClock :: JSX
+heroiconClock ∷ JSX
 heroiconClock = SVG.svg
   { xmlns: "http://www.w3.org/2000/svg"
   , className: "h-6 w-6"

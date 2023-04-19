@@ -142,7 +142,7 @@ icon' = Icon.component
 input' ∷ ∀ p q. Union p q Input.Props ⇒ ReactComponent { | p }
 input' = Input.component
 
-input ∷ ∀ p q. Union p q Input.Props ⇒  { | p } → JSX
+input ∷ ∀ p q. Union p q Input.Props ⇒ { | p } → JSX
 input = React.element input'
 
 image ∷ ∀ p q. Union p q Image.Props ⇒ { | p } → JSX

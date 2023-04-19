@@ -1,4 +1,10 @@
-module Yoga.Block.Layout.Box.View (component, Props, PropsNoChildren, PropsNoChildrenF, PropsF) where
+module Yoga.Block.Layout.Box.View
+  ( component
+  , Props
+  , PropsNoChildren
+  , PropsNoChildrenF
+  , PropsF
+  ) where
 
 import Yoga.Prelude.View
 import Yoga.Block.Internal (DivPropsNoChildren)
@@ -23,13 +29,13 @@ type PropsNoChildren =
 type PropsOptional =
   PropsF OptionalProp
 
-component ∷ ∀ p p_. Union p p_ Props => ReactComponent { | p }
+component ∷ ∀ p p_. Union p p_ Props ⇒ ReactComponent { | p }
 component = rawComponent
 
 rawComponent ∷ ∀ p. ReactComponent { | p }
 rawComponent =
   mkForwardRefComponent "Box" do
-    \(props ∷ { | PropsOptional }) ref -> React.do
+    \(props ∷ { | PropsOptional }) ref → React.do
       pure
         $ emotionDiv
             ref

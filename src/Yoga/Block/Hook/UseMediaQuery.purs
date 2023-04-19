@@ -18,17 +18,17 @@ newtype UseMediaQuery hooks = UseMediaQuery
 
 derive instance Newtype (UseMediaQuery hooks) _
 
-useMediaQuery :: String -> Hook UseMediaQuery Boolean
+useMediaQuery ∷ String → Hook UseMediaQuery Boolean
 useMediaQuery query = coerceHook React.do
   let check = window >>= matchMedia query >>= matches
 
-  queryMatches /\ setMatches <-
+  queryMatches /\ setMatches ←
     React.useState' (unsafePerformEffect check)
 
   React.useEffect query do
-    queryList <- window >>= matchMedia query
+    queryList ← window >>= matchMedia query
     let target = MQL.toEventTarget queryList
-    listener <- eventListener (const (check >>= setMatches))
+    listener ← eventListener (const (check >>= setMatches))
     addEventListener Event.change listener true target
     pure do
       removeEventListener Event.change listener true target

@@ -85,14 +85,14 @@ mkDatePickerView = do
       Just s → renderDate ({ dispatch } `disjointUnion` s)
       Nothing → mempty
 
-renderDate
-  ∷ { dispatch ∷ Action → Effect Unit
-    , currentDate ∷ Date
-    , selectedDateʔ ∷ Maybe Date
-    , showingMonth ∷ Month /\ Year
-    , transitioningʔ ∷ Maybe TransitionDirection
-    }
-  → JSX
+renderDate ∷
+  { dispatch ∷ Action → Effect Unit
+  , currentDate ∷ Date
+  , selectedDateʔ ∷ Maybe Date
+  , showingMonth ∷ Month /\ Year
+  , transitioningʔ ∷ Maybe TransitionDirection
+  } →
+  JSX
 renderDate
   { dispatch
   , currentDate
@@ -206,14 +206,14 @@ renderDate
         }
     ]
 
-renderMonthNumbers
-  ∷ { currentDateʔ ∷ Maybe Date
-    , date ∷ Date
-    , dispatch ∷ Action → Effect Unit
-    , selectedDateʔ ∷ Maybe Date
-    , showingMonth ∷ Month
-    }
-  → Array JSX
+renderMonthNumbers ∷
+  { currentDateʔ ∷ Maybe Date
+  , date ∷ Date
+  , dispatch ∷ Action → Effect Unit
+  , selectedDateʔ ∷ Maybe Date
+  , showingMonth ∷ Month
+  } →
+  Array JSX
 renderMonthNumbers { date, selectedDateʔ, currentDateʔ, showingMonth, dispatch } =
   do
     let firstDay = firstMondayBefore $ setDay Bounded.bottom date

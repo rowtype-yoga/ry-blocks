@@ -17,10 +17,10 @@ mkNotificationCentre = do
   subscribe ← mkSubscribe subscribersRef
   pure (NotificationCentre { enqueueNotification, subscribe })
 
-mkEnqueueNotification
-  ∷ Ref.Ref (Map NotificationId Notification)
-  → Ref.Ref (Map SubscriberId OnNotification)
-  → Effect (Notification → Effect Unit)
+mkEnqueueNotification ∷
+  Ref.Ref (Map NotificationId Notification) →
+  Ref.Ref (Map SubscriberId OnNotification) →
+  Effect (Notification → Effect Unit)
 mkEnqueueNotification notificationsRef subscribersRef = do
   generateId ← mkGenerateId
   pure \n → do
@@ -33,20 +33,20 @@ mkEnqueueNotification notificationsRef subscribersRef = do
     for_ n.autoHideAfter \hideAfter →
       launchAff_ (delay hideAfter *> do remove # liftEffect)
 
-removeNotification
-  ∷ Ref.Ref (Map NotificationId Notification)
-  → Ref.Ref (Map SubscriberId OnNotification)
-  → NotificationId
-  → Effect Unit
+removeNotification ∷
+  Ref.Ref (Map NotificationId Notification) →
+  Ref.Ref (Map SubscriberId OnNotification) →
+  NotificationId →
+  Effect Unit
 removeNotification notificationsRef subscribersRef id = do
   Ref.modify_ (Map.delete id) notificationsRef
   subscribers ← Ref.read subscribersRef
   subscribers # traverse_
     (_ $ NotificationDismissed id)
 
-mkSubscribe
-  ∷ Ref.Ref (Map SubscriberId OnNotification)
-  → Effect (OnNotification → Effect (Effect Unit))
+mkSubscribe ∷
+  Ref.Ref (Map SubscriberId OnNotification) →
+  Effect (OnNotification → Effect (Effect Unit))
 mkSubscribe subscribersRef = do
   generateId ← mkGenerateId
   pure \callback → do

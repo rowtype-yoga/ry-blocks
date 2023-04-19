@@ -24,17 +24,17 @@ derive instance newtypeUseDocumentSize ∷ Newtype (UseDocumentSize hooks) _
 useDocumentSize ∷ Hook UseDocumentSize DocumentSize
 useDocumentSize =
   coerceHook React.do
-    scrollDimensions /\ setScrollDimensions <- React.useState' one
+    scrollDimensions /\ setScrollDimensions ← React.useState' one
     React.useLayoutEffectAlways do
-      window <- HTML.window
-      htmlDocument <- Window.document window
+      window ← HTML.window
+      htmlDocument ← Window.document window
       let document = HTMLDocument.toDocument htmlDocument
-      scrollDimensions' <- do
-        maybeDocumentElement <- Document.documentElement document
+      scrollDimensions' ← do
+        maybeDocumentElement ← Document.documentElement document
         maybeDocumentElement
-          # maybe (pure zero) \documentElement -> do
-              scrollWidth <- Element.scrollWidth documentElement
-              scrollHeight <- Element.scrollHeight documentElement
+          # maybe (pure zero) \documentElement → do
+              scrollWidth ← Element.scrollWidth documentElement
+              scrollHeight ← Element.scrollHeight documentElement
               pure { scrollWidth, scrollHeight }
       unless (scrollDimensions' == scrollDimensions) do
         setScrollDimensions scrollDimensions'

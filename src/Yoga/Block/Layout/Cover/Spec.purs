@@ -12,10 +12,10 @@ spec =
         void
           $ renderComponent Cover.component {}
       it "accepts div props" do
-        { findByText } <-
+        { findByText } ←
           renderComponent Cover.component
             { role: "Heinz"
             , children: [ R.text "Find me!" ]
             }
-        elem <- findByText "Find me!"
+        elem ← findByText "Find me!"
         elem `shouldHaveAttribute` "role"

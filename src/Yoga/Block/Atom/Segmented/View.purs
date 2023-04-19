@@ -29,135 +29,140 @@ import Yoga.Block.Hook.UseWindowResize (useWindowResize)
 type Props =
   { buttonContents ∷ TwoOrMore Item
   , activeIndex ∷ Int
-  , updateActiveItem ∷ Item -> Int -> Effect Unit
+  , updateActiveItem ∷ Item → Int → Effect Unit
   }
 
 component ∷ ReactComponent Props
 component =
   unsafePerformEffect
-    $ reactComponent "Segmented" \({ buttonContents, activeIndex, updateActiveItem } ∷ Props) -> React.do
-        -------------------------------------------
-        -- Store button refs for animation purposes
-        itemRefs /\ setItemRefs ∷ Maybe (TwoOrMore _) /\ _ <- useState' Nothing
-        useLayoutEffectOnce do
-          refs <- traverse (const createRef) buttonContents
-          setItemRefs (Just refs)
-          mempty
-        windowSize /\ setWindowSize <- useState' zero
-        -------------------------------------------
-        -- Support keyboard input
-        let
-          maxIndex = TwoOrMore.length buttonContents - 1
-          updateIndex idx = do
-            let
-              newItem = fromMaybe'
-                (\_ -> TwoOrMore.head buttonContents)
-                (buttonContents TwoOrMore.!! idx)
-            updateActiveItem newItem idx
-
-          updateTo toIndex = do
-            for_ itemRefs do blurAtIndex activeIndex
-            updateIndex toIndex
-            for_ itemRefs do focusAtIndex toIndex
-        useKeyDown $ \_ _ -> case _ of
-          Key.Right ->
-            when (activeIndex < maxIndex) do
-              updateTo (activeIndex + 1)
-          Key.Left ->
-            when (activeIndex > 0) do
-              updateTo (activeIndex - 1)
-          Key.End -> updateTo maxIndex
-          Key.Home -> updateTo 0
-          _ -> pure unit
-        -------------------------------------------
-        -- Ensure redraw on window resize
-        newWindowSize <- useWindowResize
-        useAff newWindowSize do
-          let δw = abs (newWindowSize.innerWidth - windowSize.innerWidth)
-          let δh = abs (newWindowSize.innerHeight - windowSize.innerHeight)
-          delay
-            if δw < 10.0 || δh < 10.0 then
-              100.0 # Milliseconds
-            else
-              10.0 # Milliseconds
-          liftEffect do -- force rerender
-            refs <- traverse (const createRef) buttonContents
+    $ reactComponent "Segmented"
+        \({ buttonContents, activeIndex, updateActiveItem } ∷ Props) → React.do
+          -------------------------------------------
+          -- Store button refs for animation purposes
+          itemRefs /\ setItemRefs ∷ Maybe (TwoOrMore _) /\ _ ← useState' Nothing
+          useLayoutEffectOnce do
+            refs ← traverse (const createRef) buttonContents
             setItemRefs (Just refs)
-            setWindowSize windowSize
-        let
-          children ∷ Array JSX
-          children = refsAndContents <#> mapWithIndex contentToChild # maybe mempty TwoOrMore.toArray
+            mempty
+          windowSize /\ setWindowSize ← useState' zero
+          -------------------------------------------
+          -- Support keyboard input
+          let
+            maxIndex = TwoOrMore.length buttonContents - 1
+            updateIndex idx = do
+              let
+                newItem = fromMaybe'
+                  (\_ → TwoOrMore.head buttonContents)
+                  (buttonContents TwoOrMore.!! idx)
+              updateActiveItem newItem idx
 
-          refsAndContents ∷ Maybe (TwoOrMore (Item /\ Ref (Nullable Node)))
-          refsAndContents = TwoOrMore.zip buttonContents <$> itemRefs
+            updateTo toIndex = do
+              for_ itemRefs do blurAtIndex activeIndex
+              updateIndex toIndex
+              for_ itemRefs do focusAtIndex toIndex
+          useKeyDown $ \_ _ → case _ of
+            Key.Right →
+              when (activeIndex < maxIndex) do
+                updateTo (activeIndex + 1)
+            Key.Left →
+              when (activeIndex > 0) do
+                updateTo (activeIndex - 1)
+            Key.End → updateTo maxIndex
+            Key.Home → updateTo 0
+            _ → pure unit
+          -------------------------------------------
+          -- Ensure redraw on window resize
+          newWindowSize ← useWindowResize
+          useAff newWindowSize do
+            let δw = abs (newWindowSize.innerWidth - windowSize.innerWidth)
+            let δh = abs (newWindowSize.innerHeight - windowSize.innerHeight)
+            delay
+              if δw < 10.0 || δh < 10.0 then
+                100.0 # Milliseconds
+              else
+                10.0 # Milliseconds
+            liftEffect do -- force rerender
+              refs ← traverse (const createRef) buttonContents
+              setItemRefs (Just refs)
+              setWindowSize windowSize
+          let
+            children ∷ Array JSX
+            children = refsAndContents <#> mapWithIndex contentToChild # maybe
+              mempty
+              TwoOrMore.toArray
 
-          contentToChild ∷ Int -> (Item /\ Ref (Nullable Node)) -> JSX
-          contentToChild idx ({ id, value } /\ ref) = do
-            let isLast = idx + 1 == TwoOrMore.length buttonContents
-            let isFirst = idx == 0
-            button'
-              </*
-                { key: show idx
-                , ref
-                , css: Style.button { isFirst, isLast }
-                , className: "ry-segmented-button"
-                , style: css { pointerEvents: if idx == activeIndex then "none" else "" }
-                , onClick: handler_ (updateIndex idx)
-                , role: "tab"
-                , tabIndex: if idx == activeIndex then 0 else -1
-                , id
-                , _aria:
-                    Object.fromHomogeneous
-                      { selected: show (idx == activeIndex)
+            refsAndContents ∷ Maybe (TwoOrMore (Item /\ Ref (Nullable Node)))
+            refsAndContents = TwoOrMore.zip buttonContents <$> itemRefs
+
+            contentToChild ∷ Int → (Item /\ Ref (Nullable Node)) → JSX
+            contentToChild idx ({ id, value } /\ ref) = do
+              let isLast = idx + 1 == TwoOrMore.length buttonContents
+              let isFirst = idx == 0
+              button'
+                </*
+                  { key: show idx
+                  , ref
+                  , css: Style.button { isFirst, isLast }
+                  , className: "ry-segmented-button"
+                  , style: css
+                      { pointerEvents: if idx == activeIndex then "none" else ""
                       }
-                }
-              />
-                [ span'
-                    </*
-                      { className: "ry-segmented-button__content"
-                      , css: Style.buttonContent { isFirst, isLast }
-                      , tabIndex: if idx == activeIndex then 0 else -1
+                  , onClick: handler_ (updateIndex idx)
+                  , role: "tab"
+                  , tabIndex: if idx == activeIndex then 0 else -1
+                  , id
+                  , _aria:
+                      Object.fromHomogeneous
+                        { selected: show (idx == activeIndex)
+                        }
+                  }
+                />
+                  [ span'
+                      </*
+                        { className: "ry-segmented-button__content"
+                        , css: Style.buttonContent { isFirst, isLast }
+                        , tabIndex: if idx == activeIndex then 0 else -1
+                        }
+                      />
+                        [ R.text value
+                        ]
+                  ]
+          pure
+            $ E.element R.div'
+            $
+              { css: Style.cluster
+              , className: "ry-segmented-container"
+              , children:
+                  [ E.element R.div'
+                      { className: "ry-segmented"
+                      , css: Style.segmented
+                      , role: "tablist"
+                      , children:
+                          itemRefs
+                            # foldMap \activeItemRefs →
+                                React.element ActiveIndicator.component
+                                  { activeItemRefs
+                                  , activeItemIndex: activeIndex
+                                  , buttonContents
+                                  , updateActiveItem
+                                  , windowSize
+                                  }
+                                  A.: children
                       }
-                    />
-                      [ R.text value
-                      ]
-                ]
-        pure
-          $ E.element R.div'
-          $
-            { css: Style.cluster
-            , className: "ry-segmented-container"
-            , children:
-                [ E.element R.div'
-                    { className: "ry-segmented"
-                    , css: Style.segmented
-                    , role: "tablist"
-                    , children:
-                        itemRefs
-                          # foldMap \activeItemRefs ->
-                              React.element ActiveIndicator.component
-                                { activeItemRefs
-                                , activeItemIndex: activeIndex
-                                , buttonContents
-                                , updateActiveItem
-                                , windowSize
-                                }
-                                A.: children
-                    }
-                ]
-            }
+                  ]
+              }
 
-getHTMLElementAtIndex ∷ Int -> TwoOrMore (NodeRef) -> Effect (Maybe HTMLElement)
+getHTMLElementAtIndex ∷ Int → TwoOrMore (NodeRef) → Effect (Maybe HTMLElement)
 getHTMLElementAtIndex idx refs =
   runMaybeT do
-    ref <- refs TwoOrMore.!! idx # pure >>> wrap
-    node <- React.readRefMaybe ref # wrap
+    ref ← refs TwoOrMore.!! idx # pure >>> wrap
+    node ← React.readRefMaybe ref # wrap
     HTMLElement.fromNode node # pure >>> wrap
 
-blurAtIndex ∷ Int -> TwoOrMore (Ref (Nullable Node)) -> Effect Unit
+blurAtIndex ∷ Int → TwoOrMore (Ref (Nullable Node)) → Effect Unit
 blurAtIndex idx refs = do
   getHTMLElementAtIndex idx refs >>= traverse_ blur
 
-focusAtIndex ∷ Int -> TwoOrMore (Ref (Nullable Node)) -> Effect Unit
+focusAtIndex ∷ Int → TwoOrMore (Ref (Nullable Node)) → Effect Unit
 focusAtIndex idx refs = do
   getHTMLElementAtIndex idx refs >>= traverse_ focus

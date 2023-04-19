@@ -16,17 +16,18 @@ type PropsF f =
   | Style.Props f (MandatoryProps ())
   )
 
-component ∷ ∀ p p_. Union p p_ Props => ReactComponent { | MandatoryProps p }
+component ∷ ∀ p p_. Union p p_ Props ⇒ ReactComponent { | MandatoryProps p }
 component = rawComponent
 
 rawComponent ∷ ∀ p. ReactComponent { | p }
 rawComponent =
-  mkForwardRefComponent "Yoga Icon" \(props ∷ { | PropsF OptionalProp }) ref -> React.do
-    pure
-      $ span'
-      </*
-        { className: "ry-icon" <>? props.className
-        , css: Style.span props
-        , ref
-        }
-      /> [ props.icon ]
+  mkForwardRefComponent "Yoga Icon" \(props ∷ { | PropsF OptionalProp }) ref →
+    React.do
+      pure
+        $ span'
+        </*
+          { className: "ry-icon" <>? props.className
+          , css: Style.span props
+          , ref
+          }
+        /> [ props.icon ]

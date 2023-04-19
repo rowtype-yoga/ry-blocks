@@ -14,18 +14,18 @@ import Yoga.Block.Container.Style as Styles
 import Yoga.Block.Molecule.ReadMore as ReadMore
 
 default ∷
-  { decorators ∷ Array (Effect JSX -> JSX)
+  { decorators ∷ Array (Effect JSX → JSX)
   , title ∷ String
   }
 default =
   { title: "Molecule/Read More"
   , decorators:
-    [ \storyFn ->
-        R.div_
-          [ element E.global { styles: Styles.global }
-          , unsafePerformEffect storyFn
-          ]
-    ]
+      [ \storyFn →
+          R.div_
+            [ element E.global { styles: Styles.global }
+            , unsafePerformEffect storyFn
+            ]
+      ]
   }
 
 readMore ∷ Effect JSX
@@ -34,19 +34,24 @@ readMore = do
   where
   compo =
     unsafePerformEffect
-      $ reactComponent "ReadMore Story" \{} -> React.do
+      $ reactComponent "ReadMore Story" \{} → React.do
           pure
             $ fragment
                 [ R.h2_ [ R.text "Long text" ]
                 , ReadMore.component
-                    </ { moreLabel: R.text "more"
+                    </
+                      { moreLabel: R.text "more"
                       , lessLabel: R.text "less"
                       }
                     /> [ R.text (power "A very long text " 20) ]
                 , R.h2_ [ R.text "Short text" ]
                 , ReadMore.component
-                    </ { moreLabel: R.text "more"
+                    </
+                      { moreLabel: R.text "more"
                       , lessLabel: R.text "less"
                       }
-                    /> [ R.text "Quite a short text that probably fits on one line" ]
+                    />
+                      [ R.text
+                          "Quite a short text that probably fits on one line"
+                      ]
                 ]

@@ -30,7 +30,7 @@ component = unsafePerformEffect do
                 , onChange: handler targetValue
                     \maybeVal → traverse_ onChange do
                       val ← maybeVal
-                      choices # Array.find (toString >>> (_ == val))
+                      choices # Array.find (toValue >>> (_ == val))
 
                 }
               />

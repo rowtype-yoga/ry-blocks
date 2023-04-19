@@ -19,7 +19,7 @@ import Yoga.Block.Hook.UseDrip (useDrip)
 import Yoga.Block.Internal (ButtonWritablePropsNoChildrenF, objectToStyle, toStyleObject)
 import Yoga.Block.Quark.Drip.View as Drip
 
-type PropsF :: forall k. (Type -> k) -> Row k -> Row k
+type PropsF ∷ ∀ k. (Type → k) → Row k → Row k
 type PropsF f r =
   ( buttonType ∷ f ButtonType
   , buttonShape ∷ f ButtonShape
@@ -36,30 +36,30 @@ type Props =
 type PropsOptional =
   PropsF OptionalProp (ButtonReadableProps)
 
-component ∷ ∀ p p_. Union p p_ Props => ReactComponent { | p }
+component ∷ ∀ p p_. Union p p_ Props ⇒ ReactComponent { | p }
 component = rawComponent
 
 rawComponent ∷ ∀ p. ReactComponent { | p }
 rawComponent =
   mkForwardRefComponent "Button" do
-    \(props ∷ { | PropsOptional }) propsRef -> React.do
-      backupRef <- React.useRef null
+    \(props ∷ { | PropsOptional }) propsRef → React.do
+      backupRef ← React.useRef null
       let ref = forwardedRefAsMaybe propsRef # fromMaybe backupRef
       let buttonType = props.buttonType ?|| Button.Generic
       let buttonShape = props.buttonShape ?|| Button.Rounded
       let
         rippleʔ = props.ripple # opToMaybe # case buttonShape of
-          Button.Flat -> case buttonType of
-            Button.Primary ->
+          Button.Flat → case buttonType of
+            Button.Primary →
               fromMaybe colour.highlightLighter >>> Just
-            _ -> fromMaybe colour.highlightAlpha50 >>> Just
-          _ -> identity
-      dripValues <- useDrip ref
+            _ → fromMaybe colour.highlightAlpha50 >>> Just
+          _ → identity
+      dripValues ← useDrip ref
       let propsChildren = unsafeGet "children" props # reactChildrenToArray
       let
         children = reactChildrenFromArray case rippleʔ of
-          Nothing -> propsChildren
-          Just rippleColour -> do
+          Nothing → propsChildren
+          Just rippleColour → do
             Array.cons
               ( Drip.component
                   </>
@@ -76,11 +76,11 @@ rawComponent =
 
       let
         onClick = case unsafeGet "onClick" props # uorToMaybe of
-          Just givenHandler -> handler syntheticEvent \e -> do
+          Just givenHandler → handler syntheticEvent \e → do
             void $ runEffectFn1 givenHandler e
             void $ runEffectFn1 dripValues.onClick e
 
-          Nothing -> dripValues.onClick
+          Nothing → dripValues.onClick
       let
         props' = props
           # unsafeSet "onClick" onClick

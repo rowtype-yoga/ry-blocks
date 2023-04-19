@@ -14,11 +14,11 @@ on =
     , strokeLinejoin: "round"
     , strokeMiterlimit: "1.5"
     , children:
-      [ SVG.path
-          { d: "M50 10v80"
-          , fill: "none"
-          , stroke: "var(--stroke-colour)"
-          , strokeWidth: "17"
-          }
-      ]
+        [ SVG.path
+            { d: "M50 10v80"
+            , fill: "none"
+            , stroke: "var(--stroke-colour)"
+            , strokeWidth: "17"
+            }
+        ]
     }

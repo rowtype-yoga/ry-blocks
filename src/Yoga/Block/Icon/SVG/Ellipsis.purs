@@ -13,13 +13,13 @@ ellipsis =
     , strokeLinejoin: "round"
     , strokeMiterlimit: "2"
     , children:
-      [ SVG.g
-          { fill: "var(--stroke-colour)"
-          , children:
-            [ SVG.circle { cx: "50", cy: "50", r: "10" }
-            , SVG.circle { cx: "80", cy: "50", r: "10" }
-            , SVG.circle { cx: "20", cy: "50", r: "10" }
-            ]
-          }
-      ]
+        [ SVG.g
+            { fill: "var(--stroke-colour)"
+            , children:
+                [ SVG.circle { cx: "50", cy: "50", r: "10" }
+                , SVG.circle { cx: "80", cy: "50", r: "10" }
+                , SVG.circle { cx: "20", cy: "50", r: "10" }
+                ]
+            }
+        ]
     }

@@ -22,37 +22,38 @@ import Web.HTML.Window as Window
 eventType ∷ EventType
 eventType = EventType "resize"
 
-registerListener ∷ EventListener -> Effect (Effect Unit)
+registerListener ∷ EventListener → Effect (Effect Unit)
 registerListener listener = do
-  target <- HTML.window <#> Window.toEventTarget
+  target ← HTML.window <#> Window.toEventTarget
   addEventListener eventType listener false target
   pure $ removeEventListener eventType listener false target
 
 type Sizes =
   { innerWidth ∷ Number, innerHeight ∷ Number }
 
-newtype UseWindowResize hooks = UseWindowResize (UseLayoutEffect Unit (UseState Sizes hooks))
+newtype UseWindowResize hooks = UseWindowResize
+  (UseLayoutEffect Unit (UseState Sizes hooks))
 
 derive instance Newtype (UseWindowResize hooks) _
 
 useWindowResize ∷ Hook UseWindowResize Sizes
 useWindowResize =
   coerceHook React.do
-    size /\ setSize <- React.useState' zero
+    size /\ setSize ← React.useState' zero
     useLayoutEffect unit do
       setSizeFromWindow setSize
-      listener <- makeListener setSize
+      listener ← makeListener setSize
       registerListener listener
     pure size
 
-setSizeFromWindow ∷ (Sizes -> Effect Unit) -> Effect Unit
+setSizeFromWindow ∷ (Sizes → Effect Unit) → Effect Unit
 setSizeFromWindow setSize = do
-  window <- HTML.window
-  innerWidth <- Window.innerWidth window <#> toNumber
-  innerHeight <- Window.innerHeight window <#> toNumber
+  window ← HTML.window
+  innerWidth ← Window.innerWidth window <#> toNumber
+  innerHeight ← Window.innerHeight window <#> toNumber
   setSize { innerWidth, innerHeight }
 
-makeListener ∷ (Sizes -> Effect Unit) -> Effect EventListener
+makeListener ∷ (Sizes → Effect Unit) → Effect EventListener
 makeListener setSize = do
   eventListener
     $ const (setSizeFromWindow setSize)
@@ -66,22 +67,28 @@ newtype UseOnResize hooks = UseOnResize
 
 derive instance ntUseOnResize ∷ Newtype (UseOnResize hooks) _
 
-useOnResize
-  ∷ ∀ d
-   . Duration d
-  => d
-  -> ({ innerWidth ∷ Number, innerHeight ∷ Number, deltaWidth ∷ Number, deltaHeight ∷ Number } -> Effect Unit)
-  -> Hook UseOnResize Unit
+useOnResize ∷
+  ∀ d.
+  Duration d ⇒
+  d →
+  ( { innerWidth ∷ Number
+    , innerHeight ∷ Number
+    , deltaWidth ∷ Number
+    , deltaHeight ∷ Number
+    } →
+    Effect Unit
+  ) →
+  Hook UseOnResize Unit
 useOnResize debounceBy callback =
   coerceHook React.do
-    mbFiber /\ setFiber <- React.useState' Nothing
-    size /\ setSize <- React.useState' (zero ∷ Sizes)
+    mbFiber /\ setFiber ← React.useState' Nothing
+    size /\ setSize ← React.useState' (zero ∷ Sizes)
     let
       layoutEffect ∷ Effect (Effect Unit)
       layoutEffect = do
-        setSizeFromWindow (setSize ∷ Sizes -> Effect Unit)
-        listener ∷ EventListener <-
-          makeListener \(dimensions ∷ Sizes) -> do
+        setSizeFromWindow (setSize ∷ Sizes → Effect Unit)
+        listener ∷ EventListener ←
+          makeListener \(dimensions ∷ Sizes) → do
             let
               aff ∷ Aff Unit
               aff = do
@@ -91,10 +98,11 @@ useOnResize debounceBy callback =
                 let deltaWidth = abs (size.innerWidth - innerWidth)
                 let deltaHeight = abs (size.innerHeight - innerWidth)
                 setSize dimensions # liftEffect
-                callback { innerWidth, innerHeight, deltaWidth, deltaHeight } # liftEffect
-            fiber ∷ Fiber _ <- launchAff aff
+                callback { innerWidth, innerHeight, deltaWidth, deltaHeight } #
+                  liftEffect
+            fiber ∷ Fiber _ ← launchAff aff
             setFiber (Just fiber)
-        target ∷ EventTarget <- HTML.window <#> Window.toEventTarget
+        target ∷ EventTarget ← HTML.window <#> Window.toEventTarget
         addEventListener eventType listener false target
         pure
           $ launchAff_

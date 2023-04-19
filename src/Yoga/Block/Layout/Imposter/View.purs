@@ -14,13 +14,13 @@ type Props =
 type PropsOptional =
   PropsF OptionalProp
 
-component ∷ ∀ p q. Union p q Props => ReactComponent { | p }
+component ∷ ∀ p q. Union p q Props ⇒ ReactComponent { | p }
 component = rawComponent
 
 rawComponent ∷ ∀ p. ReactComponent { | p }
 rawComponent =
   mkForwardRefComponent "Imposter" do
-    \(props ∷ { | PropsOptional }) ref -> React.do
+    \(props ∷ { | PropsOptional }) ref → React.do
       pure
         $ emotionDiv ref props
             { className: "ry-imposter " <>? props.className

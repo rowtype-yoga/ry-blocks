@@ -23,8 +23,8 @@ default =
 
 toggle ∷ Effect JSX
 toggle = do
-  example <- mkBasicExample
-  darkLight <- mkDarkLightToggle
+  example ← mkBasicExample
+  darkLight ← mkDarkLightToggle
   pure
     $ fragment
         [ R.div_
@@ -36,8 +36,8 @@ toggle = do
         ]
   where
   mkBasicExample =
-    React.reactComponent "Toggle example" \_p -> React.do
-      togglePosition /\ setTogglePosition <- React.useState' ToggleIsRight
+    React.reactComponent "Toggle example" \_p → React.do
+      togglePosition /\ setTogglePosition ← React.useState' ToggleIsRight
       pure
         $ element Toggle.component
             { value: togglePosition
@@ -46,28 +46,28 @@ toggle = do
             }
 
   mkDarkLightToggle =
-    React.reactComponent "Toggle dark night example" \_p -> React.do
-      togglePosition /\ setTogglePosition <- React.useState' ToggleIsLeft
-      theme /\ setTheme <- React.useState' Nothing
+    React.reactComponent "Toggle dark night example" \_p → React.do
+      togglePosition /\ setTogglePosition ← React.useState' ToggleIsLeft
+      theme /\ setTheme ← React.useState' Nothing
       let
         content =
           element Toggle.component
             { value: togglePosition
             , ariaLabel: "dark-light-toggle"
             , onChange:
-              \newTogglePosition -> do
-                setTogglePosition newTogglePosition
-                setTheme case newTogglePosition of
-                  ToggleIsRight -> Just DarkMode
-                  ToggleIsLeft -> Just LightMode
+                \newTogglePosition → do
+                  setTogglePosition newTogglePosition
+                  setTheme case newTogglePosition of
+                    ToggleIsRight → Just DarkMode
+                    ToggleIsLeft → Just LightMode
             , left: R.text "🌒"
             , right: R.text "🌞"
             , backgroundLeft:
-              Color.hsl 205.0 1.0 0.83
+                Color.hsl 205.0 1.0 0.83
             , backgroundRight:
-              Color.hsl 260.0 0.7 0.45
+                Color.hsl 260.0 0.7 0.45
             }
       pure
         $ Block.container
-        </ { themeVariant: theme }
-        /> [ content ]
+            </ { themeVariant: theme }
+            /> [ content ]

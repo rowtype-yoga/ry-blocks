@@ -29,11 +29,11 @@ instance BoundedEnum ButtonType where
   fromEnum = genericFromEnum
   toEnum = genericToEnum
 
-renderButtonType ∷ ButtonType -> String
+renderButtonType ∷ ButtonType → String
 renderButtonType = case _ of
-  Primary -> "primary"
-  Generic -> "generic"
-  Dangerous -> "dangerous"
+  Primary → "primary"
+  Generic → "generic"
+  Dangerous → "dangerous"
 
 data ButtonShape
   = Rounded
@@ -57,8 +57,8 @@ instance BoundedEnum ButtonShape where
   fromEnum = genericFromEnum
   toEnum = genericToEnum
 
-renderButtonShape ∷ ButtonShape -> String
+renderButtonShape ∷ ButtonShape → String
 renderButtonShape = case _ of
-  Rounded -> "rounded"
-  Pill -> "pill"
-  Flat -> "flat"
+  Rounded → "rounded"
+  Pill → "pill"
+  Flat → "flat"

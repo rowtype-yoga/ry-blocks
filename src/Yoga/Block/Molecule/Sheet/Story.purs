@@ -20,14 +20,14 @@ import Yoga.Block.Atom.Button.Types as ButtonType
 import Yoga.Block.Container.Style as Styles
 import Yoga.Block.Molecule.Sheet as Sheet
 
-default
-  ∷ { decorators ∷ Array (Effect JSX -> JSX)
-    , title ∷ String
-    }
+default ∷
+  { decorators ∷ Array (Effect JSX → JSX)
+  , title ∷ String
+  }
 default =
   { title: "Molecule/Sheet"
   , decorators:
-      [ \storyFn ->
+      [ \storyFn →
           R.div_
             [ element E.global { styles: Styles.global }
             , unsafePerformEffect storyFn
@@ -41,43 +41,53 @@ sheet = do
   where
   compo =
     unsafePerformEffect
-      $ reactComponent "Sheet Story" \{} -> React.do
-          text /\ setText <- React.useState' "In order to spy on you we need your consent. Will you give it?"
-          isOpen /\ setIsOpen <- React.useState' true
+      $ reactComponent "Sheet Story" \{} → React.do
+          text /\ setText ← React.useState'
+            "In order to spy on you we need your consent. Will you give it?"
+          isOpen /\ setIsOpen ← React.useState' true
           pure
             $ fragment
                 [ R.h2_ [ R.text "No Options" ]
-                , R.div { id: "clickaway-container", style: R.css { userSelect: "none" } }
-                , R.div { id: "modal-container", style: R.css { userSelect: "none" } }
+                , R.div
+                    { id: "clickaway-container"
+                    , style: R.css { userSelect: "none" }
+                    }
+                , R.div
+                    { id: "modal-container"
+                    , style: R.css { userSelect: "none" }
+                    }
                 , element Sheet.component
                     { header: R.h2_ [ R.text "Would you like us to track you?" ]
-                    , footer: Block.cluster { justify: "flex-end", space: "var(--s-1)" }
-                        />
-                          [ Block.button
-                              { buttonType: ButtonType.Primary
-                              , onClick:
-                                  handler_ do
-                                    launchAff_ do
-                                      delay (fromDuration $ (2.0 # Seconds))
-                                      liftEffect do
-                                        setText "Thanks, that's very nice of you"
-                                        setIsOpen true
-                                    setIsOpen false
-                              }
-                              [ R.text "Yes" ]
-                          , Block.button
-                              { buttonType: ButtonType.Dangerous
-                              , onClick:
-                                  handler_ do
-                                    launchAff_ do
-                                      delay (fromDuration $ (2.0 # Seconds))
-                                      liftEffect do
-                                        setText (power "Oh, but please! " 200)
-                                        setIsOpen true
-                                    setIsOpen false
-                              }
-                              [ R.text "No" ]
-                          ]
+                    , footer:
+                        Block.cluster
+                          { justify: "flex-end", space: "var(--s-1)" }
+                          />
+                            [ Block.button
+                                { buttonType: ButtonType.Primary
+                                , onClick:
+                                    handler_ do
+                                      launchAff_ do
+                                        delay (fromDuration $ (2.0 # Seconds))
+                                        liftEffect do
+                                          setText
+                                            "Thanks, that's very nice of you"
+                                          setIsOpen true
+                                      setIsOpen false
+                                }
+                                [ R.text "Yes" ]
+                            , Block.button
+                                { buttonType: ButtonType.Dangerous
+                                , onClick:
+                                    handler_ do
+                                      launchAff_ do
+                                        delay (fromDuration $ (2.0 # Seconds))
+                                        liftEffect do
+                                          setText (power "Oh, but please! " 200)
+                                          setIsOpen true
+                                      setIsOpen false
+                                }
+                                [ R.text "No" ]
+                            ]
 
                     , children: [ R.p_ [ R.text text ] ]
                     , isOpen

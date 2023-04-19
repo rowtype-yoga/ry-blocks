@@ -3,7 +3,7 @@ module Yoga.Block.Layout.Imposter.Style where
 import Yoga.Prelude.Style
 import Data.Interpolate (i)
 
-type Props :: forall k. (Type -> k) -> Row k -> Row k
+type Props ∷ ∀ k. (Type → k) → Row k → Row k
 type Props f r =
   ( css ∷ f Style
   , margin ∷ f String
@@ -12,20 +12,22 @@ type Props f r =
   | r
   )
 
-imposter ∷ ∀ p. { | Props OptionalProp p } -> Style
+imposter ∷ ∀ p. { | Props OptionalProp p } → Style
 imposter props = styles <>? props.css
   where
-    styles =
-      css
-        { position: (props.fixed <#> if _ then fixed else absolute) ?|| absolute
-        , top: 50.0 # percent
-        , left: 50.0 # percent
-        , transform: str "translate(-50%,-50%)"
-        , zIndex: str "5"
-        , "&:.contain":
+  styles =
+    css
+      { position: (props.fixed <#> if _ then fixed else absolute) ?|| absolute
+      , top: 50.0 # percent
+      , left: 50.0 # percent
+      , transform: str "translate(-50%,-50%)"
+      , zIndex: str "5"
+      , "&:.contain":
           nest
             { overflow: auto
-            , maxWidth: str $ i "calc(100% - (" (getOr "0px" props.margin) " * 2))"
-            , maxHeight: str $ i "calc(100% - (" (getOr "0px" props.margin) " * 2))"
+            , maxWidth: str $ i "calc(100% - (" (getOr "0px" props.margin)
+                " * 2))"
+            , maxHeight: str $ i "calc(100% - (" (getOr "0px" props.margin)
+                " * 2))"
             }
-        }
+      }

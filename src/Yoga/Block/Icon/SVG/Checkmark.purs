@@ -14,11 +14,11 @@ checkmark =
     , strokeLinejoin: "round"
     , strokeMiterlimit: "1.5"
     , children:
-      [ SVG.path
-          { d: "M16.073 57.774l21.285 21.868 52.637-52.637"
-          , fill: "none"
-          , stroke: "var(--stroke-colour)"
-          , strokeWidth: "13"
-          }
-      ]
+        [ SVG.path
+            { d: "M16.073 57.774l21.285 21.868 52.637-52.637"
+            , fill: "none"
+            , stroke: "var(--stroke-colour)"
+            , strokeWidth: "13"
+            }
+        ]
     }

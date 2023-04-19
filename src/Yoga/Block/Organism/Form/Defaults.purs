@@ -59,29 +59,31 @@ instance formDefaultsSet ∷ FormDefaults (Set a) where
 instance formDefaultsMap ∷ FormDefaults (Map k a) where
   formDefaults = Map.empty
 
-instance formDefaultsNonEmptyArray ∷ FormDefaults a => FormDefaults (NonEmptyArray a) where
+instance formDefaultsNonEmptyArray ∷
+  FormDefaults a ⇒
+  FormDefaults (NonEmptyArray a) where
   formDefaults = pure formDefaults
 
 instance formDefaultsMaybe ∷ FormDefaults (Maybe a) where
   formDefaults = Nothing
 
-instance formDefaultsEither ∷ FormDefaults a => FormDefaults (Either a b) where
+instance formDefaultsEither ∷ FormDefaults a ⇒ FormDefaults (Either a b) where
   formDefaults = Left formDefaults
 
-instance formDefaultsValidated ∷ FormDefaults a => FormDefaults (Validated a) where
+instance formDefaultsValidated ∷ FormDefaults a ⇒ FormDefaults (Validated a) where
   formDefaults = Fresh formDefaults
 
 instance formDefaultsRecord ∷
   ( RowToList r rl
   , FormDefaultsRecord rl () r
-  ) =>
+  ) ⇒
   FormDefaults (Record r) where
   formDefaults = Builder.build (formDefaultsRecordBuilder (Proxy ∷ Proxy rl)) {}
 
 --
-class FormDefaultsRecord :: forall k. k -> Row Type -> Row Type -> Constraint
-class FormDefaultsRecord rl r_ r | rl -> r_ r where
-  formDefaultsRecordBuilder ∷ Proxy rl -> Builder { | r_ } { | r }
+class FormDefaultsRecord ∷ ∀ k. k → Row Type → Row Type → Constraint
+class FormDefaultsRecord rl r_ r | rl → r_ r where
+  formDefaultsRecordBuilder ∷ Proxy rl → Builder { | r_ } { | r }
 
 instance formDefaultsRecordNil ∷ FormDefaultsRecord Nil () () where
   formDefaultsRecordBuilder _ = identity
@@ -92,7 +94,7 @@ instance formDefaultsRecordCons ∷
   , FormDefaultsRecord tail r_ tailR
   , Lacks l tailR
   , Cons l a tailR r
-  ) =>
+  ) ⇒
   FormDefaultsRecord (Cons l a tail) r_ r where
   formDefaultsRecordBuilder _ = head <<< tail
     where

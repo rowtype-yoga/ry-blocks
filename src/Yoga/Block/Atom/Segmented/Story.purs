@@ -14,33 +14,33 @@ import Yoga.Block.Atom.Segmented as Segmented
 import Yoga.Block.Container.Style as Styles
 
 default ∷
-  { decorators ∷ Array (Effect JSX -> JSX)
+  { decorators ∷ Array (Effect JSX → JSX)
   , title ∷ String
   }
 default =
   { title: "Atom/Segmented"
   , decorators:
-    [ \storyFn ->
-        R.div_
-          [ element E.global { styles: Styles.global }
-          , unsafePerformEffect storyFn
-          ]
-    ]
+      [ \storyFn →
+          R.div_
+            [ element E.global { styles: Styles.global }
+            , unsafePerformEffect storyFn
+            ]
+      ]
   }
 
 segmented ∷ Effect JSX
 segmented = do
-  demoComponent <- makeDemoComponent
+  demoComponent ← makeDemoComponent
   pure $ element demoComponent {}
   where
-    makeDemoComponent =
-      reactComponent "Segmented Demo" \{} -> React.do
-        activeIndex /\ setElementIndex <- useState' 2
-        pure
-          $ element Segmented.component
-              { activeIndex
-              , updateActiveItem: const setElementIndex
-              , buttonContents:
+  makeDemoComponent =
+    reactComponent "Segmented Demo" \{} → React.do
+      activeIndex /\ setElementIndex ← useState' 2
+      pure
+        $ element Segmented.component
+            { activeIndex
+            , updateActiveItem: const setElementIndex
+            , buttonContents:
                 twoOrMore
                   { id: "gag", value: "2" }
                   { id: "nag", value: "1" }
@@ -48,4 +48,4 @@ segmented = do
                   , { id: "four", value: "2" }
                   , { id: "one", value: "1" }
                   ]
-              }
+            }

@@ -14,15 +14,19 @@ import Yoga.Block.Quark.Drip.Style as Style
 -- This is taken from Next UI
 
 type Props =
-  { visible :: Boolean
-  , x :: Number
-  , y :: Number
-  , onComplete :: Effect Unit
-  , colour :: String
-  , className :: String
+  { visible ∷ Boolean
+  , x ∷ Number
+  , y ∷ Number
+  , onComplete ∷ Effect Unit
+  , colour ∷ String
+  , className ∷ String
   }
 
-defaultProps ∷ ∀ (a6 ∷ Type) (a7 ∷ Type). Semiring a6 ⇒ Semiring a7 ⇒ { className ∷ String, visible ∷ Boolean, x ∷ a6, y ∷ a7 }
+defaultProps ∷
+  ∀ (a6 ∷ Type) (a7 ∷ Type).
+  Semiring a6 ⇒
+  Semiring a7 ⇒
+  { className ∷ String, visible ∷ Boolean, x ∷ a6, y ∷ a7 }
 defaultProps =
   { visible: false
   , x: zero
@@ -31,22 +35,22 @@ defaultProps =
   }
 
 component ∷ ReactComponent Props
-component = mkForwardRefComponent "Drip" \(props :: Props) propsRef -> React.do
-  backupRef <- React.useRef null
+component = mkForwardRefComponent "Drip" \(props ∷ Props) propsRef → React.do
+  backupRef ← React.useRef null
   let ref = forwardedRefAsMaybe propsRef # fromMaybe backupRef
   let left = if props.x == nan then zero else props.x - 10.0
   let top = if props.y == nan then zero else props.y - 10.0
 
   useEffectAlways do
-    nʔ <- React.readRefMaybe ref
+    nʔ ← React.readRefMaybe ref
     nʔ # case _ of
-      Just n -> do
+      Just n → do
         let target = toEventTarget n
         let et = EventType "animationend"
-        listener <- eventListener (const props.onComplete)
+        listener ← eventListener (const props.onComplete)
         addEventListener et listener false target
         pure $ removeEventListener et listener false target
-      Nothing ->
+      Nothing →
         pure (pure unit)
 
   pure $ guard props.visible do

@@ -50,7 +50,7 @@ rightAlign = css { textAlign: str "end" }
 
 -- Ellipsis
 -- [FIXME]: Buggy (still shows a third line, does not seem to hide overflow)
-maxLines ∷ Int -> Style
+maxLines ∷ Int → Style
 maxLines n =
   css
     { overflow: hidden
@@ -80,7 +80,8 @@ fontSizeH2 =
     }
 
 fontSizeH3 ∷ Style
-fontSizeH3 = css { fontSize: str size.text.heading.h3, marginTop: _0, marginBottom: _0 }
+fontSizeH3 = css
+  { fontSize: str size.text.heading.h3, marginTop: _0, marginBottom: _0 }
 
 fontSizeH4 ∷ Style
 fontSizeH4 = css { fontSize: str size.text.heading.h4 }

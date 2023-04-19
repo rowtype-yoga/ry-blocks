@@ -4,13 +4,13 @@ import Yoga.Prelude.Style
 
 import Yoga.Block.Container.Style (colour, withAlpha)
 
-type Props :: forall k. (Type -> k) -> Row k -> Row k
+type Props ∷ ∀ k. (Type → k) → Row k → Row k
 type Props f r =
   ( css ∷ f Style
   | r
   )
 
-container :: Style
+container ∷ Style
 container = styles
   where
   styles =
@@ -28,7 +28,7 @@ contractedText = styles
       , minWidth: _0
       }
 
-fadeBlock :: OptionalProp Color -> Style
+fadeBlock ∷ OptionalProp Color → Style
 fadeBlock background = css
   { zIndex: str $ "1"
   , position: relative
@@ -52,7 +52,8 @@ fadeBlock background = css
   }
   where
   bg = (cssStringRGBA <$> background) ?|| colour.background
-  bgTransparent = ((withAlpha 0.0 >>> cssStringRGBA) <$> background) ?|| colour.backgroundAlpha0
+  bgTransparent = ((withAlpha 0.0 >>> cssStringRGBA) <$> background) ?||
+    colour.backgroundAlpha0
 
 expandedText ∷ Style
 expandedText = styles

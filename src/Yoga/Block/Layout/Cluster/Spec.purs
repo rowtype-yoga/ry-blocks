@@ -13,11 +13,11 @@ spec =
         void
           $ renderComponent Cluster.component {}
       it "accepts div props" do
-        { findByTestId } <-
+        { findByTestId } ←
           renderComponent Cluster.component
             { role: "Heinz"
             , _data: Object.fromHomogeneous { testid: "cluster" }
             , children: [ R.text "Find me!" ]
             }
-        elem <- findByTestId "cluster"
+        elem ← findByTestId "cluster"
         shouldHaveAttributeWithValue elem "role" "Heinz"

@@ -21,19 +21,23 @@ newtype UseKeyUp hooks = UseKeyUp
 
 derive instance Newtype (UseKeyUp hooks) _
 
-useKeyUp ∷ (KeyboardEvent -> Set Modifier -> KeyCode -> Effect Unit) -> Hook UseKeyUp Unit
+useKeyUp ∷
+  (KeyboardEvent → Set Modifier → KeyCode → Effect Unit) → Hook UseKeyUp Unit
 useKeyUp doWhat = do
   coerceHook React.do
     useEffectOnce do
-      listener <-
-        eventListener $ KeyboardEvent.fromEvent >>> traverse_ \event -> do
+      listener ←
+        eventListener $ KeyboardEvent.fromEvent >>> traverse_ \event → do
           let modifiers = getModifiers event
           case getKeyCode event >>= intToKeyCode of
-            Just keyCode -> doWhat event modifiers keyCode
-            Nothing -> pure unit
-      win <- window
+            Just keyCode → doWhat event modifiers keyCode
+            Nothing → pure unit
+      win ← window
       addEventListener eventTypeKeyUp listener false (Win.toEventTarget win)
-      pure (removeEventListener eventTypeKeyUp listener false (Win.toEventTarget win))
+      pure
+        ( removeEventListener eventTypeKeyUp listener false
+            (Win.toEventTarget win)
+        )
 
 eventTypeKeyUp ∷ EventType
 eventTypeKeyUp = EventType "keyup"

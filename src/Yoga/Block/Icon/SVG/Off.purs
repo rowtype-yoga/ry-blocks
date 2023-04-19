@@ -13,13 +13,13 @@ off =
     , strokeLinejoin: "round"
     , strokeMiterlimit: "1.5"
     , children:
-      [ SVG.circle
-          { cx: "50"
-          , cy: "50"
-          , r: "32"
-          , fill: "none"
-          , stroke: "var(--stroke-colour)"
-          , strokeWidth: "17"
-          }
-      ]
+        [ SVG.circle
+            { cx: "50"
+            , cy: "50"
+            , r: "32"
+            , fill: "none"
+            , stroke: "var(--stroke-colour)"
+            , strokeWidth: "17"
+            }
+        ]
     }

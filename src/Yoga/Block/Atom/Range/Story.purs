@@ -11,18 +11,18 @@ import React.Basic.DOM as R
 import React.Basic.Emotion as E
 
 default ∷
-  { decorators ∷ Array (Effect JSX -> JSX)
+  { decorators ∷ Array (Effect JSX → JSX)
   , title ∷ String
   }
 default =
   { title: "Atom/Range"
   , decorators:
-    [ \storyFn ->
-        R.div_
-          [ element E.global { styles: Styles.global }
-          , unsafePerformEffect storyFn
-          ]
-    ]
+      [ \storyFn →
+          R.div_
+            [ element E.global { styles: Styles.global }
+            , unsafePerformEffect storyFn
+            ]
+      ]
   }
 
 range ∷ Effect JSX

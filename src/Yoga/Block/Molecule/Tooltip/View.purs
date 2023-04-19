@@ -8,20 +8,27 @@ import Yoga.Block.Hook.UsePopOver (usePopOver)
 import React.Basic.DOM as R
 import React.Basic.Hooks as React
 
-tooltip
-  ∷ { containerId ∷ String, placement ∷ Placement, fallbackPlacements :: Array Placement, tooltip ∷ JSX } → JSX → JSX
-tooltip props@{ containerId, placement, fallbackPlacements } child = rawComponent
-  </>
-    { placement
-    , fallbackPlacements
-    , containerId
-    , child
-    , tooltipContent: props.tooltip
-    }
+tooltip ∷
+  { containerId ∷ String
+  , placement ∷ Placement
+  , fallbackPlacements ∷ Array Placement
+  , tooltip ∷ JSX
+  } →
+  JSX →
+  JSX
+tooltip props@{ containerId, placement, fallbackPlacements } child =
+  rawComponent
+    </>
+      { placement
+      , fallbackPlacements
+      , containerId
+      , child
+      , tooltipContent: props.tooltip
+      }
 
 type Props =
   { placement ∷ Placement
-  , fallbackPlacements :: Array Placement
+  , fallbackPlacements ∷ Array Placement
   , containerId ∷ String
   , child ∷ JSX
   , tooltipContent ∷ JSX
@@ -29,7 +36,9 @@ type Props =
 
 rawComponent ∷ ReactComponent Props
 rawComponent = unsafePerformEffect $ React.reactComponent "Tooltip" $
-  \({ placement, containerId, child, tooltipContent, fallbackPlacements } ∷ Props) → React.do
+  \( { placement, containerId, child, tooltipContent, fallbackPlacements } ∷
+       Props
+   ) → React.do
     { hidePopOver
     , renderInPopOver
     , targetRef

@@ -10,12 +10,13 @@ import Data.Tuple.Nested ((/\))
 import Web.UIEvent.KeyboardEvent (KeyboardEvent)
 import Web.UIEvent.KeyboardEvent as KeyboardEvent
 
-foreign import getKeyImpl ∷ ∀ a. (a -> Maybe a) -> Maybe a -> KeyboardEvent -> Maybe Int
+foreign import getKeyImpl ∷
+  ∀ a. (a → Maybe a) → Maybe a → KeyboardEvent → Maybe Int
 
-getKeyCode ∷ KeyboardEvent -> Maybe Int
+getKeyCode ∷ KeyboardEvent → Maybe Int
 getKeyCode = getKeyImpl Just Nothing
 
-getModifiers :: KeyboardEvent -> Set Modifier
+getModifiers ∷ KeyboardEvent → Set Modifier
 getModifiers event =
   foldl fn Set.empty
     [ KeyboardEvent.metaKey /\ Command
@@ -54,31 +55,31 @@ data KeyCode
 derive instance Eq KeyCode
 derive instance Ord KeyCode
 
-keyCodeToInt ∷ KeyCode -> Int
+keyCodeToInt ∷ KeyCode → Int
 keyCodeToInt = case _ of
-  Backspace -> 8
-  Tab -> 9
-  Return -> 13
-  Escape -> 27
-  End -> 35
-  Home -> 36
-  Left -> 37
-  Up -> 38
-  Right -> 39
-  Down -> 40
-  Delete -> 46
+  Backspace → 8
+  Tab → 9
+  Return → 13
+  Escape → 27
+  End → 35
+  Home → 36
+  Left → 37
+  Up → 38
+  Right → 39
+  Down → 40
+  Delete → 46
 
-intToKeyCode ∷ Int -> Maybe KeyCode
+intToKeyCode ∷ Int → Maybe KeyCode
 intToKeyCode = case _ of
-  8 -> Just Backspace
-  9 -> Just Tab
-  13 -> Just Return
-  27 -> Just Escape
-  35 -> Just End
-  36 -> Just Home
-  37 -> Just Left
-  38 -> Just Up
-  39 -> Just Right
-  40 -> Just Down
-  46 -> Just Delete
-  _ -> Nothing
+  8 → Just Backspace
+  9 → Just Tab
+  13 → Just Return
+  27 → Just Escape
+  35 → Just End
+  36 → Just Home
+  37 → Just Left
+  38 → Just Up
+  39 → Just Right
+  40 → Just Down
+  46 → Just Delete
+  _ → Nothing

@@ -24,7 +24,7 @@ import Yoga.Block.Atom.Input.View.Label as Label
 import Yoga.Block.Container.Style (colour)
 import Yoga.Block.Icon.SVG as SVGIcon
 
-type PropsF ∷ ∀ k. (Type -> k) -> Row k -> Row k
+type PropsF ∷ ∀ k. (Type → k) → Row k → Row k
 type PropsF f r =
   ( leading ∷ f JSX
   , trailing ∷ f JSX
@@ -41,10 +41,10 @@ type Props =
 type PropsOptional =
   PropsF OptionalProp (InputReadableProps)
 
-component ∷ ∀ p q. Union p q Props => ReactComponent { | p }
+component ∷ ∀ p q. Union p q Props ⇒ ReactComponent { | p }
 component = rawComponent
 
-mkLeftIcon ∷ JSX -> JSX
+mkLeftIcon ∷ JSX → JSX
 mkLeftIcon icon =
   div'
     </*
@@ -56,28 +56,29 @@ mkLeftIcon icon =
 rawComponent ∷ ∀ p. ReactComponent (Record p)
 rawComponent =
   mkForwardRefComponent "YogaInput" do
-    \(props ∷ { | PropsOptional }) propsRef -> React.do
-      backupId <- useId
-      hasFocus /\ setHasFocus <- useState' false
-      inputBackupRef ∷ NodeRef <- useRef null
+    \(props ∷ { | PropsOptional }) propsRef → React.do
+      backupId ← useId
+      hasFocus /\ setHasFocus ← useState' false
+      inputBackupRef ∷ NodeRef ← useRef null
       let inputRef = props.inputRef ?|| inputBackupRef
-      backupRef ∷ NodeRef <- useRef null
+      backupRef ∷ NodeRef ← useRef null
       let ref = forwardedRefAsMaybe propsRef # fromMaybe backupRef
       let
         maybeValue ∷ Maybe String
         maybeValue = props.value # opToMaybe
-      internalValue /\ setValue <- useState' ""
+      internalValue /\ setValue ← useState' ""
       let
         hasValue = case maybeValue of
-          Just v -> v /= ""
-          Nothing -> internalValue /= ""
+          Just v → v /= ""
+          Nothing → internalValue /= ""
 
         aria ∷ Object String
         aria = props._aria # opToMaybe # fold
 
         labelId ∷ String
         labelId = props.id ?|| backupId # (_ <> "-label")
-        renderSmallLabel = isTruthy props.forceSmallLabel || hasFocus || hasValue
+        renderSmallLabel = isTruthy props.forceSmallLabel || hasFocus ||
+          hasValue
 
         renderLargeLabel ∷ Boolean
         renderLargeLabel = not renderSmallLabel
@@ -85,7 +86,7 @@ rawComponent =
         maybeLabelText ∷ Maybe NonEmptyString
         maybeLabelText = props.label # opToMaybe
 
-        mkLabel ∷ NonEmptyString -> JSX
+        mkLabel ∷ NonEmptyString → JSX
         mkLabel labelText =
           Label.component
             </>
@@ -117,15 +118,15 @@ rawComponent =
 
         maybePlaceholder ∷ Maybe String
         maybePlaceholder = do
-          given <- props.placeholder # opToMaybe
+          given ← props.placeholder # opToMaybe
           if isJust maybeLabelText && hasFocus then Just given else Nothing
 
         onBlur = handler_ do
           when hasFocus $ setHasFocus false
-          el <- getHTMLElementFromRef ref
+          el ← getHTMLElementFromRef ref
           let inputEl = InputElement.fromHTMLElement =<< el
-          for_ inputEl \ie -> do
-            v <- InputElement.value ie
+          for_ inputEl \ie → do
+            v ← InputElement.value ie
             setValue v
 
         onFocus = handler_ (unless hasFocus $ setHasFocus true)
@@ -148,7 +149,12 @@ rawComponent =
         theInput =
           HTMLInput.componentOptional
             </>
-              ( ( (cast ∷ _ -> { | HTMLInput.PropsF OptionalProp (InputWritablePropsF OptionalProp ()) })
+              ( ( ( cast ∷
+                      _ →
+                      { | HTMLInput.PropsF OptionalProp
+                          (InputWritablePropsF OptionalProp ())
+                      }
+                  )
                     ( ( inputProps
                           # RB.build
                               ( RB.delete (Proxy ∷ _ "leading")
@@ -166,7 +172,8 @@ rawComponent =
           Container.rawContainer
             </
               { hasFocus: hasFocus
-              , isInvalid: aria # Object.lookup "invalid" <#> (_ == "true") # maybeToOp
+              , isInvalid: aria # Object.lookup "invalid" <#> (_ == "true") #
+                  maybeToOp
               , css: props.css
               , background: props.background
               , borderColour: props.borderColour
@@ -176,29 +183,29 @@ rawComponent =
               , sizeVariant: props.sizeVariant
               }
             />
-              [ leading # foldMap \l -> div' </ {} /> [ l ]
+              [ leading # foldMap \l → div' </ {} /> [ l ]
               , theInput
-              , trailing # foldMap \t -> div' </ {} /> [ t ]
+              , trailing # foldMap \t → div' </ {} /> [ t ]
               ]
       pure
         $ case maybeLabelText of
-            Nothing -> inputContainer
-            Just labelText ->
+            Nothing → inputContainer
+            Just labelText →
               div "ry-label-and-input-wrapper"
                 (Style.labelAndInputWrapper <>? props.css)
                 [ inputContainer, mkLabel labelText ]
 
-passwordIcon
-  ∷ ReactComponent
-      { hidePassword ∷ Boolean
-      , modifyHidePassword ∷ (Boolean -> Boolean) -> Effect Unit
-      }
+passwordIcon ∷
+  ReactComponent
+    { hidePassword ∷ Boolean
+    , modifyHidePassword ∷ (Boolean → Boolean) → Effect Unit
+    }
 passwordIcon =
   unsafePerformEffect
-    $ reactComponent "Password Icon" \props -> React.do
+    $ reactComponent "Password Icon" \props → React.do
         pure $ div'
           </*
-            { onClick: handler preventDefault \_ -> props.modifyHidePassword not
+            { onClick: handler preventDefault \_ → props.modifyHidePassword not
             , className: "ry-input-right-icon-container"
             , css: Style.rightIconContainer
             }
@@ -215,7 +222,13 @@ passwordIcon =
                           , initial: M.initial $ css { scaleY: 0.2 }
                           , animate: M.animate $ css { scaleY: 1.0 }
                           , exit: M.exit $ css {}
-                          , transition: M.transition { scaleY: { type: "spring", duration: 0.12, bounce: 0.00 } }
+                          , transition: M.transition
+                              { scaleY:
+                                  { type: "spring"
+                                  , duration: 0.12
+                                  , bounce: 0.00
+                                  }
+                              }
                           }
                         />
                           [ Icon.component
@@ -231,7 +244,13 @@ passwordIcon =
                           , initial: M.initial $ css { scaleY: 1.0 }
                           , animate: M.animate $ css { scaleY: 0.4 }
                           , exit: M.exit $ css { scaleY: 0.2 }
-                          , transition: M.transition { scaleY: { type: "spring", duration: 0.12, bounce: 0.00 } }
+                          , transition: M.transition
+                              { scaleY:
+                                  { type: "spring"
+                                  , duration: 0.12
+                                  , bounce: 0.00
+                                  }
+                              }
                           }
                         />
                           [ Icon.component

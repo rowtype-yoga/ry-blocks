@@ -36,32 +36,32 @@ data ResizeObserverBoxOptions
   | ContentBox
   | DevicePixelContentBox
 
-optionsToFFI ∷ ResizeObserverBoxOptions -> String
+optionsToFFI ∷ ResizeObserverBoxOptions → String
 optionsToFFI BorderBox = "border-box"
 optionsToFFI ContentBox = "content-box"
 optionsToFFI DevicePixelContentBox = "device-pixel-content-box"
 
-foreign import resizeObserver
-  ∷ ( Array ResizeObserverEntry
-      -> ResizeObserver
-      -> Effect Unit
-    )
-  -> Effect ResizeObserver
+foreign import resizeObserver ∷
+  ( Array ResizeObserverEntry →
+    ResizeObserver →
+    Effect Unit
+  ) →
+  Effect ResizeObserver
 
-foreign import _observe ∷ ∀ r. Record r -> ResizeObserver -> Element -> Effect Unit
+foreign import _observe ∷ ∀ r. Record r → ResizeObserver → Element → Effect Unit
 
-observe
-  ∷ ResizeObserverBoxOptions
-  -> ResizeObserver
-  -> Element
-  -> Effect Unit
+observe ∷
+  ResizeObserverBoxOptions →
+  ResizeObserver →
+  Element →
+  Effect Unit
 observe options = _observe { box: optionsToFFI options }
 
-foreign import unobserve
-  ∷ ResizeObserver
-  -> Element
-  -> Effect Unit
+foreign import unobserve ∷
+  ResizeObserver →
+  Element →
+  Effect Unit
 
-foreign import disconnect
-  ∷ ResizeObserver
-  -> Effect Unit
+foreign import disconnect ∷
+  ResizeObserver →
+  Effect Unit

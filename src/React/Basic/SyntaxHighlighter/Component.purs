@@ -46,119 +46,124 @@ mkHighlighterTheme ∷
   { grey ∷ Color
   , highlightColour ∷ Color
   , textColour ∷ Color
-  } ->
+  } →
   HighlighterTheme
 mkHighlighterTheme theme =
   { hljs:
-    css
-      { display: "inline"
-      , overflowX: "auto"
-      , color: Color.cssStringRGBA $ Color.mix HSL (Color.desaturate 0.5 theme.highlightColour) (Color.desaturate 0.3 theme.textColour) 0.4
-      }
+      css
+        { display: "inline"
+        , overflowX: "auto"
+        , color: Color.cssStringRGBA $ Color.mix HSL
+            (Color.desaturate 0.5 theme.highlightColour)
+            (Color.desaturate 0.3 theme.textColour)
+            0.4
+        }
   , "hljs-keyword":
-    css
-      { color: "var(--highlight)"
-      , fontWeight: "normal"
-      }
+      css
+        { color: "var(--highlight)"
+        , fontWeight: "normal"
+        }
   , "hljs-symbol":
-    css
-      { color: Color.cssStringRGBA $ theme.highlightColour
-      }
+      css
+        { color: Color.cssStringRGBA $ theme.highlightColour
+        }
   , "hljs-type":
-    css
-      { color: Color.cssStringRGBA theme.highlightColour
-      , fontWeight: "normal"
-      }
+      css
+        { color: Color.cssStringRGBA theme.highlightColour
+        , fontWeight: "normal"
+        }
   , "hljs-string":
-    css
-      { color: Color.cssStringRGBA $ theme.highlightColour # Color.rotateHue (-15.0)
-      }
+      css
+        { color: Color.cssStringRGBA $ theme.highlightColour # Color.rotateHue
+            (-15.0)
+        }
   , "hljs-title":
-    css
-      { color: Color.cssStringRGBA $ theme.highlightColour # Color.rotateHue 15.0
-      }
+      css
+        { color: Color.cssStringRGBA $ theme.highlightColour # Color.rotateHue
+            15.0
+        }
   , "hljs-comment":
-    css
-      { color: Color.cssStringRGBA $ theme.grey
-      }
+      css
+        { color: Color.cssStringRGBA $ theme.grey
+        }
   , "hljs-selector-tag":
-    css
-      { color: "yellow"
-      , fontWeight: "bold"
-      }
+      css
+        { color: "yellow"
+        , fontWeight: "bold"
+        }
   , "hljs-literal":
-    css
-      { color: "green"
-      , fontWeight: "bold"
-      }
+      css
+        { color: "green"
+        , fontWeight: "bold"
+        }
   , "hljs-section":
-    css
-      { color: "darkslateblue"
-      , fontWeight: "bold"
-      }
+      css
+        { color: "darkslateblue"
+        , fontWeight: "bold"
+        }
   , "hljs-link":
-    css
-      { color: "yellow"
-      }
+      css
+        { color: "yellow"
+        }
   , "hljs-subst":
-    css
-      { color: "#ddd"
-      }
+      css
+        { color: "#ddd"
+        }
   , "hljs-name":
-    css
-      { color: "#d88"
-      , fontWeight: "bold"
-      }
+      css
+        { color: "#d88"
+        , fontWeight: "bold"
+        }
   , "hljs-attribute":
-    css
-      { color: "hotpink"
-      }
+      css
+        { color: "hotpink"
+        }
   , "hljs-bullet":
-    css
-      { color: "#d88"
-      }
+      css
+        { color: "#d88"
+        }
   , "hljs-built_in":
-    css
-      { color: "#d88"
-      }
+      css
+        { color: "#d88"
+        }
   , "hljs-addition":
-    css
-      { color: "#d88"
-      }
+      css
+        { color: "#d88"
+        }
   , "hljs-variable":
-    css
-      { color: "#d88"
-      }
+      css
+        { color: "#d88"
+        }
   , "hljs-template-tag":
-    css
-      { color: "#d88"
-      }
+      css
+        { color: "#d88"
+        }
   , "hljs-template-variable":
-    css
-      { color: "#d88"
-      }
+      css
+        { color: "#d88"
+        }
   , "hljs-quote":
-    css
-      { color: "#777"
-      }
+      css
+        { color: "#777"
+        }
   , "hljs-deletion":
-    css
-      { color: "#777"
-      }
+      css
+        { color: "#777"
+        }
   , "hljs-meta":
-    css
-      { color: "#777"
-      }
+      css
+        { color: "#777"
+        }
   , "hljs-doctag":
-    css
-      { fontWeight: "bold"
-      }
+      css
+        { fontWeight: "bold"
+        }
   , "hljs-strong":
-    css
-      { fontWeight: "bold"
-      }
+      css
+        { fontWeight: "bold"
+        }
   , "hljs-emphasis":
-    css
-      { fontStyle: "italic"
-      }
+      css
+        { fontStyle: "italic"
+        }
   }

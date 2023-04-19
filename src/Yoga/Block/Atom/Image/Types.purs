@@ -29,10 +29,10 @@ derive instance Eq CrossOrigin
 derive instance Ord CrossOrigin
 derive newtype instance Show CrossOrigin
 
-crossOriginAnonymous :: CrossOrigin
+crossOriginAnonymous ∷ CrossOrigin
 crossOriginAnonymous = CrossOrigin "anonymous"
 
-crossOriginUseCredentials :: CrossOrigin
+crossOriginUseCredentials ∷ CrossOrigin
 crossOriginUseCredentials = CrossOrigin "use-credentials"
 
 newtype Decoding = Decoding String
@@ -41,10 +41,10 @@ derive instance Eq Decoding
 derive instance Ord Decoding
 derive newtype instance Show Decoding
 
-decodingSync :: Decoding
+decodingSync ∷ Decoding
 decodingSync = Decoding "sync"
 
-decodingAsync :: Decoding
+decodingAsync ∷ Decoding
 decodingAsync = Decoding "async"
 
 newtype Loading = Loading String
@@ -53,10 +53,10 @@ derive instance Eq Loading
 derive instance Ord Loading
 derive newtype instance Show Loading
 
-loadingEager :: Loading
+loadingEager ∷ Loading
 loadingEager = Loading "eager"
 
-loadingLazy :: Loading
+loadingLazy ∷ Loading
 loadingLazy = Loading "lazy"
 
 newtype ReferrerPolicy = ReferrerPolicy String
@@ -69,7 +69,8 @@ referrerPolicyNoReferrer ∷ ReferrerPolicy
 referrerPolicyNoReferrer = ReferrerPolicy "no-referrer"
 
 refererPolicyNoReferrerWhenDowngrade ∷ ReferrerPolicy
-refererPolicyNoReferrerWhenDowngrade = ReferrerPolicy "no-referrer-when-downgrade"
+refererPolicyNoReferrerWhenDowngrade = ReferrerPolicy
+  "no-referrer-when-downgrade"
 
 referrerPolicyOrigin ∷ ReferrerPolicy
 referrerPolicyOrigin = ReferrerPolicy "origin"
@@ -84,13 +85,15 @@ referrerPolicyStrictOrigin ∷ ReferrerPolicy
 referrerPolicyStrictOrigin = ReferrerPolicy "strict-origin"
 
 referrerPolicyStrictOriginWhenCrossOrigin ∷ ReferrerPolicy
-referrerPolicyStrictOriginWhenCrossOrigin = ReferrerPolicy "strict-origin-when-cross-origin"
+referrerPolicyStrictOriginWhenCrossOrigin = ReferrerPolicy
+  "strict-origin-when-cross-origin"
 
 referrerPolicySameOrigin ∷ ReferrerPolicy
 referrerPolicySameOrigin = ReferrerPolicy "same-origin"
 
 referrerPolicySameOriginWhenCrossOrigin ∷ ReferrerPolicy
-referrerPolicySameOriginWhenCrossOrigin = ReferrerPolicy "same-origin-when-cross-origin"
+referrerPolicySameOriginWhenCrossOrigin = ReferrerPolicy
+  "same-origin-when-cross-origin"
 
 referrerPolicyNever ∷ ReferrerPolicy
 referrerPolicyNever = ReferrerPolicy "never"

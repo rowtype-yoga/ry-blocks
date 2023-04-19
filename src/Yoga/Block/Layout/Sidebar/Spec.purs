@@ -12,12 +12,12 @@ spec =
         void
           $ renderComponent Sidebar.component { sidebar: mempty, children: [] }
       it "accepts div props" do
-        { findByText } <-
+        { findByText } ←
           renderComponent Sidebar.component
             { role: "Heinz"
             , children: [ R.text "Find me!" ]
             , sidebar: mempty
             }
-        elem <- findByText "Find me!"
-        parent <- elem # getParentOrFailWith "Sidebar has no parent"
+        elem ← findByText "Find me!"
+        parent ← elem # getParentOrFailWith "Sidebar has no parent"
         parent `shouldHaveAttribute` "role"

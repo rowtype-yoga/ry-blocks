@@ -16,14 +16,14 @@ import Yoga.Block.Container.Style (colour)
 import Yoga.Block.Container.Style as Styles
 import Yoga.Block.Layout.Cluster as Cluster
 
-default
-  ∷ { decorators ∷ Array (Effect JSX -> JSX)
-    , title ∷ String
-    }
+default ∷
+  { decorators ∷ Array (Effect JSX → JSX)
+  , title ∷ String
+  }
 default =
   { title: "Layout/Cluster"
   , decorators:
-      [ \storyFn ->
+      [ \storyFn →
           R.div_
             [ element E.global { styles: Styles.global }
             , unsafePerformEffect storyFn
@@ -40,7 +40,8 @@ cluster =
             , children:
                 [ R.h2_ [ R.text "No Options" ]
                 , el Cluster.component
-                    { style: css { backgroundColor: cssStringRGBA F.blue._500 } }
+                    { style: css { backgroundColor: cssStringRGBA F.blue._500 }
+                    }
                     [ power
                         ( R.div
                             { children: [ R.text "Content" ]
@@ -63,11 +64,13 @@ cluster =
                     }
                     [ R.div
                         { children: [ R.text "Child 1" ]
-                        , style: css { backgroundColor: cssStringRGBA F.pink._500 }
+                        , style: css
+                            { backgroundColor: cssStringRGBA F.pink._500 }
                         }
                     , R.div
                         { children: [ R.text "Child 2" ]
-                        , style: css { backgroundColor: cssStringRGBA F.emerald._700 }
+                        , style: css
+                            { backgroundColor: cssStringRGBA F.emerald._700 }
                         }
                     ]
                 ]

@@ -3,7 +3,7 @@ module Yoga.Block.Atom.Icon.Style where
 import Yoga.Prelude.Style
 import Yoga.Block.Container.Style (colour)
 
-type Props ∷ forall k. (Type -> k) -> Row k -> Row k
+type Props ∷ ∀ k. (Type → k) → Row k → Row k
 type Props f r =
   ( css ∷ f Style
   , colour ∷ f StyleProperty
@@ -16,7 +16,7 @@ type Props f r =
   | r
   )
 
-span ∷ ∀ r. { | Props OptionalProp r } -> Style
+span ∷ ∀ r. { | Props OptionalProp r } → Style
 span props =
   inlineFlex <>
     css

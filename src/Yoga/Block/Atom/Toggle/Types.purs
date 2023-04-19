@@ -10,10 +10,10 @@ derive instance eqTogglePosition ∷ Eq TogglePosition
 
 instance showTogglePosition ∷ Show TogglePosition where
   show = case _ of
-    ToggleIsLeft -> "ToggleIsLeft"
-    ToggleIsRight -> "ToggleIsRight"
+    ToggleIsLeft → "ToggleIsLeft"
+    ToggleIsRight → "ToggleIsRight"
 
-flipToggle ∷ TogglePosition -> TogglePosition
+flipToggle ∷ TogglePosition → TogglePosition
 flipToggle = case _ of
-  ToggleIsLeft -> ToggleIsRight
-  ToggleIsRight -> ToggleIsLeft
+  ToggleIsLeft → ToggleIsRight
+  ToggleIsRight → ToggleIsLeft

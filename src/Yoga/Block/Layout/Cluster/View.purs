@@ -1,4 +1,10 @@
-module Yoga.Block.Layout.Cluster.View (component, Props, PropsF, PropsNoChildren, PropsNoChildrenF) where
+module Yoga.Block.Layout.Cluster.View
+  ( component
+  , Props
+  , PropsF
+  , PropsNoChildren
+  , PropsNoChildrenF
+  ) where
 
 import Yoga.Prelude.View
 
@@ -9,8 +15,8 @@ import Yoga.Block.Layout.Cluster.Style as Style
 
 type PropsNoChildrenF f =
   ( className ∷ f String
-  , wrapper ∷ f (Array JSX -> JSX)
-  , childWrapper ∷ f (Array JSX -> JSX)
+  , wrapper ∷ f (Array JSX → JSX)
+  , childWrapper ∷ f (Array JSX → JSX)
   | Style.Props f + DivPropsNoChildren
   )
 
@@ -28,13 +34,13 @@ type PropsNoChildren =
 type PropsOptional =
   PropsF OptionalProp
 
-component ∷ ∀ p p_. Union p p_ Props => ReactComponent { | p }
+component ∷ ∀ p p_. Union p p_ Props ⇒ ReactComponent { | p }
 component = rawComponent
 
 rawComponent ∷ ∀ p. ReactComponent { | p }
 rawComponent =
   mkForwardRefComponent "Cluster" do
-    \(props ∷ { | PropsOptional }) ref -> React.do
+    \(props ∷ { | PropsOptional }) ref → React.do
       -- Must be careful here because React fiddles with children
       let safeChildren = reactChildrenToArray (unsafeCoerce props.children)
       let wrappedChildren = safeChildren

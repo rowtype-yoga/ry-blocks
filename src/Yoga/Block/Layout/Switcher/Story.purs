@@ -39,7 +39,8 @@ switcher =
                 }
                 [ R.div
                     { children: [ R.text "A child" ]
-                    , style: css { backgroundColor: "darkslateblue", color: "white" }
+                    , style: css
+                        { backgroundColor: "darkslateblue", color: "white" }
                     }
                     `power`
                       5

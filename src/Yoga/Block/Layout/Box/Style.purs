@@ -2,7 +2,7 @@ module Yoga.Block.Layout.Box.Style where
 
 import Yoga.Prelude.Style
 
-type Props ∷ forall k. (Type -> k) -> Row k -> Row k
+type Props ∷ ∀ k. (Type → k) → Row k → Row k
 type Props f r =
   ( css ∷ f Style
   , padding ∷ f StyleProperty
@@ -18,7 +18,7 @@ type Props f r =
   | r
   )
 
-box ∷ ∀ p. { | Props OptionalProp p } -> Style
+box ∷ ∀ p. { | Props OptionalProp p } → Style
 box props = styles <>? props.css
   where
   styles =

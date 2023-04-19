@@ -22,7 +22,7 @@ import Storybook
 default = meta
   { title: "Layout"
   , decorators:
-      [ metaDecorator $ \story -> do
+      [ metaDecorator $ \story → do
           R.div_
             [ element E.global { styles: Styles.global }
             , story
@@ -32,7 +32,7 @@ default = meta
 
 layout ∷ Effect JSX
 layout = do
-  postPreview <- mkPostPreview
+  postPreview ← mkPostPreview
   let
     post1 =
       postPreview
@@ -40,23 +40,28 @@ layout = do
         , date: "16th May 2021"
         , author: "Someone W. Knowles"
         , image: "https://source.unsplash.com/3ujVzg9i2EI/105x130"
-        , previewText: "When I was a young girl wrestling with 'undefined' not being a function my mother used to come up to me and say: 'Use PureScript'. Now, a mere twenty years later..."
+        , previewText:
+            "When I was a young girl wrestling with 'undefined' not being a function my mother used to come up to me and say: 'Use PureScript'. Now, a mere twenty years later..."
         }
     post2 =
       postPreview
         { title: "The Big Beat Manifesto"
         , date: "2nd May 2008"
         , author: "Simon S. Hans"
-        , image: "https://metro.co.uk/wp-content/uploads/2016/03/super-hans-006.jpg?quality=90&strip=all&zoom=1&resize=644%2C386"
-        , previewText: "Have you read the Big Beat Manifesto lately? The Big Beat Manifesto goes \"Big Beats are the best, Get high all the time\"."
+        , image:
+            "https://metro.co.uk/wp-content/uploads/2016/03/super-hans-006.jpg?quality=90&strip=all&zoom=1&resize=644%2C386"
+        , previewText:
+            "Have you read the Big Beat Manifesto lately? The Big Beat Manifesto goes \"Big Beats are the best, Get high all the time\"."
         }
     post3 =
       postPreview
         { title: "Here's my pitch: New management consultancy"
         , date: "9th Oct. 2009"
         , author: "Alan Johnson"
-        , image: "https://preview.redd.it/3wsbjepf9yt11.png?width=960&crop=smart&auto=webp&s=d9989616ba615464b0a4a9e060250f8858c8a1f9"
-        , previewText: "In. Fire 30% of the workforce.  New logo. Boom! Out!  You are now a fully trained management consultant."
+        , image:
+            "https://preview.redd.it/3wsbjepf9yt11.png?width=960&crop=smart&auto=webp&s=d9989616ba615464b0a4a9e060250f8858c8a1f9"
+        , previewText:
+            "In. Fire 30% of the workforce.  New logo. Boom! Out!  You are now a fully trained management consultant."
         }
   pure
     $ fragment
@@ -73,26 +78,40 @@ layout = do
             ]
         ]
 
-mkPostPreview :: Component { title :: String, date :: String, author :: String, image :: String, previewText :: String }
+mkPostPreview ∷
+  Component
+    { title ∷ String
+    , date ∷ String
+    , author ∷ String
+    , image ∷ String
+    , previewText ∷ String
+    }
 mkPostPreview = do
-  component "PostPreview" \{ title, date, author, previewText, image } -> React.do
-    pure $
-      Block.box
-        { padding: E.str $ size.l <> " " <> size.l <> " " <> size.xl
-        , className: "post-preview"
-        , css: boxCss
-        }
-        [ Block.stack { space: E.str size.s, splitAfter: 2 }
-            [ Block.stack { space: E.str size.m }
-                [ Block.sidebar { sidebar: avatar image, side: SidebarRight, reverseOnWrap: true, contentMin: "30ch", space: size.l }
-                    [ postTitle title ]
-                , Block.cluster { justify: "space-between", space: size.m }
-                    [ postDate date, postAuthor author ]
-                ]
-            , hr
-            , preview previewText
-            ]
-        ]
+  component "PostPreview" \{ title, date, author, previewText, image } →
+    React.do
+      pure $
+        Block.box
+          { padding: E.str $ size.l <> " " <> size.l <> " " <> size.xl
+          , className: "post-preview"
+          , css: boxCss
+          }
+          [ Block.stack { space: E.str size.s, splitAfter: 2 }
+              [ Block.stack { space: E.str size.m }
+                  [ Block.sidebar
+                      { sidebar: avatar image
+                      , side: SidebarRight
+                      , reverseOnWrap: true
+                      , contentMin: "30ch"
+                      , space: size.l
+                      }
+                      [ postTitle title ]
+                  , Block.cluster { justify: "space-between", space: size.m }
+                      [ postDate date, postAuthor author ]
+                  ]
+              , hr
+              , preview previewText
+              ]
+          ]
   where
   hr =
     R.hr'
@@ -138,7 +157,9 @@ mkPostPreview = do
         }
 
   avatar image =
-    Block.centre { css: E.css { width: E.str $ i "calc(" size.xxl " + " size.xxs " * 2)" } }
+    Block.centre
+      { css: E.css { width: E.str $ i "calc(" size.xxl " + " size.xxs " * 2)" }
+      }
       [ R.div'
           </*
             { className: "profile-picture-container"

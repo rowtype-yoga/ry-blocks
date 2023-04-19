@@ -1,4 +1,7 @@
-module Yoga.Block.Organism.NotificationCentre.Notification.Story (default, notificationCentre) where
+module Yoga.Block.Organism.NotificationCentre.Notification.Story
+  ( default
+  , notificationCentre
+  ) where
 
 import Prelude
 
@@ -19,14 +22,14 @@ import Yoga.Prelude.View (handler_)
 storyNotificationCentre ∷ NotificationCentre
 storyNotificationCentre = unsafePerformEffect mkNotificationCentre
 
-default
-  ∷ { decorators ∷ Array (Effect JSX -> JSX)
-    , title ∷ String
-    }
+default ∷
+  { decorators ∷ Array (Effect JSX → JSX)
+  , title ∷ String
+  }
 default =
   { title: "Organism/NotificationCentre"
   , decorators:
-      [ \storyFn ->
+      [ \storyFn →
           Block.container
             </ {}
             />
@@ -40,7 +43,7 @@ notificationCentre ∷ Effect JSX
 notificationCentre = do
   let containerId = "notifications"
   let nc@(NotificationCentre { enqueueNotification }) = storyNotificationCentre
-  notificationsView <- mkNotificationCentreView nc
+  notificationsView ← mkNotificationCentreView nc
     { containerId
     , renderNotifications: renderAnimatedNotifications
     }

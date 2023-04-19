@@ -6,7 +6,7 @@ import Fahrtwind (maxHeight', overflowYScroll, pX', pY')
 import Fahrtwind.Style.ScrollBar (scrollBar')
 import Yoga.Block.Container.Style (col, colour)
 
-type Props :: forall k. (Type -> k) -> Row k -> Row k
+type Props ∷ ∀ k. (Type → k) → Row k → Row k
 type Props f r =
   ( css ∷ f Style
   , clickawayBackground ∷ f StyleProperty
@@ -40,7 +40,7 @@ sheetContent = styles
         }
       <> maxHeight' (vh 90.0)
 
-sheetBody :: Style
+sheetBody ∷ Style
 sheetBody =
   overflowYScroll
     <> scrollBar'
@@ -51,7 +51,7 @@ sheetBody =
       , borderWidth: str "var(--s-3)"
       }
 
-clickaway ∷ forall r. { | Props OptionalProp r } -> Style
+clickaway ∷ ∀ r. { | Props OptionalProp r } → Style
 clickaway { clickawayBackground } =
   css
     { width: 100.0 # vw

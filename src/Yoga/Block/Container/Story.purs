@@ -23,16 +23,39 @@ container =
   pure
     ( element Container.component
         { children:
-            [ el Box.component { style: css { background: colour.backgroundLayer1 } }
-                [ el Box.component { style: css { background: colour.backgroundLayer2 } }
-                    [ el Box.component { style: css { background: colour.backgroundLayer3 } }
-                        [ el Box.component { style: css { background: colour.backgroundLayer4 } }
-                            [ el Box.component { style: css { background: colour.backgroundLayer5 } }
-                                [ R.div { style: css { color: colour.text }, children: [ R.text "Text" ] }
-                                , R.div { style: css { color: colour.textPaler1 }, children: [ R.text "Text Paler 1" ] }
-                                , R.div { style: css { color: colour.textPaler2 }, children: [ R.text "Text Paler 2" ] }
-                                , R.div { style: css { color: colour.textPaler3 }, children: [ R.text "Text Paler 3" ] }
-                                , R.div { style: css { color: colour.textPaler4 }, children: [ R.text "Text Paler 4" ] }
+            [ el Box.component
+                { style: css { background: colour.backgroundLayer1 } }
+                [ el Box.component
+                    { style: css { background: colour.backgroundLayer2 } }
+                    [ el Box.component
+                        { style: css { background: colour.backgroundLayer3 } }
+                        [ el Box.component
+                            { style: css { background: colour.backgroundLayer4 }
+                            }
+                            [ el Box.component
+                                { style: css
+                                    { background: colour.backgroundLayer5 }
+                                }
+                                [ R.div
+                                    { style: css { color: colour.text }
+                                    , children: [ R.text "Text" ]
+                                    }
+                                , R.div
+                                    { style: css { color: colour.textPaler1 }
+                                    , children: [ R.text "Text Paler 1" ]
+                                    }
+                                , R.div
+                                    { style: css { color: colour.textPaler2 }
+                                    , children: [ R.text "Text Paler 2" ]
+                                    }
+                                , R.div
+                                    { style: css { color: colour.textPaler3 }
+                                    , children: [ R.text "Text Paler 3" ]
+                                    }
+                                , R.div
+                                    { style: css { color: colour.textPaler4 }
+                                    , children: [ R.text "Text Paler 4" ]
+                                    }
                                 ]
                             ]
                         ]
@@ -63,7 +86,11 @@ container =
                     { style:
                         css
                           { background:
-                              "linear-gradient(90deg," <> colour.highlightRotatedForwards <> "," <> colour.highlightRotatedBackwards <> ")"
+                              "linear-gradient(90deg,"
+                                <> colour.highlightRotatedForwards
+                                <> ","
+                                <> colour.highlightRotatedBackwards
+                                <> ")"
                           , color: colour.highlightText
                           }
                     }
@@ -73,34 +100,42 @@ container =
                     , padding: E.px 1
                     , css:
                         E.css
-                          { background: E.str "linear-gradient(90deg, rgb(32, 37, 63) 0%, rgb(118, 74, 151) 15%, rgb(71, 107, 169) 20%, rgb(85, 167, 177) 29%, rgb(85, 167, 177) 32%, rgb(32, 37, 63) 40%, rgb(32, 37, 63) 50%, rgb(118, 74, 151) 60%, rgb(71, 107, 169) 70%, rgb(85, 167, 177) 80%, rgb(32, 37, 63) 100%)"
+                          { background: E.str
+                              "linear-gradient(90deg, rgb(32, 37, 63) 0%, rgb(118, 74, 151) 15%, rgb(71, 107, 169) 20%, rgb(85, 167, 177) 29%, rgb(85, 167, 177) 32%, rgb(32, 37, 63) 40%, rgb(32, 37, 63) 50%, rgb(118, 74, 151) 60%, rgb(71, 107, 169) 70%, rgb(85, 167, 177) 80%, rgb(32, 37, 63) 100%)"
                           , backgroundSize: E.percent 500.0
-                          , animation: E.str "15s linear 0s infinite normal none running"
+                          , animation: E.str
+                              "15s linear 0s infinite normal none running"
                           , animationName:
                               E.keyframes
-                                { "0%": E.css { backgroundPosition: E.str "0% center" }
-                                , "100%": E.css { backgroundPosition: E.str "500% center" }
+                                { "0%": E.css
+                                    { backgroundPosition: E.str "0% center" }
+                                , "100%": E.css
+                                    { backgroundPosition: E.str "500% center" }
                                 }
                           , color: E.str colour.highlightText
                           , overflow: E.hidden
                           , "&::before":
                               E.nested
                                 $ E.css
-                                    { content: E.str $ "'" <> (power "Shiny boy     " 50 <> "'")
+                                    { content: E.str $ "'" <>
+                                        (power "Shiny boy     " 50 <> "'")
                                     , letterSpacing: E.str "4px"
                                     , backgroundRepeat: E.str "repeat-x"
                                     , whiteSpace: E.nowrap
                                     , fontSize: E.str "12px"
                                     , overflow: E.hidden
-                                    , animation: E.str "5s linear 0s infinite normal none running"
+                                    , animation: E.str
+                                        "5s linear 0s infinite normal none running"
                                     , left: E.px 0
                                     , fontWeight: E.str "800"
                                     , position: E.relative
                                     , height: E.px 20
                                     , animationName:
                                         E.keyframes
-                                          { "100%": E.css { left: E.str "calc(-100%)" }
-                                          , "0%": E.css { left: E.str "calc(0%)" }
+                                          { "100%": E.css
+                                              { left: E.str "calc(-100%)" }
+                                          , "0%": E.css
+                                              { left: E.str "calc(0%)" }
                                           }
                                     }
                           }
@@ -137,12 +172,17 @@ container =
             , psParagraph
             , R.h3_ [ R.text "Third largest heading (h3)" ]
             , psParagraph
-            , R.p_ [ R.text "Make sure to have the following meta tag in your head" ]
+            , R.p_
+                [ R.text "Make sure to have the following meta tag in your head"
+                ]
             , R.code_
                 [ R.text
                     """<meta name="viewport" content="width=device-width, initial-scale=1.0">"""
                 ]
-            , R.h1_ [ R.text "Very long largest heading that can result in multiple lines" ]
+            , R.h1_
+                [ R.text
+                    "Very long largest heading that can result in multiple lines"
+                ]
             ]
         }
     )

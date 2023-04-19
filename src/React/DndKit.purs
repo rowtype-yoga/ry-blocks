@@ -40,14 +40,14 @@ foreign import closestCorners ∷ CollisionDetection
 
 foreign import data SensorDescriptor ∷ Type
 
-dndContext ∷ ∀ p q. Union p q DndContextProps => ReactComponent { | p }
+dndContext ∷ ∀ p q. Union p q DndContextProps ⇒ ReactComponent { | p }
 dndContext = dndContextImpl
 
 active ∷ EventFn SyntheticEvent (Maybe Draggable)
-active = unsafeEventFn \e -> toMaybe (unsafeCoerce e).active
+active = unsafeEventFn \e → toMaybe (unsafeCoerce e).active
 
 over ∷ EventFn SyntheticEvent (Maybe Draggable)
-over = unsafeEventFn \e -> toMaybe (unsafeCoerce e).over
+over = unsafeEventFn \e → toMaybe (unsafeCoerce e).over
 
 type Draggable =
   { id ∷ String }
@@ -61,16 +61,16 @@ type SortableContextProps =
 -- | `items` is the sorted array of the unique ids associated to each sortable item
 foreign import sortableContextImpl ∷ ∀ props. ReactComponent { | props }
 
-sortableContext ∷ ∀ p q. Union p q SortableContextProps => ReactComponent { | p }
+sortableContext ∷ ∀ p q. Union p q SortableContextProps ⇒ ReactComponent { | p }
 sortableContext = sortableContextImpl
 
-useSortable ∷ SortableArgs -> Hook (UseSortable SortableArgs) SortableResult
+useSortable ∷ SortableArgs → Hook (UseSortable SortableArgs) SortableResult
 useSortable args =
   map toSortableResult
     $ unsafeHook
     $ runEffectFn1 useSortableImpl args
 
-foreign import data UseSortable ∷ Type -> Type -> Type
+foreign import data UseSortable ∷ Type → Type → Type
 
 foreign import useSortableImpl ∷
   EffectFn1
@@ -83,16 +83,16 @@ type SortableArgs =
 
 type SortableResultImpl =
   { attributes ∷
-    { "aria-describedby" ∷ String
-    , "aria-pressed" ∷ String
-    , "aria-roledescription" ∷ String
-    , role ∷ String
-    , tabIndex ∷ Int
-    }
+      { "aria-describedby" ∷ String
+      , "aria-pressed" ∷ String
+      , "aria-roledescription" ∷ String
+      , role ∷ String
+      , tabIndex ∷ Int
+      }
   , listeners ∷
-    { onKeyDown ∷ EventHandler
-    , onPointerDown ∷ EventHandler
-    }
+      { onKeyDown ∷ EventHandler
+      , onPointerDown ∷ EventHandler
+      }
   , setNodeRef ∷ Ref (Nullable Node)
   , transform ∷ Foreign
   , transition ∷ Foreign
@@ -100,20 +100,20 @@ type SortableResultImpl =
 
 type SortableResult =
   { attributes ∷
-    { _aria ∷ Object String
-    , role ∷ String
-    , tabIndex ∷ Int
-    }
+      { _aria ∷ Object String
+      , role ∷ String
+      , tabIndex ∷ Int
+      }
   , listeners ∷
-    { onKeyDown ∷ EventHandler
-    , onPointerDown ∷ EventHandler
-    }
+      { onKeyDown ∷ EventHandler
+      , onPointerDown ∷ EventHandler
+      }
   , setNodeRef ∷ Ref (Nullable Node)
   , transform ∷ Foreign
   , transition ∷ Foreign
   }
 
-toSortableResult ∷ SortableResultImpl -> SortableResult
+toSortableResult ∷ SortableResultImpl → SortableResult
 toSortableResult sri =
   Builder.build
     ( Builder.modify (Proxy ∷ _ "attributes")
@@ -123,12 +123,12 @@ toSortableResult sri =
                 <<< Builder.delete (Proxy ∷ _ "aria-pressed")
                 <<< Builder.delete (Proxy ∷ _ "aria-roledescription")
                 <<< Builder.insert (Proxy ∷ _ "_aria")
-                    ( Object.fromHomogeneous
-                        { describedby: sri.attributes."aria-describedby"
-                        , pressed: sri.attributes."aria-pressed"
-                        , roledescription: sri.attributes."aria-roledescription"
-                        }
-                    )
+                  ( Object.fromHomogeneous
+                      { describedby: sri.attributes."aria-describedby"
+                      , pressed: sri.attributes."aria-pressed"
+                      , roledescription: sri.attributes."aria-roledescription"
+                      }
+                  )
             )
         )
     )
@@ -146,12 +146,12 @@ foreign import restrictToFirstScrollableAncestor ∷ Modifier
 
 foreign import restrictToWindowEdges ∷ Modifier
 
-arrayMove ∷ ∀ a. Int -> Int -> Array a -> Array a
+arrayMove ∷ ∀ a. Int → Int → Array a → Array a
 arrayMove source target arr = runFn3 arrayMoveImpl arr source target
 
 foreign import arrayMoveImpl ∷ ∀ a. Fn3 (Array a) Int Int (Array a)
 
-foreign import cssToString ∷ Foreign -> String
+foreign import cssToString ∷ Foreign → String
 
 foreign import data Sensor ∷ Type
 
@@ -161,18 +161,18 @@ foreign import keyboardSensor ∷ Sensor
 
 foreign import pointerSensor ∷ Sensor
 
-foreign import data UseSensor ∷ Type -> Type
+foreign import data UseSensor ∷ Type → Type
 
 foreign import useSensorImpl ∷ ∀ args. Fn2 Sensor { | args } SensorDescriptor
 
-useSensor ∷ ∀ r. Sensor -> Record r -> SensorDescriptor
+useSensor ∷ ∀ r. Sensor → Record r → SensorDescriptor
 useSensor sensor args = runFn2 useSensorImpl sensor args
 
-foreign import data UseSensors ∷ Type -> Type
+foreign import data UseSensors ∷ Type → Type
 
 foreign import useSensorsImpl ∷ EffectFn1 (Array SensorDescriptor) Sensors
 
-useSensors ∷ ∀ hooks. Array SensorDescriptor -> Hook hooks Sensors
+useSensors ∷ ∀ hooks. Array SensorDescriptor → Hook hooks Sensors
 useSensors args =
   unsafeHook
     $ runEffectFn1 useSensorsImpl args

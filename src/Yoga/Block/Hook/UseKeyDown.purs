@@ -21,19 +21,21 @@ newtype UseKeyDown hooks = UseKeyDown
 
 derive instance Newtype (UseKeyDown hooks) _
 
-useKeyDown ∷ (KeyboardEvent -> Set Modifier -> KeyCode -> Effect Unit) -> Hook UseKeyDown Unit
+useKeyDown ∷
+  (KeyboardEvent → Set Modifier → KeyCode → Effect Unit) → Hook UseKeyDown Unit
 useKeyDown doWhat = do
   coerceHook React.do
     useEffectAlways do
-      listener <-
-        eventListener $ KeyboardEvent.fromEvent >>> traverse_ \event -> do
+      listener ←
+        eventListener $ KeyboardEvent.fromEvent >>> traverse_ \event → do
           let modifiers = getModifiers event
           case getKeyCode event >>= intToKeyCode of
-            Just keyCode -> doWhat event modifiers keyCode
-            Nothing -> pure unit
-      win <- window
+            Just keyCode → doWhat event modifiers keyCode
+            Nothing → pure unit
+      win ← window
       addEventListener eventTypeKeyDown listener false (Win.toEventTarget win)
-      pure $ removeEventListener eventTypeKeyDown listener false (Win.toEventTarget win)
+      pure $ removeEventListener eventTypeKeyDown listener false
+        (Win.toEventTarget win)
 
 eventTypeKeyDown ∷ EventType
 eventTypeKeyDown = EventType "keydown"

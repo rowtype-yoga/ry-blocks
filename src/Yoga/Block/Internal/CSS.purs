@@ -20,13 +20,20 @@ left = str "left"
 _100percent ∷ StyleProperty
 _100percent = percent 100.0
 
-nest ∷ ∀ r rl. RowToList r rl => HomogeneousRowList rl StyleProperty => Record r -> StyleProperty
+nest ∷
+  ∀ r rl.
+  RowToList r rl ⇒
+  HomogeneousRowList rl StyleProperty ⇒
+  Record r →
+  StyleProperty
 nest = nested <<< css
 
 nestDynamic ∷
   ∀ r.
-  Homogeneous r StyleProperty =>
-  String -> { | r } -> Style
+  Homogeneous r StyleProperty ⇒
+  String →
+  { | r } →
+  Style
 nestDynamic key sp =
   unsafeCoerce
     $ Object.singleton key (css sp)

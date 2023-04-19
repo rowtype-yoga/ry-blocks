@@ -27,8 +27,8 @@ newtype UseTypingPlaceholders hooks = UseTypingPlaceholders
 
 derive instance Newtype (UseTypingPlaceholders hooks) _
 
-useTypingPlaceholders
-  ∷ String → Array String → Hook UseTypingPlaceholders NodeRef
+useTypingPlaceholders ∷
+  String → Array String → Hook UseTypingPlaceholders NodeRef
 useTypingPlaceholders defaultPlaceholder otherPlaceholders = coerceHook React.do
   let placeholders = NEA.cons' defaultPlaceholder otherPlaceholders
   inputRef ← React.useRef Nullable.null

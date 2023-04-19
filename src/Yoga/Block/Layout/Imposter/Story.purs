@@ -13,18 +13,18 @@ import React.Basic.Emotion as E
 import Yoga (el)
 
 default ∷
-  { decorators ∷ Array (Effect JSX -> JSX)
+  { decorators ∷ Array (Effect JSX → JSX)
   , title ∷ String
   }
 default =
   { title: "Layout/Imposter"
   , decorators:
-    [ \storyFn ->
-        R.div_
-          [ element E.global { styles: Styles.global }
-          , unsafePerformEffect storyFn
-          ]
-    ]
+      [ \storyFn →
+          R.div_
+            [ element E.global { styles: Styles.global }
+            , unsafePerformEffect storyFn
+            ]
+      ]
   }
 
 imposter ∷ Effect JSX
@@ -37,7 +37,8 @@ imposter =
                 { style: css { backgroundColor: "hotpink" }
                 }
                 [ R.div_
-                    $ [ power
+                    $
+                      [ power
                           ( R.div
                               { children: [ R.text "Content" ]
                               , style: css { backgroundColor: "teal" }

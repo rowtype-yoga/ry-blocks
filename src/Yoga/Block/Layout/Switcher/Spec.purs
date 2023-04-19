@@ -12,10 +12,10 @@ spec =
         void
           $ renderComponent Switcher.component {}
       it "accepts div props" do
-        { findByText } <-
+        { findByText } ←
           renderComponent Switcher.component
             { role: "Heinz"
             , children: [ R.text "Find me!" ]
             }
-        elem <- findByText "Find me!"
+        elem ← findByText "Find me!"
         elem `shouldHaveAttribute` "role"
