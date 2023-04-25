@@ -18,7 +18,7 @@ type Props a =
 
 component ∷ ∀ a. ReactComponent (Props a)
 component = unsafePerformEffect do
-  React.reactComponent "Select" \{ toString, toValue, choices, onChange } →
+  React.reactComponent "Select" \{ toString, toValue, choice, choices, onChange } →
     React.do
       pure $
         div "input-container" Style.container
@@ -27,6 +27,7 @@ component = unsafePerformEffect do
                 { className: "select"
                 , role: "listbox"
                 , css: Style.select
+                , value: toValue choice
                 , onChange: handler targetValue
                     \maybeVal → traverse_ onChange do
                       val ← maybeVal
